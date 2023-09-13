@@ -92,6 +92,10 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
           idProd.push_back( idNow);
         }
 
+
+        // GAMBIT fix for Pythia bug. (To be fixed in Pythia versions > 8.212)
+        mProd.resize(1);
+
         // Pick masses. Pick new channel if fail.
         if (!pickMasses()) continue;
         foundChannel = true;
@@ -191,11 +195,15 @@ bool ResonanceDecays::pickMasses() {
     mSumMin     += mMinBW[i];
   }
 
-  // If sum of minimal masses above mother mass then give up.
-  if (mSumMin + MSAFETY > mMother) return false;
+  // GAMBIT modification to allow decays at small mass splittings:
+  // Switched order of the two next if-statements and changed
+  // 0.5*MSAFETY to 0.01*MSAFETY.
 
   // If sum of masses below and no Breit-Wigners then done.
-  if (mSum + 0.5 * MSAFETY < mMother && nBW == 0) return true;
+  if (mSum + 0.01 * MSAFETY < mMother && nBW == 0) return true;
+
+  // If sum of minimal masses above mother mass then give up.
+  if (mSumMin + MSAFETY > mMother) return false;
 
   // Else if below then retry Breit-Wigners, with simple treshold.
   if (mSum + MSAFETY < mMother) {

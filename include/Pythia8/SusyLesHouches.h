@@ -14,6 +14,9 @@
 #define Pythia8_SLHA_H
 
 #include "Pythia8/PythiaStdlib.h"
+// NOTE: Gambit hack to include slhaea support
+// SLHAea (for SLHA input from an SLHAea object instead of a file)
+#include "SLHAea/slhaea.h"
 
 namespace Pythia8 {
 
@@ -387,11 +390,13 @@ public:
   //Constructor, with and without filename.
   SusyLesHouches(int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
-    slhaRead(false), lhefRead(false), lhefSlha(false), useDecay(true) {};
+    slhaRead(false), lhefRead(false), lhefSlha(false), useDecay(true),
+    slhaeaCollPtr(NULL) {}; // NOTE: <== slhaeaCollPtr is a Gambit hack
   SusyLesHouches(string filename, int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
-    slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true)
-    {readFile(filename);};
+    slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true),
+    slhaeaCollPtr(NULL) {readFile(filename);}; // NOTE: <== slhaeaCollPtr is a Gambit hack
+
 
   //***************************** SLHA FILE I/O *****************************//
   // Read and write SLHA files
@@ -400,6 +405,8 @@ public:
   int readFile(istream& ,int verboseIn=1,
     bool useDecayIn=true);
   //int writeFile(string filename): write SLHA file on filename
+  // NOTE: Gambit hack to include slhaea support
+  void setSLHAea(const SLHAea::Coll* inputSLHAea) { slhaeaCollPtr = inputSLHAea; }
 
   //Output utilities
   void printHeader();   // print Header

@@ -20,23 +20,34 @@ namespace Pythia8 {
 int SusyLesHouches::readFile(string slhaFileIn, int verboseIn,
   bool useDecayIn) {
 
-  slhaFile = slhaFileIn;
-  // Check that input file is OK.
-  const char* cstring = slhaFile.c_str();
-  igzstream file(cstring);
-
-  // Exit if input file not found. Else print file name.
-  if (!file.good()) {
-    message(2,"readFile",slhaFile+" not found",0);
-    return -1;
-    slhaRead=false;
+  // NOTE: Gambit hack for slhaea support:
+  // If the slhaeaCollPtr is set, get the SLHA content as a stringstream
+  // from that pointer and pass this to Pythia's readFile function.
+  if (slhaeaCollPtr) // GAMBIT hack
+  {
+    std::istringstream slhaea_content(slhaeaCollPtr->str());
+    return readFile( slhaea_content, verboseIn, useDecayIn );
   }
-  if (verboseSav >= 3) {
-    message(0,"readFile","parsing "+slhaFile,0);
-    filePrinted = true;
-  }
+  else  // Pythia original
+  {
+    slhaFile = slhaFileIn;
+    // Check that input file is OK.
+    const char* cstring = slhaFile.c_str();
+    igzstream file(cstring);
 
-  return readFile( file, verboseIn, useDecayIn );
+    // Exit if input file not found. Else print file name.
+    if (!file.good()) {
+      message(2,"readFile",slhaFile+" not found",0);
+      return -1;
+      slhaRead=false;
+    }
+    if (verboseSav >= 3) {
+      message(0,"readFile","parsing "+slhaFile,0);
+      filePrinted = true;
+    }
+
+    return readFile( file, verboseIn, useDecayIn );
+  }
 }
 
 int SusyLesHouches::readFile(istream& is, int verboseIn,
@@ -635,7 +646,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
     return 102;
   }
   else return iFailFile;
-
+    
 }
 
 //--------------------------------------------------------------------------
@@ -678,6 +689,13 @@ void SusyLesHouches::printFooter() {
 // Not yet fully implemented.
 
 void SusyLesHouches::printSpectrum(int ifail) {
+
+// NOTE: Gambit hack for debugging
+  // Print a debugging message
+  if (ifail == 999) {
+    std::cout<<"\n\n!! SusyLesHouches within libpythia has been touched. !!\n\n";
+    return;
+  }
 
   // Exit if output switched off
   if (verboseSav <= 0) return;
@@ -1467,6 +1485,8 @@ int SusyLesHouches::checkSpectrum() {
     }
   }
 
+  // GAMBIT NMSSM hack
+  /*
   // CPV
   if (modsel(5) != 0) {
     if (!cvhmix.exists()) {
@@ -1474,6 +1494,7 @@ int SusyLesHouches::checkSpectrum() {
       ifail=-1;
     }
   }
+  */ 
 
   // FLV (regardless of whether RPV or not)
   if (modsel(6) != 0) {
@@ -1596,18 +1617,22 @@ int SusyLesHouches::checkSpectrum() {
   }
 
   //NMIX
-  if (nmix.exists()) {
-    for (int i=1;i<=4;i++) {
-      double cn1=0.0;
-      double cn2=0.0;
-      for (int j=1;j<=4;j++) {
-        cn1 += pow(nmix(i,j),2);
-        cn2 += pow(nmix(j,i),2);
-      }
-      if (abs(1.0-cn1) > 1e-3 || abs(1.0-cn2) > 1e-3) {
-        ifail=2;
-        message(2,"checkSpectrum","NMIX is not unitary (wrong format?)",0);
-        break;
+  // GAMBIT NMSSM hack: don't perform check for 4x4 NMIX block when the
+  // NMSSM i used, i.e. when modsel(3) == 1.
+  if (modsel(3) != 1) {
+    if (nmix.exists()) {
+      for (int i=1;i<=4;i++) {
+        double cn1=0.0;
+        double cn2=0.0;
+        for (int j=1;j<=4;j++) {
+          cn1 += pow(nmix(i,j),2);
+          cn2 += pow(nmix(j,i),2);
+        }
+        if (abs(1.0-cn1) > 1e-3 || abs(1.0-cn2) > 1e-3) {
+          ifail=2;
+          message(2,"checkSpectrum","NMIX is not unitary (wrong format?)",0);
+          break;
+        }
       }
     }
   }
@@ -1657,6 +1682,10 @@ int SusyLesHouches::checkSpectrum() {
 
   }
 
+  // GAMBIT hack: these unitarity checks don't include
+  // the corresponding IM- blocks with the imaginary components.
+  // (Fixed in later Pythia versions.) 
+  /*
   //STOPMIX, SBOTMIX
   if (stopmix.exists() && sbotmix.exists()) {
     for (int i=1;i<=2;i++) {
@@ -1749,7 +1778,11 @@ int SusyLesHouches::checkSpectrum() {
         break;
       }
     }
-  }  //NMSSM:
+  }  
+  */ 
+
+
+  //NMSSM:
   if (modsel(3) == 1) {
     //NMNMIX
     if ( nmnmix.exists() ) {

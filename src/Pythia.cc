@@ -113,7 +113,9 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     info.errorMsg("Abort from Pythia::Pythia: settings unavailable");
     return;
   }
-
+  // Also save XML path in settings
+  settings.addWord("xmlPath",xmlPath);
+  
   // Check that XML version number matches code version number.
   double versionNumberXML = parm("Pythia:versionNumber");
   isConstructed = (abs(versionNumberXML - VERSIONNUMBERCODE) < 0.0005);
@@ -157,6 +159,112 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
 
 //--------------------------------------------------------------------------
 
+// Constructor from pre-initialised ParticleData and Settings objects.
+
+Pythia::Pythia(ParticleData& particleDataIn, Settings& settingsIn,
+                 bool printBanner) {
+
+  // Initial values for pointers to PDF's.
+  useNewPdfA      = false;
+  useNewPdfB      = false;
+  useNewPdfHard   = false;
+  useNewPdfPomA   = false;
+  useNewPdfPomB   = false;
+  pdfAPtr         = 0;
+  pdfBPtr         = 0;
+  pdfHardAPtr     = 0;
+  pdfHardBPtr     = 0;
+  pdfPomAPtr      = 0;
+  pdfPomBPtr      = 0;
+
+  // Initial values for pointers to Les Houches Event objects.
+  doLHA           = false;
+  useNewLHA       = false;
+  lhaUpPtr        = 0;
+
+  //Initial value for couplings pointer
+  couplingsPtr    = &couplings;
+
+  // Initial value for pointer to external decay handler.
+  decayHandlePtr  = 0;
+
+  // Initial value for pointer to user hooks.
+  userHooksPtr    = 0;
+
+  // Initial value for pointer to merging hooks.
+  doMerging          = false;
+  hasMergingHooks    = false;
+  hasOwnMergingHooks = false;
+  mergingHooksPtr    = 0;
+
+  // Initial value for pointer to beam shape.
+  useNewBeamShape = false;
+  beamShapePtr    = 0;
+
+  // Initial values for pointers to timelike and spacelike showers.
+  useNewTimesDec  = false;
+  useNewTimes     = false;
+  useNewSpace     = false;
+  timesDecPtr     = 0;
+  timesPtr        = 0;
+  spacePtr        = 0;
+
+  // Copy XML path
+  const string key = "xmlPath";
+  xmlPath = settingsIn.word(key);
+  
+  // Copy settings database
+  settings = settingsIn;
+  // Reset pointers to pertain to this PYTHIA object
+  settings.initPtr( &info);
+  isConstructed = settings.getIsInit();
+  if (!isConstructed) {
+    info.errorMsg("Abort from Pythia::Pythia: settings unavailable");
+    return;
+  }
+
+  // Check that XML version number matches code version number.
+  double versionNumberXML = parm("Pythia:versionNumber");
+  isConstructed = (abs(versionNumberXML - VERSIONNUMBERCODE) < 0.0005);
+  if (!isConstructed) {
+    ostringstream errCode;
+    errCode << fixed << setprecision(3) << ": in code " << VERSIONNUMBERCODE
+            << " but in XML " << versionNumberXML;
+    info.errorMsg("Abort from Pythia::Pythia: unmatched version numbers",
+      errCode.str());
+    return;
+  }
+
+  // Check that header version number matches code version number.
+  isConstructed = (abs(VERSIONNUMBERHEAD - VERSIONNUMBERCODE) < 0.0005);
+  if (!isConstructed) {
+    ostringstream errCode;
+    errCode << fixed << setprecision(3) << ": in code " << VERSIONNUMBERCODE
+            << " but in header " << VERSIONNUMBERHEAD;
+    info.errorMsg("Abort from Pythia::Pythia: unmatched version numbers",
+      errCode.str());
+    return;
+  }
+
+  // Read in files with all particle data.
+  particleData.initPtr( &info, &settings, &rndm, couplingsPtr);
+  isConstructed = particleData.init( particleDataIn);
+  if (!isConstructed) {
+    info.errorMsg("Abort from Pythia::Pythia: particle data unavailable");
+    return;
+  }
+
+  // Write the Pythia banner to output.
+  if (printBanner) banner();
+
+  // Not initialized until at the end of the init() call.
+  isInit = false;
+  info.addCounter(0);
+
+}
+
+//--------------------------------------------------------------------------
+  
 // Destructor.
 
 Pythia::~Pythia() {
@@ -338,7 +446,7 @@ bool Pythia::setPDFPtr( PDF* pdfAPtrIn, PDF* pdfBPtrIn, PDF* pdfHardAPtrIn,
 
 // Routine to initialize with the variable values of the Beams kind.
 
-bool Pythia::init() {
+bool Pythia::init(ostream& os) {  // NOTE: <== os is a Gambit hack
 
   // Check that constructor worked.
   isInit = false;
@@ -677,7 +785,7 @@ bool Pythia::init() {
   // Send info/pointers to process level for initialization.
   if ( doProcessLevel && !processLevel.init( &info, settings, &particleData,
     &rndm, &beamA, &beamB, couplingsPtr, &sigmaTot, doLHA, &slhaInterface,
-    userHooksPtr, sigmaPtrs, phaseSpacePtrs) ) {
+    userHooksPtr, sigmaPtrs, phaseSpacePtrs, os) ) {  // NOTE: <== os is a Gambit hack
     info.errorMsg("Abort from Pythia::init: "
       "processLevel initialization failed");
     return false;
@@ -1618,12 +1726,12 @@ void Pythia::banner(ostream& os) {
      << "ische Physik,                         |  | \n"
      << " |  |     Universitaet Heidelberg, Philosophe"
      << "nweg 16, D-69120 Heidelberg, Germany; |  | \n"
-     << " |  |      e-mail: n.desai@thphys.uni-heidelb"
+     << " |  |      e-mail: n.desai@thuni-heidelb"
      << "erg.de                                |  | \n"
      << " |  |   Philip Ilten;  Massachusetts Institut"
      << "e of Technology,                      |  | \n"
-     << " |  |      stationed at CERN, CH-1211 Geneva "
-     << "23, Switzerland;                      |  | \n"
+     << " |  |      77 Massachusetts Ave, Cambridge, M"
+     << "A 02139, USA;                         |  | \n"
      << " |  |      e-mail: philten@cern.ch           "
      << "                                      |  | \n"
      << " |  |   Stephen Mrenna;  Computing Division, "

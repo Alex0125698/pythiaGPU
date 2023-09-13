@@ -56,6 +56,11 @@ public:
   // Constructor. (See Pythia.cc file.)
   Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
+  // Special constructor to copy settings and particle database from another
+  // Pythia object instead of XML files (to speed up multiple initialisations)
+  Pythia(ParticleData& particleDataIn, Settings& settingsIn,
+         bool printBanner = true);
+  
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
 
@@ -119,7 +124,7 @@ public:
     spacePtr = spacePtrIn; return true;}
 
   // Initialize.
-  bool init();
+  bool init(ostream& os = cout);
 
   // Generate the next event.
   bool next();
