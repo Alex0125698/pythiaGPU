@@ -1,6 +1,6 @@
 // HelicityBasics.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Philip Ilten, Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Philip Ilten, Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for a number of helper classes used in tau decays.
@@ -103,7 +103,7 @@ Wave4 conj(Wave4 w);
 Wave4 epsilon(Wave4 w1, Wave4 w2, Wave4 w3);
 double m2(Wave4 w);
 double m2(Wave4 w1, Wave4 w2);
-ostream& operator<<(ostream& os, Wave4 w);
+ostream& operator<< (ostream& os, Wave4 w);
 
 //==========================================================================
 
@@ -120,7 +120,7 @@ class GammaMatrix {
 public:
 
   // Constructors and destructor.
-  GammaMatrix() : index() {};
+  GammaMatrix() {};
   GammaMatrix(int mu);
   ~GammaMatrix() {};
 
@@ -153,7 +153,7 @@ public:
   friend GammaMatrix operator+(complex s, GammaMatrix g);
 
   // << GammaMatrix.
-  friend ostream& operator<<(ostream& os, GammaMatrix g);
+  friend ostream& operator<< (ostream& os, GammaMatrix g);
 
 protected:
 
@@ -172,7 +172,7 @@ Wave4 operator*(Wave4 w, GammaMatrix g);
 GammaMatrix operator*(complex s, GammaMatrix g);
 GammaMatrix operator-(complex s, GammaMatrix g);
 GammaMatrix operator+(complex s, GammaMatrix g);
-ostream& operator<<(ostream& os, GammaMatrix g);
+ostream& operator<< (ostream& os, GammaMatrix g);
 
 //==========================================================================
 
@@ -184,14 +184,14 @@ class HelicityParticle : public Particle {
 public:
 
   // Constructors.
-  HelicityParticle() : Particle(), indexSave() { direction = 1;}
+  HelicityParticle() : Particle() { direction = 1;}
   HelicityParticle(int idIn, int statusIn = 0, int mother1In = 0,
     int mother2In = 0, int daughter1In = 0, int daughter2In = 0,
     int colIn = 0, int acolIn = 0, double pxIn = 0.,
     double pyIn = 0., double pzIn = 0., double eIn = 0.,
     double mIn = 0., double scaleIn = 0., ParticleData* ptr = 0)
     : Particle(idIn, statusIn, mother1In, mother2In, daughter1In, daughter2In,
-    colIn, acolIn, pxIn, pyIn, pzIn, eIn, mIn, scaleIn), indexSave() {
+    colIn, acolIn, pxIn, pyIn, pzIn, eIn, mIn, scaleIn) {
     if (ptr) setPDEPtr( ptr->particleDataEntryPtr( idIn) );
     initRhoD();
     direction = 1; }
@@ -199,7 +199,7 @@ public:
     int daughter1In, int daughter2In, int colIn, int acolIn, Vec4 pIn,
     double mIn = 0., double scaleIn = 0., ParticleData* ptr = 0)
     : Particle(idIn, statusIn, mother1In, mother2In, daughter1In, daughter2In,
-    colIn, acolIn, pIn, mIn, scaleIn), indexSave() {
+    colIn, acolIn, pIn, mIn, scaleIn) {
     if (ptr) setPDEPtr( ptr->particleDataEntryPtr( idIn) );
     initRhoD();
     direction = 1; }
@@ -220,10 +220,6 @@ public:
   double m() {return mSave;}
   void   m(double mIn) {mSave = mIn; initRhoD();}
 
-  // Set the helicity state (redefine from Particle).
-  double pol() {return polSave;}
-  void   pol(double hIn);
-
   // Event record position (redefine from Particle).
   int  index() const {return indexSave;}
   void index(int indexIn) {indexSave = indexIn;}
@@ -240,7 +236,14 @@ public:
 private:
 
   // Initialize the helicity density and decay matrix.
-  void initRhoD();
+  void initRhoD() {
+    rho = vector< vector<complex> >(spinStates(),
+      vector<complex>(spinStates(), 0));
+    D   = vector< vector<complex> >(spinStates(),
+      vector<complex>(spinStates(), 0));
+    for (int i = 0; i < spinStates(); i++) {
+      rho[i][i] = 1.0 / spinStates(); D[i][i] = 1;}
+  }
 
   // Particle index in the event record.
   int indexSave;
@@ -251,4 +254,4 @@ private:
 
 } // end namespace Pythia8
 
-#endif // Pythia8_HelicityBasics_H
+#endif // end Pythia8_HelicityBasics_H

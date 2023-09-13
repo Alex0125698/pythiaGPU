@@ -1,11 +1,8 @@
 // main48.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Authors: Philip Ilten <philten@cern.ch>
-
-// Keywords: B decays; external decays; EvtGen
+// Author: Philip Ilten.
 
 // An example where decays are performed with EvtGen. See the
 // documentation in Pythia8Plugins/EvtGen.h for further details on the

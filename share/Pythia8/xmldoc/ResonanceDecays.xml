@@ -107,18 +107,16 @@ hard process and its associated resonance decays.
  
 <p/> 
 There is one key restriction on resonances: 
-<parm name="ResonanceWidths:minWidth" default="1.97e-19" min="1e-30"> 
+<parm name="ResonanceWidths:minWidth" default="1e-20" min="1e-30"> 
 Minimal allowed width of a resonance, in GeV. If the width falls below 
 this number the resonance is considered stable and will not be allowed 
 to decay. This is mainly intended as a technical parameter, to avoid 
 disasters in cases where no open decay channels exists at all. It could 
-be used for real-life decisions as well, however. The default value 
-corresponds to an average lifetime <ei>c * tau</ei> of 1 km, meaning 
-such a particle would only rarely decay inside a typical detector. 
-Special caution would be needed if coloured resonance particles were 
-made stable, since the program would not necessarily know how to 
-hadronize them, and therefore fail at that stage (see further the 
-<aloc href="RHadrons">R-hadrons description</aloc>). 
+be used for real-life decisions as well, however, but then typically 
+would have to be much bigger than the default value. Special caution 
+would be needed if coloured resonance particles were made stable, since 
+the program would not necessarily know how to hadronize them, and 
+therefore fail at that stage. 
 </parm> 
  
 <p/> 
@@ -136,7 +134,7 @@ it is because you <i>want</i> to study secondary vertices.
 How to interface those decays to a detector simulation program then 
 is another story, to be solved separately. Do note that a special 
 treatment is needed for coloured long-lived resonances, that form 
-<aloc href="RHadrons">R-hadrons</aloc>, and where charge and flavour 
+<aloc href="Rhadrons">R-hadrons</aloc>, and where charge and flavour 
 may change between the production and decay vertices. 
  
 <h3>Special properties and methods for resonances</h3> 
@@ -374,17 +372,6 @@ but the one in the denominator to all channels of the particle. These
 ever-changing numbers are not directly visible to the user, but are only 
 stored in a work area. 
  
-<h3> Filter for Resonance Decays </h3> 
- 
-The <code>UserHooks</code> code <code>ResonanceDecayFilterHooks</code> 
-available in <code>include/Pythia8Plugins</code> provides a convenient 
-way to select a specific final state from resonance decays. For 
-example, this could be applied to provide events from top pair 
-production that include leptons + jets. The example 
-<code>main103</code> demonstrates how to use this user hook. Further 
-documentation on the available settings can by found in the 
-<code>ResonanceDecayFilterHooks.h</code> header file. 
- 
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

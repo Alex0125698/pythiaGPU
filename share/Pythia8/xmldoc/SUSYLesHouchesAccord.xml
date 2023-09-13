@@ -71,7 +71,7 @@ and <code>SUSYResonanceWidths</code> classes.
 As an aid for basic validation, some checks and ranges are imposed 
  on SLHA input during initialization, as follows: 
 <ul> 
-<li>Several parameters (<code>minMassSM</code>, 
+<li>Several parameters (<code>SLHA:keepSM</code>, <code>minMassSM</code>, 
 and <code>SLHA:allowUserOverride</code>) provide some safety against 
 unintentionally overwriting PYTHIA's Standard-Model information. 
 These parameters can be altered to hand over more or less control to the SLHA 
@@ -99,13 +99,10 @@ be declared stable unless there is at least one on-shell decay channel open
 massless particles will always be declared stable. A lower cutoff is imposed 
 on the Breit-Wigner shape of the particle, requiring its mass to remain above 
 the sum of masses for the lightest decay channel. Subject to that constraint, 
-the <code>mMin</code> and <code>mMax</code> cutoffs 
-will normally be placed at 5 times the width or the on-shell mass divided by 
-two, whichever is smaller, so that the default gives a decent sampling of the 
-shape without straying too far from the on-shell value. The user is allowed to 
-use the <code>mMin</code> and <code>mMax</code> parameters to choose a 
-different sampling range if so desired (still subject to the constraint of at 
-least one decay channel remaining open for on-shell decay products). 
+the lower cutoff will normally be placed at 5 times the width (so that the 
+default gives a decent sampling of the shape), but the user is allowed to 
+use the <code>mMin</code> parameter to choose a larger sampling range if so 
+desired (still subject to the on-shell constraint). 
 </li> 
 <li>For each decay channel in an SLHA DECAY table, PYTHIA will checks the 
 available phase space. If the channel is on shell (sum of daughter masses is 
@@ -147,6 +144,17 @@ Name of an SLHA (or LHEF) file containing the SUSY/BSM model definition,
 spectra, and (optionally) decay tables. Default <code>void</code> 
 signals that no such file has been assigned. 
 </word> 
+ 
+<flag name="SLHA:keepSM" default="on"> 
+Some programs write SLHA output also for SM particles where normally 
+one would not want to have masses and decay modes changed unwittingly. 
+Therefore, by default, known SM particles are ignored in SLHA files. 
+To be more specific, particle data for identity codes in the ranges 
+1 - 24 and 81 - 999,999 are ignored. Notably this includes <ei>Z^0</ei>, 
+<ei>W^+-</ei> and <ei>t</ei>. The SM Higgs is modified by the SLHA input, 
+as is other codes in the range 25 - 80 and 1,000,000 - . If you 
+switch off this flag then also SM particles are modified by SLHA input. 
+</flag> 
  
 <parm name="SLHA:minMassSM" default="100.0"> 
 This parameter provides an alternative possibility to ignore SLHA input 
@@ -190,12 +198,6 @@ found. (To set a particle stable, you may either omit an SLHA
 use PYTHIA's internal <code>id:MayDecay</code> switch for that 
 particle, or you may include an SLHA <code>DECAY</code> table for it, 
 with the width set explicitly to zero.) 
-</flag> 
- 
-<flag name="SLHA:allowOnlyOffShell" default="off"> 
-Switch to allow a decay table with only off-shell decays. By default, 
-internal checks require particles to have at least one on-shell decay 
-mode. 
 </flag> 
  
 <mode name="SLHA:meMode" default="100" min="100" max="103"> 
@@ -245,9 +247,9 @@ Corresponds to SLHA block MODSEL entry 3.
 </flag> 
  
 <a name="generic"></a> 
-<h3>Using SLHA for generic BSM Models</h3> 
+<h2>Using SLHA for generic BSM Models</h2> 
  
-<p> 
+</p> 
 Using the <code>QNUMBERS</code> extension <ref>Alw07</ref>, the SLHA 
 can also be used to define new particles, with arbitrary quantum 
 numbers. This already serves as a useful way to introduce new 
@@ -258,7 +260,7 @@ such decays. (If you want something better than isotropic, sorry, you'll
 have to do some actual work ...) 
 </p> 
  
-<p> 
+</p> 
 A more advanced further option is to make use of the possibility 
 in the SLHA to include user-defined blocks with arbitrary 
 names and contents. Obviously, standalone 
@@ -319,4 +321,4 @@ recompute the EW parameters as best suited for the application at hand.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

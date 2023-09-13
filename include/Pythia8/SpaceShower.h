@@ -1,9 +1,10 @@
 // SpaceShower.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Header file for the base class of spacelike initial-state showers.
+// Header file for the spacelike initial-state showers.
+// SpaceDipoleEnd: radiating dipole end in ISR.
 // SpaceShower: handles the showering description.
 
 #ifndef Pythia8_SpaceShower_H
@@ -15,94 +16,122 @@
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonSystems.h"
-#include "Pythia8/PartonVertex.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/StandardModel.h"
 #include "Pythia8/UserHooks.h"
 #include "Pythia8/MergingHooks.h"
-#include "Pythia8/Weights.h"
+#include "Pythia8/WeakShowerMEs.h"
 
 namespace Pythia8 {
 
 //==========================================================================
 
-// The SpaceShower class does spacelike showers.
+// Data on radiating dipole ends, only used inside SpaceShower.
 
-class SpaceShower : public PhysicsBase {
+class SpaceDipoleEnd {
 
 public:
+
   // Constructor.
-  SpaceShower() = default;
+  SpaceDipoleEnd( int systemIn = 0, int sideIn = 0, int iRadiatorIn = 0,
+    int iRecoilerIn = 0, double pTmaxIn = 0., int colTypeIn = 0,
+    int chgTypeIn = 0, int weakTypeIn = 0,  int MEtypeIn = 0,
+    bool normalRecoilIn = true, int weakPolIn = 0) :
+    system(systemIn), side(sideIn), iRadiator(iRadiatorIn),
+    iRecoiler(iRecoilerIn), pTmax(pTmaxIn), colType(colTypeIn),
+    chgType(chgTypeIn), weakType(weakTypeIn), MEtype(MEtypeIn),
+    normalRecoil(normalRecoilIn), weakPol(weakPolIn), nBranch(0),
+    pT2Old(0.), zOld(0.5) { }
+
+  // Store values for trial emission.
+  void store( int idDaughterIn, int idMotherIn, int idSisterIn,
+    double x1In, double x2In, double m2DipIn, double pT2In, double zIn,
+    double xMoIn, double Q2In, double mSisterIn, double m2SisterIn,
+    double pT2corrIn) {idDaughter = idDaughterIn; idMother = idMotherIn;
+    idSister = idSisterIn; x1 = x1In; x2 = x2In; m2Dip = m2DipIn;
+    pT2 = pT2In; z = zIn; xMo = xMoIn; Q2 = Q2In; mSister = mSisterIn;
+    m2Sister = m2SisterIn; pT2corr = pT2corrIn;}
+
+  // Basic properties related to evolution and matrix element corrections.
+  int    system, side, iRadiator, iRecoiler;
+  double pTmax;
+  int    colType, chgType, weakType, MEtype;
+  bool   normalRecoil;
+  int    weakPol;
+
+  // Properties specific to current trial emission.
+  int    nBranch, idDaughter, idMother, idSister, iFinPol;
+  double x1, x2, m2Dip, pT2, z, xMo, Q2, mSister, m2Sister, pT2corr,
+         pT2Old, zOld, asymPol;
+
+} ;
+
+//==========================================================================
+
+// The SpaceShower class does spacelike showers.
+
+class SpaceShower {
+
+public:
+
+  // Constructor.
+  SpaceShower() {beamOffset = 0;}
 
   // Destructor.
   virtual ~SpaceShower() {}
 
   // Initialize various pointers.
   // (Separated from rest of init since not virtual.)
-  void initPtrs(MergingHooksPtr mergingHooksPtrIn,
-    PartonVertexPtr partonVertexPtrIn,
-    WeightContainer* weightContainerPtrIn) {
-    coupSMPtr = infoPtr->coupSMPtr;
-    mergingHooksPtr = mergingHooksPtrIn;
-    partonVertexPtr = partonVertexPtrIn;
-    weightContainerPtr = weightContainerPtrIn;
-  }
+  void initPtr(Info* infoPtrIn, Settings* settingsPtrIn,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn, CoupSM* coupSMPtrIn,
+    PartonSystems* partonSystemsPtrIn, UserHooks* userHooksPtrIn,
+    MergingHooks* mergingHooksPtrIn = 0) {
+    infoPtr = infoPtrIn; settingsPtr = settingsPtrIn;
+    particleDataPtr = particleDataPtrIn; rndmPtr = rndmPtrIn;
+    coupSMPtr = coupSMPtrIn; partonSystemsPtr = partonSystemsPtrIn;
+    userHooksPtr = userHooksPtrIn; mergingHooksPtr = mergingHooksPtrIn;}
+
+  // Initialize generation. Possibility to force re-initialization by hand.
+  virtual void init(BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn);
 
   // New beams possible for handling of hard diffraction. (Not virtual.)
   void reassignBeamPtrs( BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
     int beamOffsetIn = 0) {beamAPtr = beamAPtrIn; beamBPtr = beamBPtrIn;
     beamOffset = beamOffsetIn;}
 
-  // Initialize generation. Possibility to force re-initialization by hand.
-  // Usage: init( beamAPtr, beamBPtr).
-  virtual void init(BeamParticle* , BeamParticle* ) {}
-
   // Find whether to limit maximum scale of emissions, and whether to dampen.
-  // Usage: limitPTmax( event, Q2Fac, double Q2Ren).
-  virtual bool limitPTmax( Event& , double = 0., double = 0.) {return true;}
-
-  // Prepare system for evolution; identify ME.
-  // Usage: prepare( iSys, event, limitPTmax).
-  virtual void prepare( int , Event& , bool = true) {}
-
-  // Update dipole list after each FSR emission.
-  // Usage: update( iSys, event, hasWeakRad).
-  virtual void update( int , Event&, bool = false) {}
-
-  // Select next pT in downwards evolution.
-  // Usage: pTnext( event, pTbegAll, pTendAll, nRadIn, doTrialIn).
-  virtual double pTnext( Event& , double , double , int = -1, bool = false)
-    { return 0.;}
-
-  // ME corrections and kinematics that may give failure.
-  // Usage: branch( event).
-  virtual bool branch( Event& ) {return true;}
-
-  // Print dipole list; for debug mainly.
-  virtual void list() const {}
-
-  // Initialize data members for calculation of uncertainty bands.
-  virtual bool initUncertainties() {return false;}
-
-  // Initialize data members for application of enhancements.
-  virtual bool initEnhancements() {return false;}
-
-  // Flag for failure in branch(...) that will force a retry of parton level.
-  virtual bool doRestart() const {return false;}
-
-  // Tell if latest scattering was a gamma->qqbar.
-  virtual bool wasGamma2qqbar() { return false; }
-
-  // Tell whether ISR has done a weak emission.
-  virtual bool getHasWeaklyRadiated() {return false;}
-
-  // Tell which system was the last processed one.
-  virtual int system() const {return 0;}
+  virtual bool limitPTmax( Event& event, double Q2Fac = 0.,
+    double Q2Ren = 0.);
 
   // Potential enhancement factor of pTmax scale for hardest emission.
-  virtual double enhancePTmax() const {return 1.;}
+  virtual double enhancePTmax() const {return pTmaxFudge;}
+
+  // Prepare system for evolution; identify ME.
+  virtual void prepare( int iSys, Event& event, bool limitPTmaxIn = true);
+
+  // Update dipole list after each FSR emission.
+  // Usage: update( iSys, event).
+  virtual void update( int , Event&, bool hasWeakRad = false);
+
+  // Select next pT in downwards evolution.
+  virtual double pTnext( Event& event, double pTbegAll, double pTendAll,
+    int nRadIn = -1, bool doTrialIn = false);
+
+  // ME corrections and kinematics that may give failure.
+  virtual bool branch( Event& event);
+
+  // Tell which system was the last processed one.
+  virtual int system() const {return iSysSel;}
+
+  // Flag for failure in branch(...) that will force a retry of parton level.
+  bool doRestart() const {return rescatterFail;}
+
+  // Tell whether ISR has done a weak emission.
+  bool getHasWeaklyRadiated() {return hasWeaklyRadiated;}
+
+  // Print dipole list; for debug mainly.
+  virtual void list(ostream& os = cout) const;
 
   // Functions to allow usage of shower kinematics, evolution variables,
   // and splitting probabilities outside of shower.
@@ -112,76 +141,163 @@ public:
   // Function variable names are not included to avoid compiler warnings.
   // Please see the documentation under "Implement New Showers" for details.
 
-  // Return clustering kinematics - as needed for merging.
-  virtual Event clustered( const Event& , int , int , int , string )
+  // Return clustering kinematics - as needed form merging.
+  // Usage: clustered( const Event& event, string name, int iRad, int iEmt,
+  //                   int iRec)
+  virtual Event clustered( const Event&, string, int, int, int)
     { return Event();}
 
-  // Return the evolution variable(s).
-  // Important note: this map must contain the following entries
-  // - a key "t" for the value of the shower evolution variable;
-  // - a key "tRS" for the value of the shower evolution variable
-  //   from which the shower would be restarted after a branching;
-  // - a key "scaleAS" for the argument of alpha_s used for the branching;
-  // - a key "scalePDF" for the argument of the PDFs used for the branching.
-  // Usage: getStateVariables( event, iRad, iEmt, iRec,  name)
-  virtual map<string, double> getStateVariables (const Event& , int , int ,
-    int , string ) { return map<string,double>();}
+  // Return state after a branching, as needed to evaluate more complicated
+  // kernels.
+  // Usage: branched( const Event& event, int iRadBef, int iRecBef, int idEmt,
+  //                  double pT2, double z, double RN, vector<double> aux)
+  virtual Event branched( const Event&, int, int, int, int, double,
+    double, double, vector<double>) { return Event();}
 
-  // Check if attempted clustering is handled by spacelike shower.
-  // Usage: isSpacelike( event, iRad, iEmt, iRec, name)
-  virtual bool isSpacelike(const Event&, int, int, int, string)
-    { return false; }
-
-  // Return a string identifier of a splitting.
-  // Usage: getSplittingName( event, iRad, iEmt, iRec)
-  virtual vector<string> getSplittingName( const Event& , int , int , int )
-    { return vector<string>();}
-
-  // Return the splitting probability.
-  // Usage: getSplittingProb( event, iRad, iEmt, iRec)
-  virtual double getSplittingProb( const Event& , int , int , int , string )
+  // Return the evolution variable.
+  // Usage: pT2Space( const Particle& rad, const Particle& emt,
+  //                  const Particle& rec)
+  virtual double pT2Space ( const Particle&, const Particle&, const Particle&)
     { return 0.;}
 
-  virtual bool allowedSplitting( const Event& , int , int)
-    { return true;}
-  virtual vector<int> getRecoilers( const Event&, int, int, string)
-    { return vector<int>(); }
+  // Return the auxiliary (energy sharing) variable.
+  // Usage: zSpace( const Particle& rad, const Particle& emt,
+  //                const Particle& rec)
+  virtual double zSpace ( const Particle&, const Particle&, const Particle&)
+    { return 0.;}
 
-  virtual double enhanceFactor(const string& name) {
-    unordered_map<string, double>::iterator it = enhanceISR.find(name);
-    if ( it == enhanceISR.end() ) return 1.;
-    return it->second;
-  }
+  // Return a string to identifier of a splitting.
+  // Usage: getSplittingName( const Event& event, int iRad, int iEmt)
+  virtual string getSplittingName( const Event&, int, int) { return "";}
 
-  // Functions to directly extract the probability of no emission between two
-  // scales. This functions is not used in the Pythia core code, but can be
-  // used by external programs to interface with the shower directly.
-  virtual double noEmissionProbability( double, double, double, int, int,
-    double, double) { return 1.; }
-
-  // Pointer to MergingHooks object for NLO merging.
-  MergingHooksPtr  mergingHooksPtr{};
-
-  WeightContainer* weightContainerPtr{};
+  // Return the splitting probability.
+  // Usage: getSplittingProb( const Event& event, int iRad, int iEmt, int iRec)
+  virtual double getSplittingProb( const Event&, int, int, int ) { return 0.;}
 
 protected:
 
-  // Beam location offset in event.
-  int            beamOffset{};
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
 
-  // Pointer to assign space-time vertices during parton evolution.
-  PartonVertexPtr  partonVertexPtr{};
+  // Pointer to the settings database.
+  Settings*      settingsPtr;
 
-  // Store uncertainty variations relevant to SpaceShower.
-  bool   doUncertainties{}, uVarMuSoftCorr{}, uVarMPIshowers{};
-  int    nUncertaintyVariations{}, nVarQCD{}, uVarNflavQ{};
-  double dASmax{}, cNSpTmin{}, uVarpTmin2{}, overFactor{};
-  map<int,double> varG2GGmuRfac, varQ2QGmuRfac, varQ2GQmuRfac, varG2QQmuRfac,
-    varX2XGmuRfac, varG2GGcNS, varQ2QGcNS, varQ2GQcNS, varG2QQcNS, varX2XGcNS;
-  map<int,double>* varPDFplus;
-  map<int,double>* varPDFminus;
-  map<int,double>* varPDFmember;
-  unordered_map<string,double> enhanceISR;
+  // Pointer to the particle data table.
+  ParticleData*  particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*          rndmPtr;
+
+  // Pointer to Standard Model couplings.
+  CoupSM*        coupSMPtr;
+
+  // Pointers to the two incoming beams. Offset their location in event.
+  BeamParticle*  beamAPtr;
+  BeamParticle*  beamBPtr;
+  int            beamOffset;
+
+  // Pointer to information on subcollision parton locations.
+  PartonSystems* partonSystemsPtr;
+
+  // Pointer to userHooks object for user interaction with program.
+  UserHooks*     userHooksPtr;
+
+  // Weak matrix elements used for corrections both of ISR and FSR.
+  WeakShowerMEs  weakShowerMEs;
+
+  // Store properties to be returned by methods.
+  bool   rescatterFail;
+  int    iSysSel;
+  double pTmaxFudge;
+
+private:
+
+  // Constants: could only be changed in the code itself.
+  static const int    MAXLOOPTINYPDF;
+  static const double MCMIN, MBMIN, CTHRESHOLD, BTHRESHOLD, EVALPDFSTEP,
+         TINYPDF, TINYKERNELPDF, TINYPT2, HEAVYPT2EVOL, HEAVYXEVOL,
+         EXTRASPACEQ, LAMBDA3MARGIN, PT2MINWARN, LEPTONXMIN, LEPTONXMAX,
+         LEPTONPT2MIN, LEPTONFUDGE, WEAKPSWEIGHT, HEADROOMQ2Q, HEADROOMQ2G,
+         HEADROOMG2G, HEADROOMG2Q;
+
+  // Initialization data, normally only set once.
+  bool   doQCDshower, doQEDshowerByQ, doQEDshowerByL, useSamePTasMPI,
+         doWeakShower, doMEcorrections, doMEafterFirst, doPhiPolAsym,
+         doPhiIntAsym, doRapidityOrder, useFixedFacScale, doSecondHard,
+         canVetoEmission, hasUserHooks, alphaSuseCMW, singleWeakEmission,
+         vetoWeakJets;
+  int    pTmaxMatch, pTdampMatch, alphaSorder, alphaSnfmax, alphaEMorder,
+         nQuarkIn, enhanceScreening, weakMode;
+  double pTdampFudge, mc, mb, m2c, m2b, renormMultFac, factorMultFac,
+         fixedFacScale2, alphaSvalue, alphaS2pi, Lambda3flav, Lambda4flav,
+         Lambda5flav, Lambda3flav2, Lambda4flav2, Lambda5flav2, pT0Ref,
+         ecmRef, ecmPow, pTmin, sCM, eCM, pT0, pTminChgQ, pTminChgL, pT20,
+         pT2min, pT2minChgQ, pT2minChgL, pTweakCut, pT2weakCut, pTmaxFudgeMPI,
+         strengthIntAsym, weakEnhancement, mZ, gammaZ, thetaWRat, mW, gammaW,
+         weakMaxWt, vetoWeakDeltaR2;
+
+  // alphaStrong and alphaEM calculations.
+  AlphaStrong alphaS;
+  AlphaEM alphaEM;
+
+  // Some current values.
+  bool   sideA, dopTlimit1, dopTlimit2, dopTdamp, hasWeaklyRadiated, tChannel;
+  int    iNow, iRec, idDaughter, nRad, idResFirst, idResSecond;
+  double xDaughter, x1Now, x2Now, m2Dip, m2Rec, pT2damp, pTbegRef, pdfScale2;
+
+  // Bookkeeping of enhanced  actual or trial emissions (see EPJC (2013) 73).
+  bool doTrialNow, canEnhanceEmission, canEnhanceTrial, canEnhanceET;
+  string splittingNameNow, splittingNameSel;
+  map< double, pair<string,double> > enhanceFactors;
+  void storeEnhanceFactor(double pT2, string name, double enhanceFactorIn)
+    { enhanceFactors.insert(make_pair(pT2,make_pair(name,enhanceFactorIn)));}
+
+  // List of emissions in different sides in different systems:
+  vector<int> nRadA,nRadB;
+
+  // All dipole ends
+  vector<SpaceDipoleEnd> dipEnd;
+
+  // Pointers to the current and hardest (so far) dipole ends.
+  int iDipNow, iSysNow;
+  SpaceDipoleEnd* dipEndNow;
+  int iDipSel;
+  SpaceDipoleEnd* dipEndSel;
+
+  // Evolve a QCD dipole end.
+  void pT2nextQCD( double pT2begDip, double pT2endDip);
+
+  // Evolve a QCD dipole end near heavy quark threshold region.
+  void pT2nearQCDthreshold( BeamParticle& beam, double m2Massive,
+    double m2Threshold, double xMaxAbs, double zMinAbs,
+    double zMaxMassive);
+
+  // Evolve a QED dipole end.
+  void pT2nextQED( double pT2begDip, double pT2endDip);
+
+  // Evolve a Weak dipole end.
+  void pT2nextWeak( double pT2begDip, double pT2endDip);
+
+  // Find class of ME correction.
+  int findMEtype( int iSys, Event& event, bool weakRadiation = false);
+
+  // Provide maximum of expected ME weight; for preweighting of evolution.
+  double calcMEmax( int MEtype, int idMother, int idDaughterIn);
+
+  // Provide actual ME weight for current branching.
+  double calcMEcorr(int MEtype, int idMother, int idDaughterIn, double M2,
+    double z, double Q2,double m2Sister);
+
+  // Provide actual ME weight for t-channel weak emissions.
+  double calcMEcorrWeak(int MEtype, double m2, double z,
+    double pT2, Vec4 pMother, Vec4 pB, Vec4 pDaughter,
+    Vec4 pB0, Vec4 p1, Vec4 p2, Vec4 pSister);
+
+  // Find coefficient of azimuthal asymmetry from gluon polarization.
+  void findAsymPol( Event& event, SpaceDipoleEnd* dip);
+
+  // Pointer to MergingHooks object for NLO merging.
+  MergingHooks* mergingHooksPtr;
 
 };
 

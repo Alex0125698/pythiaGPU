@@ -1,4 +1,5 @@
- <chapter name="ALPGEN Event Interface"> 
+ 
+<chapter name="ALPGEN Event Interface"> 
  
 <h2>ALPGEN Event Interface</h2> 
  
@@ -29,7 +30,7 @@ in the <code>include/Pythia8Plugins/</code> subdirectory:
 <li> 
 <code>GeneratorInput.h</code> : provides three classes for the reading of 
 ALPGEN event and parameter files. <code>LHAupAlpgen</code> is an 
-<aloc href="LHA"><code>LHAup</code></aloc> derived 
+<aloc href="LesHouchesAccord"><code>LHAup</code></aloc> derived 
 class for reading in ALPGEN native format event files. 
 <code>AlpgenPar</code> is a class for the parsing of ALPGEN parameter 
 files, making the information available through a simple interface. 
@@ -55,7 +56,7 @@ sample is enough to show the different components in action.
 </li> 
 </ul> 
  
-<h3>ALPGEN main options</h3> 
+<h2>ALPGEN main options</h2> 
  
 These following options are provided by the AlpgenHooks class, 
 which must be loaded for this functionality to be present 
@@ -123,8 +124,8 @@ When switched on, the merging parameters (see below) are set according to
 the ALPGEN hard process cuts: 
 <ul> 
 <li> <code>JetMatching:eTjetMin = min(ptjmin + 5., 1.2 * ptjmin)</code>, </li> 
-<li> <code>JetMatching:coneRadius = drjmin</code>, </li> 
-<li> <code>JetMatching:etaJetMax = etajmax</code>.</li> 
+<li> <code>JetMatching:coneRadius = drjmin</code>, 
+<li> <code>JetMatching:etaJetMax = etajmax</code>. 
 </ul> 
 where the <code>ptjmin</code>, <code>drjmin</code> and 
 <code>etajmax</code> are the incoming ALPGEN parameters. Note that any 
@@ -137,16 +138,16 @@ is set to the incoming <code>njet</code> ALPGEN parameter. Note that any
 existing value of this parameter is overwritten. 
 </flag> 
  
-<h3>Class information</h3> 
+<h2>Class information</h2> 
  
 Some more technical information about the different classes is given 
 below. For clarity, some limited information on certain private methods 
 is provided. 
  
-<h4>LHAupAlpgen</h4> 
+<h3>LHAupAlpgen</h3> 
  
 This class is derived from the 
-<aloc href="LHA"><code>LHAup</code></aloc> base class, and 
+<aloc href="LesHouchesAccord"><code>LHAup</code></aloc> base class, and 
 uses the standard machinery to pass initialisation and event data to 
 PYTHIA. These standard functions are not documented here. The complete 
 parameter file is stored in the PYTHIA Info object, if given, under the 
@@ -180,7 +181,7 @@ scaled to balance the outgoing particles. Finally, any intermediate
 resonances are recalculated from their decay products. 
 </method> 
  
-<h4>AlpgenPar</h4> 
+<h3>AlpgenPar</h3> 
  
 This class parses an ALPGEN parameter file and makes the information 
 available through a simple interface. The information is stored 
@@ -234,7 +235,7 @@ not present, 0 is returned.
 Method to print a list of stored parameters. 
 </method> 
  
-<h4>AlpgenHooks</h4> 
+<h3>AlpgenHooks</h3> 
  
 This <aloc href="UserHooks"><code>UserHooks</code></aloc> derived class 
 provides all the <code>Alpgen:*</code> options. It is provided as a 
@@ -260,4 +261,4 @@ present, which are then used to set further PYTHIA settings.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

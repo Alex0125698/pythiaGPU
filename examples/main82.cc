@@ -1,13 +1,10 @@
 // main82.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Authors: Stefan Prestel
-
-// Keywords: merging; leading order; jet finding; fastjet; kT
-
-// This program illustrates how to do CKKW-L merging, see the Matrix Element
+// This program is written by Stefan Prestel.
+// It illustrates how to do CKKW-L merging, see the Matrix Element
 // Merging page in the online manual. An example command is
 //     ./main82 main82.cmnd w+_production_lhc_0.lhe histout82.dat
 // where main82.cmnd supplies the commands, w+_production_lhc_0.lhe
@@ -23,6 +20,7 @@ using namespace Pythia8;
 #include "fastjet/ClusterSequence.hh"
 #include "fastjet/CDFMidPointPlugin.hh"
 #include "fastjet/CDFJetCluPlugin.hh"
+#include "fastjet/D0RunIIConePlugin.hh"
 
 //==========================================================================
 
@@ -273,7 +271,7 @@ int main( int argc, char* argv[] ){
   int nEvent = pythia.mode("Main:numberOfEvents");
 
   // Construct user inut for merging
-  MergingHooksPtr myMergingHooks = make_shared<MyMergingHooks>();
+  MergingHooks* myMergingHooks = new MyMergingHooks();
   pythia.setMergingHooksPtr( myMergingHooks );
 
   // For ISR regularisation off
@@ -295,9 +293,7 @@ int main( int argc, char* argv[] ){
     if( ! pythia.next()) continue;
 
     // Get CKKWL weight of current event
-    double evtweight = pythia.info.weight();
-    double weight    = pythia.info.mergingWeight();
-    weight      *= evtweight;
+    double weight = pythia.info.mergingWeight();
 
     // Fill bins with CKKWL weight
     double pTfirst = pTfirstJet(pythia.event,1, 0.4);
@@ -342,6 +338,8 @@ int main( int argc, char* argv[] ){
   histPTSecond.table(write);
   write.close();
 
+
+  delete myMergingHooks;
   return 0;
 
   // Done

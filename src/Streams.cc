@@ -1,12 +1,12 @@
 // Streams.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Internal classes to implement gzstream. See header file for user classes.
 // Adapted for Sherpa by Frank Siegert from:
 // gzstream, C++ iostream classes wrapping the zlib compression library.
-// Copyright (C) 2023  Deepak Bandyopadhyay, Lutz Kettner
+// Copyright (C) 2001  Deepak Bandyopadhyay, Lutz Kettner
 // (http://www.cs.unc.edu/Research/compgeom/gzstream).
 // Further adapted to PYTHIA by Stefan Prestel.
 
@@ -14,8 +14,7 @@
 
 namespace Pythia8 {
 
-#ifdef GZIP
-
+#ifdef GZIPSUPPORT
 //==========================================================================
 
 // The gzstreambuf class.
@@ -39,7 +38,7 @@ gzstreambuf* gzstreambuf::open( const char* name, int open_mode) {
     *fmodeptr++ = 'b';
     *fmodeptr = '\0';
     file = gzopen( name, fmode);
-    if (file == Z_NULL)
+    if (file == 0)
         return (gzstreambuf*)0;
     opened = 1;
     return this;
@@ -154,13 +153,7 @@ void gzstreambase::close() {
         if ( ! buf.close())
             clear( rdstate() | std::ios::badbit);
 }
-
-//==========================================================================
-
 #endif
-
-// Dummy to avoid harmless compiler warning that Streams.o has no symbols.
-double DummyForStreams::xtox(double x) {return x;}
 
 //==========================================================================
 

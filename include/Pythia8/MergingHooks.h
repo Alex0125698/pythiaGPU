@@ -1,6 +1,6 @@
 // MergingHooks.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file is written by Stefan Prestel.
@@ -19,7 +19,6 @@
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonSystems.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/Settings.h"
 
@@ -61,9 +60,9 @@ public:
   double tms;
 
   // Default constructor
-  HardProcess() : hardIncoming1(), hardIncoming2(), tms(){}
+  HardProcess(){}
   // Default destructor
-  virtual ~HardProcess(){}
+  ~HardProcess(){}
 
   // Copy constructor
   HardProcess( const HardProcess& hardProcessIn )
@@ -86,15 +85,14 @@ public:
   }
 
   // Constructor with path to LHE file
-  HardProcess( string LHEfile, ParticleData* particleData) : hardIncoming1(),
-    hardIncoming2(), tms() {
+  HardProcess( string LHEfile, ParticleData* particleData) {
     state = Event();
     state.init("(hard process)", particleData);
     translateLHEFString(LHEfile);
   }
 
   // Constructor with core process input
-  virtual void initOnProcess( string process, ParticleData* particleData);
+  void initOnProcess( string process, ParticleData* particleData);
 
   // Constructor with path to LHE file input
   void initOnLHEF( string LHEfile, ParticleData* particleData);
@@ -103,29 +101,27 @@ public:
   void translateLHEFString( string LHEpath);
 
   // Function to translate the process string (in MG/ME notation)
-  virtual void translateProcessString( string process);
+  void translateProcessString( string process);
 
   // Function to clear hard process information
   void clear();
 
   // Function to check whether the sets of candidates Pos1, Pos2, together
   // with the proposed candidate iPos give an allowed hard process state
-  virtual bool allowCandidates(int iPos, vector<int> Pos1, vector<int> Pos2,
+  bool allowCandidates(int iPos, vector<int> Pos1, vector<int> Pos2,
     const Event& event);
   // Function to identify the hard subprocess in the current event
-  virtual void storeCandidates( const Event& event, string process);
+  void storeCandidates( const Event& event, string process);
   // Function to check if the particle event[iPos] matches any of
   // the stored outgoing particles of the hard subprocess
-  virtual bool matchesAnyOutgoing(int iPos, const Event& event);
+  bool matchesAnyOutgoing(int iPos, const Event& event);
   // Function to check if instead of the particle event[iCandidate], another
   // particle could serve as part of the hard process. Assumes that iCandidate
   // is already stored as part of the hard process.
-  virtual bool findOtherCandidates(int iPos, const Event& event,
-    bool doReplace);
+  bool findOtherCandidates(int iPos, const Event& event, bool doReplace);
   // Function to exchange a stored hard process candidate with another choice.
-  virtual bool exchangeCandidates( vector<int> candidates1,
-    vector<int> candidates2,
-    unordered_map<int,int> further1, unordered_map<int,int> further2);
+  bool exchangeCandidates( vector<int> candidates1, vector<int> candidates2,
+    map<int,int> further1, map<int,int> further2);
 
   // Function to get the number of coloured final state partons in the
   // hard process
@@ -163,26 +159,17 @@ public:
 
 // MergingHooks is base class for user input to the merging procedure.
 
-class MergingHooks : public PhysicsBase {
+class MergingHooks {
 
 public:
 
   // Constructor.
-  MergingHooks() : useShowerPluginSave(), showers(),
+  MergingHooks() :
     doUserMergingSave(false),
     doMGMergingSave(false),
     doKTMergingSave(false),
     doPTLundMergingSave(false),
-    doCutBasedMergingSave(false), includeMassiveSave(),
-    enforceStrongOrderingSave(),
-    orderInRapiditySave(), pickByFullPSave(), pickByPoPT2Save(),
-    includeRedundantSave(), pickBySumPTSave(), allowColourShufflingSave(),
-    resetHardQRenSave(), resetHardQFacSave(), unorderedScalePrescipSave(),
-    unorderedASscalePrescipSave(), unorderedPDFscalePrescipSave(),
-    incompleteScalePrescipSave(), ktTypeSave(), nReclusterSave(),
-    nQuarksMergeSave(), nRequestedSave(), scaleSeparationFactorSave(),
-    nonJoinedNormSave(), fsrInRecNormSave(), herwigAcollFSRSave(),
-    herwigAcollISRSave(), pT0ISRSave(), pTcutSave(),
+    doCutBasedMergingSave(false),
     doNL3TreeSave(false),
     doNL3LoopSave(false),
     doNL3SubtSave(false),
@@ -193,26 +180,15 @@ public:
     doUMEPSTreeSave(false),
     doUMEPSSubtSave(false),
     doEstimateXSection(false),
-    doRuntimeAMCATNLOInterfaceSave(false),
-    applyVeto(),
-    doRemoveDecayProducts(false), muMISave(), kFactor0jSave(), kFactor1jSave(),
-    kFactor2jSave(), tmsValueSave(), tmsValueNow(), DparameterSave(),
-    nJetMaxSave(), nJetMaxNLOSave(),
+    doRemoveDecayProducts(false),
     doOrderHistoriesSave(true),
     doCutOnRecStateSave(false),
-    doWeakClusteringSave(false),
-    doSQCDClusteringSave(false), muFSave(), muRSave(), muFinMESave(),
-    muRinMESave(),
+    doWClusteringSave(false),
+    doSQCDClusteringSave(false),
     doIgnoreEmissionsSave(true),
-    doIgnoreStepSave(true), pTsave(), weightCKKWL1Save(), weightCKKWL2Save(),
-    nMinMPISave(), weightCKKWLSave(), weightFIRSTSave(),
-    doVariations(false), nWgts(0), nJetMaxLocal(), nJetMaxNLOLocal(),
-    hasJetMaxLocal(false),
-    includeWGTinXSECSave(false), nHardNowSave(), nJetNowSave(),
-    tmsHardNowSave(), tmsNowSave() {
-      inputEvent = Event(); resonances.resize(0);
-      useOwnHardProcess = false; hardProcess = 0; stopScaleSave= 0.0;
-      nVetoedInMainShower = 0;}
+    doIgnoreStepSave(true) {
+      inputEvent = Event(); resonances.resize(0); infoPtr = 0;
+      particleDataPtr = 0; partonSystemsPtr = 0;}
 
   // Make History class friend to allow access to advanced switches
   friend class History;
@@ -227,8 +203,12 @@ public:
   // Make Merging class friend
   friend class Merging;
 
+  //----------------------------------------------------------------------//
+  // Functions that allow user interference
+  //----------------------------------------------------------------------//
+
   // Destructor.
-  virtual ~MergingHooks();
+  virtual ~MergingHooks(){}
   // Function encoding the functional definition of the merging scale
   virtual double tmsDefinition( const Event& event){ return event[0].e();}
   // Function to dampen weights calculated from histories with lowest
@@ -271,25 +251,17 @@ public:
   // Function to calculate the hard process matrix element.
   virtual double hardProcessME( const Event& inEvent ) {
     // Dummy statement to avoid compiler warnings.
-    if ( false ) cout << inEvent[0].e();
-    return 1.; }
+    if ( false ) cout << inEvent[0].e(); return 1.; }
 
-  // Functions for internal use inside Pythia source code
-  // Initialize.
-  virtual void init();
+  //----------------------------------------------------------------------//
+  // Simple output functions
+  //----------------------------------------------------------------------//
 
   // Function returning the value of the merging scale.
   double tms() {
     if(doCutBasedMergingSave) return 0.;
-    //else return tmsValueSave;
-    else return tmsValueNow;
-  }
-  double tmsCut() {
-    if(doCutBasedMergingSave) return 0.;
     else return tmsValueSave;
   }
-  void tms( double tmsIn ) { tmsValueNow = tmsIn; }
-
   // Function returning the value of the Delta R_{ij} cut for
   // cut based merging scale definition.
   double dRijMS() {
@@ -306,28 +278,27 @@ public:
     return ((tmsListSave.size() == 3) ? tmsListSave[2] : 0.);
   }
   // Function returning the value of the maximal number of merged jets.
-  int nMaxJets() { return (hasJetMaxLocal) ? nJetMaxLocal : nJetMaxSave;}
+  int nMaxJets() { return nJetMaxSave;}
   // Function returning the value of the maximal number of merged jets,
   // for which NLO corrections are available.
-  int nMaxJetsNLO()
-    { return (hasJetMaxLocal) ? nJetMaxNLOLocal : nJetMaxNLOSave;}
+  int nMaxJetsNLO() { return nJetMaxNLOSave;}
   // Function to return hard process string.
-  string getProcessString() { return processNow;}
+  string getProcessString() { return processSave;}
   // Function to return the number of outgoing partons in the core process
-  int nHardOutPartons(){ return hardProcess->nQuarksOut();}
+  int nHardOutPartons(){ return hardProcess.nQuarksOut();}
   // Function to return the number of outgoing leptons in the core process
-  int nHardOutLeptons(){ return hardProcess->nLeptonOut();}
+  int nHardOutLeptons(){ return hardProcess.nLeptonOut();}
   // Function to return the number of outgoing electroweak bosons in the core
   // process.
-  int nHardOutBosons(){ return hardProcess->nBosonsOut();}
+  int nHardOutBosons(){ return hardProcess.nBosonsOut();}
   // Function to return the number of incoming partons (hadrons) in the core
   // process.
-  int nHardInPartons(){ return hardProcess->nQuarksIn();}
+  int nHardInPartons(){ return hardProcess.nQuarksIn();}
   // Function to return the number of incoming leptons in the core process.
-  int nHardInLeptons(){ return hardProcess->nLeptonIn();}
+  int nHardInLeptons(){ return hardProcess.nLeptonIn();}
   // Function to report the number of resonace decays in the 2->2 sub-process
   // of the  current state.
-  int nResInCurrent(){ return hardProcess->nResInCurrent();}
+  int nResInCurrent(){ return hardProcess.nResInCurrent();}
   // Function to determine if user defined merging should be applied.
   bool doUserMerging(){ return doUserMergingSave;}
   // Function to determine if automated MG/ME merging should be applied.
@@ -360,15 +331,8 @@ public:
   bool doUNLOPSSubtNLO() { return doUNLOPSSubtNLOSave;}
   bool doUNLOPSMerging() { return (doUNLOPSTreeSave || doUNLOPSLoopSave
                              || doUNLOPSSubtSave || doUNLOPSSubtNLOSave); }
-
-  // Function to determine if we have a runtime interface to aMC@NLO.
-  bool doRuntimeAMCATNLOInterface() { return doRuntimeAMCATNLOInterfaceSave;}
-
   // Return the number clustering steps that have actually been done.
   int nRecluster() { return nReclusterSave;}
-
-  // Return number of requested additional jets on top of the Born process.
-  int nRequested() { return nRequestedSave;}
 
   //----------------------------------------------------------------------//
   // Output functions to analyse/prepare event for merging
@@ -383,20 +347,6 @@ public:
     if ( getProcessString().compare("pp>h") == 0 ) return true;
     return false; }
 
-  // Function to allow effective gg -> EW boson couplings.
-  bool allowEffectiveVertex( vector<int> in, vector<int> out) {
-    if ( getProcessString().compare("ta+ta->jj") == 0
-      || getProcessString().compare("ta-ta+>jj") == 0 ) {
-      int nInFermions(0), nOutFermions(0);
-      for (int i=0; i < int(in.size()); ++i)
-        if (abs(in[i])<20) nInFermions++;
-      for (int i=0; i < int(out.size()); ++i)
-        if (abs(out[i])<20) nOutFermions++;
-      return (nInFermions%2==0 && nOutFermions%2==0);
-    }
-    return false;
-  }
-
   // Return event stripped from decay products.
   Event bareEvent( const Event& inputEventIn, bool storeInputEvent );
   // Write event with decay products attached to argument.
@@ -406,11 +356,10 @@ public:
   bool isInHard( int iPos, const Event& event);
 
   // Function to return the number of clustering steps for the current event
-  virtual int getNumberOfClusteringSteps(const Event& event,
-    bool resetNjetMax = false);
+  int getNumberOfClusteringSteps(const Event& event);
 
   //----------------------------------------------------------------------//
-  // Functions to steer construction of histories
+  // Functions to steer contruction of histories
   //----------------------------------------------------------------------//
 
   // Function to force preferred picking of ordered histories. By default,
@@ -423,9 +372,9 @@ public:
   void allowCutOnRecState( bool doCutOnRecStateIn) {
     doCutOnRecStateSave = doCutOnRecStateIn; }
 
-  // Function to allow final state clusterings of weak bosons
-  void doWeakClustering( bool doWeakClusteringIn ) {
-    doWeakClusteringSave = doWeakClusteringIn; }
+  // Function to allow final state clusterings of W-bosons
+  void doWClustering( bool doWClusteringIn ) {
+    doWClusteringSave = doWClusteringIn; }
 
   //----------------------------------------------------------------------//
   // Functions used as default merging scales
@@ -436,7 +385,7 @@ public:
   bool checkAgainstCut( const Particle& particle);
   // Function to return the value of the merging scale function in the
   // current event.
-  virtual double tmsNow( const Event& event );
+  double tmsNow( const Event& event );
   // Find the minimal Lund pT between coloured partons in the event
   double rhoms( const Event& event, bool withColour);
   // Function to calculate the minimal kT in the event
@@ -454,50 +403,34 @@ public:
     doIgnoreEmissionsSave = doIgnoreIn;
   }
   // Function to allow not counting a trial emission.
-  virtual bool canVetoEmission() { return !doIgnoreEmissionsSave; }
+  bool canVetoEmission() { return !doIgnoreEmissionsSave; }
   // Function to check if emission should be rejected.
-  virtual bool doVetoEmission( const Event& );
-  virtual bool usesVincia() {return false;}
+  bool doVetoEmission( const Event& );
 
-  //----------------------------------------------------------------------//
+ //----------------------------------------------------------------------//
   // Functions used as clusterings / probabilities
   //----------------------------------------------------------------------//
 
   bool useShowerPluginSave;
   virtual bool useShowerPlugin() { return useShowerPluginSave; }
 
-  //----------------------------------------------------------------------//
-  // Functions to retrieve if merging weight should countin the internal
-  // cross section and the event weight.
-  //----------------------------------------------------------------------//
-
-  bool includeWGTinXSEC() { return includeWGTinXSECSave;}
-
-  //----------------------------------------------------------------------//
-  // Functions to retrieve event veto information
-  //----------------------------------------------------------------------//
-
-  int nHardNow()      { return nHardNowSave; }
-  double tmsHardNow() { return tmsHardNowSave; }
-  int nJetsNow()      { return nJetNowSave; }
-  double tmsNow()     { return tmsNowSave;}
-
-  void setHardProcessPtr(HardProcess* hardProcIn) { hardProcess = hardProcIn; }
-
-  //----------------------------------------------------------------------//
-  // Functions related to renormalization scale variations
-  //----------------------------------------------------------------------//
-
-  int nMuRVar() { return muRVarFactors.size(); }
-  void printIndividualWeights();
+protected:
 
   //----------------------------------------------------------------------//
   // The members, switches etc.
   //----------------------------------------------------------------------//
 
   // Helper class doing all the core process book-keeping
-  bool useOwnHardProcess;
-  HardProcess* hardProcess;
+  HardProcess hardProcess;
+
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData*  particleDataPtr;
+
+  // Pointer to the particle systems.
+  PartonSystems* partonSystemsPtr;
 
   PartonLevel* showers;
   void setShowerPointer(PartonLevel* psIn ) {showers = psIn;}
@@ -506,7 +439,6 @@ public:
   AlphaStrong AlphaS_FSRSave;
   AlphaStrong AlphaS_ISRSave;
   AlphaEM AlphaEM_FSRSave;
-  AlphaEM AlphaEM_ISRSave;
 
   // Saved path to LHE file for more automated merging
   string lheInputFile;
@@ -520,11 +452,10 @@ public:
          resetHardQFacSave;
   int    unorderedScalePrescipSave, unorderedASscalePrescipSave,
          unorderedPDFscalePrescipSave, incompleteScalePrescipSave,
-         ktTypeSave, nReclusterSave, nQuarksMergeSave, nRequestedSave;
-
+         ktTypeSave, nReclusterSave, nQuarksMergeSave;
   double scaleSeparationFactorSave, nonJoinedNormSave,
          fsrInRecNormSave, herwigAcollFSRSave, herwigAcollISRSave,
-         pT0ISRSave, pTcutSave, pTminISRSave, pTminFSRSave;
+         pT0ISRSave, pTcutSave;
   bool   doNL3TreeSave, doNL3LoopSave, doNL3SubtSave;
   bool   doUNLOPSTreeSave, doUNLOPSLoopSave, doUNLOPSSubtSave,
          doUNLOPSSubtNLOSave;
@@ -532,14 +463,6 @@ public:
 
   // Flag to only do phase space cut, rejecting events below the tms cut.
   bool   doEstimateXSection;
-
-  // Flag for runtime aMC@NLO interface. Needed for aMC@NLO-Delta.
-  bool   doRuntimeAMCATNLOInterfaceSave;
-
-  // Flag for postponing event vetos. If false, events are not vetoed
-  // based on the merging scale in CKKW-L merging, but have to be
-  // vetoed by the user in the main program.
-  bool   applyVeto;
 
   // Save input event in case decay products need to be detached.
   Event inputEvent;
@@ -555,11 +478,10 @@ public:
   double kFactor2jSave;
 
   // Saved members.
-  double tmsValueSave, tmsValueNow, DparameterSave;
+  double tmsValueSave, DparameterSave;
   int nJetMaxSave;
   int nJetMaxNLOSave;
-
-  string processSave, processNow;
+  string processSave;
 
   // List of cut values to used to define a merging scale. Ordering:
   // 0: DeltaR_{jet_i,jet_j,min}
@@ -577,7 +499,7 @@ public:
   bool doCutOnRecStateSave;
 
   // INTERNAL Hooks to allow clustering W bosons.
-  bool doWeakClusteringSave, doSQCDClusteringSave;
+  bool doWClusteringSave, doSQCDClusteringSave;
 
   // Store / get first scale in PDF's that Pythia should have used
   double muFSave;
@@ -593,51 +515,26 @@ public:
   bool doIgnoreStepSave;
   // Stored weights in case veot needs to be revoked
   double pTsave;
-  vector<double> weightCKKWL1Save, weightCKKWL2Save;
+  double weightCKKWL1Save, weightCKKWL2Save;
   int nMinMPISave;
   // Save CKKW-L weight / O(\alpha_s) weight.
-  vector<double> weightCKKWLSave, weightFIRSTSave;
-
-  // Struct to save individual weights
-  struct IndividualWeights {
-    vector<double> wtSave;
-    vector<double> pdfWeightSave;
-    vector<double> mpiWeightSave;
-    vector<double> asWeightSave;
-    vector<double> aemWeightSave;
-    vector<double> bornAsVarFac;
-  };
-
-  IndividualWeights individualWeights;
-
-  // Flag to indicate whether renormalization scale variations are performed
-  bool doVariations;
-  // Vector of variation factors applied to renormalization scale
-  vector<double> muRVarFactors;
-  // Number of weights, nominal + variations
-  int nWgts;
-
-  // Local copies of nJetMax inputs, if recalculation is necessary.
-  int nJetMaxLocal;
-  int nJetMaxNLOLocal;
-  bool hasJetMaxLocal;
-
-  // Event veto and hard process information, if veto should not applied be
-  // directly, but is up to the user.
-  bool includeWGTinXSECSave;
-  int nHardNowSave, nJetNowSave;
-  double tmsHardNowSave, tmsNowSave;
+  double weightCKKWLSave, weightFIRSTSave;
 
   //----------------------------------------------------------------------//
   // Generic setup functions
   //----------------------------------------------------------------------//
 
+  // Functions for internal use inside Pythia source code
+  // Initialize.
+  void init( Settings settings, Info* infoPtrIn,
+    ParticleData* particleDataPtrIn, PartonSystems* partonSystemsPtrIn,
+    ostream& os = cout);
+
   // Function storing candidates for the hard process in the current event
   // Needed in order not to cluster members of the core process
   void storeHardProcessCandidates(const Event& event){
-    hardProcess->storeCandidates(event,getProcessString());
+    hardProcess.storeCandidates(event,getProcessString());
   }
-
   // Function to set the path to the LHE file, so that more automated merging
   // can be used.
   // Remove "_1.lhe" suffix from LHE file name.
@@ -655,7 +552,6 @@ public:
   AlphaStrong* AlphaS_FSR() { return &AlphaS_FSRSave;}
   AlphaStrong* AlphaS_ISR() { return &AlphaS_ISRSave;}
   AlphaEM* AlphaEM_FSR() { return &AlphaEM_FSRSave;}
-  AlphaEM* AlphaEM_ISR() { return &AlphaEM_ISRSave;}
 
   // Functions to return advanced merging switches
   // Include masses in definition of evolution pT and splitting kernels
@@ -745,7 +641,7 @@ public:
   bool allowCutOnRecState() { return doCutOnRecStateSave;}
 
   // INTERNAL Hooks to allow clustering W bosons.
-  bool doWeakClustering() { return doWeakClusteringSave;}
+  bool doWClustering() { return doWClusteringSave;}
   // INTERNAL Hooks to allow clustering clustering of gluons to squarks.
   bool doSQCDClustering() { return doSQCDClusteringSave;}
 
@@ -754,59 +650,44 @@ public:
   double muR() { return (muRSave > 0.) ? muRSave : infoPtr->QRen();}
   // Store / get factorisation scale used in matrix element calculation.
   double muFinME() {
-    // Start with checking the event attribute called "muf".
     string mus = infoPtr->getEventAttribute("muf2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
-    // Check the scales tag of the event.
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("muf");
-    return (mu > 0.) ? mu : (muFinMESave > 0.) ? muFinMESave
-      : infoPtr->QFac();
+    return (mu > 0.) ? mu : (muFinMESave > 0.) ? muFinMESave : infoPtr->QFac();
   }
   double muRinME() {
-    // Start with checking the event attribute called "mur2".
     string mus = infoPtr->getEventAttribute("mur2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
-    // Check the scales tag of the event.
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("mur");
-    return (mu > 0.) ? mu : (muRinMESave > 0.) ? muRinMESave
-      : infoPtr->QRen();
+    return (mu > 0.) ? mu : (muRinMESave > 0.) ? muRinMESave : infoPtr->QRen();
   }
-
 
   //----------------------------------------------------------------------//
   // Functions to steer merging code
   //----------------------------------------------------------------------//
 
   // Flag to indicate if events should be vetoed.
-  void doIgnoreStep(bool doIgnoreIn) {doIgnoreStepSave = doIgnoreIn;}
+  void doIgnoreStep( bool doIgnoreIn ) { doIgnoreStepSave = doIgnoreIn; }
   // Function to allow event veto.
-  virtual bool canVetoStep() {return !doIgnoreStepSave;}
-
-  // Stored weights in case veto needs to be revoked
-  void storeWeights(vector<double> weight) {
-    weightCKKWL1Save = weightCKKWL2Save = weight;}
-
+  bool canVetoStep() { return !doIgnoreStepSave; }
   // Function to check event veto.
-  virtual bool doVetoStep(const Event& process, const Event& event,
-    bool doResonance = false);
+  bool doVetoStep( const Event& process, const Event& event,
+    bool doResonance = false );
+
+  // Stored weights in case veot needs to be revoked
+  void storeWeights( double weight ){ weightCKKWL1Save = weightCKKWL2Save
+     = weight; }
 
   // Set starting scales
-  virtual bool setShowerStartingScales( bool isTrial, bool doMergeFirstEmm,
+  bool setShowerStartingScales( bool isTrial, bool doMergeFirstEmm,
     double& pTscaleIn, const Event& event,
     double& pTmaxFSRIn, bool& limitPTmaxFSRin,
     double& pTmaxISRIn, bool& limitPTmaxISRin,
     double& pTmaxMPIIn, bool& limitPTmaxMPIin );
-
-  // Set shower stopping scale. Necessary to e.g. avoid accumulation of
-  // incorrect (low-pT) shower weights through trial showering.
-  double stopScaleSave;
-  void setShowerStoppingScale(double scale = 0.) {stopScaleSave = scale;}
-  double getShowerStoppingScale() {return stopScaleSave;}
-
-  void nMinMPI(int nMinMPIIn) {nMinMPISave = nMinMPIIn; }
-  int nMinMPI() {return nMinMPISave;}
+  void nMinMPI( int nMinMPIIn ) { nMinMPISave = nMinMPIIn; }
+  int nMinMPI() { return nMinMPISave;}
 
   //----------------------------------------------------------------------//
   // Functions for internal merging scale definions
@@ -816,7 +697,9 @@ public:
   double kTdurham(const Particle& RadAfterBranch,
     const Particle& EmtAfterBranch, int Type, double D );
   // Function to compute "pythia pT separation" from Particle input
-  double rhoPythia(const Event& event, int rad, int emt, int rec,
+
+  double rhoPythia(const Particle& RadAfterBranch,
+    const Particle& EmtAfterBranch, const Particle& RecAfterBranch,
     int ShowerType);
 
   // Function to find a colour (anticolour) index in the input event,
@@ -831,62 +714,19 @@ public:
   //----------------------------------------------------------------------//
 
   // Function to get the CKKW-L weight for the current event
-  double getWeightNLO(int i=0) { return (weightCKKWLSave[i]
-                                         - weightFIRSTSave[i]);}
+  double getWeightNLO() { return (weightCKKWLSave - weightFIRSTSave);}
   // Return CKKW-L weight.
-  vector<double> getWeightCKKWL() { return weightCKKWLSave; }
+  double getWeightCKKWL() { return weightCKKWLSave; }
   // Return O(\alpha_s) weight.
-  vector<double> getWeightFIRST() { return weightFIRSTSave; }
+  double getWeightFIRST() { return weightFIRSTSave; }
   // Set CKKW-L weight.
-  void setWeightCKKWL( vector<double> weightIn){
+  void setWeightCKKWL( double weightIn){
     weightCKKWLSave = weightIn;
-    infoPtr->weightContainerPtr
-      ->weightsMerging.setValueVector(weightIn); }
+    infoPtr->setWeightCKKWL(weightIn); }
   // Set O(\alpha_s) weight.
-  void setWeightFIRST( vector<double> weightIn){
+  void setWeightFIRST( double weightIn){
     weightFIRSTSave = weightIn;
-    infoPtr->weightContainerPtr->weightsMerging
-      .setValueFirstVector(weightIn); }
-  // Function to return Sudakov weight as calculated before, also include MPI
-  // weight. Only call after regular weight functions, since it is calculated
-  // there.
-  vector<double> getSudakovWeight() {
-    vector<double> ret = individualWeights.wtSave;
-    for (int i = 0; i < nWgts; ++i) {
-     ret[i] *= individualWeights.pdfWeightSave[i] *
-               individualWeights.mpiWeightSave[i];
-    }
-   return ret;
-  }
-  // Function to return coupling weight.
-  vector<double> getCouplingWeight() {
-    vector<double> ret = individualWeights.asWeightSave;
-    for (int i = 0; i < nWgts; ++i) {
-      ret[i] *= individualWeights.aemWeightSave[i];
-    }
-    return ret;
-  }
-
-//--------------------------------------------------------------------------
-
-
-
-  //----------------------------------------------------------------------//
-  // Functions and members to store the event veto information
-  //----------------------------------------------------------------------//
-
-  // Set CKKWL veto information.
-  void setEventVetoInfo(int nJetNowIn, double tmsNowIn) {
-    nJetNowSave = nJetNowIn; tmsNowSave = tmsNowIn; }
-
-  // Set the hard process information.
-  void setHardProcessInfo(int nHardNowIn, double tmsHardNowIn) {
-    nHardNowSave = nHardNowIn; tmsHardNowSave = tmsHardNowIn; }
-
-  // Statistics.
-  int nVetoedInMainShower;
-  void addVetoInMainShower() {++nVetoedInMainShower;}
-  int getNumberVetoedInMainShower() {return nVetoedInMainShower;}
+    infoPtr->setWeightFIRST(weightIn); }
 
 };
 

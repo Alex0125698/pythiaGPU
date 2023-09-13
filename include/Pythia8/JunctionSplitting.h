@@ -1,6 +1,6 @@
 // JunctionSplitting.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the class JunctionSplitting.
@@ -16,7 +16,6 @@
 #include "Pythia8/FragmentationFlavZpT.h"
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/StringLength.h"
 
@@ -27,38 +26,31 @@ namespace Pythia8 {
 // JunctionSplitting takes an event and seperate junction chains from
 // each other, such that no junctions are colour connected to each other.
 
-class JunctionSplitting : public PhysicsBase {
+class JunctionSplitting {
 
 public:
 
-  // Constructor
-  JunctionSplitting() : eNormJunction(), allowDoubleJunRem() {}
-
   // Initialization.
-  void init();
+  void init(Info* infoPtrIn, Settings& settings, Rndm* rndmPtrIn,
+    ParticleData* particleDataPtrIn);
 
   // Test whether an event has a physical colour configuration.
   // It also splits junction pairs into pieces that PYTHIA can hadronize.
   bool checkColours(Event& event);
 
-protected:
-
-  virtual void onInitInfoPtr() override {
-    registerSubObject(flavSel);
-    registerSubObject(pTSel);
-    registerSubObject(zSel);
-    registerSubObject(stringFrag);
-  }
-
 private:
 
   // Constants: could only be changed in the code itself.
   static const int    NTRYJNREST;
-  static const double JJSTRINGM2MAX, JJSTRINGM2FRAC, CONVJNREST, MTHAD,
-                      MINANGLE;
+  static const double JJSTRINGM2MAX, JJSTRINGM2FRAC, CONVJNREST, MTHAD;
 
   double eNormJunction;
   bool allowDoubleJunRem;
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
+
+  // Pointer to the random number generator.
+  Rndm*          rndmPtr;
 
   // Classes for flavour, pT and z generation.
   StringFlav flavSel;

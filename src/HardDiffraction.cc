@@ -1,6 +1,6 @@
 // HardDiffraction.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Author: Christine O. Rasmussen.
@@ -21,41 +21,41 @@ const double HardDiffraction::TINYPDF = 1e-10;
 
 // Ficticious Pomeron mass to leave room for beam remnant
 const double HardDiffraction::POMERONMASS = 1.;
-const double HardDiffraction::RHOMASS     = 0.77549;
-const double HardDiffraction::PROTONMASS  = 0.93827;
 
-// Safetymargin for diffractive masses
-const double HardDiffraction::DIFFMASSMARGIN = 0.2;
+// Proton mass
+const double HardDiffraction::PROTONMASS = 0.938;
+
 //--------------------------------------------------------------------------
 
-void HardDiffraction::init(BeamParticle* beamAPtrIn,
-  BeamParticle* beamBPtrIn) {
+void HardDiffraction::init(Info* infoPtrIn, Settings& settingsPtrIn,
+  Rndm* rndmPtrIn, BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
+  BeamParticle* beamPomAPtrIn, BeamParticle* beamPomBPtrIn) {
 
-  // The beam pointers may differ from originally set in PhysicsBase.
+  // Store pointers.
+  infoPtr     = infoPtrIn;
+  settings    = settingsPtrIn;
+  rndmPtr     = rndmPtrIn;
   beamAPtr    = beamAPtrIn;
   beamBPtr    = beamBPtrIn;
+  beamPomAPtr = beamPomAPtrIn;
+  beamPomBPtr = beamPomBPtrIn;
 
   // Set diffraction parameters.
-  pomFlux     = mode("SigmaDiffractive:PomFlux");
+  pomSet      = settings.mode("PDF:PomSet");
+  pomFlux     = settings.mode("Diffraction:PomFlux");
 
   // Read out some properties of beams to allow shorthand.
   idA = (beamAPtr != 0) ? beamAPtr->id() : 0;
   idB = (beamBPtr != 0) ? beamBPtr->id() : 0;
   mA  = (beamAPtr != 0) ? beamAPtr->m()  : 0.;
   mB  = (beamBPtr != 0) ? beamBPtr->m()  : 0.;
-  isGammaA = (beamAPtr != 0) ? beamAPtr->isGamma() : false;
-  isGammaB = (beamBPtr != 0) ? beamBPtr->isGamma() : false;
-  isGammaGamma = (isGammaA && isGammaB);
 
   // Set up Pomeron flux constants.
-  rescale = parm("Diffraction:PomFluxRescale");
-  a0      = 1. + parm("SigmaDiffractive:PomFluxEpsilon");
-  ap      = parm("SigmaDiffractive:PomFluxAlphaPrime");
-
   if (pomFlux == 1) {
-    double sigmaRefPomP = parm("Diffraction:sigmaRefPomP");
+    double sigmaRefPomP = settings.parm("Diffraction:sigmaRefPomP");
     normPom = pow2(sigmaRefPomP) * 0.02;
     b0      = 2.3;
+    ap      = 0.25;
   } else if (pomFlux == 2) {
     normPom = 1/2.3;
     A1      = 6.38;
@@ -63,12 +63,14 @@ void HardDiffraction::init(BeamParticle* beamAPtrIn,
     a1      = 8.;
     a2      = 3.;
   } else if (pomFlux == 3) {
-    double beta = 10.;
-    normPom = pow2(beta)/(16.*M_PI);
+    normPom = 1.99;
+    a0      = 1.085;
+    ap      = 0.25;
     a1      = 4.7;
   } else if (pomFlux == 4) {
-    double beta = 1.8;
-    normPom = 9. * pow2(beta) / (4. * pow2(M_PI));
+    normPom = 0.74;
+    ap      = 0.06;
+    a0      = 1.1182;
     A1      = 0.27;
     a1      = 8.38;
     A2      = 0.56;
@@ -76,132 +78,87 @@ void HardDiffraction::init(BeamParticle* beamAPtrIn,
     A3      = 0.18;
     a3      = 1.36;
   } else if (pomFlux == 5) {
+    normPom = 0.858;
     A1      = 0.9;
     a1      = 4.6;
     A2      = 0.1;
     a2      = 0.6;
-    a0      = 1. + parm("SigmaDiffractive:MBRepsilon");
-    ap      = parm("SigmaDiffractive:MBRalpha");
-    bool renormalize   = flag("Diffraction:useMBRrenormalization");
-    double cflux       = 0.858;
-    double m2min       = parm("SigmaDiffractive:MBRm2Min");
-    double dyminSDflux = parm("SigmaDiffractive:MBRdyminSDflux");
-    double dymaxSD     = log(infoPtr->eCM()*infoPtr->eCM() / m2min);
-    double nGap        = 0.;
-    if (renormalize){
-      double step        = (dymaxSD - dyminSDflux) / 1000.;
-      // Calculate the integral of the flux
-      // to renormalize the gap:
-      for (int i = 0; i < 1000; ++i) {
-        double dy = dyminSDflux + (i + 0.5) * step;
-        double f  = exp(2.*(a0 - 1.)*dy) * ( (A1/(a1 + 2.*ap*dy))
-                     + (A2/(a2 + 2. * ap*dy)) );
-        nGap      += step * cflux * f;
-      }
-    }
-    if (nGap < 1.) nGap = 1.;
-    normPom = cflux/nGap;
-  } else if (pomFlux == 6 || pomFlux == 7 || pomFlux == 8) {
-    // Has fixed values of eps and alpha' to get normalisation correct
-    if (pomFlux == 6 || pomFlux == 7) {
-      ap = 0.06;
-      b0 = 5.5;
-      if (pomFlux == 6) a0 = 1.1182;
-      else a0 = 1.1110;
-    // pomFlux == 8 => H1 functional form but with user-supplied parameters.
-    } else if (pomFlux == 8) {
-      b0 = parm("SigmaDiffractive:PomFluxB0");
-    }
-    double xNorm = 0.003;
-    double b     = b0 + 2. * ap * log(1./xNorm);
-    double mMin  = (isGammaA || isGammaB) ? RHOMASS : PROTONMASS;
-    double tmin  = -pow(mMin * xNorm, 2.)/(1. - xNorm);
-    double tcut  = -1.;
-    double fNorm = exp(log(1./xNorm) * ( 2.*a0 - 2.));
-    fNorm       *= (exp(b*tmin) - exp(b*tcut))/b;
-    normPom      = 1./fNorm;
+    a0      = 1.104;
+    ap      = 0.25;
+  } else if (pomFlux == 6 || pomFlux == 7) {
+    normPom = 1.57285;
+    ap      = 0.06;
+    b0      = 5.5;
+    if (pomFlux == 6) a0 = 1.1182;
+    else a0 = 1.1110;
   }
 
   // Initialise Pomeron values to zero.
   xPomA = tPomA = thetaPomA = 0.;
   xPomB = tPomB = thetaPomB = 0.;
 
-  // Calculate rescaling factor for Pomeron flux in photons.
-  sigTotRatio = 1.;
-  if (isGammaA || isGammaB) {
-    sigmaTotPtr->calc(22, 2212, infoPtr->eCM());
-    double sigGamP = sigmaTotPtr->sigmaTot();
-    sigmaTotPtr->calc(2212, 2212, infoPtr->eCM());
-    double sigPP = sigmaTotPtr->sigmaTot();
-    sigTotRatio = sigGamP / sigPP;
-  }
-
   // Done.
 }
 
 //--------------------------------------------------------------------------
 
-bool HardDiffraction::isDiffractive( int iBeamIn, int partonIn,
-  double xIn, double Q2In, double xfIncIn) {
+bool HardDiffraction::isDiffractive( int iBeamIn, int partonIn, double xIn,
+  double Q2In, double xfIncIn) {
 
   // iBeam = 1 means A B -> A' + (Pom + B) -> A' X
   // iBeam = 2 means A B -> (A + Pom) + B' -> X B'
 
   // Store incoming values.
-  iBeam          = iBeamIn;
-  int parton     = partonIn;
-  double x       = xIn;
-  double Q2      = Q2In;
-  double xfInc   = xfIncIn;
-  tmpPomPtr      = (iBeam == 1) ? beamPomAPtr : beamPomBPtr;
-  usePomInPhoton = ((iBeam == 1 && isGammaA) || (iBeam == 2 && isGammaB))
-                 ? true : false;
+  iBeam        = iBeamIn;
+  int parton   = partonIn;
+  double x     = xIn;
+  double Q2    = Q2In;
+  double xfInc = xfIncIn;
+  tmpPDFPtr    = (iBeam == 1) ? beamPomAPtr : beamPomBPtr;
 
   // Return false if value of inclusive PDF is zero.
   if (xfInc < TINYPDF) {
-    loggerPtr->WARNING_MSG("inclusive PDF is zero");
+    infoPtr->errorMsg("Warning in HardDiffraction::isDiffractive: "
+      "inclusive PDF is zero");
     return false;
   }
 
-  // Generate an xNow = x_P according to dx_P / x_P.
+  // Generate an xNow according to 1 / x.
   double xNow = pow(x, rndmPtr->flat());
 
-  // Find estimate of diffractive PDF based on x_P choice above.
-  // f_i(xP) = int_x^1 d(xP)/xP * xP f_{P/p}(xP) * x/xP f_{i/P}(x/xP, Q^2)
-  //         = ln (1/x) < xP f_{P/p}(xP) * x/xP f_{i/P}(x/xP, Q^2) >
-  double xfEst = log(1./x) * xfPom(xNow) * tmpPomPtr->xf(parton, x/xNow, Q2);
+  // Overestimated function:
+  // g(xP) = c/xP * x*f_{P/p}(x) * x*f_{i/P}(x, Q^2_{max})
+  // G(x)  = int_x^1 dxP g(xP)
+  //       = c * x*f_{P/p}(x) * x*f_{i/P}(x, Q^2_{max}) * log( 1/x )
+  // True function:
+  // f(xP) = 1/xP * xP *f_{P/p}(xP) * x/xP * f_{i/P}(x/xP, Q^2)
+  // F(x)  = int_x^1 dxP f(xP)
+  // We have diffraction if G(x)/xfInc > R and if f(xP)/g(xP) > R =>
+  // R < (G(x) * f(xP)) / (g(xP) * xfInc) = (log(1/x) * f(xP)) / (xP * xfInc)
+  double over = log(1./x) * xfPom(xNow) * tmpPDFPtr->xf(parton, x/xNow, Q2);
 
-  // Warn if the estimated function exceeds the inclusive PDF.
-  if (xfEst > xfInc) {
-    loggerPtr->WARNING_MSG("weight above unity", ", id = "+to_string(parton));
+  // Warn if the overestimated function exceeds the inclusive PDF.
+  if (over > xfInc) {
+    ostringstream msg;
+    msg << ", id = " << parton;
+    infoPtr->errorMsg("Warning in HardDiffraction::isDiffractive: "
+      "weight above unity", msg.str());
   }
-  // Discard if estimate/inclusive PDF is less than random number.
-  if (xfEst < rndmPtr->flat() * xfInc) return false;
+  // Discard if overestimate/inclusive PDF is less than random number.
+  if (over/xfInc < rndmPtr->flat()) return false;
 
-  // Make sure there is momentum left for beam remnant.
-  // Make Pomeron massless and let mMin be the mass of the subcollision
-  // particle: if Pp then mMin = mp, if Pgamma then mMin = mrho.
-  double mMin    = (usePomInPhoton) ? RHOMASS : PROTONMASS;
+  // Make sure there is momentum left for beam remnant
   double m2Diff  = xNow * pow2( infoPtr->eCM());
   double mDiff   = sqrt(m2Diff);
-  double mDiffA  = (iBeam == 1) ? 0. : mMin;
-  double mDiffB  = (iBeam == 2) ? 0. : mMin;
+  double mDiffA  = (iBeam == 1) ? 0. : PROTONMASS;
+  double mDiffB  = (iBeam == 2) ? 0. : PROTONMASS;
   double m2DiffA = mDiffA * mDiffA;
   double m2DiffB = mDiffB * mDiffB;
-  double eDiff   = (iBeam == 1)
-    ? 0.5 * (m2Diff + m2DiffA - m2DiffB) / mDiff
-    : 0.5 * (m2Diff + m2DiffB - m2DiffA) / mDiff;
+  double eDiff   = (iBeam == 1) ? 0.5 * (m2Diff + m2DiffA - m2DiffB) / mDiff :
+    0.5 * (m2Diff + m2DiffB - m2DiffA) / mDiff;
   if ( 1. - x / xNow < POMERONMASS / eDiff) {
-    loggerPtr->WARNING_MSG("no momentum left for beam remnant");
-    return false;
-  }
-
-  // Make sure that the diffractive mass is not too high.
-  double m3 = ((iBeam == 1 && isGammaA) || (iBeam == 2 && isGammaB))
-            ? RHOMASS : PROTONMASS;
-  double m4 = mDiff;
-  if (m3 + m4 + DIFFMASSMARGIN >= infoPtr->eCM()) {
-    loggerPtr->WARNING_MSG("too high diffractive mass");
+    infoPtr->errorMsg("Warning in HardDiffraction::isDiffractive: "
+    "No momentum left for beam remnant.");
     return false;
   }
 
@@ -222,7 +179,6 @@ bool HardDiffraction::isDiffractive( int iBeamIn, int partonIn,
 
   // Done.
   return true;
-
 }
 
 //--------------------------------------------------------------------------
@@ -237,9 +193,8 @@ double HardDiffraction::xfPom(double xIn) {
   double tMax  = tLim.second;
   double x     = xIn;
   double xFlux = 0.;
-  if (tMin > 0. || tMax > 0.) return 0.;
 
-  // Schuler-Sjostrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sjöstrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   // flux = normPom * 1/x * exp(2t(2.3 + 0.25 * log(1/x)))
   // => x * flux = normPom * exp(2t(2.3 + 0.25*log(1/x)))
   if (pomFlux == 1) {
@@ -265,10 +220,10 @@ double HardDiffraction::xfPom(double xIn) {
   }
 
   // Donnachie-Landshoff Pomeron flux, see Phys. Lett. B 191 (1987) 309.
-  // flux = 9 beta^2(0)/(4 pi^2) x^(1 - 2*alpha(t)) F_1(t)^2 with
+  // flux = beta^2(0)/(16 pi) x^(1 - 2*alpha(t)) F_1(t)^2 with
   // F_1(t)^2 = 0.27 exp(8.38 t) + 0.56 exp(3.78 t) + 0.18 exp(1.36 t)
   //          = (4m_p^2-2.8t)^2/(4m_p^2-t)^2*(1/(1-t/0.7))^4
-  // => x * flux = 9 beta^2(0)/(4 pi^2) * x^(2 - 2*\alpha(t)) F_1(t)^2
+  // => x * flux = beta^2(0)/(16 pi) * x^(2 - 2*\alpha(t)) F_1(t)^2
   else if (pomFlux == 4) {
     double Q = 2. * ap * log(1./x);
     xFlux    = normPom * exp(log(1./x) * (2.*a0 - 2.));
@@ -289,19 +244,17 @@ double HardDiffraction::xfPom(double xIn) {
               + A2/(Q + a2) * (exp((Q + a2)*tMax) - exp((Q + a2)*tMin)));
   }
 
-  // H1 Fit A, B Pomeron flux, see Eur. Phys. J. C48 (2006) 715, ibid. 749
+  // H1 Pomeron flux, see Eur. Phys. J. C48 (2006) 715, ibid. 749
   // flux = normPom * exp(B_Pom*t)/x^(2*\alpha(t)-1)
   // => x * flux = normPom * exp(B_Pom * t) / x^(2*\alpha(t)-2)
-  else if (pomFlux == 6 || pomFlux == 7 || pomFlux == 8) {
+  else if (pomFlux == 6 || pomFlux == 7) {
     double b = b0 + 2. * ap * log(1./x);
     xFlux    = normPom * exp(log(1./x) * ( 2.*a0 - 2.));
     xFlux   *= (exp(b*tMax) - exp(b*tMin))/b;
   }
 
   // Done
-  if (usePomInPhoton) return xFlux * rescale * sigTotRatio;
-  else return xFlux * rescale;
-
+  return xFlux;
 }
 
 //--------------------------------------------------------------------------
@@ -317,7 +270,7 @@ double HardDiffraction::pickTNow(double xIn) {
   double tTmp = 0.;
   double rndm = rndmPtr->flat();
 
-  // Schuler-Sjostrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sjöstrndm Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   if (pomFlux == 1) {
     double b = b0 + ap * log(1./xIn);
     tTmp     = log( rndm*exp(2.*b*tMin) + (1. - rndm)*exp(2.*b*tMax))/(2.*b);
@@ -369,14 +322,13 @@ double HardDiffraction::pickTNow(double xIn) {
   }
 
   // H1 Pomeron flux, see Eur. Phys. J. C48 (2006) 715, ibid. 749
-  else if (pomFlux == 6 || pomFlux == 7 || pomFlux == 8){
+  else if (pomFlux == 6 || pomFlux == 7){
     double b = b0 + 2. * ap * log(1./xIn);
     tTmp     = log( rndm * exp(b*tMin) + (1. - rndm) * exp(b*tMax))/b;
   }
 
   // Done.
   return tTmp;
-
 }
 
 //--------------------------------------------------------------------------
@@ -386,11 +338,11 @@ double HardDiffraction::pickTNow(double xIn) {
 double HardDiffraction::xfPomWithT(double xIn, double tIn) {
 
   // Initial values.
-  double x        = xIn;
-  double t        = tIn;
-  double xFlux    = 0.;
+  double x     = xIn;
+  double t     = tIn;
+  double xFlux = 0.;
 
-  // Schuler-Sjostrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sjöstrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   if (pomFlux == 1) {
     double b = b0 + ap * log(1./x);
     xFlux    = normPom * exp( 2.*b*t);
@@ -419,13 +371,11 @@ double HardDiffraction::xfPomWithT(double xIn, double tIn) {
   }
 
   // H1 Pomeron flux, see Eur. Phys. J. C48 (2006) 715, ibid. 749
-  else if (pomFlux == 6 || pomFlux == 7 || pomFlux == 8)
+  else if (pomFlux == 6 || pomFlux == 7)
     xFlux = normPom * exp(b0*t)/pow(x, 2. * (a0 + ap*t) - 2.);
 
   // Done
-  if (usePomInPhoton) return xFlux * rescale * sigTotRatio;
-  else return xFlux * rescale;
-
+  return xFlux;
 }
 
 //--------------------------------------------------------------------------
@@ -439,15 +389,12 @@ pair<double, double> HardDiffraction::tRange(double xIn) {
   // s3 = M^2 (= mA^2 if A scatteres elastically)
   // s4 = M^2 (= mB^2 if B scatteres elastically)
   double eCM = infoPtr->eCM();
-  s          = eCM * eCM;
   double M2  = xIn * s;
+  s          = eCM * eCM;
   s1         = pow2(mA);
   s2         = pow2(mB);
   s3         = (iBeam == 1) ? s1 : M2;
   s4         = (iBeam == 2) ? s2 : M2;
-
-  // Error exit if too large diffractive mass.
-  if (sqrt(s3) + sqrt(s4) >= eCM) return make_pair( 1., 1.);
 
   // Calculate kinematics.
   double lambda12 = sqrtpos(pow2(s - s1 - s2) - 4. * s1 * s2);
@@ -458,10 +405,8 @@ pair<double, double> HardDiffraction::tRange(double xIn) {
                   + (s3 - s1) * (s4 - s2);
   double tMin     = -0.5 * (tmp1 + tmp2);
   double tMax     = tmp3 / tMin;
-
   // Done.
   return make_pair(tMin, tMax);
-
 }
 
 //--------------------------------------------------------------------------
@@ -475,8 +420,8 @@ double HardDiffraction::getThetaNow( double xIn, double tIn) {
   // s3 = M^2 (= mA^2 if A scatteres elastically)
   // s4 = M^2 (= mB^2 if B scatteres elastically)
   double eCM = infoPtr->eCM();
-  s          = eCM * eCM;
   double M2  = xIn * s;
+  s          = eCM * eCM;
   s1         = pow2(mA);
   s2         = pow2(mB);
   s3         = (iBeam == 1) ? s1 : M2;
@@ -494,10 +439,8 @@ double HardDiffraction::getThetaNow( double xIn, double tIn) {
   double theta    = asin( min(1., sinTheta));
 
   if (cosTheta < 0.) theta = M_PI - theta;
-
   // Done.
   return theta;
-
 }
 
 //==========================================================================

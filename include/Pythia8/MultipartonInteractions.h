@@ -1,6 +1,6 @@
 // MultipartonInteractions.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the main classes for multiparton interactions physics.
@@ -15,8 +15,6 @@
 #include "Pythia8/Event.h"
 #include "Pythia8/Info.h"
 #include "Pythia8/PartonSystems.h"
-#include "Pythia8/PartonVertex.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/SigmaTotal.h"
@@ -37,19 +35,17 @@ class SigmaMultiparton {
 public:
 
   // Constructor.
-  SigmaMultiparton() : nChan(), needMasses(), useNarrowBW3(), useNarrowBW4(),
-    m3Fix(), m4Fix(), sHatMin(), sigmaT(), sigmaU(), sigmaTval(), sigmaUval(),
-    sigmaTsum(), sigmaUsum(), pickOther(), pickedU(), particleDataPtr(),
-    rndmPtr() {}
+  SigmaMultiparton() {}
+
+  // Destructor.
+  ~SigmaMultiparton() {
+    for (int i = 0; i < int(sigmaT.size()); ++i) delete sigmaT[i];
+    for (int i = 0; i < int(sigmaU.size()); ++i) delete sigmaU[i];}
 
   // Initialize list of processes.
   bool init(int inState, int processLevel, Info* infoPtr,
-    BeamParticle* beamAPtr, BeamParticle* beamBPtr);
-
-  // Switch to new beam particle identities.
-  void updateBeamIDs() {
-    for (int i = 0; i < nChan; ++i) sigmaT[i]->updateBeamIDs();
-    for (int i = 0; i < nChan; ++i) sigmaU[i]->updateBeamIDs(); }
+    Settings* settingsPtr, ParticleData* particleDataPtr, Rndm* rndmPtrIn,
+    BeamParticle* beamAPtr, BeamParticle* beamBPtr, Couplings* couplingsPtr);
 
   // Calculate cross section summed over possibilities.
   double sigma( int id1, int id2, double x1, double x2, double sHat,
@@ -60,7 +56,7 @@ public:
   bool pickedOther() {return pickOther;}
 
   // Return one subprocess, picked according to relative cross sections.
-  SigmaProcessPtr sigmaSel();
+  SigmaProcess* sigmaSel();
   bool swapTU() {return pickedU;}
 
   // Return code or name of a specified process, for statistics table.
@@ -75,19 +71,18 @@ private:
 
   // Number of processes. Some use massive matrix elements.
   int            nChan;
-  vector<bool>   needMasses, useNarrowBW3, useNarrowBW4;
+  vector<bool>   needMasses;
   vector<double> m3Fix, m4Fix, sHatMin;
 
   // Vector of process list, one for t-channel and one for u-channel.
-  vector<SigmaProcessPtr> sigmaT, sigmaU;
+  vector<SigmaProcess*> sigmaT, sigmaU;
 
   // Values of cross sections in process list above.
   vector<double> sigmaTval, sigmaUval;
   double         sigmaTsum, sigmaUsum;
   bool           pickOther, pickedU;
 
-  // Pointers to the particle data and random number generator.
-  ParticleData*  particleDataPtr;
+  // Pointer to the random number generator.
   Rndm*          rndmPtr;
 
 };
@@ -97,58 +92,20 @@ private:
 // The MultipartonInteractions class contains the main methods for the
 // generation of multiparton parton-parton interactions in hadronic collisions.
 
-class MultipartonInteractions : public PhysicsBase {
+class MultipartonInteractions {
 
 public:
 
   // Constructor.
-  MultipartonInteractions() : allowRescatter(), allowDoubleRes(), canVetoMPI(),
-    doPartonVertex(), doVarEcm(), setAntiSame(), setAntiSameNow(),
-    pTmaxMatch(), alphaSorder(),
-    alphaEMorder(), alphaSnfmax(), bProfile(), processLevel(), bSelScale(),
-    rescatterMode(), nQuarkIn(), nSample(), enhanceScreening(), pT0paramMode(),
-    alphaSvalue(), Kfactor(), pT0Ref(), ecmRef(), ecmPow(), pTmin(),
-    coreRadius(), coreFraction(), expPow(), ySepResc(), deltaYResc(),
-    sigmaPomP(), mPomP(), pPomP(), mMaxPertDiff(), mMinPertDiff(), a1(),
-    a0now(), a02now(), bstepNow(), a2max(), b2now(), enhanceBmax(),
-    enhanceBnow(), id1Save(), id2Save(), pT2Save(), x1Save(), x2Save(),
-    sHatSave(), tHatSave(), uHatSave(), alpSsave(), alpEMsave(), pT2FacSave(),
-    pT2RenSave(), xPDF1nowSave(), xPDF2nowSave(), scaleLimitPTsave(),
-    dSigmaDtSelSave(), vsc1(), vsc2(), hasPomeronBeams(), hasLowPow(),
-    globalRecoilFSR(), iDiffSys(), nMaxGlobalRecoilFSR(), bSelHard(), eCM(),
-    sCM(), pT0(), pT20(), pT2min(), pTmax(), pT2max(), pT20R(), pT20minR(),
-    pT20maxR(), pT20min0maxR(), pT2maxmin(), sigmaND(), pT4dSigmaMax(),
-    pT4dProbMax(), dSigmaApprox(), sigmaInt(), sudExpPT(), zeroIntCorr(),
-    normOverlap(), nAvg(), kNow(), normPi(), bAvg(), bDiv(), probLowB(),
-    radius2B(), radius2C(), fracA(), fracB(), fracC(), fracAhigh(),
-    fracBhigh(), fracChigh(), fracABChigh(), expRev(), cDiv(), cMax(),
-    enhanceBavg(), bIsSet(false), bSetInFirst(), isAtLowB(), pickOtherSel(),
-    id1(), id2(), i1Sel(), i2Sel(), id1Sel(), id2Sel(), iPDFA(), nPDFA(1),
-    idAList(), bNow(), enhanceB(), pT2(), pT2shift(), pT2Ren(), pT2Fac(), x1(),
-    x2(), xT(), xT2(), tau(), y(), sHat(), tHat(), uHat(), alpS(), alpEM(),
-    xPDF1now(), xPDF2now(), dSigmaSum(), x1Sel(), x2Sel(), sHatSel(),
-    tHatSel(), uHatSel(), iPDFAsave(), nStep(), iStepFrom(), iStepTo(),
-    eCMsave(), eStepMin(), eStepMax(), eStepSize(), eStepMix(), eStepFrom(),
-    eStepTo(), beamOffset(), mGmGmMin(), mGmGmMax(), hasGamma(),
-    isGammaGamma(), isGammaHadron(), isHadronGamma(), partonVertexPtr(),
-    sigma2Sel(), dSigmaDtSel() {}
+  MultipartonInteractions() : bIsSet(false) {}
 
   // Initialize the generation process for given beams.
-  bool init( bool doMPIinit, int iDiffSysIn,
+  bool init( bool doMPIinit, int iDiffSysIn, Info* infoPtrIn,
+    Settings& settings, ParticleData* particleDataPtr, Rndm* rndmPtrIn,
     BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
-    PartonVertexPtr partonVertexPtrIn, bool hasGammaIn = false);
-
-  // Special setup to allow switching between beam PDFs for MPI handling.
-  void initSwitchID( const vector<int>& idAListIn) {
-    idAList = idAListIn; nPDFA = idAList.size();
-    mpis  = vector<MPIInterpolationInfo>(nPDFA);}
-
-    // Switch to new beam particle identities, and possibly PDFs.
-  void setBeamID(int iPDFAin) { iPDFA = iPDFAin;
-    sigma2gg.updateBeamIDs(); sigma2qg.updateBeamIDs();
-    sigma2qqbarSame.updateBeamIDs(); sigma2qq.updateBeamIDs();
-    setAntiSameNow = setAntiSame && particleDataPtr->hasAnti(infoPtr->idA())
-      && particleDataPtr->hasAnti(infoPtr->idB());}
+    Couplings* couplingsPtrIn, PartonSystems* partonSystemsPtrIn,
+    SigmaTotal* sigmaTotPtrIn, UserHooks* userHooksPtrIn,
+    ostream& os = cout);
 
   // Reset impact parameter choice and update the CM energy.
   void reset();
@@ -165,8 +122,8 @@ public:
   double scaleLimitPT() const {return scaleLimitPTsave;}
 
   // Prepare system for evolution.
-  void prepare(Event& event, double pTscale = 1000., bool rehashB = false) {
-    if (!bSetInFirst) overlapNext(event, pTscale, rehashB); }
+  void prepare(Event& event, double pTscale = 1000.) {
+    if (!bSetInFirst) overlapNext(event, pTscale); }
 
   // Select next pT in downwards evolution.
   double pTnext( double pTbegAll, double pTendAll, Event& event);
@@ -185,28 +142,22 @@ public:
   double x1H()        const {return x1;}
   double x2H()        const {return x2;}
   double Q2Fac()      const {return pT2Fac;}
-  double pdf1()       const {return (id1 == 21 ? 4./9. : 1.) * xPDF1now;}
-  double pdf2()       const {return (id2 == 21 ? 4./9. : 1.) * xPDF2now;}
-  double bMPI()       const {return (bIsSet) ? bNow : 0.;}
+  double pdf1()       const {return xPDF1now;}
+  double pdf2()       const {return xPDF2now;}
+  double bMPI()       const {return (bIsSet) ? bNow / bAvg : 0.;}
   double enhanceMPI() const {return (bIsSet) ? enhanceB / zeroIntCorr : 1.;}
-  double enhanceMPIavg() const {return enhanceBavg;}
 
   // For x-dependent matter profile, return incoming valence/sea
   // decision from trial interactions.
   int    getVSC1()   const {return vsc1;}
   int    getVSC2()   const {return vsc2;}
 
-  // Set the offset wrt. to normal beam particle positions for hard diffraction
-  // and for photon beam from lepton.
-  int  getBeamOffset()       const {return beamOffset;}
-  void setBeamOffset(int offsetIn) {beamOffset = offsetIn;}
-
   // Update and print statistics on number of processes.
   // Note: currently only valid for nondiffractive systems, not diffraction??
   void accumulate() { int iBeg = (infoPtr->isNonDiffractive()) ? 0 : 1;
     for (int i = iBeg; i < infoPtr->nMPI(); ++i)
     ++nGen[ infoPtr->codeMPI(i) ];}
-  void statistics(bool resetStat = false);
+  void statistics(bool resetStat = false, ostream& os = cout);
   void resetStatistics() { for ( map<int, int>::iterator iter = nGen.begin();
     iter != nGen.end(); ++iter) iter->second = 0; }
 
@@ -216,19 +167,16 @@ private:
   static const bool   SHIFTFACSCALE, PREPICKRESCATTER;
   static const double SIGMAFUDGE, RPT20, PT0STEP, SIGMASTEP, PT0MIN,
                       EXPPOWMIN, PROBATLOWB, BSTEP, BMAX, EXPMAX,
-                      KCONVERGE, CONVERT2MB, ROOTMIN, ECMDEV, WTACCWARN,
-                      SIGMAMBLIMIT;
+                      KCONVERGE, CONVERT2MB, ROOTMIN, ECMDEV, WTACCWARN;
 
   // Initialization data, read from Settings.
-  bool   allowRescatter, allowDoubleRes, canVetoMPI, doPartonVertex, doVarEcm,
-         setAntiSame, setAntiSameNow, allowIDAswitch;
+  bool   allowRescatter, allowDoubleRes, canVetoMPI;
   int    pTmaxMatch, alphaSorder, alphaEMorder, alphaSnfmax, bProfile,
          processLevel, bSelScale, rescatterMode, nQuarkIn, nSample,
-         enhanceScreening, pT0paramMode, reuseInit;
+         enhanceScreening;
   double alphaSvalue, Kfactor, pT0Ref, ecmRef, ecmPow, pTmin, coreRadius,
          coreFraction, expPow, ySepResc, deltaYResc, sigmaPomP, mPomP, pPomP,
          mMaxPertDiff, mMinPertDiff;
-  string initFile;
 
   // x-dependent matter profile:
   // Constants.
@@ -256,63 +204,64 @@ private:
   double pT2Save, x1Save, x2Save, sHatSave, tHatSave, uHatSave,
          alpSsave, alpEMsave, pT2FacSave, pT2RenSave, xPDF1nowSave,
          xPDF2nowSave, scaleLimitPTsave;
-  SigmaProcessPtr dSigmaDtSelSave;
+  SigmaProcess *dSigmaDtSelSave;
 
   // vsc1, vsc2:     for minimum-bias events with trial interaction, store
   //                 decision on whether hard interaction was valence or sea.
   int    vsc1, vsc2;
 
   // Other initialization data.
-  bool   hasPomeronBeams, hasLowPow, globalRecoilFSR;
-  int    iDiffSys, nMaxGlobalRecoilFSR, bSelHard;
+  bool   hasBaryonBeams, hasLowPow, globalRecoilFSR;
+  int    iDiffSys, nMaxGlobalRecoilFSR;
   double eCM, sCM, pT0, pT20, pT2min, pTmax, pT2max, pT20R, pT20minR,
          pT20maxR, pT20min0maxR, pT2maxmin, sigmaND, pT4dSigmaMax,
          pT4dProbMax, dSigmaApprox, sigmaInt, sudExpPT[101],
          zeroIntCorr, normOverlap, nAvg, kNow, normPi, bAvg, bDiv,
          probLowB, radius2B, radius2C, fracA, fracB, fracC, fracAhigh,
-         fracBhigh, fracChigh, fracABChigh, expRev, cDiv, cMax,
-         enhanceBavg;
+         fracBhigh, fracChigh, fracABChigh, expRev, cDiv, cMax;
 
   // Properties specific to current system.
   bool   bIsSet, bSetInFirst, isAtLowB, pickOtherSel;
-  int    id1, id2, i1Sel, i2Sel, id1Sel, id2Sel, iPDFA, nPDFA;
-  vector<int> idAList;
+  int    id1, id2, i1Sel, i2Sel, id1Sel, id2Sel;
   double bNow, enhanceB, pT2, pT2shift, pT2Ren, pT2Fac, x1, x2, xT, xT2,
          tau, y, sHat, tHat, uHat, alpS, alpEM, xPDF1now, xPDF2now,
          dSigmaSum, x1Sel, x2Sel, sHatSel, tHatSel, uHatSel;
 
-  // Local values for beam particle switch and mass interpolation.
-  int    iPDFAsave, nStep, iStepFrom, iStepTo;
-  double eCMsave, eStepMin, eStepMax, eStepSize, eStepMix, eStepFrom, eStepTo;
+  // Stored values for mass interpolation for diffractive systems.
+  int    nStep, iStepFrom, iStepTo;
+  double eCMsave, eStepSize, eStepSave, eStepFrom, eStepTo, pT0Save[5],
+         pT4dSigmaMaxSave[5], pT4dProbMaxSave[5], sigmaIntSave[5],
+         sudExpPTSave[5][101], zeroIntCorrSave[5], normOverlapSave[5],
+         kNowSave[5], bAvgSave[5], bDivSave[5], probLowBSave[5],
+         fracAhighSave[5], fracBhighSave[5], fracChighSave[5],
+         fracABChighSave[5], cDivSave[5], cMaxSave[5];
 
-  // Stored values for mass interpolation. First index projectile particle.
-  struct MPIInterpolationInfo {
-    int nStepSave;
-    double eStepMinSave, eStepMaxSave, eStepSizeSave;
-    vector<double> pT0Save, pT4dSigmaMaxSave, pT4dProbMaxSave,
-         sigmaIntSave, zeroIntCorrSave, normOverlapSave, kNowSave,
-         bAvgSave, bDivSave, probLowBSave,
-         fracAhighSave, fracBhighSave, fracChighSave,
-         fracABChighSave, cDivSave, cMaxSave;
-    vector<array<double, 101> >  sudExpPTSave;
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
 
-    void init(int nStepIn);
-  };
+  // Pointer to the random number generator.
+  Rndm*          rndmPtr;
 
-  vector<MPIInterpolationInfo> mpis;
+  // Pointers to the two incoming beams.
+  BeamParticle*  beamAPtr;
+  BeamParticle*  beamBPtr;
 
-  // Beam offset wrt. normal situation and other photon-related parameters.
-  int    beamOffset;
-  double mGmGmMin, mGmGmMax;
-  bool   hasGamma, isGammaGamma, isGammaHadron, isHadronGamma;
+  // Pointers to Standard Model couplings.
+  Couplings*     couplingsPtr;
 
-  // Pointer to assign space-time vertices during parton evolution.
-  PartonVertexPtr  partonVertexPtr;
+  // Pointer to information on subcollision parton locations.
+  PartonSystems* partonSystemsPtr;
+
+  // Pointer to total cross section parametrization.
+  SigmaTotal*    sigmaTotPtr;
+
+  // Pointer to user hooks.
+  UserHooks*     userHooksPtr;
 
   // Collections of parton-level 2 -> 2 cross sections. Selected one.
   SigmaMultiparton  sigma2gg, sigma2qg, sigma2qqbarSame, sigma2qq;
   SigmaMultiparton* sigma2Sel;
-  SigmaProcessPtr   dSigmaDtSel;
+  SigmaProcess*  dSigmaDtSel;
 
   // Statistics on generated 2 -> 2 processes.
   map<int, int>  nGen;
@@ -330,10 +279,6 @@ private:
   // Integrate the parton-parton interaction cross section.
   void jetCrossSection();
 
-  // Read or write initialization data from/to file, to save startup time.
-  bool saveMPIdata();
-  bool loadMPIdata();
-
   // Evaluate "Sudakov form factor" for not having a harder interaction.
   double sudakov(double pT2sud, double enhance = 1.);
 
@@ -342,7 +287,7 @@ private:
 
   // Calculate the actual cross section, either for the first interaction
   // (including at initialization) or for any subsequent in the sequence.
-  double sigmaPT2scatter(bool isFirst = false, bool doSymmetrize = false);
+  double sigmaPT2scatter(bool isFirst = false);
 
   // Find the partons that may rescatter.
   void findScatteredPartons( Event& event);
@@ -356,7 +301,7 @@ private:
   // Pick impact parameter and interaction rate enhancement,
   // either before the first interaction (for nondiffractive) or after it.
   void overlapFirst();
-  void overlapNext(Event& event, double pTscale, bool rehashB);
+  void overlapNext(Event& event, double pTscale);
 
 };
 

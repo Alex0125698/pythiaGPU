@@ -7,19 +7,11 @@
 <body>
  
 <h2>SUSY Les Houches Accord</h2> 
-<ol id="toc">
-  <li><a href="#section0">Sanity Checks</a></li>
-  <li><a href="#section1">SLHA Switches and Parameters</a></li>
-  <li><a href="#section2">SLHA DECAY Tables</a></li>
-  <li><a href="#section3">Internal SLHA Variables</a></li>
-  <li><a href="#section4">Using SLHA for generic BSM Models</a></li>
-</ol>
-
  
 The PYTHIA 8 program does not contain an internal spectrum calculator 
 (a.k.a. RGE package) to provide supersymmetric couplings, mixing angles, 
 masses and branching ratios. Thus the SUSY Les Houches Accord (SLHA) 
-[<a href="Bibliography.html#refSka04" target="page">Ska04</a>][<a href="Bibliography.html#refAll08" target="page">All08</a>] is the only way of 
+[<a href="Bibliography.html" target="page">Ska04</a>][<a href="Bibliography.html" target="page">All08</a>] is the only way of 
 inputting SUSY models, and SUSY processes (see 
 the <a href="SUSYProcesses.html" target="page">SUSYProcesses</a> page) 
 cannot be run unless such an input has taken place. 
@@ -29,15 +21,15 @@ The SLHA input format can also be extended for use with more general BSM
 models, beyond SUSY. Information specific to  how to use the SLHA 
 interface for generic BSM models is collected below, 
 under <a href="#generic">Using SLHA for generic BSM Models</a>, with 
-more elaborate explanations and examples in [<a href="Bibliography.html#refDes11" target="page">Des11</a>]. 
+more elaborate explanations and examples in [<a href="Bibliography.html" target="page">Des11</a>]. 
  
 <p/> 
 Most of the SUSY implementation in PYTHIA 8 is compatible with both the 
-SLHA1 [<a href="Bibliography.html#refSka04" target="page">Ska04</a>] and SLHA2 [<a href="Bibliography.html#refAll08" target="page">All08</a>] 
+SLHA1 [<a href="Bibliography.html" target="page">Ska04</a>] and SLHA2 [<a href="Bibliography.html" target="page">All08</a>] 
 conventions (with some limitations for the NMSSM 
 in the latter case). Internally, PYTHIA 8 uses the 
 SLHA2 conventions and translates SLHA1 input to these when necessary. 
-See the section on SUSY Processes and [<a href="Bibliography.html#refDes11" target="page">Des11</a>] for more 
+See the section on SUSY Processes and [<a href="Bibliography.html" target="page">Des11</a>] for more 
 information. Note that PYTHIA assumes that a spectrum is either fully SHLA1 
 or fully SLHA2 compliant. Mixing of the two standards is discouraged, as 
 this can lead to ambiguities and inconsistencies. 
@@ -80,13 +72,12 @@ derived quantities of direct application to SUSY processes is done in the
 <code>CoupSUSY</code>, <code>SigmaSUSY</code>, 
 and <code>SUSYResonanceWidths</code> classes. 
  
-<a name="section0"></a> 
 <h3>Sanity Checks</h3> 
  
 As an aid for basic validation, some checks and ranges are imposed 
  on SLHA input during initialization, as follows: 
 <ul> 
-<li>Several parameters (<code>minMassSM</code>, 
+<li>Several parameters (<code>SLHA:keepSM</code>, <code>minMassSM</code>, 
 and <code>SLHA:allowUserOverride</code>) provide some safety against 
 unintentionally overwriting PYTHIA's Standard-Model information. 
 These parameters can be altered to hand over more or less control to the SLHA 
@@ -114,13 +105,10 @@ be declared stable unless there is at least one on-shell decay channel open
 massless particles will always be declared stable. A lower cutoff is imposed 
 on the Breit-Wigner shape of the particle, requiring its mass to remain above 
 the sum of masses for the lightest decay channel. Subject to that constraint, 
-the <code>mMin</code> and <code>mMax</code> cutoffs 
-will normally be placed at 5 times the width or the on-shell mass divided by 
-two, whichever is smaller, so that the default gives a decent sampling of the 
-shape without straying too far from the on-shell value. The user is allowed to 
-use the <code>mMin</code> and <code>mMax</code> parameters to choose a 
-different sampling range if so desired (still subject to the constraint of at 
-least one decay channel remaining open for on-shell decay products). 
+the lower cutoff will normally be placed at 5 times the width (so that the 
+default gives a decent sampling of the shape), but the user is allowed to 
+use the <code>mMin</code> parameter to choose a larger sampling range if so 
+desired (still subject to the on-shell constraint). 
 </li> 
 <li>For each decay channel in an SLHA DECAY table, PYTHIA will checks the 
 available phase space. If the channel is on shell (sum of daughter masses is 
@@ -145,10 +133,8 @@ good idea, as is taking a look at any warnings or error messages printed by
 the SLHA interface during initialization. It is ultimately up to the user to 
 ensure that sensible input is being given. 
  
-<a name="section1"></a> 
 <h3>SLHA Switches and Parameters</h3> 
  
-<a name="anchor1"></a>
 <p/><code>mode&nbsp; </code><strong> SLHA:readFrom &nbsp;</strong> 
  (<code>default = <strong>1</strong></code>; <code>minimum = 0</code>; <code>maximum = 2</code>)<br/>
 Controls from where SLHA information is read. 
@@ -160,7 +146,6 @@ from the <code>SLHA:file</code> below.
 <br/><code>option </code><strong> 2</strong> : read in from the <code>SLHA:file</code> below.   
    
  
-<a name="anchor2"></a>
 <p/><code>word&nbsp; </code><strong> SLHA:file &nbsp;</strong> 
  (<code>default = <strong>void</strong></code>)<br/>
 Name of an SLHA (or LHEF) file containing the SUSY/BSM model definition, 
@@ -168,7 +153,18 @@ spectra, and (optionally) decay tables. Default <code>void</code>
 signals that no such file has been assigned. 
    
  
-<a name="anchor3"></a>
+<p/><code>flag&nbsp; </code><strong> SLHA:keepSM &nbsp;</strong> 
+ (<code>default = <strong>on</strong></code>)<br/>
+Some programs write SLHA output also for SM particles where normally 
+one would not want to have masses and decay modes changed unwittingly. 
+Therefore, by default, known SM particles are ignored in SLHA files. 
+To be more specific, particle data for identity codes in the ranges 
+1 - 24 and 81 - 999,999 are ignored. Notably this includes <i>Z^0</i>, 
+<i>W^+-</i> and <i>t</i>. The SM Higgs is modified by the SLHA input, 
+as is other codes in the range 25 - 80 and 1,000,000 - . If you 
+switch off this flag then also SM particles are modified by SLHA input. 
+   
+ 
 <p/><code>parm&nbsp; </code><strong> SLHA:minMassSM &nbsp;</strong> 
  (<code>default = <strong>100.0</strong></code>)<br/>
 This parameter provides an alternative possibility to ignore SLHA input 
@@ -180,7 +176,6 @@ some threshold value, given by this parameter. The default value of
 <i>Z^0</i> and <i>W^+-</i> bosons. 
    
  
-<a name="anchor4"></a>
 <p/><code>flag&nbsp; </code><strong> SLHA:allowUserOverride &nbsp;</strong> 
  (<code>default = <strong>off</strong></code>)<br/>
 Flag to set whether the user is allowed to modify the parameters read 
@@ -191,7 +186,6 @@ allowed to be modified by the user, using PYTHIA's standard
 <code>readString</code> and related methods. 
    
  
-<a name="section2"></a> 
 <h3>SLHA DECAY Tables</h3> 
  
 In addition to SUSY spectra, the SLHA also defines a set of conventions for 
@@ -203,7 +197,6 @@ sanity checks above.
 <br/><b>Note</b>: the PYTHIA SLHA interface is limited to at most 
 <code>1&rarr;8</code> decays. 
  
-<a name="anchor5"></a>
 <p/><code>flag&nbsp; </code><strong> SLHA:useDecayTable &nbsp;</strong> 
  (<code>default = <strong>on</strong></code>)<br/>
 Switch to choose whether to read in SLHA <code>DECAY</code> tables or not. 
@@ -219,15 +212,6 @@ particle, or you may include an SLHA <code>DECAY</code> table for it,
 with the width set explicitly to zero.) 
    
  
-<a name="anchor6"></a>
-<p/><code>flag&nbsp; </code><strong> SLHA:allowOnlyOffShell &nbsp;</strong> 
- (<code>default = <strong>off</strong></code>)<br/>
-Switch to allow a decay table with only off-shell decays. By default, 
-internal checks require particles to have at least one on-shell decay 
-mode. 
-   
- 
-<a name="anchor7"></a>
 <p/><code>mode&nbsp; </code><strong> SLHA:meMode &nbsp;</strong> 
  (<code>default = <strong>100</strong></code>; <code>minimum = 100</code>; <code>maximum = 103</code>)<br/>
 This value specifies how threshold, off-shell, and phase-space 
@@ -260,10 +244,8 @@ fractions, etc, may be of assistance to validate the behaviour of the
 program. 
    
  
-<a name="section3"></a> 
 <h3>Internal SLHA Variables</h3> 
  
-<a name="anchor8"></a>
 <p/><code>mode&nbsp; </code><strong> SLHA:verbose &nbsp;</strong> 
  (<code>default = <strong>1</strong></code>; <code>minimum = 0</code>; <code>maximum = 3</code>)<br/>
 Controls amount of text output written by the SLHA interface, with a 
@@ -274,18 +256,16 @@ The following variables are used internally by PYTHIA as local copies
 of SLHA information. User changes will generally have no effect, since 
 these variables will be reset by the SLHA reader during initialization. 
  
-<a name="anchor9"></a>
 <p/><code>flag&nbsp; </code><strong> SLHA:NMSSM &nbsp;</strong> 
  (<code>default = <strong>off</strong></code>)<br/>
 Corresponds to SLHA block MODSEL entry 3. 
    
  
 <a name="generic"></a> 
-<a name="section4"></a> 
-<h3>Using SLHA for generic BSM Models</h3> 
+<h2>Using SLHA for generic BSM Models</h2> 
  
-<p> 
-Using the <code>QNUMBERS</code> extension [<a href="Bibliography.html#refAlw07" target="page">Alw07</a>], the SLHA 
+</p> 
+Using the <code>QNUMBERS</code> extension [<a href="Bibliography.html" target="page">Alw07</a>], the SLHA 
 can also be used to define new particles, with arbitrary quantum 
 numbers. This already serves as a useful way to introduce new 
 particles and can be combined with <code>MASS</code> and 
@@ -295,7 +275,7 @@ such decays. (If you want something better than isotropic, sorry, you'll
 have to do some actual work ...) 
 </p> 
  
-<p> 
+</p> 
 A more advanced further option is to make use of the possibility 
 in the SLHA to include user-defined blocks with arbitrary 
 names and contents. Obviously, standalone 
@@ -357,4 +337,4 @@ recompute the EW parameters as best suited for the application at hand.
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

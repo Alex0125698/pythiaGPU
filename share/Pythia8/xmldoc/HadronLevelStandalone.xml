@@ -36,7 +36,7 @@ main program therefore should be something like
   Event& event = pythia.event                  // Convenient shorthand. 
   pythia.readString("ProcessLevel:all = off"); // The trick! 
   pythia.init();                               // Initialization. 
-  for (int iEvent = 0; iEvent &lt; nEvent; ++iEvent) { 
+  for (int iEvent = 0; iEvent < nEvent; ++iEvent) { 
     // Insert filling of event here! 
     pythia.next();                             // Do the hadron level. 
   } 
@@ -63,8 +63,7 @@ or as four individual components:
   append( id, status, col, acol, p, m) 
   append( id, status, col, acol, px, py, pz, e, m) 
   append( id, status, mother1, mother2, daughter1, daughter2, col, acol, p, m) 
-  append( id, status, mother1, mother2, daughter1, daughter2, col, acol, 
-          px, py, pz, e, m) 
+  append( id, status, mother1, mother2, daughter1, daughter2, col, acol, px, py, pz, e, m) 
 </pre> 
 The methods return the index at which the entry has been stored, 
 but normally you would not use this feature. 
@@ -143,7 +142,7 @@ complicated ones with junctions, and also how to force a shower.
  
 <p/> 
 As an alternative to setting up a topology with the methods above, 
-a <aloc href="LHEF">Les Houches Event File</aloc> (LHEF) 
+a <aloc href="LesHouchesAccord">Les Houches Event File</aloc> (LHEF) 
 can also provide the configurations, using the "no-beams" extension. 
 For parsing reasons the <code>&lt;init&gt;</code> and 
 <code>&lt;/init&gt;</code> tags need to be present as two separate 
@@ -264,4 +263,4 @@ events.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

@@ -1,6 +1,6 @@
 // PythiaComplex.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for typedef'd double precision complex numbers.
@@ -15,9 +15,6 @@ namespace Pythia8 {
 
 // Convenient typedef for double precision complex numbers.
 typedef std::complex<double> complex;
-using std::norm;
-
-//==========================================================================
 
 } // end namespace Pythia8
 

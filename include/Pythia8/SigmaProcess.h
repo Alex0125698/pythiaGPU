@@ -1,6 +1,6 @@
 // SigmaProcess.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for hard-process differential cross sections.
@@ -28,11 +28,9 @@
 #include "Pythia8/BeamParticle.h"
 #include "Pythia8/Event.h"
 #include "Pythia8/Info.h"
-#include "Pythia8/SigmaLowEnergy.h"
 #include "Pythia8/LesHouches.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonDistributions.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaComplex.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/ResonanceWidths.h"
@@ -83,7 +81,7 @@ public:
 
 // SigmaProcess is the base class for cross section calculations.
 
-class SigmaProcess : public PhysicsBase {
+class SigmaProcess {
 
 public:
 
@@ -91,15 +89,13 @@ public:
   virtual ~SigmaProcess() {}
 
   // Perform simple initialization and store pointers.
-  void init(BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
-    SLHAinterface* slhaInterfacePtrIn = 0);
+  void init(Info* infoPtrIn, Settings* settingsPtrIn,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
+    BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn, Couplings* couplings,
+    SigmaTotal* sigmaTotPtrIn = 0, SLHAinterface* slhaInterfacePtrIn = 0);
 
   // Store or replace Les Houches pointer.
-  void setLHAPtr( LHAupPtr lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;}
-
-  // Switch to new beam particle identities; for similar hadrons only.
-  void updateBeamIDs() { idA = beamAPtr->id(); idB = beamBPtr->id();
-    mA = beamAPtr->m(); mB = beamBPtr->m();}
+  void setLHAPtr( LHAup* lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;}
 
   // Initialize process. Only used for some processes.
   virtual void initProc() {}
@@ -144,10 +140,7 @@ public:
     return ( convert2mb() ? CONVERT2MB * sigmaHat() : sigmaHat() ); }
 
   // Convolute above with parton flux and K factor. Sum over open channels.
-  // Possibly different PDF in initialization phase or no sampling for x_gamma
-  // (photons in leptons).
-  virtual double sigmaPDF(bool initPS = false, bool samexGamma = false,
-    bool useNewXvalues = false, double x1New = 0., double x2New = 0.);
+  virtual double sigmaPDF();
 
   // Select incoming parton channel and extract parton densities (resolved).
   void pickInState(int id1in = 0, int id2in = 0);
@@ -273,40 +266,47 @@ public:
     swap(pTFin, pTFinT); swap(cosTheta, cosThetaT);
     swap(sinTheta, sinThetaT); swap(phi, phiT); }
 
-  // Set the incoming ids for diffraction.
-  virtual void setIdInDiff(int, int) {}
-
 protected:
 
   // Constructor.
-  SigmaProcess() : slhaPtr(0), lhaUpPtr(0), doVarE(), nQuarkIn(),
-    renormScale1(), renormScale2(), renormScale3(), renormScale3VV(),
-    factorScale1(), factorScale2(), factorScale3(), factorScale3VV(),
-    Kfactor(), mcME(), mbME(), mmuME(), mtauME(), renormMultFac(),
-    renormFixScale(), factorMultFac(), factorFixScale(), higgsH1parity(),
-    higgsH2parity(), higgsA3parity(), higgsH1eta(), higgsH2eta(), higgsA3eta(),
-    higgsH1phi(), higgsH2phi(), higgsA3phi(), idA(), idB(), mA(), mB(),
-    isLeptonA(), isLeptonB(), hasLeptonBeams(), beamA2gamma(), beamB2gamma(),
-    hasGamma(), mH(), sH(), sH2(), x1Save(), x2Save(), sigmaSumSave(),
-    id1(), id2(), id3(), id4(), id5(), idSave(), colSave(), acolSave(),
-    mSave(), cosTheta(), sinTheta(), phi(), sHMass(), sHBeta(), pT2Mass(),
-    pTFin(), mSaveT(), pTFinT(), cosThetaT(), sinThetaT(), phiT(), mME(),
-    swapTU() {
-    for (int i = 0; i < 12; ++i) mSave[i] = 0.;
+  SigmaProcess() : infoPtr(0), settingsPtr(0), particleDataPtr(0),
+    rndmPtr(0), beamAPtr(0), beamBPtr(0), couplingsPtr(0), sigmaTotPtr(0),
+    slhaPtr(0), lhaUpPtr(0) {for (int i = 0; i < 12; ++i) mSave[i] = 0.;
     Q2RenSave = alpEM = alpS = Q2FacSave = pdf1Save = pdf2Save = 0.; }
 
   // Constants: could only be changed in the code itself.
   static const double CONVERT2MB, MASSMARGIN, COMPRELERR;
   static const int    NCOMPSTEP;
 
+  // Pointer to various information on the generation.
+  Info*           infoPtr;
+
+  // Pointer to the settings database.
+  Settings*       settingsPtr;
+
+  // Pointer to the particle data table.
+  ParticleData*   particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*           rndmPtr;
+
+  // Pointers to incoming beams.
+  BeamParticle*   beamAPtr;
+  BeamParticle*   beamBPtr;
+
+  // Pointer to Standard Model couplings, including alphaS and alphaEM.
+  Couplings*      couplingsPtr;
+
+  // Pointer to the total/elastic/diffractive cross section object.
+  SigmaTotal*     sigmaTotPtr;
+
   // Pointer to an SLHA object.
   SusyLesHouches* slhaPtr;
 
   // Pointer to LHAup for generating external events.
-  LHAupPtr        lhaUpPtr;
+  LHAup*          lhaUpPtr;
 
   // Initialization data, normally only set once.
-  bool   doVarE;
   int    nQuarkIn, renormScale1, renormScale2, renormScale3, renormScale3VV,
          factorScale1, factorScale2, factorScale3, factorScale3VV;
   double Kfactor, mcME, mbME, mmuME, mtauME, renormMultFac, renormFixScale,
@@ -320,8 +320,7 @@ protected:
   // Information on incoming beams.
   int    idA, idB;
   double mA, mB;
-  bool   isLeptonA, isLeptonB, hasLeptonBeams, beamA2gamma, beamB2gamma,
-         hasGamma;
+  bool   isLeptonA, isLeptonB, hasLeptonBeams;
 
   // Partons in beams, with PDF's.
   vector<InBeam> inBeamA;
@@ -415,14 +414,10 @@ public:
   virtual double sigmaHat() {return 0.;}
 
   // Since no PDF's there is no difference from above.
-  virtual double sigmaPDF(bool, bool, bool, double, double )
-    {return sigmaHat();}
+  virtual double sigmaPDF() {return sigmaHat();}
 
   // Answer for these processes already in mb, so do not convert.
   virtual bool convert2mb() const {return false;}
-
-  // Set the incoming ids for diffraction.
-  virtual void setIdInDiff(int idAin, int idBin) { idA = idAin; idB = idBin; }
 
 protected:
 
@@ -508,8 +503,7 @@ public:
   virtual double sigmaHatWrap(int id1in = 0, int id2in = 0) {
     id1 = id1in; id2 = id2in; double sigmaTmp = sigmaHat();
     if (convertM2())  sigmaTmp /= 16. * M_PI * sH2;
-    if (convert2mb()) sigmaTmp *= CONVERT2MB;
-    return sigmaTmp;}
+    if (convert2mb()) sigmaTmp *= CONVERT2MB; return sigmaTmp;}
 
   // Perform kinematics for a Multiparton Interaction, in its rest frame.
   virtual bool   final2KinMPI( int i1Res = 0, int i2Res = 0, Vec4 p1Res = 0.,
@@ -565,8 +559,7 @@ public:
 protected:
 
   // Constructor.
-  Sigma3Process() : m3(), s3(), m4(), s4(), m5(), s5(), runBW3(),
-    runBW4(), runBW5() {}
+  Sigma3Process() {}
 
   // Store kinematics and set scales for resolved 2 -> 3 process.
   virtual void   store3Kin( double x1in, double x2in, double sHin,
@@ -601,7 +594,7 @@ public:
   virtual bool   initFlux() {return true;}
 
   // Dummy function: action is put in PhaseSpaceLHA.
-  virtual double sigmaPDF(bool, bool, bool, double, double ) {return 1.;}
+  virtual double sigmaPDF() {return 1.;}
 
   // Evaluate weight for decay angular configuration, where relevant.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);

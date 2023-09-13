@@ -1,10 +1,10 @@
 // SusyResonanceWidths.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand
+// Copyright (C) 2015 Torbjorn Sjostrand
 // Main author of this file: N. Desai
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Header file for SUSY resonance properties: dynamical widths etc.
+// Header file for resonance properties: dynamical widths etc.
 // SusyResonanceWidths: base class for all SUSY resonances.
 
 #ifndef Pythia8_SusyResonanceWidths_H
@@ -23,19 +23,19 @@ class SUSYResonanceWidths : public ResonanceWidths{
 
 public:
 
-  // Constructor
   SUSYResonanceWidths() {}
-
-  // Destructor
-  virtual ~SUSYResonanceWidths() {}
 
 protected:
 
   // Virtual methods to handle model-specific (non-SM) part of initialization
-  virtual bool initBSM() override;
-  virtual bool allowCalc() override;
+  virtual bool initBSM();
+  virtual bool allowCalc();
   virtual bool getChannels(int) { return false; };
 
+  double integrateGauss( WidthFunction* widthFn, double, double, double);
+
+  // SUSY couplings
+  CoupSUSY* coupSUSYPtr;
   static const bool DBSUSY;
 
 };
@@ -49,7 +49,7 @@ class ResonanceSquark : public SUSYResonanceWidths {
 public:
 
   // Constructor.
-  ResonanceSquark(int idResIn) : s2W() {initBasic(idResIn);}
+  ResonanceSquark(int idResIn) {initBasic(idResIn);}
 
 
 private:
@@ -57,15 +57,16 @@ private:
   // Locally stored properties and couplings.
 
   // Initialize constants.
-  virtual void initConstants() override;
+  virtual void initConstants();
 
   // Calculate various common prefactors for the current mass.
-  virtual void calcPreFac(bool = false) override;
+  virtual void calcPreFac(bool = false);
 
-  bool getChannels(int idPDG) override;
+  bool getChannels(int idPDG);
 
   // Caclulate width for currently considered channel.
-  virtual void calcWidth(bool calledFromInit = false) override;
+  virtual void calcWidth(bool calledFromInit = false);
+
 
   double s2W;
 
@@ -84,18 +85,18 @@ public:
 
 private:
 
-  bool getChannels(int idPDG) override;
+  bool getChannels(int idPDG);
 
   // Locally stored properties and couplings.
 
   // Initialize constants.
-  virtual void initConstants() override;
+  virtual void initConstants();
 
   // Calculate various common prefactors for the current mass.
-  virtual void calcPreFac(bool = false) override;
+  virtual void calcPreFac(bool = false);
 
   // Caclulate width for currently considered channel.
-  virtual void calcWidth(bool calledFromInit = false) override;
+  virtual void calcWidth(bool calledFromInit = false);
 
 };
 
@@ -108,22 +109,22 @@ class ResonanceNeut : public SUSYResonanceWidths {
 public:
 
   // Constructor.
-  ResonanceNeut(int idResIn) : kinFac2(), s2W() {initBasic(idResIn);}
+  ResonanceNeut(int idResIn) {initBasic(idResIn);}
 
 private:
 
-  bool getChannels(int idPDG) override;
+  bool getChannels(int idPDG);
   // Locally stored properties and couplings.
   double kinFac2;
 
   // Initialize constants.
-  virtual void initConstants() override;
+  virtual void initConstants();
 
   // Calculate various common prefactors for the current mass.
-  virtual void calcPreFac(bool = false) override;
+  virtual void calcPreFac(bool = false);
 
   // Caclulate width for currently considered channel.
-  virtual void calcWidth(bool calledFromInit = false) override;
+  virtual void calcWidth(bool calledFromInit = false);
 
   double s2W;
 
@@ -143,23 +144,23 @@ class ResonanceChar : public SUSYResonanceWidths {
 public:
 
   // Constructor.
-  ResonanceChar(int idResIn) : kinFac2(), s2W() {initBasic(idResIn);}
+  ResonanceChar(int idResIn) {initBasic(idResIn);}
 
 private:
 
-  bool getChannels(int idPDG) override;
+  bool getChannels(int idPDG);
 
   // Locally stored properties and couplings.
   double kinFac2;
 
   // Initialize constants.
-  virtual void initConstants() override;
+  virtual void initConstants();
 
   // Calculate various common prefactors for the current mass.
-  virtual void calcPreFac(bool = false) override;
+  virtual void calcPreFac(bool = false);
 
   // Caclulate width for currently considered channel.
-  virtual void calcWidth(bool calledFromInit = false) override;
+  virtual void calcWidth(bool calledFromInit = false);
 
   double s2W;
 
@@ -179,22 +180,22 @@ class ResonanceSlepton : public SUSYResonanceWidths {
 public:
 
   // Constructor.
-  ResonanceSlepton(int idResIn) : s2W() {initBasic(idResIn);}
+  ResonanceSlepton(int idResIn) {initBasic(idResIn);}
 
 private:
 
-  bool getChannels(int idPDG) override;
+  bool getChannels(int idPDG);
 
   // Locally stored properties and couplings.
 
   // Initialize constants.
-  virtual void initConstants() override;
+  virtual void initConstants();
 
   // Calculate various common prefactors for the current mass.
-  virtual void calcPreFac(bool = false) override;
+  virtual void calcPreFac(bool = false);
 
   // Calculate width for currently considered channel.
-  virtual void calcWidth(bool calledFromInit = false) override;
+  virtual void calcWidth(bool calledFromInit = false);
 
   double s2W;
 

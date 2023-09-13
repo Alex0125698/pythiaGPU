@@ -1,6 +1,6 @@
 // ProcessLevel.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the main class for process-level event generation.
@@ -15,7 +15,6 @@
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonDistributions.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/ProcessContainer.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/ResonanceDecays.h"
@@ -33,38 +32,40 @@ namespace Pythia8 {
 // The ProcessLevel class contains the top-level routines to generate
 // the characteristic "hard" process of an event.
 
-class ProcessLevel : public PhysicsBase {
+class ProcessLevel {
 
 public:
 
   // Constructor.
-  ProcessLevel() = default;
+  ProcessLevel() : iLHACont(-1) {}
 
   // Destructor to delete processes in containers.
   ~ProcessLevel();
 
   // Initialization.
-  bool init(bool doLHAin, SLHAinterface* slhaInterfacePtrIn,
-    vector<SigmaProcessPtr>& sigmaPtrs, vector<PhaseSpacePtr>& phaseSpacePtrs);
+  bool init( Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
+    BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
+    Couplings* couplingsPtrIn, SigmaTotal* sigmaTotPtrIn, bool doLHAin,
+    SLHAinterface* slhaInterfacePtrIn, UserHooks* userHooksPtrIn,
+    vector<SigmaProcess*>& sigmaPtrs, vector<PhaseSpace*>& phaseSpacePtrs,
+    ostream& os = cout);
 
   // Store or replace Les Houches pointer.
-  void setLHAPtr( LHAupPtr lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;
+  void setLHAPtr( LHAup* lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;
     if (iLHACont >= 0) containerPtrs[iLHACont]->setLHAPtr(lhaUpPtr);}
 
-  // Switch to new beam particle identities; for similar hadrons only.
-  void updateBeamIDs();
-
   // Generate the next "hard" process.
-  bool next( Event& process, int procTypeIn = 0);
+  bool next( Event& process);
 
   // Special case: LHA input of resonance decay only.
   bool nextLHAdec( Event& process);
 
   // Accumulate and update statistics (after possible user veto).
-  void accumulate( bool doAccumulate = true);
+  void accumulate();
 
   // Print statistics on cross sections and number of events.
-  void statistics(bool reset = false);
+  void statistics(bool reset = false, ostream& os = cout);
 
   // Reset statistics.
   void resetStatistics();
@@ -73,18 +74,11 @@ public:
   void findJunctions( Event& junEvent);
 
   // Initialize and call resonance decays separately.
-  void initDecays( LHAupPtr lhaUpPtrIn) {
-    containerLHAdec.setLHAPtr(lhaUpPtrIn, particleDataPtr, settingsPtr,
-      rndmPtr); }
-
+  void initDecays( Info* infoPtrIn, ParticleData* particleDataPtrIn,
+    Rndm* rndmPtrIn, LHAup* lhaUpPtrIn) { infoPtr = infoPtrIn;
+    resonanceDecays.init( infoPtrIn, particleDataPtrIn, rndmPtrIn);
+    containerLHAdec.setLHAPtr(lhaUpPtrIn, particleDataPtrIn); }
   bool nextDecays( Event& process) { return resonanceDecays.next( process);}
-
-protected:
-
-  virtual void onInitInfoPtr() override {
-    registerSubObject(resonanceDecays);
-    registerSubObject(gammaKin);
-  }
 
 private:
 
@@ -92,20 +86,15 @@ private:
   static const int MAXLOOP;
 
   // Generic info for process generation.
-  bool   doVarEcm, allowIDAswitch, doSecondHard, doSameCuts, allHardSame,
-         noneHardSame, someHardSame, cutsAgree, cutsOverlap, doResDecays,
-         doISR, doMPI, doWt2, switchedID, switchedEcm, useHVcols;
-  int    startColTag, procType;
-  double maxPDFreweight, mHatMin1, mHatMax1, pTHatMin1, pTHatMax1, mHatMin2,
-         mHatMax2, pTHatMin2, pTHatMax2, sigmaND, eCMold;
-
-  // Info for process generation with photon beams.
-  bool   beamHasGamma;
-  int    gammaMode;
+  bool   doSecondHard, doSameCuts, allHardSame, noneHardSame,
+         someHardSame, cutsAgree, cutsOverlap, doResDecays;
+  int    nImpact, startColTag;
+  double mHatMin1, mHatMax1, pTHatMin1, pTHatMax1, mHatMin2, mHatMax2,
+         pTHatMin2, pTHatMax2, sigmaND, sumImpactFac, sum2ImpactFac;
 
   // Vector of containers of internally-generated processes.
   vector<ProcessContainer*> containerPtrs;
-  int    iContainer, iLHACont = -1;
+  int    iContainer, iLHACont;
   double sigmaMaxSum;
 
   // Ditto for optional choice of a second hard process.
@@ -116,26 +105,42 @@ private:
   // Single half-dummy container for LHA input of resonance decay only.
   ProcessContainer containerLHAdec;
 
+  // Pointer to various information on the generation.
+  Info*           infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData*   particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*           rndmPtr;
+
+  // Pointers to the two incoming beams.
+  BeamParticle*   beamAPtr;
+  BeamParticle*   beamBPtr;
+
+  // Pointer to Standard Model couplings, including alphaS and alphaEM.
+  Couplings*      couplingsPtr;
+
+  // Pointer to SigmaTotal object needed to handle soft QCD processes.
+  SigmaTotal*     sigmaTotPtr;
+
   // Pointer to SusyLesHouches object for interface to SUSY spectra.
   SLHAinterface*  slhaInterfacePtr;
 
+  // Pointer to userHooks object for user interaction with program.
+  UserHooks*      userHooksPtr;
+
   // Pointer to LHAup for generating external events.
-  LHAupPtr          lhaUpPtr;
+  LHAup*          lhaUpPtr;
 
   // ResonanceDecay object does sequential resonance decays.
   ResonanceDecays resonanceDecays;
-
-  // Samples photon kinematics from leptons.
-  GammaKinematics gammaKin;
 
   // Generate the next event with one interaction.
   bool nextOne( Event& process);
 
   // Generate the next event with two hard interactions.
   bool nextTwo( Event& process);
-
-  // Check that enough room for beam remnants in photon beam.
-  bool roomForRemnants();
 
   // Append the second to the first process list.
   void combineProcessRecords( Event& process, Event& process2);
@@ -144,7 +149,7 @@ private:
   bool checkColours( Event& process);
 
   // Print statistics when two hard processes allowed.
-  void statistics2(bool reset);
+  void statistics2(bool reset, ostream& os = cout);
 
 };
 

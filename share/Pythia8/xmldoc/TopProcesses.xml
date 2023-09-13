@@ -41,12 +41,6 @@ Scatterings <ei>gamma gamma &rarr; t tbar</ei>.
 Code 606. 
 </flag> 
  
-<flag name="Top:ggm2ttbar" default="off"> 
-Scatterings <ei>g gamma &rarr; t tbar</ei>. 
-Code 607 when <ei>g gamma &rarr; t tbar</ei> and 617 
-when <ei>gamma g &rarr; t tbar</ei>. 
-</flag> 
- 
 <p/> 
 By default top always decays to a <ei>W</ei> and a down-type quark. 
 It is possible to switch on the <ei>t &rarr; H+ b</ei> decay mode. 
@@ -57,4 +51,4 @@ decay also <code>Higgs:useBSM = on</code> is necessary.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

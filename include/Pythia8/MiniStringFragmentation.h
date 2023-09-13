@@ -1,6 +1,6 @@
 // MiniStringFragmentation.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the class for "cluster" fragmentation.
@@ -16,7 +16,6 @@
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PythiaStdlib.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/Settings.h"
 
 namespace Pythia8 {
@@ -27,27 +26,35 @@ namespace Pythia8 {
 // occasional low-mass colour singlet partonic systems, where the string
 // approach is not directly applicable (for technical reasons).
 
-class MiniStringFragmentation : public PhysicsBase {
+class MiniStringFragmentation {
 
 public:
 
   // Constructor.
-  MiniStringFragmentation() : flavSelPtr(), pTSelPtr(), zSelPtr(),
-    setVertices(), constantTau(), smearOn(), nTryMass(), hadronVertex(),
-    bLund(), xySmear(), kappaVtx(), mc(), mb(), isClosed(), mSum(), m2Sum() {}
+  MiniStringFragmentation() {}
 
   // Initialize and save pointers.
-  void init(StringFlav* flavSelPtrIn, StringPT* pTSelPtrIn,
-    StringZ* zSelPtrIn);
+  void init(Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
+    StringFlav* flavSelPtrIn, StringPT* pTSelPtrIn, StringZ* zSelPtrIn);
 
   // Do the fragmentation: driver routine.
   bool fragment( int iSub, ColConfig& colConfig, Event& event,
-    bool isDiff = false, bool systemRecoil = true);
+    bool isDiff = false);
 
 private:
 
   // Constants: could only be changed in the code itself.
   static const int    NTRYDIFFRACTIVE, NTRYLASTRESORT, NTRYFLAV;
+
+  // Pointer to various information on the generation.
+  Info*         infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData* particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*         rndmPtr;
 
   // Pointers to classes for flavour, pT and z generation.
   StringFlav*   flavSelPtr;
@@ -55,9 +62,8 @@ private:
   StringZ*      zSelPtr;
 
   // Initialization data, read from Settings.
-  bool   setVertices, constantTau, smearOn;
-  int    nTryMass, hadronVertex;
-  double bLund, xySmear, kappaVtx, mc, mb;
+  int    nTryMass;
+  double bLund;
 
   // Data members.
   bool   isClosed;
@@ -66,19 +72,11 @@ private:
   vector<int> iParton;
   FlavContainer flav1, flav2;
 
-  // Information from the fragmentation process.
-  vector<StringVertex> ministringVertices;
-
   // Attempt to produce two particles from a cluster.
-  bool ministring2two( int nTry, Event& event, bool findLowMass = false);
+  bool ministring2two( int nTry, Event& event);
 
   // Attempt to produce one particle from a cluster.
-  bool ministring2one( int iSub, ColConfig& colConfig, Event& event,
-    bool findLowMass = false, bool systemRecoil = true);
-
-  // Set hadron production points in space-time picture.
-  void setHadronVertices(Event& event, StringRegion& region,
-    int iFirst, int iLast);
+  bool ministring2one( int iSub, ColConfig& colConfig, Event& event);
 
 };
 

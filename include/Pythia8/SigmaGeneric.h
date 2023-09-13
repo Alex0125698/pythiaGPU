@@ -1,6 +1,6 @@
 // SigmaGeneric.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Johan Bijnens,Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Johan Bijnens,Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for various generic production processes, to be used as
@@ -26,8 +26,7 @@ public:
   // Constructor.
   Sigma2gg2qGqGbar(int idIn, int codeIn, int spinIn,
     string nameIn = "g g -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nCHV(), nameSave(nameIn), hasKappa(), openFracPair(),
-    sigma(), sigTS(), sigUS(), sigSum(), kappam1() {}
+    spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -69,8 +68,7 @@ public:
   // Constructor.
   Sigma2qqbar2qGqGbar(int idIn, int codeIn, int spinIn,
     string nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nCHV(), nameSave(nameIn), openFracPair(), sigma(),
-    sigSum(), kappa() {}
+    spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -112,8 +110,7 @@ public:
   // Constructor.
   Sigma2ffbar2fGfGbar(int idIn, int codeIn, int spinIn,
     string nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nCHV(), nameSave(nameIn), hasColour(), eQHV2(),
-    openFracPair(), sigma0(), sigSum(), kappa(), colFac() {}
+    spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -154,8 +151,7 @@ class Sigma1ffbar2Zv : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2Zv() : idZv(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    sigOut(), particlePtr() {}
+  Sigma1ffbar2Zv() {}
 
   // Initialize process.
   virtual void initProc();
@@ -185,7 +181,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, sigOut;
 
   // Pointer to properties of Zv, to access decay width.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 

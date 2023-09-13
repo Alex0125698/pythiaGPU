@@ -1,28 +1,25 @@
-// fjcore -- extracted from FastJet v3.4.0 (http://fastjet.fr)
+// fjcore -- extracted from FastJet v3.0.5 (http://fastjet.fr)
 //
 // fjcore constitutes a digest of the main FastJet functionality.
-// The files fjcore.hh and fjcore.cc are meant to provide easy access to these 
-// core functions, in the form of single files and without the need of a full 
+// The files fjcore.hh and fjcore.cc are meant to provide easy access to these
+// core functions, in the form of single files and without the need of a full
 // FastJet installation:
 //
 //     g++ main.cc fjcore.cc
-// 
-// with main.cc including fjcore.hh.
 //
-// A fortran interface, fjcorefortran.cc, is also provided. See the example 
-// and the Makefile for instructions.
+// with main.cc including fjcore.hh.
 //
 // The results are expected to be identical to those obtained by linking to
 // the full FastJet distribution.
 //
 // NOTE THAT, IN ORDER TO MAKE IT POSSIBLE FOR FJCORE AND THE FULL FASTJET
-// TO COEXIST, THE FORMER USES THE "fjcore" NAMESPACE INSTEAD OF "fastjet". 
+// TO COEXIST, THE FORMER USES THE "fjcore" NAMESPACE INSTEAD OF "fastjet".
 //
 // In particular, fjcore provides:
 //
 //   - access to all native pp and ee algorithms, kt, anti-kt, C/A.
 //     For C/A, the NlnN method is available, while anti-kt and kt
-//     are limited to the N^2 one (still the fastest for N < 100k particles)
+//     are limited to the N^2 one (still the fastest for N < 20k particles)
 //   - access to selectors, for implementing cuts and selections
 //   - access to all functionalities related to pseudojets (e.g. a jet's
 //     structure or user-defined information)
@@ -45,19 +42,16 @@
 // Like FastJet, fjcore is released under the terms of the GNU General Public
 // License version 2 (GPLv2). If you use this code as part of work towards a
 // scientific publication, whether directly or contained within another program
-// (e.g. Delphes, MadGraph, SpartyJet, Rivet, LHC collaboration software frameworks, 
+// (e.g. Delphes, SpartyJet, Rivet, LHC collaboration software frameworks,
 // etc.), you should include a citation to
-// 
+//
 //   EPJC72(2012)1896 [arXiv:1111.6097] (FastJet User Manual)
 //   and, optionally, Phys.Lett.B641 (2006) 57 [arXiv:hep-ph/0512210]
 //
-//FJSTARTHEADER
-// $Id$
-//
-// Copyright (c) 2005-2021, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
+// Copyright (c) 2005-2013, Matteo Cacciari, Gavin P. Salam and Gregory Soyez
 //
 //----------------------------------------------------------------------
-// This file is part of FastJet (fjcore).
+// This file is part of FastJet.
 //
 //  FastJet is free software; you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -65,11 +59,9 @@
 //  (at your option) any later version.
 //
 //  The algorithms that underlie FastJet have required considerable
-//  development. They are described in the original FastJet paper,
-//  hep-ph/0512210 and in the manual, arXiv:1111.6097. If you use
+//  development and are described in hep-ph/0512210. If you use
 //  FastJet as part of work towards a scientific publication, please
-//  quote the version you use and include a citation to the manual and
-//  optionally also to hep-ph/0512210.
+//  include a citation to the FastJet paper.
 //
 //  FastJet is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -79,205 +71,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with FastJet. If not, see <http://www.gnu.org/licenses/>.
 //----------------------------------------------------------------------
-//FJENDHEADER
+//
 #ifndef __FJCORE_HH__
 #define __FJCORE_HH__
 #define __FJCORE__   // remove all the non-core code (a safekeeper)
 #define __FJCORE_DROP_CGAL    // disable CGAL support
-#ifndef _INCLUDE_FJCORE_CONFIG_AUTO_H
-#define _INCLUDE_FJCORE_CONFIG_AUTO_H 1
-#ifndef FJCORE_HAVE_AUTO_PTR_INTERFACE 
-#endif
-#ifndef FJCORE_HAVE_CXX14_DEPRECATED 
-#endif
-#ifndef FJCORE_HAVE_DLFCN_H 
-# define FJCORE_HAVE_DLFCN_H  1 
-#endif
-#ifndef FJCORE_HAVE_EXECINFO_H 
-#endif
-#ifndef FJCORE_HAVE_EXPLICIT_FOR_OPERATORS 
-#endif
-#ifndef FJCORE_HAVE_GNUCXX_DEPRECATED 
-#endif
-#ifndef FJCORE_HAVE_INTTYPES_H 
-# define FJCORE_HAVE_INTTYPES_H  1 
-#endif
-#ifndef FJCORE_HAVE_LIBM 
-# define FJCORE_HAVE_LIBM  1 
-#endif
-#ifndef FJCORE_HAVE_MEMORY_H 
-# define FJCORE_HAVE_MEMORY_H  1 
-#endif
-#ifndef FJCORE_HAVE_OVERRIDE 
-#endif
-#ifndef FJCORE_HAVE_STDINT_H 
-# define FJCORE_HAVE_STDINT_H  1 
-#endif
-#ifndef FJCORE_HAVE_STDLIB_H 
-# define FJCORE_HAVE_STDLIB_H  1 
-#endif
-#ifndef FJCORE_HAVE_STRINGS_H 
-# define FJCORE_HAVE_STRINGS_H  1 
-#endif
-#ifndef FJCORE_HAVE_STRING_H 
-# define FJCORE_HAVE_STRING_H  1 
-#endif
-#ifndef FJCORE_HAVE_SYS_STAT_H 
-# define FJCORE_HAVE_SYS_STAT_H  1 
-#endif
-#ifndef FJCORE_HAVE_SYS_TYPES_H 
-# define FJCORE_HAVE_SYS_TYPES_H  1 
-#endif
-#ifndef FJCORE_HAVE_UNISTD_H 
-# define FJCORE_HAVE_UNISTD_H  1 
-#endif
-#ifndef FJCORE_LT_OBJDIR 
-# define FJCORE_LT_OBJDIR  ".libs/" 
-#endif
-#ifndef FJCORE_PACKAGE 
-# define FJCORE_PACKAGE  "fastjet" 
-#endif
-#ifndef FJCORE_PACKAGE_BUGREPORT 
-# define FJCORE_PACKAGE_BUGREPORT  "" 
-#endif
-#ifndef FJCORE_PACKAGE_NAME 
-# define FJCORE_PACKAGE_NAME  "FastJet" 
-#endif
-#ifndef FJCORE_PACKAGE_STRING 
-# define FJCORE_PACKAGE_STRING  "FastJet 3.4.0" 
-#endif
-#ifndef FJCORE_PACKAGE_TARNAME 
-# define FJCORE_PACKAGE_TARNAME  "fastjet" 
-#endif
-#ifndef FJCORE_PACKAGE_URL 
-# define FJCORE_PACKAGE_URL  "" 
-#endif
-#ifndef FJCORE_PACKAGE_VERSION 
-# define FJCORE_PACKAGE_VERSION  "3.4.0" 
-#endif
-#ifndef FJCORE_STDC_HEADERS 
-# define FJCORE_STDC_HEADERS  1 
-#endif
-#ifndef FJCORE_VERSION 
-# define FJCORE_VERSION  "3.4.0" 
-#endif
-#ifndef FJCORE_VERSION_MAJOR 
-# define FJCORE_VERSION_MAJOR  3 
-#endif
-#ifndef FJCORE_VERSION_MINOR 
-# define FJCORE_VERSION_MINOR  4 
-#endif
-#ifndef FJCORE_VERSION_NUMBER 
-# define FJCORE_VERSION_NUMBER  30400 
-#endif
-#ifndef FJCORE_VERSION_PATCHLEVEL 
-# define FJCORE_VERSION_PATCHLEVEL  0 
-#endif
-#endif
-#ifndef __FJCORE_CONFIG_H__
-#define __FJCORE_CONFIG_H__
-#endif // __FJCORE_CONFIG_H__
 #ifndef __FJCORE_FASTJET_BASE_HH__
 #define __FJCORE_FASTJET_BASE_HH__
 #define FJCORE_BEGIN_NAMESPACE namespace fjcore {
 #define FJCORE_END_NAMESPACE   }
-#ifdef FJCORE_HAVE_OVERRIDE
-# define FJCORE_OVERRIDE  override
-#else
-# define FJCORE_OVERRIDE  
-#endif
 #endif // __FJCORE_FASTJET_BASE_HH__
-#ifndef __FJCORE_THREAD_SAFETY_HELPERS_HH__
-#define __FJCORE_THREAD_SAFETY_HELPERS_HH__
-#include <limits>
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-#include <atomic>
-FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-namespace thread_safety_helpers{
-  template<typename T>
-  class AtomicCounter{
-  public:
-    AtomicCounter() : _count{0}{}
-    AtomicCounter(const T &count) : _count{count}{}
-    AtomicCounter(const AtomicCounter &other) : _count{other._count.load()}{}
-    operator T() const{ return _count.load();}
-    T get() const{ return _count.load();}
-    void set(const T new_value){
-      _count.store(new_value);
-    }
-    T step(){
-      T count = _count;
-      while (_count < std::numeric_limits<T>::max()
-             && !(_count.compare_exchange_strong(count, count+1)));
-      return count;
-    }
-    inline T operator++(){
-      return step()+1;
-    }
-    inline T operator++(int){
-      return step();
-    }
-  private:
-    std::atomic<T> _count;  ///< the actual count
-  };
-  class FirstTimeTrue{
-  public:
-    FirstTimeTrue(): _first_time{true}{}
-    FirstTimeTrue(const FirstTimeTrue &other) : _first_time{other._first_time.load()}{}
-    bool operator()(){
-      bool expected = true;
-      return _first_time.compare_exchange_strong(expected, false,
-                                                 std::memory_order_seq_cst,
-                                                 std::memory_order_relaxed);
-    }
-  private:
-    std::atomic<bool> _first_time;
-  };
-} // namespace thread_safety_helpers
-FJCORE_END_NAMESPACE
-#else  // FJ wo thread-safety features
-FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-namespace thread_safety_helpers{
-  template<typename T>
-  class AtomicCounter{
-  public:
-    AtomicCounter() : _count(0){}
-    AtomicCounter(const T &count) : _count(count){}
-    AtomicCounter(const AtomicCounter &other) : _count(other._count){}
-    operator T() const{ return _count;}
-    T get() const{ return _count;}
-    void set(const T new_value){
-      _count = new_value;
-    }
-    T step(){
-      unsigned int count = _count;
-      if (_count < std::numeric_limits<T>::max()){ _count++; }
-      return count;
-    }
-    inline T operator++(){
-      return step()+1;
-    }
-    inline T operator++(int){
-      return step();
-    }
-  private:
-    T _count;  ///< the actual value
-  };
-  class FirstTimeTrue{
-  public:
-    FirstTimeTrue(): _first_time(true){}
-    bool operator()(){
-      if (!_first_time) {return false;}
-      _first_time = false;
-      return true;
-    }
-  private:
-    bool _first_time;
-  };
-} // namespace thread_safety_helpers
-FJCORE_END_NAMESPACE
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
-#endif // __FJCORE_THREAD_SAFETY_HELPERS_HH__
 #ifndef __FJCORE_NUMCONSTS__
 #define __FJCORE_NUMCONSTS__
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
@@ -329,8 +132,8 @@ struct IsBaseAndDerived{
 #endif
     operator D const volatile *();
   };
-  static const bool value = ((sizeof(B)!=0) && 
-			     (sizeof(D)!=0) && 
+  static const bool value = ((sizeof(B)!=0) &&
+			     (sizeof(D)!=0) &&
 			     (sizeof(__inheritance_helper<B,D>::check_sig(Host(), 0)) == sizeof(__yes_type)));
 #if ((_MSC_FULL_VER != 0) && (_MSC_FULL_VER >= 140050000))
 #pragma warning(pop)
@@ -342,32 +145,95 @@ B* cast_if_derived(D* d){
 }
 FJCORE_END_NAMESPACE
 #endif  // __IS_BASE_OF_HH__
-#ifndef __FJCORE_FJCORE_DEPRECATED_HH__
-#define __FJCORE_FJCORE_DEPRECATED_HH__
-#ifndef SWIG
-#if defined(FJCORE_HAVE_CXX14_DEPRECATED) && (!defined(__FJCORE__))
-# define FJCORE_DEPRECATED(func)              [[deprecated]] func
-# define FJCORE_DEPRECATED_MSG(message,func)  [[deprecated(message)]] func
-#elif defined(FJCORE_HAVE_GNUCXX_DEPRECATED)
-# define FJCORE_DEPRECATED(func)              func __attribute__((__deprecated__))
-# define FJCORE_DEPRECATED_MSG(message,func)  func __attribute__((__deprecated__))
-#else
-# define FJCORE_DEPRECATED(func)              func
-# define FJCORE_DEPRECATED_MSG(message,func)  func
+#ifndef _INCLUDE_FJCORE_CONFIG_AUTO_H
+#define _INCLUDE_FJCORE_CONFIG_AUTO_H 1
+#ifndef FJCORE_HAVE_DLFCN_H
+#define FJCORE_HAVE_DLFCN_H  1
 #endif
-#else  // SIWG
-# define FJCORE_DEPRECATED(func)              func
-# define FJCORE_DEPRECATED_MSG(message,func)  func
-#endif // SWIG
-#endif // __FJCORE_FJCORE_DEPRECATED_HH__
- #ifndef __FJCORE_SHARED_PTR_HH__
+#ifndef FJCORE_HAVE_EXECINFO_H
+#define FJCORE_HAVE_EXECINFO_H  1
+#endif
+#ifndef FJCORE_HAVE_INTTYPES_H
+#define FJCORE_HAVE_INTTYPES_H  1
+#endif
+#ifndef FJCORE_HAVE_LIBM
+#define FJCORE_HAVE_LIBM  1
+#endif
+#ifndef FJCORE_HAVE_MEMORY_H
+#define FJCORE_HAVE_MEMORY_H  1
+#endif
+#ifndef FJCORE_HAVE_STDINT_H
+#define FJCORE_HAVE_STDINT_H  1
+#endif
+#ifndef FJCORE_HAVE_STDLIB_H
+#define FJCORE_HAVE_STDLIB_H  1
+#endif
+#ifndef FJCORE_HAVE_STRINGS_H
+#define FJCORE_HAVE_STRINGS_H  1
+#endif
+#ifndef FJCORE_HAVE_STRING_H
+#define FJCORE_HAVE_STRING_H  1
+#endif
+#ifndef FJCORE_HAVE_SYS_STAT_H
+#define FJCORE_HAVE_SYS_STAT_H  1
+#endif
+#ifndef FJCORE_HAVE_SYS_TYPES_H
+#define FJCORE_HAVE_SYS_TYPES_H  1
+#endif
+#ifndef FJCORE_HAVE_UNISTD_H
+#define FJCORE_HAVE_UNISTD_H  1
+#endif
+#ifndef FJCORE_LT_OBJDIR
+#define FJCORE_LT_OBJDIR  ".libs/"
+#endif
+#ifndef FJCORE_PACKAGE
+#define FJCORE_PACKAGE  "fastjet"
+#endif
+#ifndef FJCORE_PACKAGE_BUGREPORT
+#define FJCORE_PACKAGE_BUGREPORT  ""
+#endif
+#ifndef FJCORE_PACKAGE_NAME
+#define FJCORE_PACKAGE_NAME  "FastJet"
+#endif
+#ifndef FJCORE_PACKAGE_STRING
+#define FJCORE_PACKAGE_STRING  "FastJet 3.0.5"
+#endif
+#ifndef FJCORE_PACKAGE_TARNAME
+#define FJCORE_PACKAGE_TARNAME  "fastjet"
+#endif
+#ifndef FJCORE_PACKAGE_VERSION
+#define FJCORE_PACKAGE_VERSION  "3.0.5"
+#endif
+#ifndef FJCORE_STDC_HEADERS
+#define FJCORE_STDC_HEADERS  1
+#endif
+#ifndef FJCORE_VERSION
+#define FJCORE_VERSION  "3.0.5"
+#endif
+#endif
+#ifndef __FJCORE_CONFIG_H__
+#define __FJCORE_CONFIG_H__
+#endif // __FJCORE_CONFIG_H__
+#ifndef __FJCORE_SHARED_PTR_HH__
 #define __FJCORE_SHARED_PTR_HH__
 #include <cstdlib>  // for NULL!!!
-#ifdef FJCORE_HAVE_THREAD_SAFETY
-#include <atomic>
-#endif // FJCORE_HAVE_THREAD_SAFETY
+#ifdef __FJCORE_USETR1SHAREDPTR
+#include <tr1/memory>
+#endif // __FJCORE_USETR1SHAREDPTR
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-#ifdef FJCORE_HAVE_THREAD_SAFETY
+#ifdef __FJCORE_USETR1SHAREDPTR
+template<class T>
+class SharedPtr : public std::tr1::shared_ptr<T> {
+public:
+  SharedPtr() : std::tr1::shared_ptr<T>() {}
+  SharedPtr(T * t) : std::tr1::shared_ptr<T>(t) {}
+  SharedPtr(const SharedPtr<T> & t) : std::tr1::shared_ptr<T>(t) {}
+  inline operator bool() const {return (this->get()!=NULL);}
+  T* operator ()() const{
+    return this->get(); // automatically returns NULL when out-of-scope
+  }
+};
+#else // __FJCORE_USETR1SHAREDPTR
 template<class T>
 class SharedPtr{
 public:
@@ -377,7 +243,7 @@ public:
     _ptr = new __SharedCountingPtr(ptr);
   }
   SharedPtr(SharedPtr const & share) : _ptr(share._get_container()){
-    if (_ptr!=NULL) (*_ptr)++;
+    if (_ptr!=NULL) ++(*_ptr);
   }
   ~SharedPtr(){
     if (_ptr==NULL) return;
@@ -395,7 +261,7 @@ public:
       _decrease_count();
     }
     _ptr = share._get_container();  // Note: automatically set it to NULL if share is empty
-    if (_ptr!=NULL) (*_ptr)++;
+    if (_ptr!=NULL) ++(*_ptr);
   }
   SharedPtr& operator=(SharedPtr const & share){
     reset(share);
@@ -404,135 +270,18 @@ public:
   template<class Y> SharedPtr& operator=(SharedPtr<Y> const & share){
     reset(share);
     return *this;
-  }
-  inline T& operator*() const{
-    return *(_ptr->get());
-  }
-  inline T* operator->() const{
-    if (_ptr==NULL) return NULL;
-    return _ptr->get();
-  }  
-  inline T* get() const{
-    if (_ptr==NULL) return NULL;
-    return _ptr->get();
   }
   T* operator ()() const{
     if (_ptr==NULL) return NULL;
     return _ptr->get(); // automatically returns NULL when out-of-scope
   }
-  inline bool unique() const{
-    return (use_count()==1);
-  }
-  inline long use_count() const{
-    if (_ptr==NULL) return 0;
-    return _ptr->use_count(); // automatically returns NULL when out-of-scope
-  }
-  inline operator bool() const{
-    return (get()!=NULL);
-  }
-  inline void swap(SharedPtr & share){
-    __SharedCountingPtr* share_container = share._ptr;
-    share._ptr = _ptr;
-    _ptr = share_container;
-  }
-  void set_count(const long & count){
-    if (_ptr==NULL) return;
-    _ptr->set_count(count);
-  }
-  class __SharedCountingPtr : public std::atomic<long>{
-  public:
-    __SharedCountingPtr() : std::atomic<long>(0), _ptr(NULL){} 
-    template<class Y> explicit __SharedCountingPtr(Y* ptr)
-      : std::atomic<long>(1), _ptr(ptr){}
-    ~__SharedCountingPtr(){ 
-      if (_ptr!=NULL){ delete _ptr;}
-    }
-    inline T* get() const {return _ptr;}
-    inline long use_count() const {return (long)(*this);}
-    inline void set_count(const long & count){ store(count);}
-  private:
-    T *_ptr;               ///< the pointer we're counting the references to
-  };
-private:
-  inline __SharedCountingPtr* _get_container() const{
-    return _ptr;
-  }
-  void _decrease_count(){
-    if (((*_ptr)--) == 1)
-      delete _ptr;
-  }
-  __SharedCountingPtr *_ptr;
-};
-template<class T,class U>
-inline bool operator==(SharedPtr<T> const & t, SharedPtr<U> const & u){
-  return t.get() == u.get();
-}
-template<class T,class U>
-inline bool operator!=(SharedPtr<T> const & t, SharedPtr<U> const & u){
-  return t.get() != u.get();
-}
-template<class T,class U>
-inline bool operator<(SharedPtr<T> const & t, SharedPtr<U> const & u){
-  return t.get() < u.get();
-}
-template<class T>
-inline void swap(SharedPtr<T> & a, SharedPtr<T> & b){
-  return a.swap(b);
-}
-template<class T>
-inline T* get_pointer(SharedPtr<T> const & t){
-  return t.get();
-}
-#else  // FJCORE_HAVE_THREAD_SAFETY
-template<class T>
-class SharedPtr{
-public:
-  class __SharedCountingPtr;
-  SharedPtr() : _ptr(NULL){}
-  template<class Y> explicit SharedPtr(Y* ptr){
-    _ptr = new __SharedCountingPtr(ptr);
-  }
-  SharedPtr(SharedPtr const & share) : _ptr(share._get_container()){
-    if (_ptr!=NULL) ++(*_ptr);
-  }
-  ~SharedPtr(){
-    if (_ptr==NULL) return;
-    _decrease_count();
-  }
-  void reset(){
-    SharedPtr().swap(*this);
-  }
-  template<class Y> void reset(Y * ptr){
-    SharedPtr(ptr).swap(*this);
-  }
-  template<class Y> void reset(SharedPtr<Y> const & share){
-    if (_ptr!=NULL){
-      if (_ptr == share._get_container()) return;
-      _decrease_count();
-    }
-    _ptr = share._get_container();  // Note: automatically set it to NULL if share is empty
-    if (_ptr!=NULL) ++(*_ptr);
-  }
-  SharedPtr& operator=(SharedPtr const & share){
-    reset(share);
-    return *this;
-  }
-  template<class Y> SharedPtr& operator=(SharedPtr<Y> const & share){
-    reset(share);
-    return *this;
-  }
-  FJCORE_DEPRECATED_MSG("Use SharedPtr<T>::get() instead",
-  T* operator ()() const){
-    if (_ptr==NULL) return NULL;
-    return _ptr->get(); // automatically returns NULL when out-of-scope
-  }
   inline T& operator*() const{
     return *(_ptr->get());
   }
   inline T* operator->() const{
     if (_ptr==NULL) return NULL;
     return _ptr->get();
-  }  
+  }
   inline T* get() const{
     if (_ptr==NULL) return NULL;
     return _ptr->get();
@@ -544,9 +293,6 @@ public:
     if (_ptr==NULL) return 0;
     return _ptr->use_count(); // automatically returns NULL when out-of-scope
   }
-  #ifdef FJCORE_HAVE_EXPLICIT_FOR_OPERATORS
-  explicit
-  #endif
   inline operator bool() const{
     return (get()!=NULL);
   }
@@ -563,7 +309,7 @@ public:
   public:
     __SharedCountingPtr() : _ptr(NULL), _count(0){}
     template<class Y> explicit __SharedCountingPtr(Y* ptr) : _ptr(ptr), _count(1){}
-    ~__SharedCountingPtr(){ 
+    ~__SharedCountingPtr(){
       if (_ptr!=NULL){ delete _ptr;}
     }
     inline T* get() const {return _ptr;}
@@ -576,7 +322,7 @@ public:
       _count = count;
     }
   private:
-    T *_ptr;      ///< the pointer we're counting the references to
+    T *_ptr;              ///< the pointer we're counting the references to
     long _count;  ///< the number of references
   };
 private:
@@ -610,116 +356,62 @@ template<class T>
 inline T* get_pointer(SharedPtr<T> const & t){
   return t.get();
 }
-#endif // FJCORE_HAVE_THREAD_SAFETY
+#endif // __FJCORE_USETR1SHAREDPTR
 FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
 #endif   // __FJCORE_SHARED_PTR_HH__
-#ifndef __FJCORE_LIMITEDWARNING_HH__
-#define __FJCORE_LIMITEDWARNING_HH__
-#include <iostream>
-#include <string>
-#include <list>
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-#include <atomic>
-#include <mutex>
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
-FJCORE_BEGIN_NAMESPACE
-class LimitedWarning {
-public:
-  LimitedWarning() : _max_warn(_max_warn_default),_this_warning_summary(0) {}
-  LimitedWarning(int max_warn_in) : _max_warn(max_warn_in), _this_warning_summary(0) {}  
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  LimitedWarning(const LimitedWarning &other)
-    : _max_warn(other._max_warn), _this_warning_summary{other._this_warning_summary.load()} {}  
-#endif
-  void warn(const char * warning) {warn(warning, _default_ostr);}
-  void warn(const std::string & warning) {warn(warning.c_str(), _default_ostr);}
-  void warn(const char * warning, std::ostream * ostr);
-  void warn(const std::string & warning, std::ostream * ostr) {warn(warning.c_str(), ostr);}
-  static void set_default_stream(std::ostream * ostr) {
-    _default_ostr = ostr;
-  }
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static void set_default_stream_and_mutex(std::ostream * ostr,
-                                           std::mutex * warnings_mutex) {
-    _default_ostr  = ostr;
-    _stream_mutex = warnings_mutex;
-  }
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static void set_default_max_warn(int max_warn) {
-    _max_warn_default = max_warn;
-  }
-  int max_warn() const {return _max_warn;}
-  int n_warn_so_far() const;
-  static std::string summary();
-private:
-  const int _max_warn;
-  typedef std::pair<std::string, thread_safety_helpers::AtomicCounter<unsigned int> > Summary;
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static std::atomic<int> _max_warn_default;
-  static std::atomic<std::ostream *> _default_ostr;
-  static std::atomic<std::mutex *> _stream_mutex;
-  static std::mutex _global_warnings_summary_mutex;
-  std::atomic<Summary*> _this_warning_summary;
-#else
-  static int _max_warn_default;
-  static std::ostream * _default_ostr;
-  Summary* _this_warning_summary;
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static std::list< Summary > _global_warnings_summary;
-};
-FJCORE_END_NAMESPACE
-#endif // __FJCORE_LIMITEDWARNING_HH__
- #ifndef __FJCORE_ERROR_HH__
+#ifndef __FJCORE_ERROR_HH__
 #define __FJCORE_ERROR_HH__
 #include<iostream>
 #include<string>
-#if (!defined(FJCORE_HAVE_EXECINFO_H)) || defined(__FJCORE__)
-#endif
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-#include <atomic>
-#include <mutex>
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-class Error{
+class Error {
 public:
   Error() {}
   Error(const std::string & message);
   virtual ~Error() {}
   std::string message() const {return _message;}
-  std::string description() const {return message();}
   static void set_print_errors(bool print_errors) {_print_errors = print_errors;}
-  static void set_print_backtrace(bool enabled);
+  static void set_print_backtrace(bool enabled) {_print_backtrace = enabled;}
   static void set_default_stream(std::ostream * ostr) {
     _default_ostr = ostr;
   }
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static void set_default_stream_and_mutex(std::ostream * ostr, std::mutex * stream_mutex) {
-    _default_ostr = ostr;
-    _stream_mutex = stream_mutex;
-  }
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
 private:
   std::string _message;                ///< error message
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static std::atomic<bool> _print_errors;           ///< do we print anything?
-  static std::atomic<bool> _print_backtrace;        ///< do we print the backtrace?
-  static std::atomic<std::ostream *> _default_ostr; ///< the output stream (cerr if not set)
-  static std::atomic<std::mutex *> _stream_mutex; ///< the mutex for the output stream (nullptr if not set)
-#else
   static bool _print_errors;           ///< do we print anything?
   static bool _print_backtrace;        ///< do we print the backtrace?
   static std::ostream * _default_ostr; ///< the output stream (cerr if not set)
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
-#if (!defined(FJCORE_HAVE_EXECINFO_H)) || defined(__FJCORE__)
-  static LimitedWarning _execinfo_undefined;
-#endif
-};
-class InternalError : public Error{
-public:
-  InternalError(const std::string & message_in) : Error(std::string("*** CRITICAL INTERNAL FASTJET ERROR *** CONTACT THE AUTHORS *** ") + message_in){ }
 };
 FJCORE_END_NAMESPACE
 #endif // __FJCORE_ERROR_HH__
+#ifndef __FJCORE_LIMITEDWARNING_HH__
+#define __FJCORE_LIMITEDWARNING_HH__
+#include <iostream>
+#include <string>
+#include <list>
+FJCORE_BEGIN_NAMESPACE
+class LimitedWarning {
+public:
+  LimitedWarning() : _max_warn(_max_warn_default), _n_warn_so_far(0), _this_warning_summary(0) {}
+  LimitedWarning(int max_warn) : _max_warn(max_warn), _n_warn_so_far(0), _this_warning_summary(0) {}
+  void warn(const std::string & warning);
+  void warn(const std::string & warning, std::ostream * ostr);
+  static void set_default_stream(std::ostream * ostr) {
+    _default_ostr = ostr;
+  }
+  static void set_default_max_warn(int max_warn) {
+    _max_warn_default = max_warn;
+  }
+  static std::string summary();
+private:
+  int _max_warn, _n_warn_so_far;
+  static int _max_warn_default;
+  static std::ostream * _default_ostr;
+  typedef std::pair<std::string, unsigned int> Summary;
+  static std::list< Summary > _global_warnings_summary;
+  Summary * _this_warning_summary;
+};
+FJCORE_END_NAMESPACE
+#endif // __FJCORE_LIMITEDWARNING_HH__
 #ifndef __FJCORE_PSEUDOJET_STRUCTURE_BASE_HH__
 #define __FJCORE_PSEUDOJET_STRUCTURE_BASE_HH__
 #include <vector>
@@ -770,15 +462,9 @@ class PseudoJet {
  public:
   PseudoJet() : _px(0), _py(0), _pz(0), _E(0) {_finish_init(); _reset_indices();}
   PseudoJet(const double px, const double py, const double pz, const double E);
-  #ifndef SWIG
   template <class L> PseudoJet(const L & some_four_vector);
-  #endif
   PseudoJet(bool /* dummy */) {}
-#ifdef FJCORE_HAVE_THREAD_SAFETY
-  PseudoJet(const PseudoJet &other){ (*this)=other; }
-  PseudoJet& operator=(const PseudoJet& other);
-#endif
-  virtual ~PseudoJet(){}
+  virtual ~PseudoJet(){};
   inline double E()   const {return _E;}
   inline double e()   const {return _E;} // like CLHEP
   inline double px()  const {return _px;}
@@ -800,12 +486,12 @@ class PseudoJet {
   double pseudorapidity() const;
   double eta() const {return pseudorapidity();}
   inline double pt2() const {return _kt2;}
-  inline double  pt() const {return sqrt(_kt2);} 
+  inline double  pt() const {return sqrt(_kt2);}
   inline double perp2() const {return _kt2;}  // like CLHEP
   inline double  perp() const {return sqrt(_kt2);}    // like CLHEP
   inline double kt2() const {return _kt2;} // for bkwds compatibility
-  inline double  m2() const {return (_E+_pz)*(_E-_pz)-_kt2;}    
-  inline double  m() const;    
+  inline double  m2() const {return (_E+_pz)*(_E-_pz)-_kt2;}
+  inline double  m() const;
   inline double mperp2() const {return (_E+_pz)*(_E-_pz);}
   inline double mperp() const {return sqrt(std::abs(mperp2()));}
   inline double mt2() const {return (_E+_pz)*(_E-_pz);}
@@ -814,11 +500,7 @@ class PseudoJet {
   inline double modp() const {return sqrt(_kt2+_pz*_pz);}
   inline double Et() const {return (_kt2==0) ? 0.0 : _E/sqrt(1.0+_pz*_pz/_kt2);}
   inline double Et2() const {return (_kt2==0) ? 0.0 : _E*_E/(1.0+_pz*_pz/_kt2);}
-  inline double cos_theta() const {
-    return std::min(1.0, std::max(-1.0, _pz/sqrt(modp2())));
-  }
-  inline double theta() const { return acos(cos_theta()); }
-  double operator () (int i) const ; 
+  double operator () (int i) const ;
   inline double operator [] (int i) const { return (*this)(i); }; // this too
   double kt_distance(const PseudoJet & other) const;
   double plain_distance(const PseudoJet & other) const;
@@ -833,15 +515,14 @@ class PseudoJet {
   enum { X=0, Y=1, Z=2, T=3, NUM_COORDINATES=4, SIZE=NUM_COORDINATES };
   PseudoJet & boost(const PseudoJet & prest);
   PseudoJet & unboost(const PseudoJet & prest);
-  PseudoJet & operator*=(double);
-  PseudoJet & operator/=(double);
-  PseudoJet & operator+=(const PseudoJet &);
-  PseudoJet & operator-=(const PseudoJet &);
+  void operator*=(double);
+  void operator/=(double);
+  void operator+=(const PseudoJet &);
+  void operator-=(const PseudoJet &);
   inline void reset(double px, double py, double pz, double E);
   inline void reset(const PseudoJet & psjet) {
     (*this) = psjet;
   }
-#ifndef SWIG
   template <class L> inline void reset(const L & some_four_vector) {
     const PseudoJet * pj = fjcore::cast_if_derived<const PseudoJet>(&some_four_vector);
     if (pj){
@@ -851,7 +532,6 @@ class PseudoJet {
 	    some_four_vector[2], some_four_vector[3]);
     }
   }
-#endif // SWIG
   inline void reset_PtYPhiM(double pt_in, double y_in, double phi_in, double m_in=0.0) {
     reset_momentum_PtYPhiM(pt_in, y_in, phi_in, m_in);
     _reset_indices();
@@ -869,7 +549,7 @@ class PseudoJet {
   class UserInfoBase{
   public:
     UserInfoBase(){};
-    virtual ~UserInfoBase(){}; 
+    virtual ~UserInfoBase(){};
   };
   class InexistentUserInfo : public Error {
   public:
@@ -891,6 +571,7 @@ class PseudoJet {
     return _user_info.get() && dynamic_cast<const L *>(_user_info.get());
   }
   const UserInfoBase * user_info_ptr() const{
+    if (!_user_info()) return NULL;
     return _user_info.get();
   }
   const SharedPtr<UserInfoBase> & user_info_shared_ptr() const{
@@ -910,7 +591,7 @@ class PseudoJet {
     return validated_cs();
   }
   const ClusterSequence * validated_cs() const;
-  void set_structure_shared_ptr(const SharedPtr<PseudoJetStructureBase> &structure_in);
+  void set_structure_shared_ptr(const SharedPtr<PseudoJetStructureBase> &structure);
   bool has_structure() const;
   const PseudoJetStructureBase* structure_ptr() const;
   PseudoJetStructureBase* structure_non_const_ptr();
@@ -930,8 +611,8 @@ class PseudoJet {
   virtual bool has_constituents() const;
   virtual std::vector<PseudoJet> constituents() const;
   virtual bool has_exclusive_subjets() const;
-  std::vector<PseudoJet> exclusive_subjets (const double dcut) const;
-  int n_exclusive_subjets(const double dcut) const;
+  std::vector<PseudoJet> exclusive_subjets (const double & dcut) const;
+  int n_exclusive_subjets(const double & dcut) const;
   std::vector<PseudoJet> exclusive_subjets (int nsub) const;
   std::vector<PseudoJet> exclusive_subjets_up_to (int nsub) const;
   double exclusive_subdmerge(int nsub) const;
@@ -944,33 +625,20 @@ class PseudoJet {
     return cluster_hist_index();}
   inline void set_cluster_sequence_history_index(const int index) {
     set_cluster_hist_index(index);}
- protected:  
+ protected:
   SharedPtr<PseudoJetStructureBase> _structure;
   SharedPtr<UserInfoBase> _user_info;
- private: 
+ private:
   double _px,_py,_pz,_E;
   mutable double _phi, _rap;
-  double _kt2; 
+  double _kt2;
   int    _cluster_hist_index, _user_index;
-#ifdef FJCORE_HAVE_THREAD_SAFETY
-  enum {
-    Init_Done=1,
-    Init_NotDone=0,
-    Init_InProgress=-1
-  };
-  mutable std::atomic<int> _init_status;
-#endif
   void _finish_init();
   void _reset_indices();
-#ifdef FJCORE_HAVE_THREAD_SAFETY
-  void _ensure_valid_rap_phi() const;
-#else
-  inline void _ensure_valid_rap_phi() const{
+  inline void _ensure_valid_rap_phi() const {
     if (_phi == pseudojet_invalid_phi) _set_rap_phi();
   }
-#endif
   void _set_rap_phi() const;
-  friend PseudoJet operator*(double, const PseudoJet &);
 };
 PseudoJet operator+(const PseudoJet &, const PseudoJet &);
 PseudoJet operator-(const PseudoJet &, const PseudoJet &);
@@ -980,18 +648,9 @@ PseudoJet operator/(const PseudoJet &, double);
 bool operator==(const PseudoJet &, const PseudoJet &);
 inline bool operator!=(const PseudoJet & a, const PseudoJet & b) {return !(a==b);}
 bool operator==(const PseudoJet & jet, const double val);
-inline bool operator==(const double val, const PseudoJet & jet) {return jet == val;}
-inline bool operator!=(const PseudoJet & a, const double val)  {return !(a==val);}
-inline bool operator!=( const double val, const PseudoJet & a) {return !(a==val);}
+inline bool operator!=(const PseudoJet & a, const double & val) {return !(a==val);}
 inline double dot_product(const PseudoJet & a, const PseudoJet & b) {
   return a.E()*b.E() - a.px()*b.px() - a.py()*b.py() - a.pz()*b.pz();
-}
-inline double cos_theta(const PseudoJet & a, const PseudoJet & b) {
-  double dot_3d = a.px()*b.px() + a.py()*b.py() + a.pz()*b.pz();
-  return std::min(1.0, std::max(-1.0, dot_3d/sqrt(a.modp2()*b.modp2())));
-}
-inline double theta(const PseudoJet & a, const PseudoJet & b) {
-  return acos(cos_theta(a,b));
 }
 bool have_same_momentum(const PseudoJet &, const PseudoJet &);
 PseudoJet PtYPhiM(double pt, double y, double phi, double m = 0.0);
@@ -999,39 +658,25 @@ std::vector<PseudoJet> sorted_by_pt(const std::vector<PseudoJet> & jets);
 std::vector<PseudoJet> sorted_by_rapidity(const std::vector<PseudoJet> & jets);
 std::vector<PseudoJet> sorted_by_E(const std::vector<PseudoJet> & jets);
 std::vector<PseudoJet> sorted_by_pz(const std::vector<PseudoJet> & jets);
-void sort_indices(std::vector<int> & indices, 
+void sort_indices(std::vector<int> & indices,
 		  const std::vector<double> & values);
-template<class T> std::vector<T> objects_sorted_by_values(const std::vector<T> & objects, 
-					      const std::vector<double> & values) {
-  if (objects.size() != values.size()){
-    throw Error("fjcore::objects_sorted_by_values(...): the size of the 'objects' vector must match the size of the 'values' vector");
-  }
-  std::vector<int> indices(values.size());
-  for (size_t i = 0; i < indices.size(); i++) {indices[i] = i;}
-  sort_indices(indices, values);
-  std::vector<T> objects_sorted(objects.size());
-  for (size_t i = 0; i < indices.size(); i++) {
-    objects_sorted[i] = objects[indices[i]];
-  }
-  return objects_sorted;
-}
+template<class T> std::vector<T> objects_sorted_by_values(const std::vector<T> & objects,
+					      const std::vector<double> & values);
 class IndexedSortHelper {
 public:
   inline IndexedSortHelper (const std::vector<double> * reference_values) {
     _ref_values = reference_values;
   };
-  inline int operator() (const int i1, const int i2) const {
+  inline int operator() (const int & i1, const int & i2) const {
     return  (*_ref_values)[i1] < (*_ref_values)[i2];
   };
 private:
   const std::vector<double> * _ref_values;
 };
-#ifndef SWIG
 template <class L> inline  PseudoJet::PseudoJet(const L & some_four_vector) {
   reset(some_four_vector);
 }
-#endif
-inline void PseudoJet::_reset_indices() { 
+inline void PseudoJet::_reset_indices() {
   set_cluster_hist_index(-1);
   set_user_index(-1);
   _structure.reset();
@@ -1071,12 +716,12 @@ const StructureType & PseudoJet::structure() const{
 }
 template<typename TransformerType>
 bool PseudoJet::has_structure_of() const{
-  if (!_structure) return false;
+  if (!_structure()) return false;
   return dynamic_cast<const typename TransformerType::StructureType *>(_structure.get()) != 0;
 }
 template<typename TransformerType>
 const typename TransformerType::StructureType & PseudoJet::structure_of() const{
-  if (!_structure) 
+  if (!_structure())
     throw Error("Trying to access the structure of a PseudoJet without an associated structure");
   return dynamic_cast<const typename TransformerType::StructureType &>(*_structure);
 }
@@ -1094,6 +739,7 @@ template<typename TOut>
 class FunctionOfPseudoJet{
 public:
   FunctionOfPseudoJet(){}
+  FunctionOfPseudoJet(const TOut &constant_value);
   virtual ~FunctionOfPseudoJet(){}
   virtual std::string description() const{ return "";}
   virtual TOut result(const PseudoJet &pj) const = 0;
@@ -1128,12 +774,12 @@ public:
   virtual void set_reference(const PseudoJet & /*reference*/){
     throw Error("set_reference(...) cannot be used for a selector worker that does not take a reference");
   }
-  virtual SelectorWorker* copy(){ 
+  virtual SelectorWorker* copy(){
     throw Error("this SelectorWorker has nothing to copy");
   }
   virtual void get_rapidity_extent(double & rapmin, double & rapmax) const {
     rapmax = std::numeric_limits<double>::infinity();
-    rapmin = -rapmax; 
+    rapmin = -rapmax;
   }
   virtual bool is_geometric() const { return false;}
   virtual bool has_finite_area() const;
@@ -1157,8 +803,6 @@ public:
     return pass(jet);
   }
   unsigned int count(const std::vector<PseudoJet> & jets) const;
-  PseudoJet sum(const std::vector<PseudoJet> & jets) const;
-  double scalar_pt_sum(const std::vector<PseudoJet> & jets) const;
   void sift(const std::vector<PseudoJet> & jets,
 		  std::vector<PseudoJet> & jets_that_pass,
 		  std::vector<PseudoJet> & jets_that_fail) const;
@@ -1247,11 +891,11 @@ Selector SelectorAbsEtaMax(double absetamax);                     ///< select ob
 Selector SelectorAbsEtaRange(double absetamin, double absetamax); ///< select objects with absetamin <= |eta| <= absetamax
 Selector SelectorPhiRange(double phimin, double phimax); ///< select objects with phimin <= phi <= phimax
 Selector SelectorRapPhiRange(double rapmin, double rapmax, double phimin, double phimax);
-Selector SelectorNHardest(unsigned int n); 
-Selector SelectorCircle(const double radius); 
-Selector SelectorDoughnut(const double radius_in, const double radius_out); 
-Selector SelectorStrip(const double half_width);
-Selector SelectorRectangle(const double half_rap_width, const double half_phi_width);
+Selector SelectorNHardest(unsigned int n);
+Selector SelectorCircle(const double & radius);
+Selector SelectorDoughnut(const double & radius_in, const double & radius_out);
+Selector SelectorStrip(const double & half_width);
+Selector SelectorRectangle(const double & half_rap_width, const double & half_phi_width);
 Selector SelectorPtFractionMin(double fraction);
 Selector SelectorIsZero();
 FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
@@ -1264,32 +908,27 @@ FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 std::string fastjet_version_string();
 enum Strategy {
-  N2MHTLazy9AntiKtSeparateGhosts   = -10, 
-  N2MHTLazy9   = -7, 
-  N2MHTLazy25   = -6, 
-  N2MHTLazy9Alt   = -5, 
-  N2MinHeapTiled   = -4, 
-  N2Tiled     = -3, 
-  N2PoorTiled = -2, 
-  N2Plain     = -1, 
-  N3Dumb      =  0, 
-  Best        =  1, 
-  NlnN        =  2, 
-  NlnN3pi     =  3, 
+  N2MinHeapTiled   = -4,
+  N2Tiled     = -3,
+  N2PoorTiled = -2,
+  N2Plain     = -1,
+  N3Dumb      =  0,
+  Best        =  1,
+  NlnN        =  2,
+  NlnN3pi     =  3,
   NlnN4pi     =  4,
   NlnNCam4pi   = 14,
   NlnNCam2pi2R = 13,
   NlnNCam      = 12, // 2piMultD
-  BestFJ30     =  21, 
   plugin_strategy = 999
 };
 enum JetAlgorithm {
   kt_algorithm=0,
   cambridge_algorithm=1,
-  antikt_algorithm=2, 
-  genkt_algorithm=3, 
+  antikt_algorithm=2,
+  genkt_algorithm=3,
   cambridge_for_passive_algorithm=11,
-  genkt_for_passive_algorithm=13, 
+  genkt_for_passive_algorithm=13,
   ee_kt_algorithm=50,
   ee_genkt_algorithm=53,
   plugin_algorithm = 99,
@@ -1306,8 +945,6 @@ enum RecombinationScheme {
   Et2_scheme=4,
   BIpt_scheme=5,
   BIpt2_scheme=6,
-  WTA_pt_scheme=7,
-  WTA_modp_scheme=8,
   external_scheme = 99
 };
 class ClusterSequence;
@@ -1315,46 +952,47 @@ class JetDefinition {
 public:
   class Plugin;
   class Recombiner;
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
+                double R_in,
                 RecombinationScheme recomb_scheme_in = E_scheme,
                 Strategy strategy_in = Best) {
-    *this = JetDefinition(jet_algorithm_in, R_in, recomb_scheme_in, strategy_in, 1);
+    *this = JetDefinition(jet_algorithm_in, R_in, strategy_in, recomb_scheme_in, 1);
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
                 RecombinationScheme recomb_scheme_in = E_scheme,
                 Strategy strategy_in = Best) {
     double dummyR = 0.0;
-    *this = JetDefinition(jet_algorithm_in, dummyR, recomb_scheme_in, strategy_in, 0);
+    *this = JetDefinition(jet_algorithm_in, dummyR, strategy_in, recomb_scheme_in, 0);
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
+                double R_in,
                 double xtra_param_in,
                 RecombinationScheme recomb_scheme_in = E_scheme,
                 Strategy strategy_in = Best) {
-    *this = JetDefinition(jet_algorithm_in, R_in, recomb_scheme_in, strategy_in, 2);
+    *this = JetDefinition(jet_algorithm_in, R_in, strategy_in, recomb_scheme_in, 2);
     set_extra_param(xtra_param_in);
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
+                double R_in,
                 const Recombiner * recombiner_in,
                 Strategy strategy_in = Best) {
     *this = JetDefinition(jet_algorithm_in, R_in, external_scheme, strategy_in);
     _recombiner = recombiner_in;
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
                 const Recombiner * recombiner_in,
                 Strategy strategy_in = Best) {
     *this = JetDefinition(jet_algorithm_in, external_scheme, strategy_in);
     _recombiner = recombiner_in;
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
+                double R_in,
                 double xtra_param_in,
                 const Recombiner * recombiner_in,
                 Strategy strategy_in = Best) {
-    *this = JetDefinition(jet_algorithm_in, R_in, xtra_param_in, external_scheme, strategy_in);
+    *this = JetDefinition(jet_algorithm_in, R_in, external_scheme, strategy_in);
     _recombiner = recombiner_in;
+    set_extra_param(xtra_param_in);
   }
   JetDefinition()  {
     *this = JetDefinition(undefined_jet_algorithm, 1.0);
@@ -1363,33 +1001,21 @@ public:
     _plugin = plugin_in;
     _strategy = plugin_strategy;
     _Rparam = _plugin->R();
-    _extra_param = 0.0; // a dummy value to keep static code checkers happy
     _jet_algorithm = plugin_algorithm;
     set_recombination_scheme(E_scheme);
   }
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
-                RecombinationScheme recomb_scheme_in,
-                Strategy strategy_in,
-                int nparameters_in);
-  FJCORE_DEPRECATED_MSG("This argument ordering is deprecated. Use JetDefinition(alg, R, strategy, scheme[, n_parameters]) instead",
-  JetDefinition(JetAlgorithm jet_algorithm_in, 
-                double R_in, 
+  JetDefinition(JetAlgorithm jet_algorithm_in,
+                double R_in,
                 Strategy strategy_in,
                 RecombinationScheme recomb_scheme_in = E_scheme,
-                int nparameters_in = 1)){
-    (*this) = JetDefinition(jet_algorithm_in,R_in,recomb_scheme_in,strategy_in,nparameters_in);
-  }
-  template <class L> 
-  std::vector<PseudoJet> operator()(const std::vector<L> & particles) const;
+                int nparameters_in = 1);
   static const double max_allowable_R; //= 1000.0;
   void set_recombination_scheme(RecombinationScheme);
   void set_recombiner(const Recombiner * recomb) {
-    if (_shared_recombiner) _shared_recombiner.reset(recomb);
+    if (_recombiner_shared()) _recombiner_shared.reset(recomb);
     _recombiner = recomb;
     _default_recombiner = DefaultRecombiner(external_scheme);
   }
-  void set_recombiner(const JetDefinition &other_jet_def);
   void delete_recombiner_when_unused();
   const Plugin * plugin() const {return _plugin;};
   void delete_plugin_when_unused();
@@ -1406,33 +1032,29 @@ public:
   const Recombiner * recombiner() const {
     return _recombiner == 0 ? & _default_recombiner : _recombiner;}
   bool has_same_recombiner(const JetDefinition &other_jd) const;
-  bool is_spherical() const;
   std::string description() const;
-  std::string description_no_recombiner() const;
-  static std::string algorithm_description(const JetAlgorithm jet_alg);
-  static unsigned int n_parameters_for_algorithm(const JetAlgorithm jet_alg);
 public:
   class Recombiner {
   public:
     virtual std::string description() const = 0;
-    virtual void recombine(const PseudoJet & pa, const PseudoJet & pb, 
+    virtual void recombine(const PseudoJet & pa, const PseudoJet & pb,
                            PseudoJet & pab) const = 0;
     virtual void preprocess(PseudoJet & ) const {};
     virtual ~Recombiner() {};
     inline void plus_equal(PseudoJet & pa, const PseudoJet & pb) const {
-      PseudoJet pres; 
+      PseudoJet pres;
       recombine(pa,pb,pres);
       pa = pres;
     }
   };
   class DefaultRecombiner : public Recombiner {
   public:
-    DefaultRecombiner(RecombinationScheme recomb_scheme = E_scheme) : 
+    DefaultRecombiner(RecombinationScheme recomb_scheme = E_scheme) :
       _recomb_scheme(recomb_scheme) {}
-    virtual std::string description() const FJCORE_OVERRIDE;
-    virtual void recombine(const PseudoJet & pa, const PseudoJet & pb, 
-                           PseudoJet & pab) const FJCORE_OVERRIDE;
-    virtual void preprocess(PseudoJet & p) const FJCORE_OVERRIDE;
+    virtual std::string description() const;
+    virtual void recombine(const PseudoJet & pa, const PseudoJet & pb,
+                           PseudoJet & pab) const;
+    virtual void preprocess(PseudoJet & p) const;
     RecombinationScheme scheme() const {return _recomb_scheme;}
   private:
     RecombinationScheme _recomb_scheme;
@@ -1446,7 +1068,6 @@ public:
     virtual void set_ghost_separation_scale(double scale) const;
     virtual double ghost_separation_scale() const {return 0.0;}
     virtual bool exclusive_sequence_meaningful() const {return false;}
-    virtual bool is_spherical() const {return false;}
     virtual ~Plugin() {};
   };
 private:
@@ -1458,16 +1079,16 @@ private:
   SharedPtr<const Plugin> _plugin_shared;
   DefaultRecombiner _default_recombiner;
   const Recombiner * _recombiner;
-  SharedPtr<const Recombiner> _shared_recombiner;
+  SharedPtr<const Recombiner> _recombiner_shared;
 };
 PseudoJet join(const std::vector<PseudoJet> & pieces, const JetDefinition::Recombiner & recombiner);
-PseudoJet join(const PseudoJet & j1, 
+PseudoJet join(const PseudoJet & j1,
 	       const JetDefinition::Recombiner & recombiner);
-PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
+PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
 	       const JetDefinition::Recombiner & recombiner);
-PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, const PseudoJet & j3, 
+PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, const PseudoJet & j3,
 	       const JetDefinition::Recombiner & recombiner);
-PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, const PseudoJet & j3, const PseudoJet & j4, 
+PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, const PseudoJet & j3, const PseudoJet & j4,
 	       const JetDefinition::Recombiner & recombiner);
 FJCORE_END_NAMESPACE
 #endif // __FJCORE_JETDEFINITION_HH__
@@ -1477,16 +1098,16 @@ FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 class CompositeJetStructure : public PseudoJetStructureBase{
 public:
   CompositeJetStructure() : _area_4vector_ptr(0){};
-  CompositeJetStructure(const std::vector<PseudoJet> & initial_pieces, 
+  CompositeJetStructure(const std::vector<PseudoJet> & initial_pieces,
 			const JetDefinition::Recombiner * recombiner = 0);
   virtual ~CompositeJetStructure(){
     if (_area_4vector_ptr) delete _area_4vector_ptr;
   };
-  virtual std::string description() const FJCORE_OVERRIDE;
-  virtual bool has_constituents() const FJCORE_OVERRIDE;
-  virtual std::vector<PseudoJet> constituents(const PseudoJet &jet) const FJCORE_OVERRIDE;
-  virtual bool has_pieces(const PseudoJet & /*jet*/) const FJCORE_OVERRIDE {return true;}
-  virtual std::vector<PseudoJet> pieces(const PseudoJet &jet) const FJCORE_OVERRIDE;
+  virtual std::string description() const;
+  virtual bool has_constituents() const;
+  virtual std::vector<PseudoJet> constituents(const PseudoJet &jet) const;
+  virtual bool has_pieces(const PseudoJet & /*jet*/) const {return true;}
+  virtual std::vector<PseudoJet> pieces(const PseudoJet &jet) const;
 protected:
   std::vector<PseudoJet> _pieces;  ///< the pieces building the jet
   PseudoJet * _area_4vector_ptr;   ///< pointer to the 4-vector jet area
@@ -1510,7 +1131,7 @@ template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2){
   pieces.push_back(j2);
   return join<T>(pieces);
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
+template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
 				    const PseudoJet & j3){
   std::vector<PseudoJet> pieces;
   pieces.push_back(j1);
@@ -1518,7 +1139,7 @@ template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
   pieces.push_back(j3);
   return join<T>(pieces);
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
+template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
 				    const PseudoJet & j3, const PseudoJet & j4){
   std::vector<PseudoJet> pieces;
   pieces.push_back(j1);
@@ -1527,7 +1148,7 @@ template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
   pieces.push_back(j4);
   return join<T>(pieces);
 }
-template<typename T> PseudoJet join(const std::vector<PseudoJet> & pieces, 
+template<typename T> PseudoJet join(const std::vector<PseudoJet> & pieces,
 				    const JetDefinition::Recombiner & recombiner){
   PseudoJet result;
   if (pieces.size()>0){
@@ -1540,33 +1161,30 @@ template<typename T> PseudoJet join(const std::vector<PseudoJet> & pieces,
   result.set_structure_shared_ptr(SharedPtr<PseudoJetStructureBase>(cj_struct));
   return result;
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, 
+template<typename T> PseudoJet join(const PseudoJet & j1,
 				    const JetDefinition::Recombiner & recombiner){
   return join<T>(std::vector<PseudoJet>(1,j1), recombiner);
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
+template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
 				    const JetDefinition::Recombiner & recombiner){
   std::vector<PseudoJet> pieces;
-  pieces.reserve(2);
   pieces.push_back(j1);
   pieces.push_back(j2);
   return join<T>(pieces, recombiner);
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
-				    const PseudoJet & j3, 
+template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
+				    const PseudoJet & j3,
 				    const JetDefinition::Recombiner & recombiner){
   std::vector<PseudoJet> pieces;
-  pieces.reserve(3);
   pieces.push_back(j1);
   pieces.push_back(j2);
   pieces.push_back(j3);
   return join<T>(pieces, recombiner);
 }
-template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2, 
-				    const PseudoJet & j3, const PseudoJet & j4, 
+template<typename T> PseudoJet join(const PseudoJet & j1, const PseudoJet & j2,
+				    const PseudoJet & j3, const PseudoJet & j4,
 				    const JetDefinition::Recombiner & recombiner){
   std::vector<PseudoJet> pieces;
-  pieces.reserve(4);
   pieces.push_back(j1);
   pieces.push_back(j2);
   pieces.push_back(j3);
@@ -1586,30 +1204,28 @@ public:
     set_associated_cs(cs);
   };
   virtual ~ClusterSequenceStructure();
-  virtual std::string description() const FJCORE_OVERRIDE{
-    return "PseudoJet with an associated ClusterSequence";
-  }
-  virtual bool has_associated_cluster_sequence() const FJCORE_OVERRIDE{ return true;}
-  virtual const ClusterSequence* associated_cluster_sequence() const FJCORE_OVERRIDE;
-  virtual bool has_valid_cluster_sequence() const FJCORE_OVERRIDE;
-  virtual const ClusterSequence * validated_cs() const FJCORE_OVERRIDE;
+  virtual std::string description() const{ return "PseudoJet with an associated ClusterSequence"; }
+  virtual bool has_associated_cluster_sequence() const{ return true;}
+  virtual const ClusterSequence* associated_cluster_sequence() const;
+  virtual bool has_valid_cluster_sequence() const;
+  virtual const ClusterSequence * validated_cs() const;
   virtual void set_associated_cs(const ClusterSequence * new_cs){
     _associated_cs = new_cs;
   }
-  virtual bool has_partner(const PseudoJet &reference, PseudoJet &partner) const FJCORE_OVERRIDE;
-  virtual bool has_child(const PseudoJet &reference, PseudoJet &child) const FJCORE_OVERRIDE;
-  virtual bool has_parents(const PseudoJet &reference, PseudoJet &parent1, PseudoJet &parent2) const FJCORE_OVERRIDE;
-  virtual bool object_in_jet(const PseudoJet &reference, const PseudoJet &jet) const FJCORE_OVERRIDE;
-  virtual bool has_constituents() const FJCORE_OVERRIDE;
-  virtual std::vector<PseudoJet> constituents(const PseudoJet &reference) const FJCORE_OVERRIDE;
-  virtual bool has_exclusive_subjets() const FJCORE_OVERRIDE;
-  virtual std::vector<PseudoJet> exclusive_subjets(const PseudoJet &reference, const double & dcut) const FJCORE_OVERRIDE;
-  virtual int n_exclusive_subjets(const PseudoJet &reference, const double & dcut) const FJCORE_OVERRIDE;
-  virtual std::vector<PseudoJet> exclusive_subjets_up_to (const PseudoJet &reference, int nsub) const FJCORE_OVERRIDE;
-  virtual double exclusive_subdmerge(const PseudoJet &reference, int nsub) const FJCORE_OVERRIDE;
-  virtual double exclusive_subdmerge_max(const PseudoJet &reference, int nsub) const FJCORE_OVERRIDE;
-  virtual bool has_pieces(const PseudoJet &reference) const FJCORE_OVERRIDE;
-  virtual std::vector<PseudoJet> pieces(const PseudoJet &reference) const FJCORE_OVERRIDE;
+  virtual bool has_partner(const PseudoJet &reference, PseudoJet &partner) const;
+  virtual bool has_child(const PseudoJet &reference, PseudoJet &child) const;
+  virtual bool has_parents(const PseudoJet &reference, PseudoJet &parent1, PseudoJet &parent2) const;
+  virtual bool object_in_jet(const PseudoJet &reference, const PseudoJet &jet) const;
+  virtual bool has_constituents() const;
+  virtual std::vector<PseudoJet> constituents(const PseudoJet &reference) const;
+  virtual bool has_exclusive_subjets() const;
+  virtual std::vector<PseudoJet> exclusive_subjets(const PseudoJet &reference, const double & dcut) const;
+  virtual int n_exclusive_subjets(const PseudoJet &reference, const double & dcut) const;
+  virtual std::vector<PseudoJet> exclusive_subjets_up_to (const PseudoJet &reference, int nsub) const;
+  virtual double exclusive_subdmerge(const PseudoJet &reference, int nsub) const;
+  virtual double exclusive_subdmerge_max(const PseudoJet &reference, int nsub) const;
+  virtual bool has_pieces(const PseudoJet &reference) const;
+  virtual std::vector<PseudoJet> pieces(const PseudoJet &reference) const;
 protected:
   const ClusterSequence *_associated_cs;
 };
@@ -1629,7 +1245,7 @@ FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 class ClusterSequenceStructure;
 class DynamicNearestNeighbours;
 class ClusterSequence {
- public: 
+ public:
   ClusterSequence () : _deletes_self_when_unused(false) {}
   template<class L> ClusterSequence (
 			          const std::vector<L> & pseudojets,
@@ -1638,15 +1254,14 @@ class ClusterSequence {
   ClusterSequence (const ClusterSequence & cs) : _deletes_self_when_unused(false) {
     transfer_from_sequence(cs);
   }
-  ClusterSequence & operator=(const ClusterSequence & cs);
   virtual ~ClusterSequence (); //{}
-  std::vector<PseudoJet> inclusive_jets (const double ptmin = 0.0) const;
-  int n_exclusive_jets (const double dcut) const;
-  std::vector<PseudoJet> exclusive_jets (const double dcut) const;
-  std::vector<PseudoJet> exclusive_jets (const int njets) const;
-  std::vector<PseudoJet> exclusive_jets_up_to (const int njets) const;
-  double exclusive_dmerge (const int njets) const;
-  double exclusive_dmerge_max (const int njets) const;
+  std::vector<PseudoJet> inclusive_jets (const double & ptmin = 0.0) const;
+  int n_exclusive_jets (const double & dcut) const;
+  std::vector<PseudoJet> exclusive_jets (const double & dcut) const;
+  std::vector<PseudoJet> exclusive_jets (const int & njets) const;
+  std::vector<PseudoJet> exclusive_jets_up_to (const int & njets) const;
+  double exclusive_dmerge (const int & njets) const;
+  double exclusive_dmerge_max (const int & njets) const;
   double exclusive_ymerge (int njets) const {return exclusive_dmerge(njets) / Q2();}
   double exclusive_ymerge_max (int njets) const {return exclusive_dmerge_max(njets)/Q2();}
   int n_exclusive_jets_ycut (double ycut) const {return n_exclusive_jets(ycut*Q2());}
@@ -1654,31 +1269,31 @@ class ClusterSequence {
     int njets = n_exclusive_jets_ycut(ycut);
     return exclusive_jets(njets);
   }
-  std::vector<PseudoJet> exclusive_subjets (const PseudoJet & jet, 
-                                            const double dcut) const;
-  int n_exclusive_subjets(const PseudoJet & jet, 
-                          const double dcut) const;
-  std::vector<PseudoJet> exclusive_subjets (const PseudoJet & jet, 
+  std::vector<PseudoJet> exclusive_subjets (const PseudoJet & jet,
+                                            const double & dcut) const;
+  int n_exclusive_subjets(const PseudoJet & jet,
+                          const double & dcut) const;
+  std::vector<PseudoJet> exclusive_subjets (const PseudoJet & jet,
                                             int nsub) const;
-  std::vector<PseudoJet> exclusive_subjets_up_to (const PseudoJet & jet, 
+  std::vector<PseudoJet> exclusive_subjets_up_to (const PseudoJet & jet,
 						  int nsub) const;
   double exclusive_subdmerge(const PseudoJet & jet, int nsub) const;
   double exclusive_subdmerge_max(const PseudoJet & jet, int nsub) const;
   double Q() const {return _Qtot;}
   double Q2() const {return _Qtot*_Qtot;}
   bool object_in_jet(const PseudoJet & object, const PseudoJet & jet) const;
-  bool has_parents(const PseudoJet & jet, PseudoJet & parent1, 
+  bool has_parents(const PseudoJet & jet, PseudoJet & parent1,
                PseudoJet & parent2) const;
   bool has_child(const PseudoJet & jet, PseudoJet & child) const;
   bool has_child(const PseudoJet & jet, const PseudoJet * & childp) const;
   bool has_partner(const PseudoJet & jet, PseudoJet & partner) const;
   std::vector<PseudoJet> constituents (const PseudoJet & jet) const;
-  void print_jets_for_root(const std::vector<PseudoJet> & jets, 
+  void print_jets_for_root(const std::vector<PseudoJet> & jets,
                            std::ostream & ostr = std::cout) const;
-  void print_jets_for_root(const std::vector<PseudoJet> & jets, 
+  void print_jets_for_root(const std::vector<PseudoJet> & jets,
                            const std::string & filename,
 			   const std::string & comment = "") const;
-  void add_constituents (const PseudoJet & jet, 
+  void add_constituents (const PseudoJet & jet,
 			 std::vector<PseudoJet> & subjet_vector) const;
   inline Strategy strategy_used () const {return _strategy;}
   std::string strategy_string () const {return strategy_string(_strategy);}
@@ -1688,13 +1303,13 @@ class ClusterSequence {
   bool will_delete_self_when_unused() const {return _deletes_self_when_unused;}
   void signal_imminent_self_deletion() const;
   double jet_scale_for_algorithm(const PseudoJet & jet) const;
-  void plugin_record_ij_recombination(int jet_i, int jet_j, double dij, 
+  void plugin_record_ij_recombination(int jet_i, int jet_j, double dij,
 				      int & newjet_k) {
     assert(plugin_activated());
     _do_ij_recombination_step(jet_i, jet_j, dij, newjet_k);
   }
-  void plugin_record_ij_recombination(int jet_i, int jet_j, double dij, 
-				      const PseudoJet & newjet, 
+  void plugin_record_ij_recombination(int jet_i, int jet_j, double dij,
+				      const PseudoJet & newjet,
 				      int & newjet_k);
   void plugin_record_iB_recombination(int jet_i, double diB) {
     assert(plugin_activated());
@@ -1705,17 +1320,9 @@ class ClusterSequence {
     virtual ~Extras() {}
     virtual std::string description() const {return "This is a dummy extras class that contains no extra information! Derive from it if you want to use it to provide extra information from a plugin jet finder";}
   };
-  inline void plugin_associate_extras(Extras * extras_in) {
-    _extras.reset(extras_in);
-  }
-#ifndef SWIG
-#ifdef FJCORE_HAVE_AUTO_PTR_INTERFACE
-  FJCORE_DEPRECATED_MSG("Please use ClusterSequence::plugin_associate_extras(Extras * extras_in)) instead",
-  inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in)){
+  inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in) {
     _extras.reset(extras_in.release());
   }
-#endif
-#endif //SWIG
   inline bool plugin_activated() const {return _plugin_activated;}
   const Extras * extras() const {return _extras.get();}
   template<class GBJ> void plugin_simple_N2_cluster () {
@@ -1755,11 +1362,7 @@ public:
   static void set_fastjet_banner_stream(std::ostream * ostr) {_fastjet_banner_ostr = ostr;}
   static std::ostream * fastjet_banner_stream() {return _fastjet_banner_ostr;}
 private:
-#ifdef FJCORE_HAVE_LIMITED_THREAD_SAFETY
-  static std::atomic<std::ostream*> _fastjet_banner_ostr;
-#else
   static std::ostream * _fastjet_banner_ostr;
-#endif // FJCORE_HAVE_LIMITED_THREAD_SAFETY
 protected:
   JetDefinition _jet_def;
   template<class L> void _transfer_input_jets(
@@ -1771,26 +1374,11 @@ protected:
                        const bool & writeout_combinations);
   void _decant_options_partial();
   void _fill_initial_history();
-  void _do_ij_recombination_step(const int jet_i, const int jet_j, 
-				 const double dij, int & newjet_k);
-  void _do_iB_recombination_step(const int jet_i, const double diB);
+  void _do_ij_recombination_step(const int & jet_i, const int & jet_j,
+				 const double & dij, int & newjet_k);
+  void _do_iB_recombination_step(const int & jet_i, const double & diB);
   void _set_structure_shared_ptr(PseudoJet & j);
   void _update_structure_use_count();
-  Strategy _best_strategy() const;
-  class _Parabola {
-  public:
-    _Parabola(double a, double b, double c) : _a(a), _b(b), _c(c) {}
-    inline double operator()(const double R) const {return _c*(_a*R*R + _b*R + 1);}
-  private:
-    double _a, _b, _c;
-  };
-  class _Line {
-  public:
-    _Line(double a, double b) : _a(a), _b(b) {}
-    inline double operator()(const double R) const {return _a*R + _b;}
-  private:
-    double _a, _b;
-  };
   std::vector<PseudoJet> _jets;
   std::vector<history_element> _history;
   void get_subhist_set(std::set<const history_element*> & subhist,
@@ -1803,11 +1391,7 @@ protected:
   JetAlgorithm  _jet_algorithm;
   SharedPtr<PseudoJetStructureBase> _structure_shared_ptr; //< will actually be of type ClusterSequenceStructure
   int _structure_use_count_after_construction; //< info of use when CS handles its own memory
-#ifdef FJCORE_HAVE_THREAD_SAFETY
-  mutable std::atomic<bool> _deletes_self_when_unused;
-#else
   mutable bool _deletes_self_when_unused;
-#endif
  private:
   bool _plugin_activated;
   SharedPtr<Extras> _extras; // things the plugin might want to add
@@ -1823,22 +1407,21 @@ protected:
   void _CP2DChan_limited_cluster(double D);
   void _do_Cambridge_inclusive_jets();
   void _fast_NsqrtN_cluster();
-  void _add_step_to_history( //const int step_number,
-                            const int parent1, 
-			    const int parent2, const int jetp_index,
-			    const double dij);
-  void _extract_tree_children(int pos, std::valarray<bool> &, 
+  void _add_step_to_history(const int & step_number, const int & parent1,
+			       const int & parent2, const int & jetp_index,
+			       const double & dij);
+  void _extract_tree_children(int pos, std::valarray<bool> &,
 		const std::valarray<int> &, std::vector<int> &) const;
-  void _extract_tree_parents (int pos, std::valarray<bool> &, 
+  void _extract_tree_parents (int pos, std::valarray<bool> &,
                 const std::valarray<int> &,  std::vector<int> &) const;
   typedef std::pair<int,int> TwoVertices;
   typedef std::pair<double,TwoVertices> DijEntry;
   typedef std::multimap<double,TwoVertices> DistMap;
-  void _add_ktdistance_to_map(const int ii, 
+  void _add_ktdistance_to_map(const int & ii,
 			      DistMap & DijMap,
   			      const DynamicNearestNeighbours * DNN);
-  static thread_safety_helpers::FirstTimeTrue _first_time;
-  static LimitedWarning _exclusive_warnings;
+  static bool _first_time;
+  static int _n_exclusive_warnings;
   static LimitedWarning _changed_strategy_warning;
   struct BriefJet {
     double     eta, phi, kt2, NN_dist;
@@ -1848,21 +1431,21 @@ protected:
   class TiledJet {
   public:
     double     eta, phi, kt2, NN_dist;
-    TiledJet * NN, *previous, * next; 
+    TiledJet * NN, *previous, * next;
     int        _jets_index, tile_index, diJ_posn;
     inline void label_minheap_update_needed() {diJ_posn = 1;}
     inline void label_minheap_update_done()   {diJ_posn = 0;}
     inline bool minheap_update_needed() const {return diJ_posn==1;}
   };
-  template <class J> void _bj_set_jetinfo( J * const jet, 
+  template <class J> void _bj_set_jetinfo( J * const jet,
 						 const int _jets_index) const;
   void _bj_remove_from_tiles( TiledJet * const jet) const;
-  template <class J> double _bj_dist(const J * const jeta, 
+  template <class J> double _bj_dist(const J * const jeta,
 			const J * const jetb) const;
   template <class J> double _bj_diJ(const J * const jeta) const;
   template <class J> inline J * _bj_of_hindex(
-                          const int hist_index, 
-			  J * const head, J * const tail) 
+                          const int hist_index,
+			  J * const head, J * const tail)
     const {
     J * res;
     for(res = head; res<tail; res++) {
@@ -1870,18 +1453,18 @@ protected:
     }
     return res;
   }
-  template <class J> void _bj_set_NN_nocross(J * const jeta, 
+  template <class J> void _bj_set_NN_nocross(J * const jeta,
             J * const head, const J * const tail) const;
-  template <class J> void _bj_set_NN_crosscheck(J * const jeta, 
+  template <class J> void _bj_set_NN_crosscheck(J * const jeta,
             J * const head, const J * const tail) const;
   static const int n_tile_neighbours = 9;
   struct Tile {
-    Tile *   begin_tiles[n_tile_neighbours]; 
-    Tile **  surrounding_tiles; 
-    Tile **  RH_tiles;  
-    Tile **  end_tiles; 
-    TiledJet * head;    
-    bool     tagged;    
+    Tile *   begin_tiles[n_tile_neighbours];
+    Tile **  surrounding_tiles;
+    Tile **  RH_tiles;
+    Tile **  end_tiles;
+    TiledJet * head;
+    bool     tagged;
   };
   std::vector<Tile> _tiles;
   double _tiles_eta_min, _tiles_eta_max;
@@ -1891,14 +1474,14 @@ protected:
     return (ieta-_tiles_ieta_min)*_n_tiles_phi
                   + (iphi+_n_tiles_phi) % _n_tiles_phi;
   }
-  int  _tile_index(const double eta, const double phi) const;
+  int  _tile_index(const double & eta, const double & phi) const;
   void _tj_set_jetinfo ( TiledJet * const jet, const int _jets_index);
   void  _bj_remove_from_tiles(TiledJet * const jet);
   void _initialise_tiles();
   void _print_tiles(TiledJet * briefjets ) const;
-  void _add_neighbours_to_tile_union(const int tile_index, 
+  void _add_neighbours_to_tile_union(const int tile_index,
 		 std::vector<int> & tile_union, int & n_near_tiles) const;
-  void _add_untagged_neighbours_to_tile_union(const int tile_index, 
+  void _add_untagged_neighbours_to_tile_union(const int tile_index,
 		 std::vector<int> & tile_union, int & n_near_tiles);
   struct EEBriefJet {
     double NN_dist;  // obligatorily present
@@ -1934,24 +1517,6 @@ inline const std::vector<ClusterSequence::history_element> & ClusterSequence::hi
   return _history;
 }
 inline unsigned int ClusterSequence::n_particles() const {return _initial_n;}
-#ifndef __CINT__
-template<class L>
-std::vector<PseudoJet> JetDefinition::operator()(const std::vector<L> & particles) const {
-  ClusterSequence * cs = new ClusterSequence(particles, *this);
-  std::vector<PseudoJet> jets;
-  if (is_spherical()) {
-    jets = sorted_by_E(cs->inclusive_jets());
-  } else {
-    jets = sorted_by_pt(cs->inclusive_jets());
-  }
-  if (jets.size() != 0) {
-    cs->delete_self_when_unused();
-  } else {
-    delete cs;
-  }
-  return jets;
-}
-#endif // __CINT__
 template <class J> inline void ClusterSequence::_bj_set_jetinfo(
                             J * const jetA, const int _jets_index) const {
     jetA->eta  = _jets[_jets_index].rap();
@@ -1963,14 +1528,9 @@ template <class J> inline void ClusterSequence::_bj_set_jetinfo(
 }
 template <class J> inline double ClusterSequence::_bj_dist(
                 const J * const jetA, const J * const jetB) const {
-#ifndef FJCORE_NEW_DELTA_PHI
   double dphi = std::abs(jetA->phi - jetB->phi);
   double deta = (jetA->eta - jetB->eta);
   if (dphi > pi) {dphi = twopi - dphi;}
-#else 
-  double dphi = pi-std::abs(pi-std::abs(jetA->phi - jetB->phi));
-  double deta = (jetA->eta - jetB->eta);
-#endif 
   return dphi*dphi + deta*deta;
 }
 template <class J> inline double ClusterSequence::_bj_diJ(const J * const jet) const {
@@ -2003,7 +1563,7 @@ template <class J> inline void ClusterSequence::_bj_set_NN_nocross(
   jet->NN = NN;
   jet->NN_dist = NN_dist;
 }
-template <class J> inline void ClusterSequence::_bj_set_NN_crosscheck(J * const jet, 
+template <class J> inline void ClusterSequence::_bj_set_NN_crosscheck(J * const jet,
 		    J * const head, const J * const tail) const {
   double NN_dist = _R2;
   J * NN  = NULL;
@@ -2023,43 +1583,28 @@ template <class J> inline void ClusterSequence::_bj_set_NN_crosscheck(J * const 
 }
 FJCORE_END_NAMESPACE
 #endif // __FJCORE_CLUSTERSEQUENCE_HH__
-#ifndef __FJCORE_NNBASE_HH__
-#define __FJCORE_NNBASE_HH__
-FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-class _NoInfo {};
-template<class I> class NNInfo {
-public:
-  NNInfo()         : _info(NULL) {}
-  NNInfo(I * info) : _info(info) {}
-  template<class BJ> void init_jet(BJ * briefjet, const fjcore::PseudoJet & jet, int index) { briefjet->init(jet, index, _info);}
-private:
-  I * _info;
-};
-template<> class NNInfo<_NoInfo>  {
-public:
-  NNInfo()           {}
-  NNInfo(_NoInfo * ) {}
-  template<class BJ> void init_jet(BJ * briefjet, const fjcore::PseudoJet & jet, int index) { briefjet->init(jet, index);}
-};
-template<class I = _NoInfo> class NNBase : public NNInfo<I> {
-public:
-  NNBase() {}
-  NNBase(I * info) : NNInfo<I>(info) {}
-  virtual void start(const std::vector<PseudoJet> & jets) = 0;
-  virtual double dij_min(int & iA, int & iB) = 0;
-  virtual void remove_jet(int iA) = 0;
-  virtual void merge_jets(int iA, int iB, const PseudoJet & jet, int jet_index) =  0;
-  virtual ~NNBase() {};
-};
-FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
-#endif // __FJCORE_NNBASE_HH__
 #ifndef __FJCORE_NNH_HH__
 #define __FJCORE_NNH_HH__
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-template<class BJ, class I = _NoInfo> class NNH : public NNBase<I> {
+class _NoInfo {};
+template<class I> class NNHInfo {
 public:
-  NNH(const std::vector<PseudoJet> & jets)           : NNBase<I>()     {start(jets);}
-  NNH(const std::vector<PseudoJet> & jets, I * info) : NNBase<I>(info) {start(jets);}
+  NNHInfo()         : _info(NULL) {}
+  NNHInfo(I * info) : _info(info) {}
+  template<class NNBJ> void init_jet(NNBJ * briefjet, const fjcore::PseudoJet & jet, int index) { briefjet->init(jet, index, _info);}
+private:
+  I * _info;
+};
+template<> class NNHInfo<_NoInfo>  {
+public:
+  NNHInfo()           {}
+  NNHInfo(_NoInfo * ) {}
+  template<class NNBJ> void init_jet(NNBJ * briefjet, const fjcore::PseudoJet & jet, int index) { briefjet->init(jet, index);}
+};
+template<class BJ, class I = _NoInfo> class NNH : public NNHInfo<I> {
+public:
+  NNH(const std::vector<PseudoJet> & jets) {start(jets);}
+  NNH(const std::vector<PseudoJet> & jets, I * info) : NNHInfo<I>(info) {start(jets);}
   void start(const std::vector<PseudoJet> & jets);
   double dij_min(int & iA, int & iB);
   void remove_jet(int iA);
@@ -2118,7 +1663,7 @@ template<class BJ, class I> double NNH<BJ,I>::dij_min(int & iA, int & iB) {
   int diJ_min_jet = 0;
   for (int i = 1; i < n; i++) {
     if (briefjets[i].NN_dist < diJ_min) {
-      diJ_min_jet = i; 
+      diJ_min_jet = i;
       diJ_min  = briefjets[i].NN_dist;
     }
   }
@@ -2137,7 +1682,7 @@ template<class BJ, class I> void NNH<BJ,I>::remove_jet(int iA) {
     if (jetI->NN == tail) {jetI->NN = jetA;}
   }
 }
-template<class BJ, class I> void NNH<BJ,I>::merge_jets(int iA, int iB, 
+template<class BJ, class I> void NNH<BJ,I>::merge_jets(int iA, int iB,
 					const PseudoJet & jet, int index) {
   NNBJ * jetA = where_is[iA];
   NNBJ * jetB = where_is[iB];
@@ -2151,7 +1696,7 @@ template<class BJ, class I> void NNH<BJ,I>::merge_jets(int iA, int iB,
   for (NNBJ * jetI = head; jetI != tail; jetI++) {
     if (jetI->NN == jetA || jetI->NN == jetB) {
       set_NN_nocross(jetI, head, tail);
-    } 
+    }
     double dist = jetI->distance(jetB);
     if (dist < jetI->NN_dist) {
       if (jetI != jetB) {
@@ -2168,7 +1713,7 @@ template<class BJ, class I> void NNH<BJ,I>::merge_jets(int iA, int iB,
     if (jetI->NN == tail) {jetI->NN = jetA;}
   }
 }
-template <class BJ, class I> void NNH<BJ,I>::set_NN_crosscheck(NNBJ * jet, 
+template <class BJ, class I> void NNH<BJ,I>::set_NN_crosscheck(NNBJ * jet,
 		    NNBJ * begin, NNBJ * end) {
   double NN_dist = jet->beam_distance();
   NNBJ * NN      = NULL;

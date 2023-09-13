@@ -1,25 +1,18 @@
 // main87.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Authors: Stefan Prestel
-
-// Keywords: merging; NLO; NL3; hepmc
-
+// This program is written by Stefan Prestel.
 // It illustrates how to do NL3 merging, see the Matrix Element
 // Merging page in the online manual. An example command is
 //     ./main87 main87.cmnd w_production hepmcout87.dat
 // where main87.cmnd supplies the commands, w_production provides the
 // input LHE events, and hepmcout87.dat is the output file. This
-// example requires HepMC 3.
+// example requires HepMC.
 
 #include "Pythia8/Pythia.h"
-#ifndef HEPMC2
-#include "Pythia8Plugins/HepMC3.h"
-#else
 #include "Pythia8Plugins/HepMC2.h"
-#endif
 #include <unistd.h>
 
 using namespace Pythia8;
@@ -50,20 +43,17 @@ int main( int argc, char* argv[] ){
   //  3. Output histogram path
   pythia.readFile(argv[1]);
 
-  // Deactivate AUX_ weight output
-  pythia.readString("Weights:suppressAUX = on");
-
-
   // Interface for conversion from Pythia8::Event to HepMC one.
+  HepMC::Pythia8ToHepMC ToHepMC;
   // Specify file where HepMC events will be stored.
-  Pythia8ToHepMC toHepMC(argv[3]);
+  HepMC::IO_GenEvent ascii_io(argv[3], std::ios::out);
   // Switch off warnings for parton-level events.
-  toHepMC.set_print_inconsistency(false);
-  toHepMC.set_free_parton_warnings(false);
+  ToHepMC.set_print_inconsistency(false);
+  ToHepMC.set_free_parton_warnings(false);
   // Do not store cross section information, as this will be done manually.
-  toHepMC.set_store_pdf(false);
-  toHepMC.set_store_proc(false);
-  toHepMC.set_store_xsec(false);
+  ToHepMC.set_store_pdf(false);
+  ToHepMC.set_store_proc(false);
+  ToHepMC.set_store_xsec(false);
 
   // Path to input events, with name up to the "_tree", "_powheg" identifier
   // included.
@@ -109,7 +99,7 @@ int main( int argc, char* argv[] ){
     // From njetcounter, choose LHE file
     stringstream in;
     in   << "_" << njetcounterLO << ".lhe";
-#ifdef GZIP
+#ifdef GZIPSUPPORT
     if(access( (iPathTree+in.str()+".gz").c_str(), F_OK) != -1) in << ".gz";
 #endif
     string LHEfile = iPathTree + in.str();
@@ -167,7 +157,7 @@ int main( int argc, char* argv[] ){
     // From njetcounter, choose LHE file
     stringstream in;
     in   << "_" << njetcounterNLO << ".lhe";
-#ifdef GZIP
+#ifdef GZIPSUPPORT
     if(access( (iPathLoop+in.str()+".gz").c_str(), F_OK) != -1) in << ".gz";
 #endif
     string LHEfile = iPathLoop + in.str();
@@ -261,7 +251,7 @@ int main( int argc, char* argv[] ){
     // From njetcounter, choose LHE file
     stringstream in;
     in   << "_" << njetcounterLO << ".lhe";
-#ifdef GZIP
+#ifdef GZIPSUPPORT
     if(access( (iPathTree+in.str()+".gz").c_str(), F_OK) != -1) in << ".gz";
 #endif
     string LHEfile = iPathTree + in.str();
@@ -294,25 +284,28 @@ int main( int argc, char* argv[] ){
       // Do not print zero-weight events.
       if ( weightNLO == 0. ) continue;
 
-      // Copy weight names to HepMC.
-      toHepMC.setWeightNames(pythia.info.weightNameVector());
-
+      // Construct new empty HepMC event.
+      HepMC::GenEvent* hepmcevt = new HepMC::GenEvent();
       // Get correct cross section from previous estimate.
       double normhepmc = xsecLO[iNow] / nAcceptLO[iNow];
       // powheg box weighted events
       if( abs(pythia.info.lhaStrategy()) == 4 )
         normhepmc = 1. / (1e9*nSelectedLO[iNow]);
+      // Set event weight.
+      hepmcevt->weights().push_back(weightNLO*normhepmc);
       // Fill HepMC event.
-      toHepMC.fillNextEvent( pythia );
-
+      ToHepMC.fill_next_event( pythia, hepmcevt );
       // Add the weight of the current event to the cross section.
       sigmaTotal += weightNLO*normhepmc;
       sigmaTemp  += weightNLO*normhepmc;
       errorTotal += pow2(weightNLO*normhepmc);
-      // Report cross section to hepmc.
-      toHepMC.setXSec( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
-      // Write the HepMC event to file.
-      toHepMC.writeEvent();
+      // Report cross section to hepmc
+      HepMC::GenCrossSection xsec;
+      xsec.set_cross_section( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
+      hepmcevt->set_cross_section( xsec );
+      // Write the HepMC event to file. Done with it.
+      ascii_io << hepmcevt;
+      delete hepmcevt;
 
     } // end loop over events to generate
 
@@ -350,7 +343,7 @@ int main( int argc, char* argv[] ){
     // From njetcounter, choose LHE file
     stringstream in;
     in   << "_" << njetcounterNLO << ".lhe";
-#ifdef GZIP
+#ifdef GZIPSUPPORT
     if(access( (iPathLoop+in.str()+".gz").c_str(), F_OK) != -1) in << ".gz";
 #endif
     string LHEfile = iPathLoop + in.str();
@@ -383,27 +376,28 @@ int main( int argc, char* argv[] ){
       // Do not print zero-weight events.
       if ( weightNLO == 0. ) continue;
 
-      // Copy weight names to HepMC.
-      toHepMC.setWeightNames(pythia.info.weightNameVector());
-
+      // Construct new empty HepMC event.
+      HepMC::GenEvent* hepmcevt = new HepMC::GenEvent();
       // Get correct cross section from previous estimate.
       double normhepmc = xsecNLO[iNow] / nAcceptNLO[iNow];
-
       // powheg box weighted events
       if( abs(pythia.info.lhaStrategy()) == 4 )
         normhepmc = 1. / (1e9*nSelectedNLO[iNow]);
-
+      // Set event weight.
+      hepmcevt->weights().push_back(weightNLO*normhepmc);
       // Fill HepMC event.
-      toHepMC.fillNextEvent( pythia );
-
+      ToHepMC.fill_next_event( pythia, hepmcevt );
       // Add the weight of the current event to the cross section.
       sigmaTotal += weightNLO*normhepmc;
       sigmaTemp  += weightNLO*normhepmc;
       errorTotal += pow2(weightNLO*normhepmc);
-      // Report cross section to hepmc.
-      toHepMC.setXSec( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
-      // Write the HepMC event to file.
-      toHepMC.writeEvent();
+      // Report cross section to hepmc
+      HepMC::GenCrossSection xsec;
+      xsec.set_cross_section( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
+      hepmcevt->set_cross_section( xsec );
+      // Write the HepMC event to file. Done with it.
+      ascii_io << hepmcevt;
+      delete hepmcevt;
 
     } // end loop over events to generate
 
@@ -443,7 +437,7 @@ int main( int argc, char* argv[] ){
     // From njetcounter, choose LHE file
     stringstream in;
     in   << "_" << njetcounterCT << ".lhe";
-#ifdef GZIP
+#ifdef GZIPSUPPORT
     if(access( (iPathSubt+in.str()+".gz").c_str(), F_OK) != -1) in << ".gz";
 #endif
     string LHEfile = iPathSubt + in.str();
@@ -476,25 +470,29 @@ int main( int argc, char* argv[] ){
       // Do not print zero-weight events.
       if ( weightNLO == 0. ) continue;
 
-      // Copy the weight names to HepMC.
-      toHepMC.setWeightNames(pythia.info.weightNameVector());
-
+      // Construct new empty HepMC event.
+      HepMC::GenEvent* hepmcevt = new HepMC::GenEvent();
       // Get correct cross section from previous estimate.
       double normhepmc = -1.*xsecLO[iNow] / nAcceptLO[iNow];
       // powheg box weighted events
       if( abs(pythia.info.lhaStrategy()) == 4 )
         normhepmc = -1. / (1e9*nSelectedLO[iNow]);
+      // Set event weight.
+      hepmcevt->weights().push_back( weightNLO*normhepmc);
       // Fill HepMC event.
-      toHepMC.fillNextEvent( pythia );
-
+      ToHepMC.fill_next_event( pythia, hepmcevt );
       // Add the weight of the current event to the cross section.
       sigmaTotal += weightNLO*normhepmc;
       sigmaTemp  += weightNLO*normhepmc;
       errorTotal += pow2(weightNLO*normhepmc);
-      // Report cross section to hepmc.
-      toHepMC.setXSec( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
-      // Write the HepMC event to file.
-      toHepMC.writeEvent();
+      // Report cross section to hepmc
+      HepMC::GenCrossSection xsec;
+      xsec.set_cross_section( sigmaTotal*1e9, pythia.info.sigmaErr()*1e9 );
+      hepmcevt->set_cross_section( xsec );
+
+      // Write the HepMC event to file. Done with it.
+      ascii_io << hepmcevt;
+      delete hepmcevt;
 
     } // end loop over events to generate
 

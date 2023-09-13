@@ -1,6 +1,6 @@
-<chapter name="Hard Process Selection"> 
+<chapter name="Process Selection"> 
  
-<h2>Hard Process Selection</h2> 
+<h2>Process Selection</h2> 
  
 There is no way PYTHIA could contain all processes of interest, 
 neither in terms of potential physics topics nor in terms of 
@@ -11,8 +11,7 @@ processes beyond that, again for low multiplicities. Combined with
 the PYTHIA parton showers, this should be enough to get a flying 
 start in the study of many physics scenarios. 
 Other processes could be fed in via the 
-<aloc href="LHA">Les Houches Accord</aloc> 
-or <aloc href="LHEF">Les Houches Event Files</aloc>, 
+<aloc href="LesHouchesAccord">Les Houches Accord</aloc> 
 or be implemented as a 
 <aloc href="SemiInternalProcesses">Semi-Internal Process</aloc>. 
 In the latter case the existing processes would act as obvious 
@@ -44,26 +43,13 @@ separate pages also appear the settings that are completely local
 to that particular process class, but not the ones that have a 
 broader usage. 
  
-<h3>QCD Processes</h3> 
+<h3><aloc href="QCDProcesses">QCD Processes</aloc></h3> 
  
-QCD processes fall in two main categories: soft and hard. 
-<br/><aloc href="QCDSoftProcesses">Soft processses</aloc> 
-contain elastic, <aloc href="Diffraction">diffractive</aloc> and 
-"minimum-bias" events, together covering the total cross section. 
-<br/>Reserved code range: 101 - 110. 
-<br/><aloc href="QCDHardProcesses">Hard processes</aloc> are the normal 
-<ei>2 &rarr; 2</ei> ones, including charm and bottom production 
-(plus an incomplete implementation of <ei>2 &rarr; 3</ei> processes). 
-They are contained as a subset of the soft processes via the 
-<aloc href="MultipartonInteractions">MultiParton Interactions</aloc> 
-(MPI) mechanism. 
-<br/>Reserved code range: 111 - 150. 
-<br/>The <aloc href="QCDLowEnergyProcesses">Low-energy processes</aloc>, 
-primarily used for collision energies below 10 GeV, closely mirror 
-the soft processes, but without any MPIs to offer an admixture of 
-hard processes. Other kinds, such resonant and annihilation processes, 
-instead are needed at low energies. 
-<br/>Reserved code range: 151 - 160. 
+QCD processes fall in two main categories: soft and hard. The soft ones 
+contain elastic, diffractive and "minimum-bias" events, together 
+covering the total cross section. Hard processes are the normal 
+<ei>2 &rarr; 2</ei> ones, including charm and bottom production. 
+<br/>Reserved code range: 101 - 199. 
  
 <h3><aloc href="ElectroweakProcesses">Electroweak Processes</aloc></h3> 
  
@@ -148,13 +134,6 @@ several Large Extra Dimension processes, and a few related Unparticle
 processes. 
 <br/>Reserved code range: 5001 - 5099. 
  
-<h3><aloc href="DarkMatterProcesses">Dark Matter Processes</aloc></h3> 
- 
-An area of increasing interest. Currently only represented by 
-a few basic processes. 
-<br/>Reserved code range: 6001 - 6099. 
- 
- 
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

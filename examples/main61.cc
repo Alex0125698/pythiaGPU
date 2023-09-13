@@ -1,11 +1,8 @@
 // main61.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Authors: Christine O Rasmussen
-
-// Keywords: diffraction; z production
+// Author: Christine O. Rasmussen.
 
 // The y, pT, x_Pomeron and t distributions for forward Z bosons at the LHC,
 // within the hard diffraction framework for an inclusive event sample.
@@ -20,7 +17,7 @@ int main() {
   // Create Pythia instance. Shorthand for event and info.
   Pythia pythia;
   Event& event = pythia.event;
-  const Info& info = pythia.info;
+  Info&  info  = pythia.info;
 
   // Set it up to generate Z's at 8 TeV.
   pythia.readString("Beams:eCM = 8000.");
@@ -31,7 +28,7 @@ int main() {
   // Setup of diffractive framework.
   pythia.readString("Diffraction:doHard = on");
   pythia.readString("Diffraction:sampleType = 1");
-  pythia.readString("SigmaDiffractive:PomFlux = 5");
+  pythia.readString("Diffraction:PomFlux = 5");
   pythia.readString("PDF:PomSet = 6");
 
   // Simplify printout.
@@ -50,7 +47,7 @@ int main() {
   pythia.init();
 
   // Collect information on the number of diffractive events
-  int maxEvent      = 5000;
+  int maxEvent      = 10000;
   int nDiffA        = 0;
   int nDiffB        = 0;
   int nReducedDiffA = 0;

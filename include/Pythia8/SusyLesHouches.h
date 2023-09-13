@@ -1,7 +1,7 @@
 // SusyLesHouches.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
+// Copyright (C) 2015 Torbjorn Sjostrand.
 // Main authors of this file: N. Desai, P. Skands
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for SUSY Les Houches Accord functionality
@@ -28,7 +28,7 @@ namespace Pythia8 {
   public:
 
     //Constructor.
-    LHblock() : idnow(0), qDRbar(), i(), val() {} ;
+    LHblock<T>() : idnow(0) {} ;
 
     //Does block exist?
     bool exists() { return int(entry.size()) == 0 ? false : true ; };
@@ -65,13 +65,17 @@ namespace Pythia8 {
       ? true : false;};
 
     // Indexing with (). Output only.
-    T operator()() {return exists(0) ? entry[0] : T();}
-    T operator()(int iIn) {return exists(iIn) ? entry[iIn] : T();}
+    T operator()() {
+      if (exists(0)) {return entry[0];} else {T dummy(0); return dummy;};
+    };
+    T operator()(int iIn) {
+      if (exists(iIn)) {return entry[iIn];} else {T dummy(0); return dummy;};
+    };
 
-    // Size of map.
+    // Size of map
     int size() {return int(entry.size());};
 
-    // First and next key code.
+    // First and next key code
     int first() { idnow = entry.begin()->first; return idnow; };
     int next() {
       typename map<int,T>::iterator itnow;
@@ -80,8 +84,8 @@ namespace Pythia8 {
       return idnow = itnow->first;
     };
 
-    // Simple print utility.
-    void list() {
+    // Simple print utility
+    void print() {
       bool finished=false;
       int ibegin=first();
       i=ibegin;
@@ -125,11 +129,10 @@ namespace Pythia8 {
 
   // class LHmatrixBlock: the generic SLHA matrix
   // Explicit sizing required, e.g.LHmatrixBlock<4> nmix;
-  // Note, indexing from 1 is intentional, zeroth column/row not used.
   template <int size> class LHmatrixBlock {
   public:
     //Constructor. Set uninitialized and explicitly zero.
-    LHmatrixBlock() : entry(), qDRbar(), val() {
+    LHmatrixBlock<size>() {
       initialized=false;
       for (i=1;i<=size;i++) {
         for (j=1;j<=size;j++) {
@@ -138,16 +141,10 @@ namespace Pythia8 {
       };
     };
 
-    // Copy constructor.
-    LHmatrixBlock(const LHmatrixBlock& m) : val(m.val) {
-      for (i=1;i<=size;i++) for (j=1;j<=size;j++) entry[i][j] = m(i,j);
-      qDRbar = m.qDRbar;
-      initialized = m.initialized; }
-
-    // Assignment.
+    // Assignment
     LHmatrixBlock& operator=(const LHmatrixBlock& m) {
       if (this != &m) {
-        for (i=1;i<=size;i++) for (j=1;j<=size;j++) entry[i][j] = m(i,j);
+        for (i=0;i<size;i++) for (j=0;j<=size;j++) entry[i][j] = m(i,j);
         qDRbar = m.qDRbar;
         initialized = m.initialized;
       }
@@ -186,7 +183,7 @@ namespace Pythia8 {
     double q() { return qDRbar; }
 
     // Simple print utility, to be elaborated on.
-    void list() {
+    void print() {
       for (i=1;i<=size;i++) {
         cout << "   "<<i << " " ;
         for (j=1;j<=size;j++) cout << entry[i][j] << " ";
@@ -208,7 +205,7 @@ namespace Pythia8 {
   template <int size> class LHtensor3Block {
   public:
     //Constructor. Set uninitialized and explicitly zero.
-    LHtensor3Block() : entry(), qDRbar(), val() {
+    LHtensor3Block<size>() {
       initialized=false;
       for (i=1;i<=size;i++) {
         for (j=1;j<=size;j++) {
@@ -219,17 +216,10 @@ namespace Pythia8 {
       };
     };
 
-    // Copy constructor.
-    LHtensor3Block(const LHtensor3Block& m) : val(m.val) {
-      for (i=0;i<=size;i++) for (j=0;j<=size;j++) for (k=0;k<=size;k++)
-        entry[i][j][k] = m(i,j,k);
-      qDRbar = m.qDRbar;
-      initialized = m.initialized; };
-
-    // Assignment.
+    // Assignment
     LHtensor3Block& operator=(const LHtensor3Block& m) {
       if (this != &m) {
-        for (i=0;i<=size;i++) for (j=0;j<=size;j++) for (k=0;k<=size;k++)
+        for (i=0;i<size;i++) for (j=0;j<=size;j++) for (k=0;k<=size;k++)
           entry[i][j][k] = m(i,j,k);
         qDRbar = m.qDRbar;
         initialized = m.initialized;
@@ -269,7 +259,7 @@ namespace Pythia8 {
     double q() { return qDRbar; }
 
     // Simple print utility, to be elaborated on.
-    void list() {
+    void print() {
       for (i=1;i<=size;i++) {
         for (j=1;j<=size;j++) {
           cout << "   "<<i << " "<<j << " " ;
@@ -297,7 +287,7 @@ namespace Pythia8 {
 
     LHdecayChannel() : brat(0.0) {};
     LHdecayChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") : brat() { setChannel(bratIn,nDaIn,idDaIn,cIn);
+      string cIn="") { setChannel(bratIn,nDaIn,idDaIn,cIn);
     }
 
     // Functions to set decay channel information
@@ -394,14 +384,14 @@ class SusyLesHouches {
 
 public:
 
-  // Constructor, with and without filename.
+  //Constructor, with and without filename.
   SusyLesHouches(int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
     slhaRead(false), lhefRead(false), lhefSlha(false), useDecay(true) {};
   SusyLesHouches(string filename, int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
-    slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true) {
-    readFile(filename);};
+    slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true)
+    {readFile(filename);};
 
   //***************************** SLHA FILE I/O *****************************//
   // Read and write SLHA files
@@ -409,11 +399,12 @@ public:
     bool useDecayIn=true);
   int readFile(istream& ,int verboseIn=1,
     bool useDecayIn=true);
+  //int writeFile(string filename): write SLHA file on filename
 
   //Output utilities
-  void listHeader();   // print Header
-  void listFooter();   // print Footer
-  void listSpectrum(int ifail=0); // print Spectrum
+  void printHeader();   // print Header
+  void printFooter();   // print Footer
+  void printSpectrum(int ifail=0); // print Spectrum
 
   // Check spectrum and decays
   int checkSpectrum();
@@ -450,7 +441,7 @@ public:
 
     // Set and Get comment
     void setComment(string comment) {commentP=comment;}
-    void getComment(string& comment) {comment=commentP;}
+    void getComment(string comment) {comment=commentP;}
 
     // Generic functions to get value
     bool get(int& val) {val=n; return isIntP;}
@@ -506,7 +497,7 @@ public:
   map<int,int> decayIndices;
 
   //********************* THE BSM-SLHA QNUMBERS BLOCKS *********************//
-  vector< LHblock<double> > qnumbers;     // Zero'th entry is PDG code
+  vector< LHblock<int> > qnumbers;     // Zero'th entry is PDG code
   vector< string > qnumbersName;
   vector< string > qnumbersAntiName;
 
@@ -640,6 +631,10 @@ public:
   // Output of messages from SLHA interface
   void message(int, string,string ,int line=0);
 
+  // Convert string to lowercase, removing junk characters
+  // Copied from PYTHIA 8 Settings class
+  void toLower(string& name);
+
   //***************************** SLHA PRIVATE *****************************//
 private:
   //SLHA I/O
@@ -656,7 +651,7 @@ private:
 template <class T> int SusyLesHouches::set(string blockName, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -674,7 +669,7 @@ template <class T> int SusyLesHouches::set(string blockName, T val) {
 template <class T> int SusyLesHouches::set(string blockName, int indx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -693,7 +688,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -712,7 +707,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, int kndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -732,7 +727,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
 template <class T> bool SusyLesHouches::getEntry(string blockName, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -768,7 +763,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -806,7 +801,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -844,7 +839,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, int kndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLowerRep(blockName);
+  toLower(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -880,6 +875,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
 
 //==========================================================================
 
+
 } // end of namespace Pythia8
 
-#endif // Pythia8_SLHA_H
+#endif // end Pythia8_SLHA_H

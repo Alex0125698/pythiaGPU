@@ -1,6 +1,6 @@
 // ColourReconnection.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for the Colour reconnection handling.
@@ -23,7 +23,6 @@
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/StringLength.h"
-#include "Pythia8/StringInteractions.h"
 
 namespace Pythia8 {
 
@@ -43,7 +42,7 @@ public:
     bool isActiveIn = true, bool isRealIn = false) : col(colIn), iCol(iColIn),
     iAcol(iAcolIn), colReconnection(colReconnectionIn), isJun(isJunIn),
     isAntiJun(isAntiJunIn),isActive(isActiveIn), isReal(isRealIn)
-    {iColLeg = 0; iAcolLeg = 0; printed = false; p1p2 = 0.;}
+    {leftDip = 0; rightDip = 0; iColLeg = 0; iAcolLeg = 0; printed = false;}
 
   double mDip(Event & event) {
     if (isJun || isAntiJun) return 1E9;
@@ -52,20 +51,15 @@ public:
 
   // Members.
   int    col, iCol, iAcol, iColLeg, iAcolLeg, colReconnection;
-  bool   isJun, isAntiJun, isActive, isReal, printed;
-  weak_ptr<ColourDipole> leftDip{}, rightDip{};
-  vector<weak_ptr<ColourDipole> > colDips, acolDips;
+  bool   isJun, isAntiJun, isActive, isReal, printed, inChain;
+  ColourDipole *leftDip, *rightDip;
+  vector<ColourDipole *> colDips, acolDips;
   double p1p2;
 
   // Printing function, mainly intended for debugging.
-  void list();
-  long index{0};
+  void print();
 
 };
-
-// Comparison operator by index for two dipole pointers.
-inline bool operator<(const ColourDipolePtr& d1, const ColourDipolePtr& d2) {
-  return ( d1 && d2 ? d1->index < d2->index : !d1 );}
 
 //==========================================================================
 
@@ -76,10 +70,12 @@ class ColourJunction : public Junction {
 
 public:
 
-  ColourJunction(const Junction& ju) : Junction(ju), dips(), dipsOrig() { }
-
-  ColourJunction(const ColourJunction& ju) : Junction(Junction(ju)), dips(),
-    dipsOrig() { for(int i = 0;i < 3;++i) {
+  ColourJunction(const Junction& ju) : Junction(ju) {
+      for(int i = 0;i < 3;++i) {
+        dips[i] = 0; dipsOrig[i] = 0;}
+  }
+  ColourJunction(const ColourJunction& ju) : Junction(Junction(ju)) {
+    for(int i = 0;i < 3;++i) {
       dips[i] = ju.dips[i]; dipsOrig[i] = ju.dipsOrig[i];}
   }
   ColourJunction& operator=( const ColourJunction& ju) {
@@ -90,11 +86,11 @@ public:
     return (*this);
   }
 
-  ColourDipolePtr getColDip(int i) {return dips[i];}
-  void setColDip(int i, ColourDipolePtr dip) {dips[i] = dip;}
-  ColourDipolePtr dips[3];
-  ColourDipolePtr dipsOrig[3];
-  void list();
+  ColourDipole * getColDip(int i) {return dips[i];}
+  void setColDip(int i, ColourDipole * dip) {dips[i] = dip;}
+  ColourDipole * dips[3];
+  ColourDipole * dipsOrig[3];
+  void print();
 
 };
 
@@ -108,8 +104,8 @@ class TrialReconnection {
 
 public:
 
-  TrialReconnection(ColourDipolePtr dip1In = 0, ColourDipolePtr dip2In = 0,
-    ColourDipolePtr dip3In = 0, ColourDipolePtr dip4In = 0, int modeIn = 0,
+  TrialReconnection(ColourDipole* dip1In = 0, ColourDipole* dip2In = 0,
+    ColourDipole* dip3In = 0, ColourDipole* dip4In = 0, int modeIn = 0,
     double lambdaDiffIn = 0) {
     dips.push_back(dip1In); dips.push_back(dip2In);
     dips.push_back(dip3In); dips.push_back(dip4In);
@@ -119,10 +115,10 @@ public:
   void list() {
     cout << "mode: " << mode << " " << "lambdaDiff: " << lambdaDiff << endl;
     for (int i = 0;i < int(dips.size()) && dips[i] != 0;++i) {
-      cout << "   "; dips[i]->list(); }
+      cout << "   "; dips[i]->print(); }
   }
 
-  vector<ColourDipolePtr> dips;
+  vector<ColourDipole*> dips;
   int mode;
   double lambdaDiff;
 
@@ -138,18 +134,18 @@ class ColourParticle : public Particle {
 
 public:
 
- ColourParticle(const Particle& ju) : Particle(ju), isJun(), junKind() {}
+ ColourParticle(const Particle& ju) : Particle(ju) {}
 
-  vector<vector<ColourDipolePtr> > dips;
+  vector<vector<ColourDipole *> > dips;
   vector<bool> colEndIncluded, acolEndIncluded;
-  vector<ColourDipolePtr> activeDips;
+  vector<ColourDipole *> activeDips;
   bool isJun;
   int junKind;
 
   // Printing functions, intended for debugging.
-  void listParticle();
+  void  list();
   void listActiveDips();
-  void listDips();
+  void print();
 
 };
 
@@ -159,21 +155,17 @@ public:
 
 //--------------------------------------------------------------------------
 
-class ColourReconnection : public ColourReconnectionBase {
+class ColourReconnection {
 
 public:
 
   // Constructor
-  ColourReconnection() : allowJunctions(), sameNeighbourCol(),
-    singleReconOnly(), lowerLambdaOnly(), nSys(), nReconCols(), swap1(),
-    swap2(), reconnectMode(), flipMode(), timeDilationMode(), eCM(), sCM(),
-    pT0(), pT20Rec(), pT0Ref(), ecmRef(), ecmPow(), reconnectRange(), m0(),
-    m0sqr(), m2Lambda(), fracGluon(), dLambdaCut(), timeDilationPar(),
-    timeDilationParGeV(), tfrag(), blowR(), blowT(), rHadron(), kI(),
-    nColMove() {}
+  ColourReconnection() {}
 
   // Initialization.
-  bool init();
+  bool init( Info* infoPtrIn, Settings& settings, Rndm* rndmPtrIn,
+    ParticleData* particleDataPtrIn, BeamParticle* beamAPtrIn,
+    BeamParticle* beamBPtrIn, PartonSystems* partonSystemsPtrIn);
 
   // New beams possible for handling of hard diffraction.
   void reassignBeamPtrs( BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn)
@@ -185,7 +177,7 @@ public:
 private:
 
   // Constants: could only be changed in the code itself.
-  static const double MINIMUMGAIN, MINIMUMGAINJUN, TINYP1P2;
+  static const double MINIMUMGAIN, MINIMUMGAINJUN, HBAR;
   static const int MAXRECONNECTIONS;
 
   // Variables needed.
@@ -197,32 +189,28 @@ private:
          timeDilationParGeV, tfrag, blowR, blowT, rHadron, kI;
 
   // List of current dipoles.
-  vector<ColourDipolePtr> dipoles, usedDipoles;
-
-  // Last used dipole index, used for sorting.
-  int dipoleIndex{0};
-
-  // Add a dipole and increment index.
-  void addDipole(int colIn = 0, int iColIn = 0, int iAcolIn = 0,
-    int colReconnectionIn = 0, bool isJunIn = false, bool isAntiJunIn = false,
-    bool isActiveIn = true, bool isRealIn = false) {
-    dipoles.push_back(make_shared<ColourDipole>(colIn, iColIn, iAcolIn,
-        colReconnectionIn, isJunIn, isAntiJunIn, isActiveIn, isRealIn));
-    dipoles.back()->index = ++dipoleIndex;
-  }
-
-  // Add a dipole and increment index.
-  void addDipole(const ColourDipole& dipole) {
-    dipoles.push_back(make_shared<ColourDipole>(dipole));
-    dipoles.back()->index = ++dipoleIndex;
-  }
-
-  // Lists of particles, junctions and trials.
+  vector<ColourDipole*> dipoles, usedDipoles;
   vector<ColourJunction> junctions;
   vector<ColourParticle> particles;
   vector<TrialReconnection> junTrials, dipTrials;
   vector<vector<int> > iColJun;
   map<int,double> formationTimes;
+
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
+
+  // Pointer to particle data table.
+  ParticleData*  particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*          rndmPtr;
+
+  // Pointers to the two incoming beams.
+  BeamParticle*  beamAPtr;
+  BeamParticle*  beamBPtr;
+
+  // Pointer to information on subcollision parton locations.
+  PartonSystems* partonSystemsPtr;
 
   // This is only to access the function call junctionRestFrame.
   StringFragmentation stringFragmentation;
@@ -234,19 +222,18 @@ private:
   bool nextNew( Event & event, int oldSize);
 
   // Simple test swap between two dipoles.
-  void swapDipoles(ColourDipolePtr dip1, ColourDipolePtr dip2,
-    bool back = false);
+  void swapDipoles(ColourDipole* dip1, ColourDipole* dip2, bool back = false);
 
   // Setup the dipoles.
   void setupDipoles( Event& event, int iFirst = 0);
 
   // Form pseuparticle of a given dipole (or junction system).
-  void makePseudoParticle(ColourDipolePtr dip, int status,
+  void makePseudoParticle( ColourDipole* dip, int status,
     bool setupDone = false);
 
   // Find the indices in the particle list of the junction and also their
   // respectively leg numbers.
-  bool getJunctionIndices(ColourDipolePtr dip, int &iJun, int &i0, int &i1,
+  bool getJunctionIndices(ColourDipole* dip, int &iJun, int &i0, int &i1,
     int &i2, int &junLeg0, int &junLeg1, int &junLeg2);
 
   // Form all possible pseudoparticles.
@@ -255,8 +242,8 @@ private:
   // Update all colours in the event.
   void updateEvent( Event& event, int iFirst = 0);
 
-  double calculateStringLength( ColourDipolePtr dip,
-    vector<ColourDipolePtr> & dips);
+  double calculateStringLength( ColourDipole* dip,
+    vector<ColourDipole*> & dips);
 
   // Calculate the string length for two event indices.
   double calculateStringLength( int i, int j);
@@ -274,20 +261,20 @@ private:
   // If a single junction, the size of iParticles should be 3.
   // For multiple junction structures, the size will increase.
   bool findJunctionParticles( int iJun, vector<int>& iParticles,
-    vector<bool> &usedJuns, int &nJuns, vector<ColourDipolePtr> &dips);
+    vector<bool> &usedJuns, int &nJuns, vector<ColourDipole*> &dips);
 
   // Do a single trial reconnection.
-  void singleReconnection( ColourDipolePtr dip1, ColourDipolePtr dip2);
+  void singleReconnection( ColourDipole* dip1, ColourDipole* dip2);
 
   // Do a single trial reconnection to form a junction.
-  void singleJunction(ColourDipolePtr dip1, ColourDipolePtr dip2);
+  void singleJunction(ColourDipole* dip1, ColourDipole* dip2);
 
   // Do a single trial reconnection to form a junction.
-  void singleJunction(ColourDipolePtr dip1, ColourDipolePtr dip2,
-    ColourDipolePtr dip3);
+  void singleJunction(ColourDipole* dip1, ColourDipole* dip2,
+    ColourDipole* dip3);
 
   // Print the chain containing the dipole.
-  void listChain(ColourDipolePtr dip);
+  void listChain(ColourDipole* dip);
 
   // Print all the chains.
   void listAllChains();
@@ -308,15 +295,15 @@ private:
   void checkRealDipoles(Event& event, int iFirst);
 
   // Calculate the invariant mass of a dipole.
-  double mDip(ColourDipolePtr dip);
+  double mDip(ColourDipole* dip);
 
   // Find the neighbour to anti colour side. Return false if the dipole is
   // connected to a junction or the new particle has a junction inside of it.
-  bool findAntiNeighbour(ColourDipolePtr& dip);
+  bool findAntiNeighbour(ColourDipole*& dip);
 
   // Find the neighbour to colour side. Return false if the dipole is
   // connected to a junction or the new particle has a junction inside of it.
-  bool findColNeighbour(ColourDipolePtr& dip);
+  bool findColNeighbour(ColourDipole*& dip);
 
   // Check that trials do not contain junctions / unusable pseudoparticles.
   bool checkJunctionTrials();
@@ -325,20 +312,20 @@ private:
   void storeUsedDips(TrialReconnection& trial);
 
   // Change colour structure to describe the reconnection in juncTrial.
-  bool doJunctionTrial(Event& event, TrialReconnection& juncTrial);
+  void doJunctionTrial(Event& event, TrialReconnection& juncTrial);
 
   // Change colour structure to describe the reconnection in juncTrial.
   void doDipoleTrial(TrialReconnection& trial);
 
   // Change colour structure if it is three dipoles forming a junction system.
-  bool doTripleJunctionTrial(Event& event, TrialReconnection& juncTrial);
+  void doTripleJunctionTrial(Event& event, TrialReconnection& juncTrial);
 
   // Calculate the difference between the old and new lambda.
-  double getLambdaDiff(ColourDipolePtr dip1, ColourDipolePtr dip2,
-    ColourDipolePtr dip3, ColourDipolePtr dip4, int mode);
+  double getLambdaDiff(ColourDipole* dip1,
+    ColourDipole* dip2, ColourDipole* dip3, ColourDipole* dip4, int mode);
 
   // Calculate the difference between the old and new lambda (dipole swap).
-  double getLambdaDiff(ColourDipolePtr dip1, ColourDipolePtr dip2);
+  double getLambdaDiff(ColourDipole* dip1, ColourDipole* dip2);
 
   // Update the list of dipole trial swaps to account for latest swap.
   void updateDipoleTrials();
@@ -347,14 +334,14 @@ private:
   void updateJunctionTrials();
 
   // Check whether up to four dipoles are 'causally' connected.
-  bool checkTimeDilation(ColourDipolePtr dip1 = 0, ColourDipolePtr dip2 = 0,
-    ColourDipolePtr dip3 = 0, ColourDipolePtr dip4 = 0);
+  bool checkTimeDilation(ColourDipole* dip1 = 0, ColourDipole* dip2 = 0,
+    ColourDipole* dip3 = 0, ColourDipole* dip4 = 0);
 
   // Check whether two four momenta are casually connected.
   bool checkTimeDilation(Vec4 p1, Vec4 p2, double t1, double t2);
 
   // Find the momentum of the dipole.
-  Vec4 getDipoleMomentum(ColourDipolePtr dip);
+  Vec4 getDipoleMomentum(ColourDipole* dip);
 
   // Find all particles connected to a junction system (particle list).
   void addJunctionIndices(int iSinglePar, vector<int> &iPar,

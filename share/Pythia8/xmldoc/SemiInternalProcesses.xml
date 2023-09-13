@@ -3,15 +3,14 @@
 <h2>Semi-Internal Processes</h2> 
  
 Normally users are expected to implement new processes via the 
-<aloc href="LHA">Les Houches Accord</aloc>, or by supplying 
-<aloc href="LHEF">Les Houches Event Files</aloc>. Then 
+<aloc href="LesHouchesAccord">Les Houches Accord</aloc>. Then 
 you do all flavour, colour and phase-space selection externally, 
 before your process-level events are input for further processing 
 by PYTHIA. However, it is also possible to implement a 
 new process in exactly the same way as the internal PYTHIA 
 ones, thus making use of the internal phase space selection machinery 
 to sample an externally provided cross-section expression. 
-The MadGraph5 program <ref>Alw11</ref> allows you to do exactly that, 
+The MadGraph 5 program <ref>Alw11</ref> allows you to do exactly that, 
 i.e. it can be used to generate C++ code that can be linked into 
 the existing PYTHIA framework, see 
 <aloc href="MadGraph5Processes">here</aloc>. 
@@ -240,8 +239,11 @@ constructor takes the quark code (4 or 5)  as argument,
 to allow the proper amount of differentiation. 
  
 <p/> 
-A <b>destructor</b> is only needed if you require some special 
-behaviour. 
+A <b>destructor</b> is only needed if you plan to delete the process 
+before the natural end of the run, and require some special behaviour 
+at that point. If you call such a destructor you will leave a pointer 
+dangling inside the <code>Pythia</code> object you gave it in to, 
+if that still exists. 
  
 <method name="void SigmaProcess::initProc()"> 
 is called once during initialization, and can then be used to set up 
@@ -544,7 +546,7 @@ or <code>Sigma3Process</code>, which in their turn inherit from
 <code>SigmaProcess</code>. You then create an instance of this class 
 and hand it in to a <code>pythia</code> object with 
 <pre> 
-      SigmaProcessPtr mySigma = make_shared&lt;MySigma()&gt;; 
+      SigmaProcess* mySigma = new MySigma(); 
       pythia.setSigmaPtr( mySigma); 
 </pre> 
 If an external phase-space generator should be used for this process 
@@ -552,15 +554,12 @@ If an external phase-space generator should be used for this process
 this should be specified as a second argument in the call to 
 <code>setSigmaPtr()</code>, as in: 
 <pre> 
-      pythia.setSigmaPtr(make_shared&lt;MySigma()&gt;, 
-                         make_shared&lt;MyPhaseSpaceGenerator()&gt;); 
+      pythia.setSigmaPtr( new mySigma(), new myPhaseSpaceGenerator() ); 
 </pre> 
-If you have several processes you can use successive 
-<code>addSigmaPtr</code> calls with the same arguments as 
-<code>setSigmaPtr</code>. When <code>pythia.init()</code> is called 
-these processes are initialized along with any internal processes you 
-may have switched on, and treated in exactly the same manner. The 
-<code>pythia.next()</code> 
+If you have several processes you can repeat the procedure any number 
+of times. When <code>pythia.init()</code> is called these processes 
+are initialized along with any internal processes you may have switched on, 
+and treated in exactly the same manner. The  <code>pythia.next()</code> 
 will therefore generate a mix of the different kinds of processes without 
 distinction. See also the <aloc href="ProgramFlow">Program Flow</aloc> 
 description. 
@@ -602,7 +601,7 @@ already there. The basic structure is
 <br/>(ii) create an instance of the matrix-element class, 
 <br/>(iii)create a container for the matrix element and its associated 
 phase-space handling, and 
-<br/>(iv) add the container to the existing process list. 
+<br>(iv) add the container to the existing process list. 
  
 <p/> 
 Two minor variations are possible. One is that a set of related 
@@ -682,4 +681,4 @@ evaluate the cross-section expressions.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

@@ -1,6 +1,6 @@
 // StringLength.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the class StringLength.
@@ -23,10 +23,6 @@ namespace Pythia8 {
 class StringLength {
 
 public:
-
-  // Constructor.
-  StringLength() : m0(), m0sqr(), sqrt2(), juncCorr(), lambdaForm(),
-    infoPtr() {}
 
   // Initialize.
   void init(Info* infoPtrIn, Settings& settings);
@@ -58,13 +54,13 @@ public:
 
 private:
 
-  static const double TINY, MINANGLE;
+  static const double MINDELTAR;
 
   double m0, m0sqr, sqrt2, juncCorr;
   int lambdaForm;
 
   // Pointer to various information on the generation.
-  Info* infoPtr;
+  Info*          infoPtr;
 
   // This is only to access the function call junctionRestFrame.
   StringFragmentation stringFragmentation;

@@ -1,11 +1,7 @@
 // main24.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Peter Skands, Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Authors: Nishita Desai <nishita.desai@tifr.res.in>
-
-// Keywords: basic usage; supersymmetry; BSM; command file
 
 // This is a simple test program.
 // It illustrates how to run SUSY processes in Pythia8.

@@ -7,23 +7,16 @@
 <body>
  
 <h2>Multiparton Interactions</h2> 
-<ol id="toc">
-  <li><a href="#section0">Main variables</a></li>
-  <li><a href="#section1">Initialization speed-up</a></li>
-  <li><a href="#section2">Further variables</a></li>
-  <li><a href="#section3">Technical notes</a></li>
-</ol>
-
  
 The starting point for the multiparton interactions physics scenario in 
-PYTHIA is provided by [<a href="Bibliography.html#refSjo87" target="page">Sjo87</a>]. Recent developments have 
+PYTHIA is provided by [<a href="Bibliography.html" target="page">Sjo87</a>]. Recent developments have 
 included a more careful study of flavour and colour correlations, 
 junction topologies and the relationship to beam remnants 
-[<a href="Bibliography.html#refSjo04" target="page">Sjo04</a>], interleaving with initial-state radiation 
-[<a href="Bibliography.html#refSjo05" target="page">Sjo05</a>], making use of transverse-momentum-ordered 
+[<a href="Bibliography.html" target="page">Sjo04</a>], interleaving with initial-state radiation 
+[<a href="Bibliography.html" target="page">Sjo05</a>], making use of transverse-momentum-ordered 
 initial- and final-state showers, with the extension to fully 
-interleaved evolution covered in [<a href="Bibliography.html#refCor10a" target="page">Cor10a</a>]. A framework to 
-handle rescattering is described in [<a href="Bibliography.html#refCor09" target="page">Cor09</a>]. 
+interleaved evolution covered in [<a href="Bibliography.html" target="page">Cor10a</a>]. A framework to 
+handle rescattering is described in [<a href="Bibliography.html" target="page">Cor09</a>]. 
  
 <p/> 
 A big unsolved issue is how the colour of all these subsystems is 
@@ -35,7 +28,6 @@ effects appear necessary to describe data, e.g. on
 rearrangement is found as part of the 
 <a href="BeamRemnants.html" target="page">beam remnants</a> description. 
  
-<a name="section0"></a> 
 <h3>Main variables</h3> 
  
 <h4>Matching to hard process</h4> 
@@ -48,7 +40,6 @@ only the user has: how the events were generated and mixed (e.g. with
 Les Houches Accord external input), and how they are intended to be 
 used. Therefore a few options are available, with a sensible default 
 behaviour. 
-<a name="anchor1"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:pTmaxMatch &nbsp;</strong> 
  (<code>default = <strong>0</strong></code>; <code>minimum = 0</code>; <code>maximum = 3</code>)<br/>
 Way in which the maximum scale for multiparton interactions is set 
@@ -80,8 +71,8 @@ particles. This may be more relevant than option 0 for multiparton
 final states, where the factorization scale could be associated with 
 the lowest <i>pT</i> of any parton, as appropriate for parton 
 showers, but not for MPI. The scale for no doublecounting and no gaps 
-should rather be associated with the "core" <i>2 &rarr; 2</i> hard 
-process, which here is approximated by <i>sum pT / 2</i>. 
+should rather be associated with the "core" <i>2 &rarr 2</i> hard 
+process, whioch here is approximated by <i>sum pT / 2</i>. 
    
 <br/><b>Note:</b> If a "second hard" process is present, the two 
 are analyzed separately for the default 0 option, and for 3. It is 
@@ -93,7 +84,6 @@ by the hard interaction with lowest scale.
 <h4>Cross-section parameters</h4> 
  
 The rate of interactions is determined by 
-<a name="anchor2"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:alphaSvalue &nbsp;</strong> 
  (<code>default = <strong>0.130</strong></code>; <code>minimum = 0.06</code>; <code>maximum = 0.25</code>)<br/>
 The value of <i>alpha_strong</i> at <i>m_Z</i>. Default value is 
@@ -103,9 +93,8 @@ picked equal to the one used in CTEQ 5L.
 <p/> 
 The actual value is then regulated by the running to the scale 
 <i>pT^2</i>, at which it is evaluated 
-<a name="anchor3"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:alphaSorder &nbsp;</strong> 
- (<code>default = <strong>1</strong></code>; <code>minimum = 0</code>; <code>maximum = 3</code>)<br/>
+ (<code>default = <strong>1</strong></code>; <code>minimum = 0</code>; <code>maximum = 2</code>)<br/>
 The order at which <i>alpha_strong</i> runs at scales away from 
 <i>m_Z</i>. 
 <br/><code>option </code><strong> 0</strong> : zeroth order, i.e. <i>alpha_strong</i> is kept 
@@ -114,15 +103,12 @@ fixed.
 <br/><code>option </code><strong> 2</strong> : second order. Since other parts of the code do 
 not go to second order there is no strong reason to use this option, 
 but there is also nothing wrong with it.   
-<br/><code>option </code><strong> 3</strong> : third order, with the same comment as for second 
-order. The expression in the 2006 RPP is used here.   
    
  
 <p/> 
 QED interactions are regulated by the <i>alpha_electromagnetic</i> 
 value at the <i>pT^2</i> scale of an interaction. 
  
-<a name="anchor4"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:alphaEMorder &nbsp;</strong> 
  (<code>default = <strong>1</strong></code>; <code>minimum = -1</code>; <code>maximum = 1</code>)<br/>
 The running of <i>alpha_em</i> used in hard processes. 
@@ -147,7 +133,6 @@ but only for the interactions generated by the
 In addition there is the possibility of a global rescaling of 
 cross sections (which could not easily be accommodated by a 
 changed <i>alpha_strong</i>, since <i>alpha_strong</i> runs) 
-<a name="anchor5"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:Kfactor &nbsp;</strong> 
  (<code>default = <strong>1.0</strong></code>; <code>minimum = 0.5</code>; <code>maximum = 4.0</code>)<br/>
 Multiply all cross sections by this fix factor. 
@@ -162,7 +147,6 @@ of the kinematics are already fixed when the process is called.
 It is possible to regulate the set of processes that are included in the 
 multiparton-interactions framework. 
  
-<a name="anchor6"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:processLevel &nbsp;</strong> 
  (<code>default = <strong>3</strong></code>; <code>minimum = 0</code>; <code>maximum = 3</code>)<br/>
 Set of processes included in the machinery. 
@@ -203,30 +187,13 @@ automatically be scaled down to cope.
  
 <p/> 
 The actual <i>pT0</i> parameter used at a given CM energy scale, 
-<i>ecmNow</i>, is obtained from a power law or a logarithmic 
-parametrization. The former is default with hadron beams and 
-the latter for photon-photon collisions. 
- 
-<a name="anchor7"></a>
-<p/><code>mode&nbsp; </code><strong> MultipartonInteractions:pT0parametrization &nbsp;</strong> 
- (<code>default = <strong>0</strong></code>; <code>minimum = 0</code>; <code>maximum = 1</code>)<br/>
-Choice of <i>pT0</i> parametrization. 
-<br/><code>option </code><strong> 0</strong> :  Power law dependence on <i>ecmNow</i>:<br/> 
-<i> 
-    pT0 = pT0(ecmNow) = pT0Ref * (ecmNow / ecmRef)^ecmPow 
-</i> 
-   
-<br/><code>option </code><strong> 1</strong> :  Logarithmic dependence on <i>ecmNow</i>: 
+<i>ecmNow</i>, is obtained as 
 <br/><i> 
-    pT0 = pT0(ecmNow) = pT0Ref + ecmPow * log (ecmNow / ecmRef) 
+     pT0 = pT0(ecmNow) = pT0Ref * (ecmNow / ecmRef)^ecmPow 
 </i><br/> 
 where <i>pT0Ref</i>, <i>ecmRef</i> and <i>ecmPow</i> are the 
-three parameters below. In case of photon-photon collisions the corresponding 
-parameters are set in <a href="Photoproduction.html" target="page">Photoproduction</a>. 
-   
-   
+three parameters below. 
  
-<a name="anchor8"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:pT0Ref &nbsp;</strong> 
  (<code>default = <strong>2.28</strong></code>; <code>minimum = 0.5</code>; <code>maximum = 10.0</code>)<br/>
 The <i>pT0Ref</i> scale in the above formula. 
@@ -236,13 +203,11 @@ choices, such as that of colour flow description, so unfortunately it is
 difficult to give an independent meaning to <i>pT0Ref</i>. 
    
  
-<a name="anchor9"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:ecmRef &nbsp;</strong> 
  (<code>default = <strong>7000.0</strong></code>; <code>minimum = 1.</code>)<br/>
 The <i>ecmRef</i> reference energy scale introduced above. 
    
  
-<a name="anchor10"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:ecmPow &nbsp;</strong> 
  (<code>default = <strong>0.215</strong></code>; <code>minimum = 0.0</code>; <code>maximum = 0.5</code>)<br/>
 The <i>ecmPow</i> energy rescaling pace introduced above. 
@@ -250,7 +215,6 @@ The <i>ecmPow</i> energy rescaling pace introduced above.
  
 <p/> 
 Alternatively, or in combination, a sharp cut can be used. 
-<a name="anchor11"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:pTmin &nbsp;</strong> 
  (<code>default = <strong>0.2</strong></code>; <code>minimum = 0.1</code>; <code>maximum = 10.0</code>)<br/>
 Lower cutoff in <i>pT</i>, below which no further interactions 
@@ -283,7 +247,6 @@ to begin with, since it later is increased back up. Also note that the
 idea with this scenario is to propose an alternative to colour 
 reconnection to understand the rise of <i>&lt;pT&gt;(n_ch)</i>, 
 so that the amount of colour reconnection should be reduced. 
-<a name="anchor12"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:enhanceScreening &nbsp;</strong> 
  (<code>default = <strong>0</strong></code>; <code>minimum = 0</code>; <code>maximum = 2</code>)<br/>
 Choice to activate the above screening scenario, i.e. an increasing 
@@ -315,7 +278,6 @@ there is currently no <code>bProfile = 4</code> option for diffraction.
 Other parameters are assumed to agree between diffractive and 
 nondiffractive topologies. 
  
-<a name="anchor13"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:bProfile &nbsp;</strong> 
  (<code>default = <strong>3</strong></code>; <code>minimum = 0</code>; <code>maximum = 4</code>)<br/>
 Choice of impact parameter profile for the incoming hadron beams. 
@@ -325,8 +287,8 @@ no free parameters.
 <br/><code>option </code><strong> 2</strong> : a double Gaussian matter distribution, 
 with the two free parameters <i>coreRadius</i> and 
 <i>coreFraction</i>.   
-<br/><code>option </code><strong> 3</strong> : an overlap function (i.e. the convolution of 
-the matter distributions of the two incoming hadrons) of the form 
+<br/><code>option </code><strong> 3</strong> : an overlap function, i.e. the convolution of 
+the matter distributions of the two incoming hadrons, of the form 
 <i>exp(- b^expPow)</i>, where <i>expPow</i> is a free 
 parameter.   
 <br/><code>option </code><strong> 4</strong> : a Gaussian matter distribution with a width 
@@ -334,14 +296,13 @@ that varies according to the selected <i>x</i> value of an interaction,
 <i>1. + a1 log (1 / x)</i>, where <i>a1</i> is a free parameter. 
 Note that once <i>b</i> has been selected for the hard process, 
 it remains fixed for the remainder of the evolution. Also note that 
-the machinery for a 
-<a href="SecondHardProcess.html" target="page">second hard process</a> 
+the machinery for 
+<a href="ASecondHardProcess.html" target="page">a second hard process</a> 
 is not adapted to calculate the impact-parameter enhancement factor 
 for this option. 
    
    
  
-<a name="anchor14"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:coreRadius &nbsp;</strong> 
  (<code>default = <strong>0.4</strong></code>; <code>minimum = 0.1</code>; <code>maximum = 1.</code>)<br/>
 When assuming a double Gaussian matter profile, <i>bProfile = 2</i>, 
@@ -349,7 +310,6 @@ the inner core is assumed to have a radius that is a factor
 <i>coreRadius</i> smaller than the rest. 
    
  
-<a name="anchor15"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:coreFraction &nbsp;</strong> 
  (<code>default = <strong>0.5</strong></code>; <code>minimum = 0.</code>; <code>maximum = 1.</code>)<br/>
 When assuming a double Gaussian matter profile, <i>bProfile = 2</i>, 
@@ -357,28 +317,18 @@ the inner core is assumed to have a fraction <i>coreFraction</i>
 of the matter content of the hadron. 
    
  
-<a name="anchor16"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:expPow &nbsp;</strong> 
  (<code>default = <strong>1.85</strong></code>; <code>minimum = 0.4</code>; <code>maximum = 10.</code>)<br/>
 When <i>bProfile = 3</i> it gives the power of the assumed overlap 
-shape <i>exp(- b^expPow)</i>. Since the convolution of two Gaussians 
-is another Gaussian, the overlap shape obtained for <i>expPow = 2</i> 
-is the same as that obtained for a Gaussian matter distribution, 
-<i>bProfile = 1</i>. The limit <i>expPow &rarr; infinity</i> 
-corresponds to no impact parameter dependence at all, <i>bProfile = 0</i>. 
-The overlap shape that would be obtained for an exponential matter 
-distribution cannot be represented exactly on this form, but a similar 
-variance (for fixed normalisation and average <i>b</i>) is obtained 
-for <i>expPow = 1.4</i>. The double Gaussian matter profiles that 
-are obtained for <i>bProfile = 2</i> generally correspond to the range 
-between <i>expPow = 1</i> and <i>expPow = 2</i>, with the former 
-representing scenarios with pronounced "hot spots" and consequently 
-very significant fluctuations (high variance). Note that for small 
-<i>expPow</i> the program becomes slow and unstable, so the min 
-limit must be respected. 
+shape <i>exp(- b^expPow)</i>. Default corresponds to a simple 
+exponential drop, which is not too dissimilar from the overlap 
+obtained with the standard double Gaussian parameters. For 
+<i>expPow = 2</i> we reduce to the simple Gaussian, <i>bProfile = 1</i>, 
+and for <i>expPow &rarr; infinity</i> to no impact parameter dependence 
+at all, <i>bProfile = 0</i>. For small <i>expPow</i> the program 
+becomes slow and unstable, so the min limit must be respected. 
    
  
-<a name="anchor17"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:a1 &nbsp;</strong> 
  (<code>default = <strong>0.15</strong></code>; <code>minimum = 0.</code>; <code>maximum = 2.</code>)<br/>
 When <i>bProfile = 4</i>, this gives the <i>a1</i> constant in the 
@@ -386,7 +336,6 @@ Gaussian width. When <i>a1 = 0.</i>, this reduces back to the single
 Gaussian case. 
    
  
-<a name="anchor18"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:bSelScale &nbsp;</strong> 
  (<code>default = <strong>1</strong></code>; <code>minimum = 1</code>; <code>maximum = 3</code>)<br/>
 The selection of impact parameter is related to the scale of the 
@@ -424,13 +373,12 @@ be associated with the hard process.
 It is possible that a parton may rescatter, i.e. undergo a further 
 interaction subsequent to the first one. The machinery to model this 
 kind of physics has only recently become fully operational 
-[<a href="Bibliography.html#refCor09" target="page">Cor09</a>], and is therefore not yet so well explored. 
+[<a href="Bibliography.html" target="page">Cor09</a>], and is therefore not yet so well explored. 
  
 <p/> 
 The rescattering framework has ties with other parts of the program, 
 notably with the <a href="BeamRemnants.html" target="page">beam remnants</a>. 
  
-<a name="anchor19"></a>
 <p/><code>flag&nbsp; </code><strong> MultipartonInteractions:allowRescatter &nbsp;</strong> 
  (<code>default = <strong>off</strong></code>)<br/>
 Switch to allow rescattering of partons; on/off = true/false.<br/> 
@@ -441,7 +389,6 @@ and can therefore not be switched on in that case.
 so well tested. 
    
  
-<a name="anchor20"></a>
 <p/><code>flag&nbsp; </code><strong> MultipartonInteractions:allowDoubleRescatter &nbsp;</strong> 
  (<code>default = <strong>off</strong></code>)<br/>
 Switch to allow rescattering of partons, where both incoming partons 
@@ -455,7 +402,6 @@ simulated. The rate also comes out to be much lower than for single
 rescattering, so to first approximation it can be neglected. 
    
  
-<a name="anchor21"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:rescatterMode &nbsp;</strong> 
  (<code>default = <strong>0</strong></code>; <code>minimum = 0</code>; <code>maximum = 4</code>)<br/>
 Selection of which partons rescatter against unscattered partons 
@@ -481,18 +427,16 @@ with <i>y</i> according to
 beams.   
    
  
-<a name="anchor22"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:ySepRescatter &nbsp;</strong> 
  (<code>default = <strong>0.</strong></code>)<br/>
 used for some of the <code>MultipartonInteractions:rescatterMode</code> 
 options above, as the rapidity for which a scattered parton has a 50% 
 probability to be considered as a potential rescatterer. 
 A <i>ySep > 0</i> generally implies that some central partons cannot 
-rescatter at all, while a <i>ySep &lt; 0</i>  instead allows central 
+rescatter at all, while a <i>ySep < 0</i>  instead allows central 
 partons to scatter against either beam. 
    
  
-<a name="anchor23"></a>
 <p/><code>parm&nbsp; </code><strong> MultipartonInteractions:deltaYRescatter &nbsp;</strong> 
  (<code>default = <strong>1.</strong></code>; <code>minimum = 0.1</code>)<br/>
 used for some of the <code>MultipartonInteractions:rescatterMode</code> 
@@ -502,98 +446,11 @@ as a potential rescatterer.
    
  
  
-<a name="section1"></a> 
-<h3>Initialization speed-up</h3> 
- 
-The initialization of the MPI framework is the most time-consuming part 
-of the whole initialization step. This is because the jet cross section 
-has to be integrated numerically for the given <i>pT0</i> choice, and 
-shown to be larger than the total cross section of the relevant event 
-class (nondiffractive or diffractive). If not, the <i>pT0</i> value has 
-to be reduced. Sudakov factors also need to be tabulated for usage during 
-the generation. If the collision energy is kept fixed and diffraction is 
-not simulated, then the time usage is still hardly noticeable, at or below 
-the order of a second. For diffraction, however, the diffractive masses 
-vary between events, which requires a setup in a grid of masses for 
-subsequent interpolation. This is similar for nondiffractive events, if the 
-collision energy is allowed to vary. In total, this can give up to a 
-hundred process+energy/mass points to consider, requiring tens of seconds. 
-It can become problematic if additionally several different Pythia objects 
-are required to handle many different beam-particle combinations, or if 
-the <code>Beams:allowIDAswitch</code> is used to handle several 
-beam-particle combinations inside a single Pythia object. 
- 
-<p/> 
-It is therefore possible to save the outcome of one initialization step 
-on file, and then read it back in for subsequent runs. This can save a 
-significant time, notably for short test runs. A warning is that all relevant 
-settings must be the same in the two runs. It is up to the user to 
-ensure that this is the case; it would be next-to-impossible to catch 
-any possible conflict. The most obvious aspects that must agree are 
-incoming beam particles and (maximum) collision energy, all MPI-related 
-settings and PDFs. Aspects that could be different without causing problems 
-include ISR and FSR, and all hadronization steps. 
- 
-<p/> 
-This trick also works for the initialization of several particles. 
-Specifically, when the <code>Beams:allowIDAswitch</code> switch is 
-on, some 20 different incoming beam particles are initialized 
-in succession, and all of these can be saved and reused with the methods 
-below. Since we now need a few hundred seconds to initialize all of them, 
-the time savings can be considerable for repeated use. 
- 
-<a name="anchor24"></a>
-<p/><code>mode&nbsp; </code><strong> MultipartonInteractions:reuseInit &nbsp;</strong> 
- (<code>default = <strong>0</strong></code>; <code>minimum = 0</code>; <code>maximum = 3</code>)<br/>
-Action taken with respect to using MPI initialization data as above. 
-<br/><code>option </code><strong> 0</strong> : current run is self-contained.   
-<br/><code>option </code><strong> 1</strong> : MPI initialization is done as usual, but afterwards 
-the results of this initialization are saved on file.   
-<br/><code>option </code><strong> 2</strong> : initialization data is read in from a file, saved 
-from a previous initialization, thereby saving time. If the file is not 
-found, initialization fails.   
-<br/><code>option </code><strong> 3</strong> : as option 2, but if the file is not found, it will be 
-generated and saved after normal initialization.   
-   
- 
-<a name="anchor25"></a>
-<p/><code>word&nbsp; </code><strong> MultipartonInteractions:initFile &nbsp;</strong> 
- (<code>default = <strong>pp14000.mpi</strong></code>)<br/>
-The file name used to store or read MPI initialization data. It is up 
-to the user to pick a suitable name (including path if relevant) for the 
-case at hand. 
-   
- 
-<p/> 
-Another possible speed-up, in some contexts, is to symmetrize the 
-description between particles and antiparticles, so that e.g. 
-<i>pi^+ p</i> and <i>pi^- p</i> are handled identically in the 
-MPI initialization, and thus could use the same initialization file. 
-This is used for the <code>Beams:allowIDAswitch = on</code> option, 
-to limit the number of options needed to cover, but can also be used 
-in other contexts. 
- 
-<a name="anchor26"></a>
-<p/><code>flag&nbsp; </code><strong> MultipartonInteractions:setAntiSame &nbsp;</strong> 
- (<code>default = <strong>off</strong></code>)<br/>
-The cross sections for particle-particle and particle-antiparticle 
-collisions are symmetrized at initialization. For the perturbative 
-cross section this is achieved by symmetrizing the PDFs of one 
-particle between quarks and antiquarks. For the nonperturbative 
-cross sections this is done by averaging two separate calls. If 
-either of the two particles is its own antiparticle the procedure 
-can be skipped. In the actual event generation the proper PDFs are 
-used for real parton-parton collisions, but combined with the 
-symmetrized Sudakov factor table and nondiffractive cross section. 
-   
- 
-<a name="section2"></a> 
 <h3>Further variables</h3> 
  
 These should normally not be touched. Their only function is for 
 cross-checks. 
  
-<a name="anchor27"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:nQuarkIn &nbsp;</strong> 
  (<code>default = <strong>5</strong></code>; <code>minimum = 0</code>; <code>maximum = 5</code>)<br/>
 Number of allowed incoming quark flavours in the beams; a change 
@@ -601,7 +458,6 @@ to 4 would thus exclude <i>b</i> and <i>bbar</i> as incoming
 partons, etc. 
    
  
-<a name="anchor28"></a>
 <p/><code>mode&nbsp; </code><strong> MultipartonInteractions:nSample &nbsp;</strong> 
  (<code>default = <strong>1000</strong></code>; <code>minimum = 100</code>)<br/>
 The allowed <i>pT</i> range is split (unevenly) into 100 bins, 
@@ -612,7 +468,6 @@ at initialization, and the differential one during the run as a
 A larger number implies increased accuracy of the calculations. 
    
  
-<a name="section3"></a> 
 <h3>Technical notes</h3> 
  
 Relative to the articles mentioned above, not much has happened. 
@@ -746,4 +601,4 @@ interactions.
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

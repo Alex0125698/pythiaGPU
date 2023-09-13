@@ -1,7 +1,7 @@
 // SusyWidthFunctions.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand
+// Copyright (C) 2015 Torbjorn Sjostrand
 // Authors: N. Desai, P. Skands
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -16,17 +16,114 @@ namespace Pythia8 {
 
 //==========================================================================
 
-// The WidthFunction class.
+// The WidthFunctions class.
 // Functions to be integrated for calculating the 3-body decay widths.
 
 //--------------------------------------------------------------------------
 
-void WidthFunction::setPointers(Info* infoPtrIn) {
+void WidthFunction::setPointers( ParticleData* particleDataPtrIn,
+  CoupSUSY* coupSUSYPtrIn, Info* infoPtrIn) {
 
-  particleDataPtr = infoPtrIn->particleDataPtr;
-  loggerPtr       = infoPtrIn->loggerPtr;
-  coupSUSYPtr     = infoPtrIn->coupSUSYPtr;
-  coupSMPtr       = infoPtrIn->coupSMPtr;
+  particleDataPtr = particleDataPtrIn;
+  coupSUSYPtr = coupSUSYPtrIn;
+  infoPtr = infoPtrIn;
+}
+
+//--------------------------------------------------------------------------
+
+double WidthFunction::function(double) {
+
+  infoPtr->errorMsg("Error in WidthFunction::function: "
+    "using dummy width function");
+  return 0.;
+}
+
+//--------------------------------------------------------------------------
+
+// Adapted from the CERNLIB DGAUSS routine by K.S. Kolbig.
+
+double WidthFunction::integrateGauss(double xlo, double xhi, double tol) {
+
+  // 8-point unweighted.
+  static double x8[4]={0.96028985649753623,
+                       0.79666647741362674,
+                       0.52553240991632899,
+                       0.18343464249564980};
+  static double w8[4]={0.10122853629037626,
+                       0.22238103445337447,
+                       0.31370664587788729,
+                       0.36268378337836198};
+  // 16-point unweighted.
+  static double x16[8]={0.98940093499164993,
+                       0.94457502307323258,
+                       0.86563120238783174,
+                       0.75540440835500303,
+                       0.61787624440264375,
+                       0.45801677765722739,
+                       0.28160355077925891,
+                       0.09501250983763744};
+  static double w16[8]={0.027152459411754095,
+                       0.062253523938647893,
+                       0.095158511682492785,
+                       0.12462897125553387,
+                       0.14959598881657673,
+                       0.16915651939500254,
+                       0.18260341504492359,
+                       0.18945061045506850};
+
+  // Boundary checks.
+  if (xlo >= xhi) {
+  infoPtr->errorMsg("Error in WidthFunction::integrateGauss: "
+    "xlo >= xhi");
+    return 0.0;
+  }
+
+  // Initialize.
+  double sum = 0.0;
+  double c = 0.001/abs(xhi-xlo);
+  double zlo = xlo;
+  double zhi = xhi;
+
+  bool nextbin = true;
+  while ( nextbin ) {
+
+    double zmi = 0.5*(zhi+zlo); // midpoint
+    double zmr = 0.5*(zhi-zlo); // midpoint, relative to zlo
+
+    // Calculate 8-point and 16-point quadratures.
+    double s8=0.0;
+    for (int i=0;i<4;i++) {
+      double dz = zmr * x8[i];
+      s8 += w8[i]*(function(zmi+dz) + function(zmi-dz));
+    }
+    s8 *= zmr;
+    double s16=0.0;
+    for (int i=0;i<8;i++) {
+      double dz = zmr * x16[i];
+      s16 += w16[i]*(function(zmi+dz) + function(zmi-dz));
+    }
+    s16 *= zmr;
+    if (abs(s16-s8) < tol*(1+abs(s16))) {
+      // Precision in this bin OK, add to cumulative and go to next.
+      nextbin=true;
+      sum += s16;
+      // Next bin: LO = end of current, HI = end of integration region.
+      zlo=zhi;
+      zhi=xhi;
+      if ( zlo == zhi ) nextbin = false;
+    } else {
+      // Precision in this bin not OK, subdivide.
+      if (1.0 + c*abs(zmr) == 1.0) {
+        infoPtr->errorMsg("Error in WidthFunction::integrateGauss: "
+          "too high accuracy required");
+        sum = 0.0 ;
+        break;
+      }
+      zhi=zmi;
+      nextbin=true;
+    }
+  }
+  return sum;
 }
 
 //==========================================================================
@@ -39,15 +136,11 @@ void WidthFunction::setPointers(Info* infoPtrIn) {
 double StauWidths::getWidth(int idResIn, int idIn){
 
   setChannel(idResIn, idIn);
+
+  // Calculate integration limits and return integrated width.
   if (idResIn % 2 == 0) return 0.0;
-
-  // Set up a function of only x, capturing the reference to 'this'
-  auto integrand = [&](double x) { return this->f(x); };
-
-  // Integrate f
-  double width;
-  if (integrateGauss(width, integrand, 0.0, 1.0, 1.0e-3)) return width;
-  else return 0.0;
+  double width = integrateGauss(0.0,1.0,1.0e-3);
+  return width;
 
 }
 
@@ -67,16 +160,16 @@ void StauWidths::setChannel(int idResIn, int idIn) {
 
   // Couplings etc.
   f0 = 92.4; //MeV
-  gf =   coupSMPtr->GF();
+  gf =   coupSUSYPtr->GF();
   delm = mRes - m1;
   cons = pow2(f0)*pow2(gf)*(pow2(delm) - pow2(m2))
-       * coupSMPtr->V2CKMid(1,1) / (128.0 * pow(mRes*M_PI,3));
+       * coupSUSYPtr->V2CKMid(1,1) / (128.0 * pow(mRes*M_PI,3));
 
-  if (idIn == 9000211) wparam = 1.16;
-  else if (idIn == 213) wparam = 0.808;
+  if (idIn == 900111) wparam = 1.16;
+  else if (idIn == 113) wparam = 0.808;
   else wparam = 1.0;
 
-  double g = coupSMPtr->alphaEM(mRes * mRes);
+  double g = coupSUSYPtr->alphaEM(mRes * mRes);
   int ksusy = 1000000;
   int isl = (abs(idRes)/ksusy == 2) ? (abs(idRes)%10+1)/2 + 3
                                     : (abs(idRes)%10+1)/2;
@@ -85,15 +178,16 @@ void StauWidths::setChannel(int idResIn, int idIn) {
   gR = g * coupSUSYPtr->RsllX[isl][3][1] / ( sqrt(2.0) * coupSUSYPtr->cosb);
 
   // Set function switch and internal propagators depending on decay product.
-  if (idIn == 211) fnSwitch = 1;
-  else if (idIn == 9000211 || idIn == 213)  fnSwitch = 2;
+  if (idIn == 111) fnSwitch = 1;
+  else if (idIn == 900111 || idIn == 113)  fnSwitch = 2;
   else if (idIn == 14 || idIn == 12) {
     m2 = particleDataPtr->m0(idIn-1);
     fnSwitch = 3;
   }
   else {
-    loggerPtr->WARNING_MSG("unknown decay channel",
-      "idIn = " + to_string(idIn));
+    stringstream mess;
+    mess <<  " unknown decay channel idIn = " << idIn;
+    infoPtr->errorMsg("Warning in StauWidths::setChannel:", mess.str() );
   }
 
   return;
@@ -101,7 +195,7 @@ void StauWidths::setChannel(int idResIn, int idIn) {
 
 //------------------------------------------------------------------------
 
-double StauWidths::f(double x){
+double StauWidths::function(double x){
 
   // Decay width functions documented in arXiv:1212.2886 Citron et. al.
   double value = 0.0;
@@ -138,8 +232,9 @@ double StauWidths::f(double x){
   }
 
   else {
-    loggerPtr->WARNING_MSG("unknown decay channel",
-      "fnSwitch = " + to_string(fnSwitch));
+    stringstream mess;
+    mess <<  " unknown decay channel fnSwitch = " << fnSwitch;
+    infoPtr->errorMsg("Warning in StauWidths::function:", mess.str() );
   }
 
   return value;

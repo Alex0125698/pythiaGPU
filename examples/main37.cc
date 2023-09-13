@@ -1,9 +1,7 @@
 // main37.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: basic usage; LHE file
 
 // This is a simple test program.
 // It illustrates how Les Houches Event File version 3.0 input can be used
@@ -23,7 +21,7 @@ int main() {
   pythia.init();
 
   // Get number of event weights.
-  int ninitrwgt = pythia.info.initrwgt ? pythia.info.initrwgt->size() : 0;
+  int ninitrwgt = pythia.info.getInitrwgtSize();
 
   // Initialise as many histograms as there are event weights.
   vector<Hist> pTw;
@@ -47,14 +45,15 @@ int main() {
     double pT = pythia.event[iW].pT();
 
     // Loop over the event weights in the detailed format and histogram.
-    int iwgt = 0;
-    const map<string,double>* weights = pythia.info.weights_detailed;
-    if (weights) {
-      for ( map<string,double>::const_iterator it = weights->begin();
-            it != weights->end(); ++it ) {
-        pTw[iwgt].fill( max(pT,0.5), it->second );
-        ++iwgt;
-      }
+    unsigned int nwgt = pythia.info.getWeightsDetailedSize();
+    for (unsigned int iwgt = 0; iwgt < nwgt; ++iwgt) {
+      // The weights happen to have the identifiers 1001, 1002...
+      string key;
+      ostringstream convert;
+      convert << iwgt + 1001;
+      key = convert.str();
+      double w = pythia.info.getWeightsDetailedValue(key);
+      pTw[iwgt].fill( max(pT,0.5), w );
     }
 
   // End of event loop.

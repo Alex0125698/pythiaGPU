@@ -1,9 +1,7 @@
 // main64.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: basic usage; LHE file
 
 // This is a simple test program. It shows how PYTHIA 8 can write
 // a Les Houches Event File v. 3.0 based on its process-level events.
@@ -23,7 +21,8 @@ int main() {
   pythia.init();
 
   // Create and open file for LHEF 3.0 output.
-  LHEF3FromPythia8 myLHEF3(&pythia.event, &pythia.info);
+  LHEF3FromPythia8 myLHEF3(&pythia.event, &pythia.settings, &pythia.info,
+    &pythia.particleData);
   myLHEF3.openLHEF("weakbosons.lhe");
 
   // Write out initialization info on the file.

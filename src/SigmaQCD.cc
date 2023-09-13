@@ -1,6 +1,6 @@
 // SigmaQCD.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -159,7 +159,7 @@ void Sigma2gg2gg::setIdColAcol() {
 void Sigma2gg2qqbar::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = mode("HardQCD:nQuarkNew");
+  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
 
 }
 
@@ -248,7 +248,6 @@ void Sigma2qg2qg::setIdColAcol() {
 // Sigma2qq2qq class.
 // Cross section for q qbar' -> q qbar' or q q' -> q q'
 // (qbar qbar' -> qbar qbar'), q' may be same as q.
-// s-channel part of q qbar -> q qbar / q' qbar' handled separately below.
 
 //--------------------------------------------------------------------------
 
@@ -274,11 +273,7 @@ double Sigma2qq2qq::sigmaHat() {
   // Combine cross section terms; factor 1/2 when identical quarks.
   if      (id2 ==  id1) sigSum = 0.5 * (sigT + sigU + sigTU);
   else if (id2 == -id1) sigSum = sigT + sigST;
-  else                  sigSum = sigT;
-
-  // Uncomment line below to obtain only q q' -> q q' scattering.
-  // (Useful for studies of well-defined colour flow.)
-  // if (id1 < 0 || id2 < 0 || id2 == id1) sigSum = 0.;
+  else                      sigSum = sigT;
 
   // Answer.
   return (M_PI/sH2) * pow2(alpS) * sigSum;
@@ -353,7 +348,7 @@ void Sigma2qqbar2gg::setIdColAcol() {
 void Sigma2qqbar2qqbarNew::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = mode("HardQCD:nQuarkNew");
+  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
 
 }
 
@@ -817,7 +812,7 @@ void Sigma3qg2qgg::setIdColAcol(){
 void Sigma3gg2qqbarg::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = mode("HardQCD:nQuarkNew");
+  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
 
 }
 
@@ -1025,7 +1020,7 @@ inline void Sigma3qq2qqgDiff::mapFinal() {
 void Sigma3qqbar2qqbargDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = mode("HardQCD:nQuarkNew");
+  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
 
 }
 
@@ -1125,7 +1120,7 @@ void Sigma3qqbar2qqbargDiff::setIdColAcol(){
 void Sigma3qg2qqqbarDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = mode("HardQCD:nQuarkNew");
+  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
 
 }
 

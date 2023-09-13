@@ -1,6 +1,6 @@
 // ColourTracing.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -93,7 +93,7 @@ bool ColourTracing::traceFromAcol(int indxCol, Event& event, int iJun,
     for (int iAntiJun = 0; iAntiJun < event.sizeJunction(); ++iAntiJun)
       if (iAntiJun != iJun && event.kindJunction(iAntiJun) % 2 == 0)
         for (int iColAnti = 0; iColAnti < 3; ++iColAnti)
-          if (event.endColJunction(iAntiJun, iColAnti) == indxCol) {
+          if (event.colJunction(iAntiJun, iColAnti) == indxCol) {
             iParton.push_back( -(10 + 10 * iAntiJun + iColAnti) );
             indxCol = 0;
             hasFound = true;
@@ -102,8 +102,8 @@ bool ColourTracing::traceFromAcol(int indxCol, Event& event, int iJun,
 
     // In a pinch, check list of opposite-sign junction end colours.
     // Store in iParton list as -(10 + 10 * iAntiJun + iLeg).
-    // This is for =J-g-...-g-J= connections; where instead of running both
-    // ways, the second time we just store the two junctions.
+    // This is for J-g-...-g-J connections; where instead of running both ways,
+    // the second time we just store the two junctions.
     if (!hasFound && kindJun % 2 == 1 && event.sizeJunction() > 1)
     for (int iAntiJun = 0; iAntiJun < event.sizeJunction(); ++iAntiJun)
       if (iAntiJun != iJun && event.kindJunction(iAntiJun) % 2 == 0)
@@ -120,7 +120,8 @@ bool ColourTracing::traceFromAcol(int indxCol, Event& event, int iJun,
 
   // Something went wrong in colour tracing.
   if (!hasFound || loop == loopMax) {
-    loggerPtr->ERROR_MSG("colour tracing from anti-colour to colour failed");
+    infoPtr->errorMsg("Error in ColourTracing::traceFromAcol: "
+      "colour tracing failed");
     return false;
   }
 
@@ -191,7 +192,7 @@ bool ColourTracing::traceFromCol(int indxCol, Event& event, int iJun,
       for (int iAntiJun = 0; iAntiJun < event.sizeJunction(); ++iAntiJun)
         if (iAntiJun != iJun && event.kindJunction(iAntiJun) %2 == 1)
           for (int iColAnti = 0; iColAnti < 3; ++iColAnti)
-            if (event.endColJunction(iAntiJun, iColAnti) == indxCol) {
+            if (event.colJunction(iAntiJun, iColAnti) == indxCol) {
               iParton.push_back( -(10 + 10 * iAntiJun + iColAnti) );
               indxCol = 0;
               hasFound = true;
@@ -218,7 +219,8 @@ bool ColourTracing::traceFromCol(int indxCol, Event& event, int iJun,
 
   // Something went wrong in colour tracing.
   if (!hasFound || loop == loopMax) {
-    loggerPtr->ERROR_MSG("colour tracing from colour to anti-colour failed");
+    infoPtr->errorMsg("Error in ColourTracing::traceFromCol: "
+      "colour tracing failed");
     return false;
   }
 
@@ -262,7 +264,8 @@ bool ColourTracing::traceInLoop(Event& event, vector<int>& iParton) {
 
   // Something went wrong in colour tracing.
   if (!hasFound || loop == loopMax) {
-    loggerPtr->ERROR_MSG("colour tracing in loop failed");
+    infoPtr->errorMsg("Error in ColourTracing::traceInLoop: "
+      "colour tracing failed");
 
     return false;
   }

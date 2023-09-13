@@ -1,6 +1,6 @@
 // RHadrons.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains a class for the production and decay
@@ -16,7 +16,6 @@
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PythiaStdlib.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/Settings.h"
 
 namespace Pythia8 {
@@ -26,18 +25,16 @@ namespace Pythia8 {
 // The RHadrons class contains the routines for the production and decay
 // of long-lived heavy coloured particles.
 
-class RHadrons : public PhysicsBase {
+class RHadrons {
 
 public:
 
   // Constructor.
-  RHadrons() : allowRH(), allowRSb(), allowRSt(), allowRGo(), allowSomeR(),
-    setMassesRH(), idRSb(), idRSt(), idRGo(), maxWidthRH(), probGluinoballRH(),
-    mOffsetCloudRH(), mCollapseRH(), diquarkSpin1RH(), m0Sb(), m0St(), m0Go(),
-    nRHad(0), iRHad(), iBef(), iSys(), systemPtr(), flavSelPtr(), zSelPtr() {}
+  RHadrons() : nRHad(0) {}
 
   // Initialization of R-hadron handling.
-  bool init();
+  bool init( Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn);
 
   // Pointers to flavours and z sent from HadronLevel.
   void fragPtrs( StringFlav* flavSelPtrIn, StringZ* zSelPtrIn)
@@ -56,9 +53,8 @@ public:
   bool exist() {return (nRHad > 0);}
 
   // Tell whether a R-hadron production+decay happened, and trace down.
-  int trace(int i) {
-    for (int iR = 0; iR < nRHad; ++iR)
-      if (iBefRHad[iR] == i || iCreRHad[iR] == i) return iAftRHad[iR];
+  int trace(int i) { for (int iR = 0; iR < nRHad; ++iR)
+    if (iBefRHad[iR] == i || iCreRHad[iR] == i) return iAftRHad[iR];
     return 0;}
 
 private:
@@ -78,6 +74,15 @@ private:
   vector<bool> isTriplet;
   int          nRHad, iRHad, iBef, iSys;
   ColSinglet*  systemPtr;
+
+  // Pointer to various information on the generation.
+  Info*          infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData*  particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*          rndmPtr;
 
   // Pointers to classes for flavour and z generation.
   StringFlav*    flavSelPtr;

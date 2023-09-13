@@ -1,6 +1,6 @@
 // ParticleData.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for the classes containing particle data.
@@ -24,7 +24,7 @@ namespace Pythia8 {
 // Forward reference to some classes.
 class ParticleData;
 class ResonanceWidths;
-class CoupSM;
+class Couplings;
 class CoupSUSY;
 class SUSYResonanceWidths;
 
@@ -35,35 +35,16 @@ class SUSYResonanceWidths;
 class DecayChannel {
 
 public:
-
   // Constructor.
   DecayChannel(int onModeIn = 0, double bRatioIn = 0., int meModeIn = 0,
     int prod0 = 0, int prod1 = 0, int prod2 = 0, int prod3 = 0,
     int prod4 = 0, int prod5 = 0, int prod6 = 0, int prod7 = 0)
     : onModeSave(onModeIn), bRatioSave(bRatioIn), currentBRSave(0.),
     onShellWidthSave(0.), openSecPos(1.), openSecNeg(1.),
-    meModeSave(meModeIn), nProd(0), prod(), hasChangedSave(true) {
+    meModeSave(meModeIn), nProd(0), hasChangedSave(true) {
     prod[0] = prod0; prod[1] = prod1; prod[2] = prod2; prod[3] = prod3;
     prod[4] = prod4; prod[5] = prod5; prod[6] = prod6; prod[7] = prod7;
     for (int j = 0; j < 8; ++j) if (prod[j] != 0 && j == nProd) ++nProd; }
-
-  // Copy constructor.
-  DecayChannel( const DecayChannel& oldDC) {
-    onModeSave = oldDC.onModeSave; bRatioSave = oldDC.bRatioSave;
-    currentBRSave = oldDC.currentBRSave;
-    onShellWidthSave = oldDC.onShellWidthSave; openSecPos = oldDC.openSecPos;
-    openSecNeg = oldDC.openSecNeg; meModeSave = oldDC.meModeSave;
-    nProd = oldDC.nProd; for (int j = 0; j < 8; ++j) prod[j] = oldDC.prod[j];
-    hasChangedSave = oldDC.hasChangedSave; }
-
-  // Assignment operator.
-  DecayChannel& operator=( const DecayChannel& oldDC) { if (this != &oldDC) {
-    onModeSave = oldDC.onModeSave; bRatioSave = oldDC.bRatioSave;
-    currentBRSave = oldDC.currentBRSave;
-    onShellWidthSave = oldDC.onShellWidthSave; openSecPos = oldDC.openSecPos;
-    openSecNeg = oldDC.openSecNeg; meModeSave = oldDC.meModeSave;
-    nProd = oldDC.nProd; for (int j = 0; j < 8; ++j) prod[j] = oldDC.prod[j];
-    hasChangedSave = oldDC.hasChangedSave; } return *this; }
 
   // Member functions for input.
   void onMode(int onModeIn) {onModeSave = onModeIn; hasChangedSave = true;}
@@ -130,79 +111,25 @@ public:
   ParticleDataEntry(int idIn = 0, string nameIn = " ",
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
-    double mMaxIn = 0., double tau0In = 0., bool varWidthIn = false)
-    : idSave(abs(idIn)), nameSave(nameIn), antiNameSave("void"),
-    spinTypeSave(spinTypeIn), chargeTypeSave(chargeTypeIn),
-    colTypeSave(colTypeIn), m0Save(m0In),  mWidthSave (mWidthIn),
-    mMinSave(mMinIn), mMaxSave(mMaxIn), tau0Save(tau0In),
-    constituentMassSave(), hasAntiSave(false), isResonanceSave(),
-    mayDecaySave(), tauCalcSave(true), varWidthSave(varWidthIn),
-    doExternalDecaySave(), isVisibleSave(), doForceWidthSave(),
-    hasChangedSave(true), hasChangedMMinSave(false),
-    hasChangedMMaxSave(false), modeBWnow(), modeTau0now(), atanLow(),
-    atanDif(), mThr(), currentBRSum(), resonancePtr(0), particleDataPtr() {
-      setDefaults();}
+    double mMaxIn = 0., double tau0In = 0.) : idSave(abs(idIn)),
+    nameSave(nameIn), antiNameSave("void"),  spinTypeSave(spinTypeIn),
+    chargeTypeSave(chargeTypeIn), colTypeSave(colTypeIn), m0Save(m0In),
+    mWidthSave (mWidthIn), mMinSave(mMinIn), mMaxSave(mMaxIn),
+    tau0Save(tau0In), hasAntiSave(false), hasChangedSave(true),
+    resonancePtr(0) {setDefaults();}
   ParticleDataEntry(int idIn, string nameIn, string antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
-    double mMaxIn = 0., double tau0In = 0., bool varWidthIn = false)
-    : idSave(abs(idIn)), nameSave(nameIn), antiNameSave(antiNameIn),
-    spinTypeSave(spinTypeIn), chargeTypeSave(chargeTypeIn),
-    colTypeSave(colTypeIn), m0Save(m0In), mWidthSave (mWidthIn),
-    mMinSave(mMinIn), mMaxSave(mMaxIn), tau0Save(tau0In),
-    constituentMassSave(), hasAntiSave(true), isResonanceSave(),
-    mayDecaySave(), tauCalcSave(true), varWidthSave(varWidthIn),
-    doExternalDecaySave(), isVisibleSave(), doForceWidthSave(),
-    hasChangedSave(true), hasChangedMMinSave(false),
-    hasChangedMMaxSave(false), modeBWnow(), modeTau0now(), atanLow(),
-    atanDif(), mThr(), currentBRSum(), resonancePtr(0), particleDataPtr() {
-      setDefaults(); if (toLower(antiNameIn) == "void") hasAntiSave = false;}
+    double mMaxIn = 0., double tau0In = 0.) : idSave(abs(idIn)),
+    nameSave(nameIn), antiNameSave(antiNameIn), spinTypeSave(spinTypeIn),
+    chargeTypeSave(chargeTypeIn), colTypeSave(colTypeIn), m0Save(m0In),
+    mWidthSave (mWidthIn), mMinSave(mMinIn), mMaxSave(mMaxIn),
+    tau0Save(tau0In), hasAntiSave(true), hasChangedSave(true),
+    resonancePtr(0) {setDefaults();
+    if (toLower(antiNameIn) == "void") hasAntiSave = false;}
 
-  // Copy constructor.
-  ParticleDataEntry( const ParticleDataEntry& oldPDE) {idSave = oldPDE.idSave;
-    nameSave = oldPDE.nameSave; antiNameSave = oldPDE.antiNameSave;
-    spinTypeSave = oldPDE.spinTypeSave; chargeTypeSave = oldPDE.chargeTypeSave;
-    colTypeSave = oldPDE.colTypeSave; m0Save = oldPDE.m0Save;
-    mWidthSave = oldPDE.mWidthSave;  mMinSave = oldPDE.mMinSave;
-    mMaxSave = oldPDE.mMaxSave;  tau0Save = oldPDE.tau0Save;
-    varWidthSave = oldPDE.varWidthSave;
-    constituentMassSave = oldPDE.constituentMassSave;
-    hasAntiSave = oldPDE.hasAntiSave; isResonanceSave = oldPDE.isResonanceSave;
-    mayDecaySave = oldPDE.mayDecaySave; tauCalcSave = oldPDE.tauCalcSave;
-    doExternalDecaySave = oldPDE.doExternalDecaySave; isVisibleSave
-    = oldPDE.isVisibleSave; doForceWidthSave = oldPDE.doForceWidthSave;
-    hasChangedSave = oldPDE.hasChangedSave; hasChangedMMinSave
-    = oldPDE.hasChangedMMinSave; hasChangedMMaxSave
-    = oldPDE.hasChangedMMaxSave; modeTau0now = oldPDE.modeTau0now; modeBWnow
-    = oldPDE.modeBWnow; atanLow = oldPDE.atanLow; atanDif = oldPDE.atanDif;
-    mThr = oldPDE.mThr;
-    for (int i = 0; i < int(oldPDE.channels.size()); ++i) {
-      DecayChannel oldDC = oldPDE.channels[i]; channels.push_back(oldDC); }
-    currentBRSum = oldPDE.currentBRSum; resonancePtr = oldPDE.resonancePtr;
-    particleDataPtr = oldPDE.particleDataPtr; }
-
-  // Assignment operator.
-  ParticleDataEntry& operator=( const ParticleDataEntry& oldPDE) {
-    if (this != &oldPDE) { idSave = oldPDE.idSave;
-    nameSave = oldPDE.nameSave; antiNameSave = oldPDE.antiNameSave;
-    spinTypeSave = oldPDE.spinTypeSave; chargeTypeSave = oldPDE.chargeTypeSave;
-    colTypeSave = oldPDE.colTypeSave; m0Save = oldPDE.m0Save;
-    mWidthSave = oldPDE.mWidthSave;  mMinSave = oldPDE.mMinSave;
-    mMaxSave = oldPDE.mMaxSave;  tau0Save = oldPDE.tau0Save;
-    varWidthSave = oldPDE.varWidthSave;
-    constituentMassSave = oldPDE.constituentMassSave;
-    hasAntiSave = oldPDE.hasAntiSave; isResonanceSave = oldPDE.isResonanceSave;
-    mayDecaySave = oldPDE.mayDecaySave; tauCalcSave = oldPDE.tauCalcSave;
-    doExternalDecaySave = oldPDE.doExternalDecaySave; isVisibleSave
-    = oldPDE.isVisibleSave; doForceWidthSave = oldPDE.doForceWidthSave;
-    hasChangedSave = oldPDE.hasChangedSave; hasChangedMMinSave
-    = oldPDE.hasChangedMMinSave; hasChangedMMaxSave
-    = oldPDE.hasChangedMMaxSave; modeBWnow = oldPDE.modeBWnow; atanLow
-    = oldPDE.atanLow; atanDif = oldPDE.atanDif; mThr = oldPDE.mThr;
-    for (int i = 0; i < int(oldPDE.channels.size()); ++i) {
-      DecayChannel oldDC = oldPDE.channels[i]; channels.push_back(oldDC); }
-    currentBRSum = oldPDE.currentBRSum; resonancePtr = 0;
-    particleDataPtr = 0; } return *this; }
+  // Destructor: delete any ResonanceWidths object.
+  ~ParticleDataEntry();
 
   // Initialization of some particle flags.
   void setDefaults();
@@ -215,13 +142,13 @@ public:
   void setAll(string nameIn, string antiNameIn, int spinTypeIn = 0,
     int chargeTypeIn = 0, int colTypeIn = 0, double m0In = 0.,
     double mWidthIn = 0., double mMinIn = 0., double mMaxIn = 0.,
-    double tau0In = 0., bool varWidthIn = false)
+    double tau0In = 0.)
     {nameSave = nameIn; antiNameSave = antiNameIn; hasAntiSave = true;
     if (toLower(antiNameIn) == "void") hasAntiSave = false;
     spinTypeSave = spinTypeIn; chargeTypeSave = chargeTypeIn;
     colTypeSave = colTypeIn; m0Save = m0In; mWidthSave = mWidthIn;
-    setMMin(mMinIn); setMMax(mMaxIn); tau0Save = tau0In;
-    varWidthSave = varWidthIn; setDefaults(); hasChangedSave = true;}
+    mMinSave = mMinIn; mMaxSave = mMaxIn; tau0Save = tau0In;
+    setDefaults(); hasChangedSave = true;}
 
   // Change current values one at a time (or set if not set before).
   // (Must use set here since else name+signature clash with get methods.)
@@ -241,22 +168,16 @@ public:
     hasChangedSave = true;}
   void setMWidth(double mWidthIn, bool countAsChanged = true) {
     mWidthSave = mWidthIn; if (countAsChanged) hasChangedSave = true;}
-  void setMMin(double mMinIn) {mMinSave = mMinIn; hasChangedSave = true;
-    hasChangedMMinSave=true;}
-  void setMMax(double mMaxIn) {mMaxSave = mMaxIn; hasChangedSave = true;
-    hasChangedMMaxSave=true;}
+  void setMMin(double mMinIn) {mMinSave = mMinIn; hasChangedSave = true;}
+  void setMMax(double mMaxIn) {mMaxSave = mMaxIn; hasChangedSave = true;}
   // Special options specifically when cutting wings of Breit-Wigners.
   void setMMinNoChange(double mMinIn) {mMinSave = mMinIn;}
   void setMMaxNoChange(double mMaxIn) {mMaxSave = mMaxIn;}
-  void setTau0(double tau0In, bool countAsChanged = true)
-    {tau0Save = tau0In; if (countAsChanged) hasChangedSave = true;}
-  void setVarWidth(bool varWidthIn) {varWidthSave = varWidthIn;}
+  void setTau0(double tau0In) {tau0Save = tau0In; hasChangedSave = true;}
   void setIsResonance(bool isResonanceIn) {isResonanceSave = isResonanceIn;
     hasChangedSave = true;}
   void setMayDecay(bool mayDecayIn, bool countAsChanged = true) {
     mayDecaySave = mayDecayIn; if (countAsChanged) hasChangedSave = true;}
-  void setTauCalc(bool tauCalcIn, bool countAsChanged = true) {
-    tauCalcSave = tauCalcIn; if (countAsChanged) hasChangedSave = true;}
   void setDoExternalDecay(bool doExternalDecayIn)
     {doExternalDecaySave = doExternalDecayIn; hasChangedSave = true;}
   void setIsVisible(bool isVisibleIn) {isVisibleSave = isVisibleIn;
@@ -265,17 +186,14 @@ public:
     hasChangedSave = true;}
   void setHasChanged(bool hasChangedIn) {hasChangedSave = hasChangedIn;
     for (int i = 0; i < int(channels.size()); ++i)
-      channels[i].setHasChanged(hasChangedIn);
-    if (!hasChangedIn) {hasChangedMMinSave=false; hasChangedMMaxSave=false;}}
+      channels[i].setHasChanged(hasChangedIn);}
 
   // Give back current values.
   int    id()                     const { return idSave; }
-  int    antiId()                 const {
-         return hasAntiSave ? -idSave : idSave; }
   bool   hasAnti()                const { return hasAntiSave; }
   string name(int idIn = 1)       const {
          return (idIn > 0) ? nameSave : antiNameSave; }
-  int    spinType()               const {return spinTypeSave; }
+  int    spinType() const {return spinTypeSave; }
   int    chargeType(int idIn = 1) const {
          return (idIn > 0) ? chargeTypeSave : -chargeTypeSave; }
   double charge(int idIn = 1)     const {
@@ -293,52 +211,40 @@ public:
          return (modeBWnow == 0) ? m0Save : mMaxSave; }
   double tau0()                   const { return tau0Save; }
   bool   isResonance()            const { return isResonanceSave; }
-  bool   varWidth()               const { return varWidthSave; }
   bool   mayDecay()               const { return mayDecaySave; }
-  bool   tauCalc()                const { return tauCalcSave; }
   bool   doExternalDecay()        const { return doExternalDecaySave; }
   bool   isVisible()              const { return isVisibleSave; }
   bool   doForceWidth()           const { return doForceWidthSave; }
   bool   hasChanged()     const { if (hasChangedSave) return true;
          for (int i = 0; i < int(channels.size()); ++i)
-           if (channels[i].hasChanged()) return true;
-         return false;}
-  bool   hasChangedMMin()         const { return hasChangedMMinSave; }
-  bool   hasChangedMMax()         const { return hasChangedMMaxSave; }
+         if (channels[i].hasChanged()) return true; return false;}
 
   // Set and give back several mass-related quantities.
   void   initBWmass();
   double constituentMass()        const { return constituentMassSave; }
-  double mSel()                   const;
-  double mRun(double mH)          const;
+  double mSel();
+  double mRun(double mH);
 
   // Give back other quantities.
   bool   useBreitWigner() const { return (modeBWnow > 0); }
-  bool   canDecay()       const { return (channels.size() > 0)
-                                       || varWidthSave; }
+  bool   canDecay()       const { return (channels.size() > 0);}
   bool   isLepton()       const { return (idSave > 10 && idSave < 19);}
   bool   isQuark()        const { return (idSave != 0 && idSave < 9);}
   bool   isGluon()        const { return (idSave == 21);}
   bool   isDiquark()      const { return (idSave > 1000 && idSave < 10000
          && (idSave/10)%10 == 0);}
-  // Identify Hidden Valley partons as partons.
   bool   isParton()       const { return ( idSave == 21
     || (idSave != 0 && idSave < 6)
-    || (idSave > 1000 && idSave < 5510 && (idSave/10)%10 == 0)
-    || (idSave > 4900100 && idSave < 4900109)
-    || (idSave > 4901000 && idSave < 4909000 && (idSave/10)%10 == 0) );}
+    || (idSave > 1000 && idSave < 5510 && (idSave/10)%10 == 0) );}
   bool   isHadron()       const;
   bool   isMeson()        const;
   bool   isBaryon()       const;
-  bool   isOnium()        const;
-  bool   isExotic()       const;
 
   // Intermediate octet ccbar or bbar states in colour-octet model.
   bool   isOctetHadron()  const {return idSave >= 9940000
       && idSave < 9960000; }
   int    heaviestQuark(int idIn = 1)    const;
   int    baryonNumberType(int idIn = 1) const;
-  int    nQuarksInCode(int idQIn)       const;
 
   // Reset to empty decay table.
   void clearChannels() {channels.resize(0);}
@@ -365,10 +271,10 @@ public:
   DecayChannel& pickChannel();
 
   // Access methods stored in ResonanceWidths.
-  void   setResonancePtr(ResonanceWidthsPtr resonancePtrIn) {
-    resonancePtr = resonancePtrIn;}
-  ResonanceWidthsPtr getResonancePtr() {return resonancePtr;}
-  void   resInit(Info* infoPtrIn);
+  void   setResonancePtr(ResonanceWidths* resonancePtrIn);
+  ResonanceWidths* getResonancePtr() {return resonancePtr;}
+  void   resInit(Info* infoPtrIn, Settings* settingsPtrIn,
+    ParticleData* particleDataPtrIn, Couplings* couplingsPtrIn);
   double resWidth(int idSgn, double mHat, int idIn = 0,
     bool openOnly = false, bool setBR = false);
   double resWidthOpen(int idSgn, double mHat, int idIn = 0);
@@ -390,12 +296,11 @@ private:
   int    spinTypeSave, chargeTypeSave, colTypeSave;
   double m0Save, mWidthSave, mMinSave, mMaxSave, tau0Save,
          constituentMassSave;
-  bool   hasAntiSave, isResonanceSave, mayDecaySave, tauCalcSave, varWidthSave,
-         doExternalDecaySave, isVisibleSave, doForceWidthSave, hasChangedSave,
-         hasChangedMMinSave, hasChangedMMaxSave;
+  bool   hasAntiSave, isResonanceSave, mayDecaySave, doExternalDecaySave,
+         isVisibleSave, doForceWidthSave, hasChangedSave;
 
-  // Extra data for mass selection according to a Breit-Wigner and lifetime.
-  int    modeBWnow, modeTau0now;
+  // Extra data for mass selection according to a Breit-Wigner.
+  int    modeBWnow;
   double atanLow, atanDif, mThr;
 
   // A vector containing all the decay channels of the particle.
@@ -405,13 +310,18 @@ private:
   double currentBRSum;
 
   // Pointer to ResonanceWidths object; only used for some particles.
-  ResonanceWidthsPtr resonancePtr;
+  ResonanceWidths* resonancePtr;
 
   // Pointer to the full particle data table.
   ParticleData* particleDataPtr;
 
   // Set constituent mass.
   void setConstituentMass();
+
+  // Useful functions for string handling.
+  string toLower(const string& nameConv) { string temp(nameConv);
+    for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+    return temp; }
 
 };
 
@@ -424,408 +334,237 @@ class ParticleData {
 public:
 
   // Constructor.
-  ParticleData() : setRapidDecayVertex(), modeBreitWigner(), maxEnhanceBW(),
-    mQRun(), Lambda5Run(), intermediateTau0(), infoPtr(nullptr),
-    settingsPtr(nullptr), rndmPtr(nullptr), coupSMPtr(nullptr),
-    particlePtr(nullptr), isInit(false), readingFailedSave(false) {}
-
-  // Copy constructor.
-  ParticleData( const ParticleData& oldPD) {
-    modeBreitWigner = oldPD.modeBreitWigner; maxEnhanceBW = oldPD.maxEnhanceBW;
-    for (int i = 0; i < 7; ++i) mQRun[i] = oldPD.mQRun[i];
-    Lambda5Run = oldPD.Lambda5Run; infoPtr = nullptr; settingsPtr = nullptr;
-    rndmPtr = nullptr; coupSMPtr = nullptr;
-    for (auto pde = oldPD.pdt.begin(); pde != oldPD.pdt.end(); pde++) {
-      int idTmp = pde->first;
-      pdt[idTmp] = make_shared<ParticleDataEntry>(*pde->second);
-      pdt[idTmp]->initPtr(this); }
-    particlePtr = nullptr; isInit = oldPD.isInit;
-    readingFailedSave = oldPD.readingFailedSave; }
-
-  // Assignment operator.
-  ParticleData& operator=( const ParticleData& oldPD) { if (this != &oldPD) {
-    modeBreitWigner = oldPD.modeBreitWigner; maxEnhanceBW = oldPD.maxEnhanceBW;
-    for (int i = 0; i < 7; ++i) mQRun[i] = oldPD.mQRun[i];
-    Lambda5Run = oldPD.Lambda5Run; infoPtr = nullptr; settingsPtr = nullptr;
-    rndmPtr = nullptr; coupSMPtr = nullptr;
-    for (auto pde = oldPD.pdt.begin(); pde != oldPD.pdt.end(); pde++) {
-      int idTmp = pde->first;
-      pdt[idTmp] = make_shared<ParticleDataEntry>(*pde->second);
-      pdt[idTmp]->initPtr(this); }
-    particlePtr = nullptr; isInit = oldPD.isInit;
-    readingFailedSave = oldPD.readingFailedSave; } return *this; }
+  ParticleData() : infoPtr(0), settingsPtr(0), rndmPtr(0), couplingsPtr(0),
+    particlePtr(0), isInit(false), readingFailedSave(false) {}
 
   // Initialize pointers.
-  void initPtrs(Info* infoPtrIn) {infoPtr = infoPtrIn;
-    settingsPtr = infoPtr->settingsPtr; loggerPtr = infoPtr->loggerPtr;
-    rndmPtr = infoPtr->rndmPtr; coupSMPtr = infoPtr->coupSMPtr;}
+  void initPtr(Info* infoPtrIn, Settings* settingsPtrIn, Rndm* rndmPtrIn,
+    Couplings* couplingsPtrIn) {infoPtr = infoPtrIn;
+    settingsPtr = settingsPtrIn; rndmPtr = rndmPtrIn;
+    couplingsPtr = couplingsPtrIn;}
 
   // Read in database from specific file.
-  bool init(string startFile = "../share/Pythia8/xmldoc/ParticleData.xml") {
+  bool init(string startFile = "../xmldoc/ParticleData.xml") {
     initCommon(); return readXML(startFile);}
-
-  // Read in database from saved file stored in memory.
-  bool init(const ParticleData& particleDataIn) {
-    initCommon(); return copyXML(particleDataIn);}
-
-  // Read in database from an istream.
-  bool init(istream& is) { initCommon(); return readXML(is);}
 
   // Overwrite existing database by reading from specific file.
   bool reInit(string startFile, bool xmlFormat = true) { initCommon();
     return (xmlFormat) ? readXML(startFile) : readFF(startFile);}
 
   // Initialize pointers, normal Breit-Wigners and special resonances.
-  void initWidths(vector<ResonanceWidthsPtr> resonancePtrs);
+  void initWidths(vector<ResonanceWidths*> resonancePtrs);
 
-  // Read and process or list whole (or part of) database from/to an XML file.
+  // Read or list whole (or part of) database from/to an XML file.
   bool readXML(string inFile, bool reset = true) ;
   void listXML(string outFile);
-  bool readXML(istream& is, bool reset=true);
-
-  // Copy and process XML information from another particleData object.
-  bool copyXML(const ParticleData &particleDataIn);
-
-  // Auxiliary functions to readXML() and copyXML().
-  bool loadXML(string inFile, bool reset = true) ;
-  bool loadXML(istream& is, bool reset=true);
-  bool processXML(bool reset = true) ;
 
   // Read or list whole (or part of) database from/to a free format file.
   bool readFF(string inFile, bool reset = true) ;
-  bool readFF(istream& is, bool reset = true);
   void listFF(string outFile);
 
   // Read in one update from a single line.
-  bool readString(string lineIn, bool warn = true) ;
+  bool readString(string lineIn, bool warn = true, ostream& os = cout) ;
 
   // Keep track whether any readings have failed, invalidating run setup.
   bool readingFailed() {return readingFailedSave;}
 
   // Print out table of whole database, or of only part of it.
-  void listAll(ostream& stream) {list(stream, false, true);}
-  void listAll() {listAll(cout);}
-  void listChanged(bool changedRes = false) {list(true, changedRes);}
-  void list(ostream& stream, bool chargedOnly = false, bool changedRes = true);
-  void list(bool changedOnly = false, bool changedRes = true) {
-    list(cout, changedOnly, changedRes); }
+  void listAll(ostream& os = cout) {list(false, true, os);}
+  void listChanged(ostream& os = cout) {list(true, false, os);}
+  void listChanged(bool changedRes, ostream& os = cout) {
+    list(true, changedRes, os);}
+  void list(bool changedOnly = false, bool changedRes = true,
+    ostream& os = cout);
 
   // Print out specified particles.
-  void list(int idList) {vector<int> idListTemp;
-    idListTemp.push_back(idList); list( idListTemp);}
-  void list(vector<int> idList);
-
-  // Retrieve readString history (e.g., for inspection). Everything
-  // (subrun=-999), up to first subrun (=-1), or subrun-specific (>=0).
-  vector<string> getReadHistory(int subrun=-999) {
-    if (subrun == -999) return readStringHistory;
-    else if (readStringSubrun.find(subrun) != readStringSubrun.end())
-      return readStringSubrun[subrun];
-    else return vector<string>();
-  }
+  void list(int idList, ostream& os = cout) {vector<int> idListTemp;
+    idListTemp.push_back(idList); list( idListTemp, os);}
+  void list(vector<int> idList, ostream& os = cout);
 
   // Check that table makes sense, especially for decays.
-  void checkTable(int verbosity = 1) ;
+  void checkTable(ostream& os = cout) {checkTable(1, os);};
+  void checkTable(int verbosity, ostream& os = cout) ;
 
   // Add new entry.
   void addParticle(int idIn, string nameIn = " ", int spinTypeIn = 0,
     int chargeTypeIn = 0, int colTypeIn = 0, double m0In = 0.,
     double mWidthIn = 0., double mMinIn = 0., double mMaxIn = 0.,
-    double tau0In = 0., bool varWidthIn = false) {
-    pdt[abs(idIn)] = make_shared<ParticleDataEntry>(idIn, nameIn, spinTypeIn,
-      chargeTypeIn, colTypeIn, m0In, mWidthIn, mMinIn, mMaxIn, tau0In,
-      varWidthIn);
-    pdt[abs(idIn)]->initPtr(this); }
+    double tau0In = 0.) { pdt[abs(idIn)] = ParticleDataEntry(idIn,
+    nameIn, spinTypeIn, chargeTypeIn, colTypeIn, m0In, mWidthIn,
+    mMinIn, mMaxIn, tau0In); pdt[abs(idIn)].initPtr(this); }
   void addParticle(int idIn, string nameIn, string antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
-    double mMaxIn = 0., double tau0In = 0., bool varWidthIn = false) {
-    pdt[abs(idIn)] = make_shared<ParticleDataEntry>(idIn, nameIn, antiNameIn,
-      spinTypeIn, chargeTypeIn, colTypeIn, m0In, mWidthIn, mMinIn, mMaxIn,
-      tau0In, varWidthIn);
-    pdt[abs(idIn)]->initPtr(this); }
+    double mMaxIn = 0., double tau0In = 0.) { pdt[abs(idIn)]
+    = ParticleDataEntry(idIn, nameIn, antiNameIn, spinTypeIn,
+    chargeTypeIn, colTypeIn, m0In, mWidthIn, mMinIn, mMaxIn, tau0In);
+    pdt[abs(idIn)].initPtr(this); }
 
   // Reset all the properties of an entry in one go.
   void setAll(int idIn, string nameIn, string antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
-    double mMaxIn = 0.,double tau0In = 0.,bool varWidthIn = false) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setAll( nameIn, antiNameIn, spinTypeIn, chargeTypeIn,
-    colTypeIn, m0In, mWidthIn, mMinIn, mMaxIn, tau0In, varWidthIn); }
+    double mMaxIn = 0.,double tau0In = 0.) { if (isParticle(idIn))
+    pdt[abs(idIn)].setAll( nameIn, antiNameIn, spinTypeIn, chargeTypeIn,
+    colTypeIn, m0In, mWidthIn, mMinIn, mMaxIn, tau0In); }
 
   // Query existence of an entry.
-  bool isParticle(int idIn) const {
-    auto found = pdt.find( abs(idIn) );
-    if ( found == pdt.end() ) return false;
-    if ( idIn > 0 || found->second->hasAnti() ) return true;
-    return false;
-  }
-
-  // Query existence of an entry and return an iterator.
-  ParticleDataEntryPtr findParticle(int idIn) {
-    auto found = pdt.find( abs(idIn) );
-    if( found == pdt.end() ) return nullptr;
-    if ( idIn > 0 || found->second->hasAnti() ) return found->second;
-    return nullptr;
-  }
-
-  // Query existence of an entry and return a const iterator.
-  const ParticleDataEntryPtr findParticle(int idIn) const {
-    auto found = pdt.find( abs(idIn) );
-    if( found == pdt.end() ) return nullptr;
-    if ( idIn > 0 || found->second->hasAnti() ) return found->second;
-    return nullptr;
-  }
+  bool isParticle(int idIn) {
+    if (pdt.find(abs(idIn)) == pdt.end()) return false;
+    if (idIn > 0 || pdt[abs(idIn)].hasAnti()) return true;
+    return false; }
 
   // Return the id of the sequentially next particle stored in table.
-  int nextId(int idIn) const;
-
-  // Define iterators over entries.
-  map<int, ParticleDataEntryPtr>::iterator begin() { return pdt.begin(); }
-  map<int, ParticleDataEntryPtr>::iterator end()   { return pdt.end();   }
+  int nextId(int idIn) ;
 
   // Change current values one at a time (or set if not set before).
   void name(int idIn, string nameIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setName(nameIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setName(nameIn); }
   void antiName(int idIn, string antiNameIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setAntiName(antiNameIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setAntiName(antiNameIn); }
   void names(int idIn, string nameIn, string antiNameIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setNames(nameIn, antiNameIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setNames(nameIn, antiNameIn); }
   void spinType(int idIn, int spinTypeIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setSpinType(spinTypeIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setSpinType(spinTypeIn); }
   void chargeType(int idIn, int chargeTypeIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setChargeType(chargeTypeIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setChargeType(chargeTypeIn); }
   void colType(int idIn, int colTypeIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setColType(colTypeIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setColType(colTypeIn); }
   void m0(int idIn, double m0In) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setM0(m0In); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setM0(m0In); }
   void mWidth(int idIn, double mWidthIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setMWidth(mWidthIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setMWidth(mWidthIn); }
   void mMin(int idIn, double mMinIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setMMin(mMinIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setMMin(mMinIn); }
   void mMax(int idIn, double mMaxIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setMMax(mMaxIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setMMax(mMaxIn); }
   void tau0(int idIn, double tau0In) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setTau0(tau0In); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setTau0(tau0In); }
   void isResonance(int idIn, bool isResonanceIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setIsResonance(isResonanceIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setIsResonance(isResonanceIn); }
   void mayDecay(int idIn, bool mayDecayIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setMayDecay(mayDecayIn); }
-  void tauCalc(int idIn, bool tauCalcIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setTauCalc(tauCalcIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setMayDecay(mayDecayIn); }
   void doExternalDecay(int idIn, bool doExternalDecayIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setDoExternalDecay(doExternalDecayIn); }
-  void varWidth(int idIn, bool varWidthIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setVarWidth(varWidthIn); }
+    if (isParticle(idIn))
+    pdt[abs(idIn)].setDoExternalDecay(doExternalDecayIn); }
   void isVisible(int idIn, bool isVisibleIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setIsVisible(isVisibleIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setIsVisible(isVisibleIn); }
   void doForceWidth(int idIn, bool doForceWidthIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setDoForceWidth(doForceWidthIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setDoForceWidth(doForceWidthIn); }
   void hasChanged(int idIn, bool hasChangedIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setHasChanged(hasChangedIn); }
+    if (isParticle(idIn)) pdt[abs(idIn)].setHasChanged(hasChangedIn); }
 
   // Give back current values.
-  bool hasAnti(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->hasAnti() : false; }
-  int antiId(int idIn) const {
-    if (idIn < 0) return -idIn;
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->antiId() : 0; }
-  string name(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->name(idIn) : " "; }
-  int spinType(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->spinType() : 0; }
-  int chargeType(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->chargeType(idIn) : 0; }
-  double charge(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->charge(idIn) : 0; }
-  int colType(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->colType(idIn) : 0 ; }
-  double m0(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->m0() : 0. ; }
-  double mWidth(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mWidth() : 0. ; }
-  double mMin(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mMin() : 0. ; }
-  double m0Min(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->m0Min() : 0. ; }
-  double mMax(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mMax() : 0. ; }
-  double m0Max(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->m0Max() : 0. ; }
-  double tau0(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->tau0() : 0. ; }
-  bool isResonance(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isResonance() : false ; }
-  bool mayDecay(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mayDecay() : false ; }
-  bool tauCalc(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->tauCalc() : false ; }
-  bool doExternalDecay(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->doExternalDecay() : false ; }
-  bool isVisible(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isVisible() : false ; }
-  bool doForceWidth(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->doForceWidth() : false ; }
-  bool hasChanged(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->hasChanged() : false ; }
-  bool hasChangedMMin(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->hasChangedMMin() : false ; }
-  bool hasChangedMMax(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->hasChangedMMax() : false ; }
+  bool hasAnti(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].hasAnti() : false ; }
+  string name(int idIn) {
+    return (isParticle(abs(idIn))) ? pdt[abs(idIn)].name(idIn) : " "; }
+  int spinType(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].spinType() : 0 ; }
+  int chargeType(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].chargeType(idIn) : 0 ; }
+  double charge(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].charge(idIn) : 0 ; }
+  int colType(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].colType(idIn) : 0 ; }
+  double m0(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].m0() : 0. ; }
+  double mWidth(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mWidth() : 0. ; }
+  double mMin(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mMin() : 0. ; }
+  double m0Min(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].m0Min() : 0. ; }
+  double mMax(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mMax() : 0. ; }
+  double m0Max(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].m0Max() : 0. ; }
+  double tau0(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].tau0() : 0. ; }
+  bool isResonance(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isResonance() : false ; }
+  bool mayDecay(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mayDecay() : false ; }
+  bool doExternalDecay(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].doExternalDecay() : false ; }
+  bool isVisible(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isVisible() : false ; }
+  bool doForceWidth(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].doForceWidth() : false ; }
+  bool hasChanged(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].hasChanged() : false ; }
 
   // Give back special mass-related quantities.
-  bool useBreitWigner(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->useBreitWigner() : false ; }
-  bool varWidth(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->varWidth() : false; }
-  double constituentMass(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->constituentMass() : 0. ; }
-  double mSel(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mSel() : 0. ; }
-  double mRun(int idIn, double mH) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->mRun(mH) : 0. ; }
+  bool useBreitWigner(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].useBreitWigner() : false ; }
+  double constituentMass(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].constituentMass() : 0. ; }
+  double mSel(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mSel() : 0. ; }
+  double mRun(int idIn, double mH) {
+    return isParticle(idIn) ? pdt[abs(idIn)].mRun(mH) : 0. ; }
 
   // Give back other quantities.
-  bool canDecay(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->canDecay() : false ; }
-  bool isLepton(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isLepton() : false ; }
-  bool isQuark(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isQuark() : false ; }
-  bool isGluon(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isGluon() : false ; }
-  bool isDiquark(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isDiquark() : false ; }
-  bool isParton(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isParton() : false ; }
-  bool isHadron(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isHadron() : false ; }
-  bool isMeson(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isMeson() : false ; }
-  bool isBaryon(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isBaryon() : false ; }
-  bool isOnium(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isOnium() : false ; }
-  bool isExotic(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isExotic() : false ; }
-  bool isOctetHadron(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->isOctetHadron() : false ; }
-  int heaviestQuark(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->heaviestQuark(idIn) : 0 ; }
-  int baryonNumberType(int idIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->baryonNumberType(idIn) : 0 ; }
-  int nQuarksInCode(int idIn, int idQIn) const {
-    const ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->nQuarksInCode(idQIn) : 0 ; }
+  bool canDecay(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].canDecay() : false ; }
+  bool isLepton(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isLepton() : false ; }
+  bool isQuark(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isQuark() : false ; }
+  bool isGluon(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isGluon() : false ; }
+  bool isDiquark(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isDiquark() : false ; }
+  bool isParton(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isParton() : false ; }
+  bool isHadron(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isHadron() : false ; }
+  bool isMeson(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isMeson() : false ; }
+  bool isBaryon(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isBaryon() : false ; }
+  bool isOctetHadron(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].isOctetHadron() : false ; }
+  int heaviestQuark(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].heaviestQuark(idIn) : 0 ; }
+  int baryonNumberType(int idIn) {
+    return isParticle(idIn) ? pdt[abs(idIn)].baryonNumberType(idIn) : 0 ; }
 
   // Change branching ratios.
   void rescaleBR(int idIn, double newSumBR = 1.) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->rescaleBR(newSumBR); }
+    if (isParticle(idIn)) pdt[abs(idIn)].rescaleBR(newSumBR); }
 
   // Access methods stored in ResonanceWidths.
-  void setResonancePtr(int idIn, ResonanceWidthsPtr resonancePtrIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->setResonancePtr( resonancePtrIn);}
-  void resInit(int idIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    if ( ptr ) ptr->resInit(infoPtr);}
+  void setResonancePtr(int idIn, ResonanceWidths* resonancePtrIn) {
+    if (isParticle(idIn)) pdt[abs(idIn)].setResonancePtr( resonancePtrIn);}
+  void resInit(int idIn) { if (isParticle(idIn))
+    pdt[abs(idIn)].resInit(infoPtr, settingsPtr, this, couplingsPtr);}
   double resWidth(int idIn, double mHat, int idInFlav = 0,
     bool openOnly = false, bool setBR = false) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->resWidth(idIn, mHat,
+    return isParticle(idIn) ? pdt[abs(idIn)].resWidth(idIn, mHat,
     idInFlav, openOnly, setBR) : 0.;}
   double resWidthOpen(int idIn, double mHat, int idInFlav = 0) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->resWidthOpen(idIn, mHat, idInFlav) : 0.;}
+    return isParticle(idIn) ? pdt[abs(idIn)].resWidthOpen(idIn, mHat,
+    idInFlav) : 0.;}
   double resWidthStore(int idIn, double mHat, int idInFlav = 0) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->resWidthStore(idIn, mHat, idInFlav) : 0.;}
+    return isParticle(idIn) ? pdt[abs(idIn)].resWidthStore(idIn, mHat,
+    idInFlav) : 0.;}
   double resOpenFrac(int id1In, int id2In = 0, int id3In = 0);
-  double resWidthRescaleFactor(int idIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->resWidthRescaleFactor() : 0.;}
+  double resWidthRescaleFactor(int idIn) { return isParticle(idIn)
+    ? pdt[abs(idIn)].resWidthRescaleFactor() : 0.;}
   double resWidthChan(int idIn, double mHat, int idAbs1 = 0,
-    int idAbs2 = 0) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr->resWidthChan( mHat, idAbs1, idAbs2) : 0.;}
+    int idAbs2 = 0) { return isParticle(idIn)
+    ? pdt[abs(idIn)].resWidthChan( mHat, idAbs1, idAbs2) : 0.;}
 
   // Return pointer to entry.
-  ParticleDataEntryPtr particleDataEntryPtr(int idIn) {
-    ParticleDataEntryPtr ptr = findParticle(idIn);
-    return ( ptr ) ? ptr : pdt[0]; }
-
-  // Check initialisation status.
-  bool getIsInit() {return isInit;}
+  ParticleDataEntry* particleDataEntryPtr(int idIn) {
+    return (isParticle(idIn)) ? &pdt[abs(idIn)] : &pdt[0]; }
 
 private:
 
   // Common data, accessible for the individual particles.
-  bool   setRapidDecayVertex;
   int    modeBreitWigner;
-  double maxEnhanceBW, mQRun[7], Lambda5Run, intermediateTau0;
+  double maxEnhanceBW, mQRun[7], Lambda5Run;
 
   // The individual particle need access to the full database.
   friend class ParticleDataEntry;
@@ -836,20 +575,17 @@ private:
   // Pointer to the settings database.
   Settings* settingsPtr;
 
-  // Pointer to logger.
-  Logger*   loggerPtr;
-
   // Pointer to the random number generator.
   Rndm*     rndmPtr;
 
   // Pointer to Standard Model couplings.
-  CoupSM* coupSMPtr;
+  Couplings*   couplingsPtr;
 
   // All particle data stored in a map.
-  map<int, ParticleDataEntryPtr> pdt;
+  map<int, ParticleDataEntry> pdt;
 
   // Pointer to current particle (e.g. when reading decay channels).
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
   // Flag that initialization has been performed; whether any failures.
   bool   isInit, readingFailedSave;
@@ -858,6 +594,9 @@ private:
   void   initCommon();
 
   // Useful functions for string handling.
+  string toLower(const string& nameConv) { string temp(nameConv);
+    for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+    return temp; }
   bool   boolString(string tag) { string tagLow = toLower(tag);
     return ( tagLow == "true" || tagLow == "1" || tagLow == "on"
     || tagLow == "yes" || tagLow == "ok" ); }
@@ -867,13 +606,6 @@ private:
   bool   boolAttributeValue(string line, string attribute);
   int    intAttributeValue(string line, string attribute);
   double doubleAttributeValue(string line, string attribute);
-
-  // Vector of strings containing the readable lines of the XML file.
-  vector<string> xmlFileSav;
-
-  // Stored history of readString statements (common and by subrun).
-  vector<string> readStringHistory;
-  map<int, vector<string> > readStringSubrun;
 
 };
 

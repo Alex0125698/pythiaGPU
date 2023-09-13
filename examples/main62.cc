@@ -1,9 +1,7 @@
 // main62.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: userhooks; LHE file; resonance decay; external resonance
 
 // Example how you can use UserHooks to set angular decay distributions
 // for undecayed resonances from Les Houches input using the polarization
@@ -11,6 +9,13 @@
 
 #include "Pythia8/Pythia.h"
 using namespace Pythia8;
+
+//==========================================================================
+
+// Book a histogram to test the angular distribution in the UserHook.
+// It is booked here so that it is global.
+
+Hist cosRaw("cos(the*) raw",100,-1.,1.);
 
 //==========================================================================
 
@@ -28,15 +33,10 @@ class MyUserHooks : public UserHooks {
 
 public:
 
-  // Constructor can set helicity definition and book a histogram.
-  MyUserHooks(const Info* infoPtrIn, bool inputOption = true)
-    : infoPtr(infoPtrIn), helicityDefinedByMother(inputOption) {
-    // Book a histogram to test the angular distribution in the UserHook.
-    cosRaw = new Hist("cos(the*) raw", 100, -1., 1.);
-  }
-
-  // Destructor prints histogram and deletes it.
-  ~MyUserHooks() { cout << *cosRaw; delete cosRaw; }
+  // Constructor can set helicity definition. Destructor does nothing.
+  MyUserHooks(Info* infoPtrIn, bool inputOption = true)
+    : infoPtr(infoPtrIn), helicityDefinedByMother(inputOption) {}
+  ~MyUserHooks() {}
 
   // Allow a veto for the process level, to gain access to decays.
   bool canVetoProcessLevel() {return true;}
@@ -54,7 +54,7 @@ public:
         // based on polarization and particle/antiparticle.
         double cosThe = selectAngle( process[i].pol(), process[i].id() );
         // Accumulate the raw angular distribution.
-        cosRaw->fill( cosThe );
+        cosRaw.fill( cosThe );
         double sinThe = sqrt(1.0 - pow2(cosThe));
         double phi    = 2.0 * M_PI * rndmPtr->flat();
 
@@ -140,10 +140,9 @@ public:
 
 private:
 
-  const Info* infoPtr;
+  Info* infoPtr;
    // bool to define the frame for helicity.
   bool helicityDefinedByMother;
-  Hist* cosRaw;
 
 };
 
@@ -159,8 +158,8 @@ int main() {
   //  Use this line for CMS definition of helicity.
   //  MyUserHooks* myUserHooks = new MyUserHooks(&pythia.info,false);
   // Default constructor uses mother frame for helicity.
-  shared_ptr<MyUserHooks> myUserHooks = make_shared<MyUserHooks>(&pythia.info);
-  pythia.setUserHooksPtr( (UserHooksPtr)myUserHooks);
+  MyUserHooks* myUserHooks = new MyUserHooks(&pythia.info);
+  pythia.setUserHooksPtr( myUserHooks);
   pythia.readFile("main62.cmnd");
   pythia.init();
 
@@ -214,8 +213,9 @@ int main() {
 
   // Statistics. Histograms.
   pythia.stat();
-  cout << polarization << cosPlus << cosMinus << energy;
+  cout << polarization << cosPlus << cosMinus << energy << cosRaw;
 
   // Done.
+  delete myUserHooks;
   return 0;
 }

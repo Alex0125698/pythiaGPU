@@ -1,6 +1,6 @@
 // SigmaLeftRightSym.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for left-rights-symmetry differential cross sections.
@@ -22,8 +22,7 @@ class Sigma1ffbar2ZRight : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2ZRight() : idZR(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    sin2tW(), sigma0(), ZRPtr() {}
+  Sigma1ffbar2ZRight() {}
 
   // Initialize process.
   virtual void initProc();
@@ -53,7 +52,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, sin2tW, sigma0;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr ZRPtr;
+  ParticleDataEntry* ZRPtr;
 
 };
 
@@ -66,8 +65,7 @@ class Sigma1ffbar2WRight : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2WRight() : idWR(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    thetaWRat(), sigma0Pos(), sigma0Neg(), particlePtr() {}
+  Sigma1ffbar2WRight() {}
 
   // Initialize process.
   virtual void initProc();
@@ -97,7 +95,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, thetaWRat, sigma0Pos, sigma0Neg;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -110,9 +108,7 @@ class Sigma1ll2Hchgchg : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ll2Hchgchg(int leftRightIn ) : leftRight(leftRightIn), idHLR(),
-    codeSave(), mRes(), GammaRes(), m2Res(), GamMRat(), yukawa(),
-    particlePtr() {}
+  Sigma1ll2Hchgchg(int leftRightIn ) : leftRight(leftRightIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -140,7 +136,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, yukawa[4][4];
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -154,8 +150,7 @@ public:
 
   // Constructor.
   Sigma2lgm2Hchgchgl(int leftRightIn, int idLepIn ) : leftRight(leftRightIn),
-    idHLR(), idLep(idLepIn), codeSave(), yukawa(), openFracPos(),
-    openFracNeg() {}
+    idLep(idLepIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -193,9 +188,7 @@ class Sigma3ff2HchgchgfftWW : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3ff2HchgchgfftWW(int leftRightIn) : leftRight(leftRightIn), idHLR(),
-    codeSave(), mWS(), prefac(), sigma0TU(), sigma0T(), openFracPos(),
-    openFracNeg() {}
+  Sigma3ff2HchgchgfftWW(int leftRightIn) : leftRight(leftRightIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -243,9 +236,7 @@ class Sigma2ffbar2HchgchgHchgchg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2HchgchgHchgchg(int leftRightIn) : leftRight(leftRightIn),
-    idHLR(), codeSave(), mRes(), GammaRes(), m2Res(), GamMRat(), sin2tW(),
-    preFac(), yukawa(), openFrac() {}
+  Sigma2ffbar2HchgchgHchgchg(int leftRightIn) : leftRight(leftRightIn) {}
 
   // Initialize process.
   virtual void initProc();

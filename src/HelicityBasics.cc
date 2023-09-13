@@ -1,6 +1,6 @@
 // HelicityBasics.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Philip Ilten, Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Philip Ilten, Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for helper classes
@@ -110,7 +110,7 @@ ostream& operator<< (ostream& os, Wave4 w) {
 // paper. Gamma(4) gives the +--- metric, while Gamma(5) gives the gamma^5
 // matrix.
 
-GammaMatrix::GammaMatrix(int mu) : index() {
+GammaMatrix::GammaMatrix(int mu) {
 
   COMPLEXZERO = complex( 0., 0.);
 
@@ -361,47 +361,14 @@ void HelicityParticle::normalize(vector< vector<complex> >& matrix) {
 
 // Return the number of spin states.
 
-int HelicityParticle::spinStates() {
+  int HelicityParticle::spinStates() {
 
-  int sT = spinType();
-  if (sT == 0) return 1;
-  else if (sT != 2 && m() == 0) return sT - 1;
-  else return sT;
+    int sT = spinType();
+    if (sT == 0) return 1;
+    else if (sT != 2 && m() == 0) return sT - 1;
+    else return sT;
 
-}
-
-//--------------------------------------------------------------------------
-
-// Set the helicity state.
-
-void HelicityParticle::pol(double hIn) {
-
-  // Helicity states are indexed as -1, 1, 0.
-  rho = vector< vector<complex> >(spinStates(),
-    vector<complex>(spinStates(), 0));
-  int h = trunc(hIn) == hIn ? hIn : 9;
-  if      (h == -1) h = 0;
-  else if (h ==  1) h = 1;
-  else if (h ==  0) h = 2;
-  else h = 9;
-  if (h < spinStates()) rho[h][h] = 1;
-  else for (int i = 0; i < spinStates(); i++) rho[i][i] = 1.0 / spinStates();
-  polSave = h;
-
-}
-
-//--------------------------------------------------------------------------
-
-// Initialize the helicity density and decay matrix.
-
-void HelicityParticle::initRhoD() {
-
-  D = vector< vector<complex> >(spinStates(),
-    vector<complex>(spinStates(), 0));
-  for (int i = 0; i < spinStates(); i++) D[i][i] = 1;
-  pol(polSave);
-
-}
+  }
 
 //==========================================================================
 

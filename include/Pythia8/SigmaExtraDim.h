@@ -1,6 +1,6 @@
 // SigmaExtraDim.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Author: Stefan Ask for the *LED* routines.
@@ -23,9 +23,7 @@ class Sigma1gg2GravitonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1gg2GravitonStar() : eDsmbulk(), eDvlvl(), idGstar(), mRes(),
-    GammaRes(), m2Res(), GamMRat(), kappaMG(), sigma(), eDcoupling(),
-    gStarPtr() {}
+  Sigma1gg2GravitonStar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -59,7 +57,7 @@ private:
   double eDcoupling[27];
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr gStarPtr;
+  ParticleDataEntry* gStarPtr;
 
 };
 
@@ -72,9 +70,7 @@ class Sigma1ffbar2GravitonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2GravitonStar() : eDsmbulk(), eDvlvl(), idGstar(), mRes(),
-    GammaRes(), m2Res(), GamMRat(), kappaMG(), sigma0(), eDcoupling(),
-    gStarPtr() {}
+  Sigma1ffbar2GravitonStar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -108,7 +104,7 @@ private:
   double eDcoupling[27];
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr gStarPtr;
+  ParticleDataEntry* gStarPtr;
 
 };
 
@@ -121,9 +117,7 @@ class Sigma1qqbar2KKgluonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1qqbar2KKgluonStar() : idKKgluon(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), sumSM(), sumInt(), sumKK(), sigSM(), sigInt(), sigKK(),
-    eDgv(), eDga(), interfMode(), gStarPtr() {}
+  Sigma1qqbar2KKgluonStar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -163,7 +157,7 @@ private:
 
   // Pointer to properties of the particle species, to access decay
   // channels.
-  ParticleDataEntryPtr gStarPtr;
+  ParticleDataEntry* gStarPtr;
 
 };
 
@@ -176,8 +170,7 @@ class Sigma2gg2GravitonStarg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2GravitonStarg() : idGstar(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), kappaMG(), openFrac(), sigma() {}
+  Sigma2gg2GravitonStarg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -217,8 +210,7 @@ class Sigma2qg2GravitonStarq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2GravitonStarq() : idGstar(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), kappaMG(), openFrac(), sigma() {}
+  Sigma2qg2GravitonStarq() {}
 
   // Initialize process.
   virtual void initProc();
@@ -258,8 +250,7 @@ class Sigma2qqbar2GravitonStarg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2GravitonStarg() : idGstar(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), kappaMG(), openFrac(), sigma() {}
+  Sigma2qqbar2GravitonStarg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -301,14 +292,7 @@ class Sigma2ffbar2TEVffbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2TEVffbar(int idIn, int codeIn) : idNew(idIn), gmZmode(),
-    codeSave(codeIn), nexcitationmax(), isPhysical(), gPlusf(), gMinusf(),
-    gPlusF(), gMinusF(), gPlusTop(), gMinusTop(), gf(), gF(), mRes(), m2Res(),
-    mStar(), mTop(), m2Top(), mZKKn(), m2ZKKn(), m2gmKKn(), mgmKKn(),
-    alphaemfixed(), helicityME2(), coefTot(), coefAngular(), mr(), betaf(),
-    cosThe(), openFracPair(), wgmKKFactor(), wgmKKn(), wZKKn(), wZ0(),
-    ttbarwZKKn(), ttbarwgmKKn(), ttbarwFactorA(), ttbarwFactorB(),
-    phaseSpacemHatMin(), phaseSpacemHatMax() {}
+  Sigma2ffbar2TEVffbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -368,9 +352,7 @@ class Sigma2gg2LEDUnparticleg : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDUnparticleg( bool Graviton ) : eDgraviton(Graviton), eDspin(),
-    eDnGrav(), eDidG(), eDcutoff(), mG(), mGS(), eDsigma0(), eDdU(),
-    eDLambdaU(), eDlambda(), eDconstantTerm(), eDtff(), eDcf() {}
+  Sigma2gg2LEDUnparticleg( bool Graviton ) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -412,9 +394,7 @@ class Sigma2qg2LEDUnparticleq : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2qg2LEDUnparticleq( bool Graviton) : eDgraviton(Graviton), eDspin(),
-    eDnGrav(), eDidG(), eDcutoff(), mG(), mGS(), eDsigma0(), eDdU(),
-    eDLambdaU(), eDlambda(), eDconstantTerm(), eDtff(), eDgf(), eDcf() {}
+  Sigma2qg2LEDUnparticleq( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -455,9 +435,7 @@ class Sigma2qqbar2LEDUnparticleg : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2qqbar2LEDUnparticleg( bool Graviton) : eDgraviton(Graviton), eDspin(),
-    eDnGrav(), eDidG(), eDcutoff(), mG(), mGS(), eDsigma0(), eDdU(),
-    eDLambdaU(), eDlambda(), eDconstantTerm(), eDtff(), eDgf(), eDcf() {}
+  Sigma2qqbar2LEDUnparticleg( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -499,11 +477,7 @@ class Sigma2ffbar2LEDUnparticleZ : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDUnparticleZ( bool Graviton) : eDspin(), eDnGrav(), eDcutoff(),
-    eDidG(), eDgraviton(Graviton), eDdU(), eDLambdaU(), eDlambda(), eDratio(),
-    eDlambdaPrime(), eDtff(), eDconstantTerm(), sHS(), tHS(), uHS(), tHC(),
-    uHC(), tHQ(), uHQ(), tHuH(), mU(), mUS(), mZ(), widZ(), mZS(), mwZS(),
-    eDsigma0(), openFrac() {}
+  Sigma2ffbar2LEDUnparticleZ( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -538,7 +512,7 @@ private:
   double eDdU, eDLambdaU, eDlambda, eDratio, eDlambdaPrime,
          eDtff, eDconstantTerm;
   double sHS, tHS, uHS, tHC, uHC, tHQ, uHQ, tHuH, mU, mUS, mZ, widZ,
-         mZS, mwZS, eDsigma0, openFrac;
+         mZS, mwZS, eDsigma0;
 
 };
 
@@ -552,11 +526,7 @@ class Sigma2ffbar2LEDUnparticlegamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDUnparticlegamma( bool Graviton) : eDspin(), eDnGrav(),
-    eDcutoff(), eDidG(), eDgraviton(Graviton), eDdU(), eDLambdaU(),
-    eDlambda(), eDratio(), eDlambdaPrime(), eDtff(), eDconstantTerm(),
-    sHS(), tHS(), uHS(), tHC(), uHC(), tHQ(), uHQ(), tHuH(), mU(), mUS(),
-    mZ(), mZS(), eDsigma0() {}
+  Sigma2ffbar2LEDUnparticlegamma( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -603,9 +573,7 @@ class Sigma2ffbar2LEDgammagamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDgammagamma( bool Graviton) : eDspin(), eDcutoff(), eDnGrav(),
-    eDnegInt(), eDgraviton(Graviton), eDdU(), eDLambdaU(), eDlambda(),
-    eDlambda2chi(), eDterm1(), eDterm2(), eDterm3(), eDtff() {}
+  Sigma2ffbar2LEDgammagamma( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -646,9 +614,7 @@ class Sigma2gg2LEDgammagamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDgammagamma( bool Graviton) : eDspin(), eDcutoff(), eDnGrav(),
-    eDgraviton(Graviton), eDdU(), eDLambdaU(), eDlambda(), eDlambda2chi(),
-    eDsigma0(), eDtff() {}
+  Sigma2gg2LEDgammagamma( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -688,11 +654,7 @@ class Sigma2ffbar2LEDllbar : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDllbar( bool Graviton) : eDspin(), eDcutoff(), eDnGrav(),
-    eDnxx(), eDnxy(), eDnegInt(), eDgraviton(Graviton), eDdU(), eDLambdaU(),
-    eDlambda(), eDlambda2chi(), eDtff(), eDmZ(), eDmZS(), eDGZ(), eDGZS(),
-    eDabsMeU(), eDdenomPropZ(), eDrePropGamma(), eDrePropZ(), eDimPropZ(),
-    eDabsAS(), eDreA(), eDreABW(), eDpoly1(), eDpoly2(), eDpoly3() {}
+  Sigma2ffbar2LEDllbar( bool Graviton) : eDgraviton(Graviton) {}
 
   // Initialize process.
   virtual void initProc();
@@ -735,9 +697,7 @@ class Sigma2gg2LEDllbar : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDllbar( bool Graviton) : eDspin(), eDcutoff(), eDnGrav(),
-    eDgraviton(Graviton), eDdU(), eDLambdaU(), eDlambda(), eDlambda2chi(),
-    eDsigma0(), eDtff() {}
+  Sigma2gg2LEDllbar( bool Graviton) : eDgraviton(Graviton) {}
 
 
   // Initialize process.
@@ -776,8 +736,7 @@ class Sigma2gg2LEDgg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2LEDgg() : sigTS(), sigUS(), sigTU(), sigSum(), sigma(), eDopMode(),
-    eDnGrav(), eDcutoff(), eDnegInt(), eDMD(), eDLambdaT(), eDtff() {}
+  Sigma2gg2LEDgg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -816,9 +775,7 @@ class Sigma2gg2LEDqqbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2LEDqqbar() : nQuarkNew(), idNew(), mNew(), m2New(), sigTS(),
-    sigUS(), sigSum(), sigma(), eDopMode(), eDnGrav(), eDcutoff(),
-    eDnegInt(), eDMD(), eDLambdaT(), eDtff() {}
+  Sigma2gg2LEDqqbar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -862,8 +819,7 @@ class Sigma2qg2LEDqg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2LEDqg() : sigTS(), sigTU(), sigSum(), sigma(), eDopMode(),
-    eDnGrav(), eDcutoff(), eDnegInt(), eDMD(), eDLambdaT(), eDtff() {}
+  Sigma2qg2LEDqg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -902,9 +858,7 @@ class Sigma2qq2LEDqq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2LEDqq() : sigT(), sigU(), sigTU(), sigST(), sigSum(), sigGrT1(),
-    sigGrT2(), sigGrU(), sigGrTU(), sigGrST(), eDopMode(), eDnGrav(),
-    eDcutoff(), eDnegInt(), eDMD(), eDLambdaT(), eDtff() {}
+  Sigma2qq2LEDqq() {}
 
   // Initialize process.
   virtual void initProc();
@@ -944,8 +898,7 @@ class Sigma2qqbar2LEDgg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2LEDgg() : sigTS(), sigUS(), sigSum(), sigma(), eDopMode(),
-    eDnGrav(), eDcutoff(), eDnegInt(), eDMD(), eDLambdaT(), eDtff() {}
+  Sigma2qqbar2LEDgg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -984,9 +937,7 @@ class Sigma2qqbar2LEDqqbarNew : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2LEDqqbarNew() : nQuarkNew(), idNew(), mNew(), m2New(), sigS(),
-    sigma(), eDopMode(), eDnGrav(), eDcutoff(), eDMD(), eDLambdaT(),
-    eDtff() {}
+  Sigma2qqbar2LEDqqbarNew() {}
 
   // Initialize process.
   virtual void initProc();

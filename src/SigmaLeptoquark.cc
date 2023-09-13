@@ -1,6 +1,6 @@
 // SigmaLeptoquark.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -28,7 +28,7 @@ void Sigma1ql2LeptoQuark::initProc() {
   GamMRat  = GammaRes / mRes;
 
   // Yukawa coupling strength.
-  kCoup    = parm("LeptoQuark:kCoup");
+  kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
 
   // Set pointer to particle properties and decay table.
   LQPtr    = particleDataPtr->particleDataEntryPtr(42);
@@ -108,10 +108,10 @@ void Sigma2qg2LeptoQuarkl::initProc() {
   GamMRat  = GammaRes / mRes;
 
   // Yukawa coupling strength.
-  kCoup    = parm("LeptoQuark:kCoup");
+  kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
 
   // Read out quark and lepton the LQ couples to.
-  ParticleDataEntryPtr LQPtr = particleDataPtr->particleDataEntryPtr(42);
+  ParticleDataEntry* LQPtr = particleDataPtr->particleDataEntryPtr(42);
   idQuark  = LQPtr->channel(0).product(0);
   idLepton = LQPtr->channel(0).product(1);
 
@@ -161,8 +161,8 @@ void Sigma2qg2LeptoQuarkl::setIdColAcol() {
   int idlp = (idq > 0) ? -idLepton : idLepton;
   setId( id1, id2, idLQ, idlp);
 
-  // tH defined between f and LQ: must swap tHat <-> uHat if g q in.
-  swapTU = (id1 == 21);
+  // tH defined between f and f': must swap tHat <-> uHat if q g in.
+  swapTU = (id2 == 21);
 
   // Colour flow topologies. Swap when antiquarks.
   if (id2 == 21) setColAcol( 1, 0, 2, 1, 2, 0, 0, 0);
@@ -248,10 +248,10 @@ void Sigma2qqbar2LQLQbar::initProc() {
   GamMRat  = GammaRes / mRes;
 
   // Yukawa coupling strength.
-  kCoup    = parm("LeptoQuark:kCoup");
+  kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
 
   // Read out quark and lepton the LQ couples to.
-  ParticleDataEntryPtr LQPtr = particleDataPtr->particleDataEntryPtr(42);
+  ParticleDataEntry* LQPtr = particleDataPtr->particleDataEntryPtr(42);
   idQuark  = LQPtr->channel(0).product(0);
 
    // Secondary open width fraction.

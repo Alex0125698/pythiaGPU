@@ -1,12 +1,9 @@
 // main41.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Authors: Mikhail Kirsanov <Mikhail.Kirsanov@cern.ch>
-
-// Keywords: basic usage; hepmc
-
+// Author: Mikhail Kirsanov, Mikhail.Kirsanov@cern.ch, based on main01.cc.
 // This program illustrates how HepMC can be interfaced to Pythia8.
 // It studies the charged multiplicity distribution at the LHC.
 // HepMC events are output to the hepmcout41.dat file.
@@ -15,19 +12,17 @@
 // Therefore large event samples may be impractical.
 
 #include "Pythia8/Pythia.h"
-#ifndef HEPMC2
-#include "Pythia8Plugins/HepMC3.h"
-#else
 #include "Pythia8Plugins/HepMC2.h"
-#endif
 
 using namespace Pythia8;
 
 int main() {
 
-  // Interface for conversion from Pythia8::Event to HepMC
-  // event. Specify file where HepMC events will be stored.
-  Pythia8::Pythia8ToHepMC topHepMC("hepmcout41.dat");
+  // Interface for conversion from Pythia8::Event to HepMC event.
+  HepMC::Pythia8ToHepMC ToHepMC;
+
+  // Specify file where HepMC events will be stored.
+  HepMC::IO_GenEvent ascii_io("hepmcout41.dat", std::ios::out);
 
   // Generator. Process selection. LHC initialization. Histogram.
   Pythia pythia;
@@ -48,9 +43,15 @@ int main() {
         ++nCharged;
     mult.fill( nCharged );
 
-    // Construct new empty HepMC event, fill it and write it out.
-    topHepMC.writeNextEvent( pythia );
+    // Construct new empty HepMC event and fill it.
+    // Units will be as chosen for HepMC build; but can be changed
+    // by arguments, e.g. GenEvt( HepMC::Units::GEV, HepMC::Units::MM)
+    HepMC::GenEvent* hepmcevt = new HepMC::GenEvent();
+    ToHepMC.fill_next_event( pythia, hepmcevt );
 
+    // Write the HepMC event to file. Done with it.
+    ascii_io << hepmcevt;
+    delete hepmcevt;
 
   // End of event loop. Statistics. Histogram.
   }

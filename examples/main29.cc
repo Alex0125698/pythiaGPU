@@ -1,9 +1,7 @@
 // main29.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: colour reconnection; hadronization; top mass;
 
 // Omnibus version for colour reconnection (CR) effect studies.
 
@@ -37,7 +35,7 @@ int main() {
   // Warning: much statistics is needed for significant results,
   // so this is just an appetizer. Anyway, the reconstruction is
   // pretty lousy, so not useful for real studies.
-  int nEvent = 250;
+  int nEvent = 1000;
 
   // Target t and W masses.
   double mT = 173.3;
@@ -63,7 +61,7 @@ int main() {
     pythia.readString("Top:gg2ttbar = on");
 
     // Colour reconnection setups.
-    shared_ptr<UserHooks> myUserHooks;
+    UserHooks* myUserHooks;
 
     // Tuning parameters for CR scenarios have tune 4C as a starting point.
     pythia.readString("Tune:pp = 5");
@@ -105,8 +103,7 @@ int main() {
              pythia.readString("MultipartonInteractions:pT0Ref = 2.15");
         else pythia.readString("MultipartonInteractions:pT0Ref = 2.25");
       }
-      myUserHooks = make_shared<MBReconUserHooks>(mode, flip, dLamCut,
-        fracGluon);
+      myUserHooks = new MBReconUserHooks(mode, flip, dLamCut, fracGluon);
       pythia.setUserHooksPtr( myUserHooks);
 
     // New scenaros that do top reconnections separately from normal one.
@@ -120,7 +117,7 @@ int main() {
       pythia.readString("PartonLevel:earlyResDec = off");
       // Possibility with reduced reconnection strength.
       double strength = ( mLoop == 13 ) ? 1. : 0.075;
-      myUserHooks = make_shared<TopReconUserHooks>(mLoop - 8, strength);
+      myUserHooks = new TopReconUserHooks(mLoop - 8, strength);
       pythia.setUserHooksPtr( myUserHooks);
     }
 
@@ -238,6 +235,7 @@ int main() {
          << mTerrH << pTTH << mTpTH;
 
     // End loop over top colour reconnection scenarios.
+    if (mLoop >=3) delete myUserHooks;
   }
 
   // Done.

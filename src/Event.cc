@@ -1,6 +1,6 @@
 // Event.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -27,55 +27,22 @@ const double Particle::TINY = 1e-20;
 
 // Set pointer to the particle data species of the particle.
 
-void Particle::setPDEPtr(ParticleDataEntryPtr pdePtrIn) {
-  pdePtr = pdePtrIn; if (pdePtrIn != nullptr || evtPtr == nullptr) return;
+void Particle::setPDEPtr(ParticleDataEntry* pdePtrIn) {
+  pdePtr = pdePtrIn; if (pdePtrIn != 0 || evtPtr == 0) return;
   pdePtr = (*evtPtr).particleDataPtr->particleDataEntryPtr( idSave);}
-
-//--------------------------------------------------------------------------
-
-// Find out if polarization is (close to) an integer.
-
-int Particle::intPol() const {
-
-  double smallDbls[6] = { 0., 1., -1., 2., -2., 9.};
-  int    smallInts[6] = { 0,  1,  -1,  2,  -2,  9 };
-  for (int iPol = 0; iPol < 6; ++ iPol)
-    if (abs(polSave - smallDbls[iPol]) < 1e-10) return smallInts[iPol];
-  return -9;
-
-}
 
 //--------------------------------------------------------------------------
 
 // Functions for rapidity and pseudorapidity.
 
 double Particle::y() const {
-  double temp = log( ( max(pSave.e(), pSave.pAbs()) + abs(pSave.pz()) )
-    / max( TINY, mT() ) );
-  return (pSave.pz() > 0.) ? temp : -temp;
+  double temp = log( ( pSave.e() + abs(pSave.pz()) ) / max( TINY, mT() ) );
+  return (pSave.pz() > 0) ? temp : -temp;
 }
 
 double Particle::eta() const {
   double temp = log( ( pSave.pAbs() + abs(pSave.pz()) ) / max( TINY, pT() ) );
-  return (pSave.pz() > 0.) ? temp : -temp;
-}
-
-// Rapidity with minimal transverse mass, and after rotation/boost.
-
-double Particle::y(double mCut) const {
-  double mTmin = max( mCut, mT() );
-  double eMin  = sqrt( pow2(mTmin) + pow2(pSave.pz()) );
-  double temp  = log( ( eMin + abs(pSave.pz()) ) / mTmin );
-  return (pSave.pz() > 0.) ? temp : -temp;
-}
-
-double Particle::y(double mCut, RotBstMatrix& M) const {
-  Vec4 pCopy = pSave;
-  pCopy.rotbst(M);
-  double mTmin = max( mCut, sqrt( m2() + pCopy.pT2()) );
-  double eMin  = sqrt( pow2(mTmin) + pow2(pCopy.pz()) );
-  double temp = log( ( eMin + abs(pCopy.pz()) ) / mTmin );
-  return (pCopy.pz() > 0.) ? temp : -temp;
+  return (pSave.pz() > 0) ? temp : -temp;
 }
 
 //--------------------------------------------------------------------------
@@ -252,37 +219,6 @@ vector<int> Particle::daughterList() const {
       for (int iIn = 0; iIn < int(daughterVec.size()); ++iIn)
         if (iDau == daughterVec[iIn]) isIn = true;
       if (!isIn) daughterVec.push_back(iDau);
-    }
-  }
-
-  // Done.
-  return daughterVec;
-
-}
-
-//--------------------------------------------------------------------------
-
-// Find complete list of daughters recursively, i.e. including subsequent
-// generations. Is intended specifically for resonance decays.
-
-vector<int> Particle::daughterListRecursive() const {
-
-  // Vector of all the daughters; created empty. Done if no event pointer.
-  vector<int> daughterVec;
-  if (evtPtr == 0) return daughterVec;
-
-  // Find first generation of daughters.
-  daughterVec = daughterList();
-
-  // Recursively add daughters of unstable particles.
-  int size = daughterVec.size();
-  for (int iDau = 0; iDau < size; ++iDau) {
-    Particle& partNow = (*evtPtr)[daughterVec[iDau]];
-    if (!partNow.isFinal()) {
-      vector<int> grandDauVec = partNow.daughterList();
-      for (int i = 0; i < int(grandDauVec.size()); ++i)
-        daughterVec.push_back( grandDauVec[i] );
-      size += grandDauVec.size();
     }
   }
 
@@ -498,9 +434,24 @@ bool Particle::undoDecay() {
 
   // Iterate over relevant ranges, from bottom up.
   for (int iR = int(dauBeg.size()) - 1; iR >= 0; --iR) {
+    dau1 = dauBeg[iR];
+    dau2 = dauEnd[iR];
+    int nRem = dau2 - dau1 + 1;
 
-    // Remove daughters in each range and update mother and daughter indices.
-    (*evtPtr).remove( dauBeg[iR], dauEnd[iR]);
+    // Remove daughters in each range.
+    (*evtPtr).remove( dau1, dau2);
+
+    // Update subsequent history to account for removed indices.
+    for (int j = 0; j < int((*evtPtr).size()); ++j) {
+      if ((*evtPtr)[j].mother1() > dau2)
+        (*evtPtr)[j].mother1( (*evtPtr)[j].mother1() - nRem );
+      if ((*evtPtr)[j].mother2() > dau2)
+        (*evtPtr)[j].mother2( (*evtPtr)[j].mother2() - nRem );
+      if ((*evtPtr)[j].daughter1() > dau2)
+        (*evtPtr)[j].daughter1( (*evtPtr)[j].daughter1() - nRem );
+      if ((*evtPtr)[j].daughter2() > dau2)
+        (*evtPtr)[j].daughter2( (*evtPtr)[j].daughter2() - nRem );
+    }
   }
 
   // Update mother that has been undecayed.
@@ -511,42 +462,6 @@ bool Particle::undoDecay() {
   // Done.
   return true;
 
-}
-
-//--------------------------------------------------------------------------
-
-// Get and set Hidden Valley colours, referring back to the event.
-
-int Particle::colHV() const {
-  if (evtPtr == nullptr || !(*evtPtr).findIndexHV(index())) return 0;
-  return (*evtPtr).hvCols[(*evtPtr).iIndexHV].colHV;
-}
-
-int Particle::acolHV() const {
-  if (evtPtr == nullptr || !(*evtPtr).findIndexHV(index())) return 0;
-  return (*evtPtr).hvCols[(*evtPtr).iIndexHV].acolHV;
-}
-
-void Particle::colHV(int colHVin) {
-  if (evtPtr == nullptr) return;
-  if ((*evtPtr).findIndexHV(index()))
-    (*evtPtr).hvCols[(*evtPtr).iIndexHV].colHV = colHVin;
-  else (*evtPtr).hvCols.push_back( HVcols(index(), colHVin, 0) );
-}
-
-void Particle::acolHV(int acolHVin) {
-  if (evtPtr == nullptr) return;
-  if ((*evtPtr).findIndexHV(index()))
-    (*evtPtr).hvCols[(*evtPtr).iIndexHV].acolHV = acolHVin;
-  else (*evtPtr).hvCols.push_back( HVcols(index(), 0, acolHVin) );
-}
-
-void Particle::colsHV(int colHVin, int acolHVin) {
-  if (evtPtr == nullptr) return;
-  if ((*evtPtr).findIndexHV(index())) {
-    (*evtPtr).hvCols[(*evtPtr).iIndexHV].colHV = colHVin;
-    (*evtPtr).hvCols[(*evtPtr).iIndexHV].acolHV = acolHVin;
-  } else (*evtPtr).hvCols.push_back( HVcols(index(), colHVin, acolHVin) );
 }
 
 //--------------------------------------------------------------------------
@@ -595,20 +510,20 @@ void Particle::offsetCol( int addCol) {
 
 //--------------------------------------------------------------------------
 
-// Particles invariant mass, mass squared, and momentum dot product.
+// Invariant mass of a pair and its square.
 // (Not part of class proper, but tightly linked.)
 
 double m(const Particle& pp1, const Particle& pp2) {
-  double s = m2(pp1, pp2); return (s > 0. ? sqrt(s) : 0.);}
+  double m2 = pow2(pp1.e() + pp2.e()) - pow2(pp1.px() + pp2.px())
+     - pow2(pp1.py() + pp2.py()) - pow2(pp1.pz() + pp2.pz());
+  return (m2 > 0. ? sqrt(m2) : 0.);
+}
 
 double m2(const Particle& pp1, const Particle& pp2) {
-  return m2(pp1.p(), pp2.p());}
-
-double m2(const Particle& pp1, const Particle& pp2, const Particle& pp3) {
-  return m2(pp1.p(), pp2.p(), pp3.p());}
-
-double dot4(const Particle& pp1, const Particle& pp2) {
-  return pp1.p()*pp2.p();}
+  double m2 = pow2(pp1.e() + pp2.e()) - pow2(pp1.px() + pp2.px())
+     - pow2(pp1.py() + pp2.py()) - pow2(pp1.pz() + pp2.pz());
+  return m2;
+}
 
 //==========================================================================
 
@@ -646,23 +561,14 @@ Event& Event::operator=( const Event& oldEvent) {
     for (int i = 0; i < oldEvent.sizeJunction(); ++i)
       appendJunction( oldEvent.getJunction(i) );
 
-    // Copy the Hidden Valley colour information.
-    for (int i = 0; i < int(oldEvent.hvCols.size()); ++i)
-      hvCols.push_back( HVcols(oldEvent.hvCols[i].iHV,
-      oldEvent.hvCols[i].colHV, oldEvent.hvCols[i].acolHV) );
-
     // Copy all other values.
-    startColTag          = oldEvent.startColTag;
-    iEventHV             = oldEvent.iEventHV;
-    iIndexHV             = oldEvent.iIndexHV;
-    maxColTag            = oldEvent.maxColTag;
-    savedSize            = oldEvent.savedSize;
-    savedJunctionSize    = oldEvent.savedJunctionSize;
-    savedHVcolsSize      = oldEvent.savedHVcolsSize;
-    savedPartonLevelSize = oldEvent.savedPartonLevelSize;
-    scaleSave            = oldEvent.scaleSave;
-    scaleSecondSave      = oldEvent.scaleSecondSave;
-    headerList           = oldEvent.headerList;
+    startColTag         = oldEvent.startColTag;
+    maxColTag           = oldEvent.maxColTag;
+    savedSize           = oldEvent.savedSize;
+    savedJunctionSize   = oldEvent.savedJunctionSize;
+    scaleSave           = oldEvent.scaleSave;
+    scaleSecondSave     = oldEvent.scaleSecondSave;
+    headerList          = oldEvent.headerList;
 
   // Done.
   }
@@ -709,41 +615,20 @@ int Event::copy(int iCopy, int newStatus) {
 
 //--------------------------------------------------------------------------
 
-// Remove entries from iFirst to iLast, including endpoints, and fix history.
-// (To the extent possible; history pointers in removed range are zeroed.)
+// Print an event - special cases that rely on the general method.
+// Not inline to make them directly callable in (some) debuggers.
 
-void Event::remove(int iFirst, int iLast, bool shiftHistory) {
+void Event::list(int precision) const {
+  list(false, false, cout, precision);
+}
 
-  // Check that removal range is sensible.
-  if (iFirst < 0 || iLast >= int(entry.size()) || iLast < iFirst) return;
-  int nRem = iLast + 1 - iFirst;
+void Event::list(ostream& os, int precision) const {
+  list(false, false, os, precision);
+}
 
-  // Remove the entries.
-  entry.erase( entry.begin() + iFirst, entry.begin() + iLast + 1);
-
-  // Loop over remaining particles; read out mothers and daughters.
-  if (shiftHistory) for (int i = 0; i < int(entry.size()); ++i) {
-    int iMot1 = entry[i].mother1();
-    int iMot2 = entry[i].mother2();
-    int iDau1 = entry[i].daughter1();
-    int iDau2 = entry[i].daughter2();
-
-    // Shift mother and daughter indices according to removed number.
-    // Set zero if in removed range.
-    if (iMot1 > iLast) iMot1 -= nRem;
-    else if (iMot1 >= iFirst) iMot1 = 0;
-    if (iMot2 > iLast) iMot2 -= nRem;
-    else if (iMot2 >= iFirst) iMot2 = 0;
-    if (iDau1 > iLast) iDau1 -= nRem;
-    else if (iDau1 >= iFirst) iDau1 = 0;
-    if (iDau2 > iLast) iDau2 -= nRem;
-    else if (iDau2 >= iFirst) iDau2 = 0;
-
-    // Set the new values.
-    entry[i].mothers(iMot1, iMot2);
-    entry[i].daughters(iDau1, iDau2);
-  }
-
+void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
+  int precision) const {
+  list(showScaleAndVertex, showMothersAndDaughters, cout, precision);
 }
 
 //--------------------------------------------------------------------------
@@ -751,17 +636,17 @@ void Event::remove(int iFirst, int iLast, bool shiftHistory) {
 // Print an event.
 
 void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
-  int precision) const {
+  ostream& os, int precision) const {
 
   // Header.
-  cout << "\n --------  PYTHIA Event Listing  " << headerList << "----------"
-       << "-------------------------------------------------\n \n    no    "
-       << "     id  name            status     mothers   daughters     colou"
-       << "rs      p_x        p_y        p_z         e          m \n";
+  os << "\n --------  PYTHIA Event Listing  " << headerList << "----------"
+     << "-------------------------------------------------\n \n    no    "
+     << "    id   name            status     mothers   daughters     colou"
+     << "rs      p_x        p_y        p_z         e          m \n";
   if (showScaleAndVertex)
-    cout << "                                    scale         pol          "
-         << "                   xProd      yProd      zProd      tProd      "
-         << " tau\n";
+    os << "                                    scale         pol          "
+       << "                   xProd      yProd      zProd      tProd      "
+       << " tau\n";
 
   // Precision. At high energy switch to scientific format for momenta.
   int prec = max( 3, precision);
@@ -774,51 +659,45 @@ void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
     const Particle& pt = entry[i];
 
     // Basic line for a particle, always printed.
-    cout << setw(6) << i << setw(11) << pt.id() << "  " << left
-         << setw(18) << pt.nameWithStatus(18) << right << setw(4)
-         << pt.status() << setw(6) << pt.mother1() << setw(6)
-         << pt.mother2() << setw(6) << pt.daughter1() << setw(6)
-         << pt.daughter2() << setw(6) << pt.col() << setw(6) << pt.acol()
-         << ( (useFixed) ? fixed : scientific ) << setprecision(prec)
-         << setw(8+prec) << pt.px() << setw(8+prec) << pt.py()
-         << setw(8+prec) << pt.pz() << setw(8+prec) << pt.e()
-         << setw(8+prec) << pt.m() << "\n";
+    os << setw(6) << i << setw(10) << pt.id() << "   " << left
+       << setw(18) << pt.nameWithStatus(18) << right << setw(4)
+       << pt.status() << setw(6) << pt.mother1() << setw(6)
+       << pt.mother2() << setw(6) << pt.daughter1() << setw(6)
+       << pt.daughter2() << setw(6) << pt.col() << setw(6) << pt.acol()
+       << ( (useFixed) ? fixed : scientific ) << setprecision(prec)
+       << setw(8+prec) << pt.px() << setw(8+prec) << pt.py()
+       << setw(8+prec) << pt.pz() << setw(8+prec) << pt.e()
+       << setw(8+prec) << pt.m() << "\n";
 
     // Optional extra line for scale value, polarization and production vertex.
     if (showScaleAndVertex)
-      cout << "                              " << setw(8+prec) << pt.scale()
-           << " " << fixed << setprecision(prec) << setw(8+prec) << pt.pol()
-           << "                        " << scientific << setprecision(prec)
-           << setw(8+prec) << pt.xProd() << setw(8+prec) << pt.yProd()
-           << setw(8+prec) << pt.zProd() << setw(8+prec) << pt.tProd()
-           << setw(8+prec) << pt.tau() << "\n";
+      os << "                              " << setw(8+prec) << pt.scale()
+         << " " << fixed << setprecision(prec) << setw(8+prec) << pt.pol()
+         << "                        " << scientific << setprecision(prec)
+         << setw(8+prec) << pt.xProd() << setw(8+prec) << pt.yProd()
+         << setw(8+prec) << pt.zProd() << setw(8+prec) << pt.tProd()
+         << setw(8+prec) << pt.tau() << "\n";
 
     // Optional extra line, giving a complete list of mothers and daughters.
     if (showMothersAndDaughters) {
       int linefill = 2;
-      cout << "                mothers:";
+      os << "                mothers:";
       vector<int> allMothers = pt.motherList();
       for (int j = 0; j < int(allMothers.size()); ++j) {
-        cout << " " <<  allMothers[j];
-        if (++linefill == IPERLINE) {
-          cout << "\n                ";
-          linefill = 0;
-        }
+        os << " " <<  allMothers[j];
+        if (++linefill == IPERLINE) {os << "\n                "; linefill = 0;}
       }
-      cout << ";   daughters:";
+      os << ";   daughters:";
       vector<int> allDaughters = pt.daughterList();
       for (int j = 0; j < int(allDaughters.size()); ++j) {
-        cout << " " <<  allDaughters[j];
-        if (++linefill == IPERLINE) {
-          cout << "\n                ";
-          linefill = 0;
-        }
+        os << " " <<  allDaughters[j];
+        if (++linefill == IPERLINE) {os << "\n                "; linefill = 0;}
       }
-      if (linefill !=0) cout << "\n";
+      if (linefill !=0) os << "\n";
     }
 
     // Extra blank separation line when each particle spans more than one line.
-    if (showScaleAndVertex || showMothersAndDaughters) cout << "\n";
+    if (showScaleAndVertex || showMothersAndDaughters) os << "\n";
 
     // Statistics on momentum and charge.
     if (entry[i].status() > 0) {
@@ -828,17 +707,17 @@ void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
   }
 
   // Line with sum charge, momentum, energy and invariant mass.
-  cout << fixed << setprecision(3) << "                                   "
-       << "Charge sum:" << setw(7) << chargeSum << "           Momentum sum:"
-       << ( (useFixed) ? fixed : scientific ) << setprecision(prec)
-       << setw(8+prec) << pSum.px() << setw(8+prec) << pSum.py()
-       << setw(8+prec) << pSum.pz() << setw(8+prec) << pSum.e()
-       << setw(8+prec) << pSum.mCalc() << "\n";
+  os << fixed << setprecision(3) << "                                   "
+     << "Charge sum:" << setw(7) << chargeSum << "           Momentum sum:"
+     << ( (useFixed) ? fixed : scientific ) << setprecision(prec)
+     << setw(8+prec) << pSum.px() << setw(8+prec) << pSum.py()
+     << setw(8+prec) << pSum.pz() << setw(8+prec) << pSum.e()
+     << setw(8+prec) << pSum.mCalc() << "\n";
 
   // Listing finished.
-  cout << "\n --------  End PYTHIA Event Listing  ----------------------------"
-       << "-------------------------------------------------------------------"
-       << endl;
+  os << "\n --------  End PYTHIA Event Listing  ----------------------------"
+     << "-------------------------------------------------------------------"
+     << endl;
 }
 
 //--------------------------------------------------------------------------
@@ -857,55 +736,26 @@ void Event::eraseJunction(int i) {
 
 // Print the junctions in an event.
 
-void Event::listJunctions() const {
+void Event::listJunctions(ostream& os) const {
 
   // Header.
-  cout << "\n --------  PYTHIA Junction Listing  "
-       << headerList.substr(0,30) << "\n \n    no  kind  col0  col1  col2 "
-       << "endc0 endc1 endc2 stat0 stat1 stat2\n";
+  os << "\n --------  PYTHIA Junction Listing  "
+     << headerList.substr(0,30) << "\n \n    no  kind  col0  col1  col2 "
+     << "endc0 endc1 endc2 stat0 stat1 stat2\n";
 
   // Loop through junctions in event and list them.
   for (int i = 0; i < sizeJunction(); ++i)
-    cout << setw(6) << i << setw(6) << kindJunction(i) << setw(6)
-         << colJunction(i, 0) << setw(6) << colJunction(i, 1) << setw(6)
-         << colJunction(i, 2) << setw(6) << endColJunction(i, 0) << setw(6)
-         << endColJunction(i, 1) << setw(6) << endColJunction(i, 2) << setw(6)
-         << statusJunction(i, 0) << setw(6) << statusJunction(i, 1) << setw(6)
-         << statusJunction(i, 2) << "\n";
+    os << setw(6) << i << setw(6) << kindJunction(i) << setw(6)
+       << colJunction(i, 0) << setw(6) << colJunction(i, 1) << setw(6)
+       << colJunction(i, 2) << setw(6) << endColJunction(i, 0) << setw(6)
+       << endColJunction(i, 1) << setw(6) << endColJunction(i, 2) << setw(6)
+       << statusJunction(i, 0) << setw(6) << statusJunction(i, 1) << setw(6)
+       << statusJunction(i, 2) << "\n";
 
   // Alternative if no junctions. Listing finished.
-  if (sizeJunction() == 0) cout << "    no junctions present \n";
-  cout << "\n --------  End PYTHIA Junction Listing  --------------------"
-       << "------" << endl;
-}
-
-//--------------------------------------------------------------------------
-
-// Print the Hidden Valley colours in an event.
-
-void Event::listHVcols() const {
-
-  cout << "\n -- HV-coloured particles --\n   i      no   colHV  acolHV\n";
-  for (int iv = 0; iv < int(hvCols.size()); ++iv)
-    cout << setw(4) << iv << setw(8) << hvCols[iv].iHV << setw(8)
-         << hvCols[iv].colHV << setw(8) << hvCols[iv].acolHV << "\n";
-  cout << " ---------------------------" << endl;
-
-}
-
-//--------------------------------------------------------------------------
-
-// Find largest Hidden Valley (anti)colour in an event.
-
-int Event::maxHVcols() const {
-
-  int maxHVcoltag = 0;
-  for (int iv = 0; iv < int(hvCols.size()); ++iv) {
-    if (hvCols[iv].colHV > maxHVcoltag) maxHVcoltag = hvCols[iv].colHV;
-    if (hvCols[iv].acolHV > maxHVcoltag) maxHVcoltag = hvCols[iv].acolHV;
-  }
-  return maxHVcoltag;
-
+  if (sizeJunction() == 0) os << "    no junctions present \n";
+  os << "\n --------  End PYTHIA Junction Listing  --------------------"
+     << "------" << endl;
 }
 
 //--------------------------------------------------------------------------
@@ -956,15 +806,6 @@ Event& Event::operator+=( const Event& addEvent) {
 
     // Append junction to summed event.
     appendJunction( tempJ );
-  }
-
-  // Append Hidden Valley colour information.
-  if (addEvent.hasHVcols())
-  for (int i = 1; i < addEvent.size(); ++i) {
-    int colv  = addEvent[i].colHV();
-    int acolv = addEvent[i].acolHV();
-    if (colv > 0 || acolv > 0) hvCols.push_back(
-      HVcols( i + offsetIdx, colv + offsetCol, acolv + offsetCol) );
   }
 
   // Set header that indicates character as sum of events.

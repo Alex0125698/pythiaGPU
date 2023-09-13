@@ -1,6 +1,6 @@
 // SigmaLeptoquark.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for leptoquark-process differential cross sections.
@@ -23,8 +23,7 @@ class Sigma1ql2LeptoQuark : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ql2LeptoQuark() : idQuark(), idLepton(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), kCoup(), widthIn(), sigBW(), LQPtr() {}
+  Sigma1ql2LeptoQuark() {}
 
   // Initialize process.
   virtual void initProc();
@@ -51,7 +50,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, kCoup, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channel.
-  ParticleDataEntryPtr LQPtr;
+  ParticleDataEntry* LQPtr;
 
 };
 
@@ -64,8 +63,7 @@ class Sigma2qg2LeptoQuarkl : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2LeptoQuarkl() : idQuark(), idLepton(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), kCoup(), openFracPos(), openFracNeg(), sigma0() {}
+  Sigma2qg2LeptoQuarkl() {}
 
   // Initialize process.
   virtual void initProc();
@@ -103,8 +101,7 @@ class Sigma2gg2LQLQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2LQLQbar() : mRes(), GammaRes(), m2Res(), GamMRat(), openFrac(),
-    sigma() {}
+  Sigma2gg2LQLQbar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -141,8 +138,7 @@ class Sigma2qqbar2LQLQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2LQLQbar() : idQuark(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    kCoup(), openFrac(), sigmaDiff(), sigmaSame() {}
+  Sigma2qqbar2LQLQbar() {}
 
   // Initialize process.
   virtual void initProc();

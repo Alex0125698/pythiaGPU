@@ -1,6 +1,6 @@
 // LesHouches.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for Les Houches Accord user process information.
@@ -82,14 +82,12 @@ public:
   // Destructor.
   virtual ~LHAup() {}
 
-  // Set pointers.
-  void setPtr(Info* infoPtrIn) {infoPtr = infoPtrIn;
-    loggerPtr = infoPtrIn->loggerPtr;}
+  // Set info pointer.
+  void setPtr(Info* infoPtrIn) {infoPtr = infoPtrIn;}
 
   // Method to be used for LHAupLHEF derived class.
   virtual void newEventFile(const char*) {}
   virtual bool fileFound() {return true;}
-  virtual bool useExternal() {return false;}
 
   // A pure virtual method setInit, wherein all initialization information
   // is supposed to be set in the derived class. Can do this by reading a
@@ -119,7 +117,7 @@ public:
   double xErrSum()       const {return xErrSumSave;}
 
   // Print the initialization info; useful to check that setting it worked.
-  void   listInit();
+  void   listInit(ostream& os = cout);
 
   // A pure virtual method setEvent, wherein information on the next event
   // is supposed to be set in the derived class.
@@ -170,18 +168,14 @@ public:
   double pdf1()            const {return pdf1Save;}
   double pdf2()            const {return pdf2Save;}
 
-  // Optional: give back info on parton shower scales.
-  bool   scaleShowersIsSet() const {return scaleShowersIsSetSave;}
-  double scaleShowers(int i) const {return scaleShowersSave[i];}
-
   // Print the info; useful to check that reading an event worked.
-  void   listEvent();
+  void   listEvent(ostream& os = cout);
 
   // Skip ahead a number of events, which are not considered further.
   // Mainly intended for debug when using the LHAupLHEF class.
   virtual bool skipEvent(int nSkip) {
-    for (int iSkip = 0; iSkip < nSkip; ++iSkip) if (!setEvent()) return false;
-    return true;}
+    for (int iSkip = 0; iSkip < nSkip; ++iSkip)
+    if (!setEvent()) return false; return true;}
 
   // Four routines to write a Les Houches Event file in steps.
   virtual bool openLHEF(string fileNameIn);
@@ -195,20 +189,8 @@ public:
 protected:
 
   // Constructor. Sets default to be that events come with unit weight.
-  LHAup(int strategyIn = 3) : infoPtr(), nupSave(), idprupSave(),
-    xwgtupSave(), scalupSave(), aqedupSave(), aqcdupSave(), xSecSumSave(),
-    xErrSumSave(), getPDFSave(), getScale(),  getScaleShowers(),
-    id1InSave(), id2InSave(), id1pdfInSave(), id2pdfInSave(), x1InSave(),
-    x2InSave(), x1pdfInSave(), x2pdfInSave(), scalePDFInSave(),
-    pdf1InSave(), pdf2InSave(), scaleShowersInSave(), fileName("void"),
-    dateNow(), timeNow(), strategySave(strategyIn), idBeamASave(),
-    idBeamBSave(), eBeamASave(), eBeamBSave(), pdfGroupBeamASave(),
-    pdfGroupBeamBSave(), pdfSetBeamASave(), pdfSetBeamBSave(), idProc(),
-    weightProc(), scaleProc(), alphaQEDProc(), alphaQCDProc(),
-    pdfIsSetSave(), scaleShowersIsSetSave(false), id1Save(),
-    id2Save(), id1pdfSave(), id2pdfSave(), x1Save(), x2Save(), x1pdfSave(),
-    x2pdfSave(), scalePDFSave(), pdf1Save(), pdf2Save(), scaleShowersSave() {
-    processes.reserve(10); particles.reserve(20);
+  LHAup(int strategyIn = 3) : fileName("void"), strategySave(strategyIn)
+    { processes.reserve(10); particles.reserve(20);
     setBeamA( 0, 0., 0, 0); setBeamB( 0, 0., 0, 0); }
 
   // Allow conversion from mb to pb.
@@ -216,7 +198,6 @@ protected:
 
   // Pointer to various information on the generation.
   Info* infoPtr;
-  Logger* loggerPtr;
 
   // Input beam info.
   void setBeamA(int idIn, double eIn, int pdfGroupIn = 0, int pdfSetIn = 0)
@@ -245,8 +226,7 @@ protected:
     idProc = idProcIn; weightProc = weightIn; scaleProc = scaleIn;
     alphaQEDProc = alphaQEDIn; alphaQCDProc = alphaQCDIn;
     // Clear particle list. Add empty zeroth particle for correct indices.
-    particles.clear(); addParticle(0); pdfIsSetSave = false;
-    scaleShowersIsSetSave = false;}
+    particles.clear(); addParticle(0); pdfIsSetSave = false;}
 
   // Input particle info, one particle at the time.
   void addParticle(LHAParticle particleIn) {
@@ -270,17 +250,12 @@ protected:
     x2pdfSave = x2pdfIn; scalePDFSave = scalePDFIn; pdf1Save = pdf1In;
     pdf2Save = pdf2In; pdfIsSetSave = pdfIsSetIn;}
 
-  // Optionally input info on parton shower starting scale; two for DPS.
-  void setScaleShowers( double scaleIn1, double scaleIn2 = 0.)
-    { scaleShowersSave[0] = scaleIn1; scaleShowersSave[1] = scaleIn2;
-    scaleShowersIsSetSave = true;}
-
   // Three routines for LHEF files, but put here for flexibility.
   bool setInitLHEF(istream& is, bool readHeaders = false);
   bool setNewEventLHEF(istream& is);
   bool setOldEventLHEF();
 
-  // Helper routines to open and close a file handling GZIP:
+  // Helper routines to open and close a file handling GZIPSUPPORT:
   //   ifstream ifs;
   //   istream *is = openFile("myFile.txt", ifs);
   //   -- Process file using is --
@@ -299,10 +274,10 @@ protected:
   double xwgtupSave, scalupSave, aqedupSave, aqcdupSave, xSecSumSave,
          xErrSumSave;
   vector<LHAParticle> particlesSave;
-  bool   getPDFSave, getScale, getScaleShowers;
+  bool   getPDFSave, getScale;
   int    id1InSave, id2InSave, id1pdfInSave, id2pdfInSave;
   double x1InSave, x2InSave, x1pdfInSave, x2pdfInSave, scalePDFInSave,
-         pdf1InSave, pdf2InSave, scaleShowersInSave[2];
+         pdf1InSave, pdf2InSave;
 
   // File to which to write Les Houches Event File information.
   string fileName;
@@ -332,10 +307,10 @@ private:
   vector<LHAParticle> particles;
 
   // Info on initiators and optionally on parton density values of event.
-  bool   pdfIsSetSave, scaleShowersIsSetSave;
+  bool   pdfIsSetSave;
   int    id1Save, id2Save, id1pdfSave, id2pdfSave;
   double x1Save, x2Save, x1pdfSave, x2pdfSave, scalePDFSave, pdf1Save,
-         pdf2Save, scaleShowersSave[2];
+         pdf2Save;
 
 };
 
@@ -348,27 +323,17 @@ class LHAupLHEF : public LHAup {
 public:
 
   // Constructor.
-  LHAupLHEF(Pythia8::Info* infoPtrIn, istream* isIn, istream* isHeadIn,
-    bool readHeadersIn = false, bool setScalesFromLHEFIn = false ) :
-    filename(""), headerfile(""),
-    is(isIn), is_gz(nullptr), isHead(isHeadIn), isHead_gz(nullptr),
-    readHeaders(readHeadersIn), reader(is),
-    setScalesFromLHEF(setScalesFromLHEFIn), hasExtFileStream(true),
-    hasExtHeaderStream(true) {setPtr(infoPtrIn);}
-
   LHAupLHEF(Pythia8::Info* infoPtrIn, const char* filenameIn,
-    const char* headerIn = nullptr, bool readHeadersIn = false,
+    const char* headerIn = NULL, bool readHeadersIn = false,
     bool setScalesFromLHEFIn = false ) :
-    filename(filenameIn), headerfile(headerIn),
-    is(nullptr), is_gz(nullptr), isHead(nullptr), isHead_gz(nullptr),
+    infoPtr(infoPtrIn), filename(filenameIn), headerfile(headerIn),
+    is(NULL), is_gz(NULL), isHead(NULL), isHead_gz(NULL),
     readHeaders(readHeadersIn), reader(filenameIn),
-    setScalesFromLHEF(setScalesFromLHEFIn), hasExtFileStream(false),
-    hasExtHeaderStream(false) {
-    setPtr(infoPtrIn);
+    setScalesFromLHEF(setScalesFromLHEFIn) {
     is = (openFile(filenameIn, ifs));
-    isHead = (headerfile == nullptr) ? is : openFile(headerfile, ifsHead);
+    isHead = (headerfile == NULL) ? is : openFile(headerfile, ifsHead);
     is_gz = new igzstream(filename);
-    isHead_gz = (headerfile == nullptr) ? is_gz : new igzstream(headerfile);
+    isHead_gz = (headerfile == NULL) ? is_gz : new igzstream(headerfile);
   }
 
   // Destructor.
@@ -380,14 +345,14 @@ public:
   // Helper routine to correctly close files.
   void closeAllFiles() {
 
-    if (!hasExtHeaderStream && isHead_gz != is_gz) isHead_gz->close();
+    if (isHead_gz != is_gz) isHead_gz->close();
     if (isHead_gz != is_gz) delete isHead_gz;
-    if (is_gz) is_gz->close();
-    if (is_gz) delete is_gz;
+    is_gz->close();
+    delete is_gz;
 
     // Close header file if separate, and close main file.
-    if (!hasExtHeaderStream && isHead != is) closeFile(isHead, ifsHead);
-    if (!hasExtFileStream) closeFile(is, ifs);
+    if (isHead != is) closeFile(isHead, ifsHead);
+    closeFile(is, ifs);
   }
 
   // Want to use new file with events, but without reinitialization.
@@ -405,8 +370,7 @@ public:
   }
 
   // Confirm that file was found and opened as expected.
-  bool fileFound() {return (useExternal() || (isHead->good() && is->good()));}
-  bool useExternal() {return (hasExtHeaderStream && hasExtFileStream);}
+  bool fileFound() { return (isHead->good() && is->good()); }
 
   // Routine for doing the job of reading and setting initialization info.
   bool setInit() {
@@ -433,17 +397,15 @@ public:
   bool setNewEventLHEF();
 
   // Update cross-section information at the end of the run.
-  bool updateSigma() {return true;}
+  bool updateSigma();
 
 protected:
 
   // Used internally to read a single line from the stream.
   bool getLine(string & line, bool header = true) {
-#ifdef GZIP
-    if      ( isHead_gz &&  header && !getline(*isHead_gz, line)) return false;
-    else if ( is_gz     && !header && !getline(*is_gz, line))     return false;
-    if      (header && !getline(*isHead, line)) return false;
-    else if (!header && !getline(*is, line))    return false;
+#ifdef GZIPSUPPORT
+    if      ( header && !getline(*isHead_gz, line)) return false;
+    else if (!header && !getline(*is_gz, line))     return false;
 #else
     if      (header && !getline(*isHead, line)) return false;
     else if (!header && !getline(*is, line))    return false;
@@ -455,6 +417,7 @@ protected:
 
 private:
 
+  Info*  infoPtr;
   const char* filename;
   const char* headerfile;
 
@@ -473,7 +436,7 @@ private:
   Reader reader;
 
   // Flag to set particle production scales or not.
-  bool setScalesFromLHEF, hasExtFileStream, hasExtHeaderStream;
+  bool setScalesFromLHEF;
 
 };
 
@@ -486,7 +449,7 @@ class LHAupFromPYTHIA8 : public LHAup {
 public:
 
   // Constructor.
-  LHAupFromPYTHIA8(Event* processPtrIn, const Info* infoPtrIn) {
+  LHAupFromPYTHIA8(Event* processPtrIn, Info* infoPtrIn) {
     processPtr = processPtrIn; infoPtr = infoPtrIn;}
 
   // Destructor.
@@ -503,11 +466,9 @@ public:
 
 private:
 
-  // Pointer to process event record.
+  // Pointers to process event record and further information.
   Event* processPtr;
-
-  // Constant info pointer, explicitly overwrites member from LHAup base class.
-  const Info* infoPtr;
+  Info*  infoPtr;
 
 };
 
@@ -521,20 +482,16 @@ class LHEF3FromPythia8 : public LHAup {
 public:
 
   // Constructor.
-  LHEF3FromPythia8(Event* eventPtrIn, const Info* infoPtrIn,
-    int pDigitsIn = 15, bool writeToFileIn = true) :
-    eventPtr(eventPtrIn),infoPtr(infoPtrIn),
-    particleDataPtr(infoPtrIn->particleDataPtr),
-    settingsPtr(infoPtrIn->settingsPtr), writer(osLHEF),
-    pDigits(pDigitsIn), writeToFile(writeToFileIn) {}
+  LHEF3FromPythia8(Event* eventPtrIn, Settings* settingsPtrIn,
+    Info* infoPtrIn, ParticleData* particleDataPtrIn, int pDigitsIn = 15) :
+    eventPtr(eventPtrIn),settingsPtr(settingsPtrIn), infoPtr(infoPtrIn),
+    particleDataPtr(particleDataPtrIn), writer(osLHEF), pDigits(pDigitsIn) {}
 
   // Routine for reading, setting and printing the initialisation info.
   bool setInit();
 
   // Routine for reading, setting and printing the next event.
-  void setEventPtr(Event* evPtr) { eventPtr = evPtr; }
   bool setEvent(int = 0);
-  string getEventString() { return writer.getEventString(&hepeup); }
 
   // Function to open the output file.
   bool openLHEF(string fileNameIn);
@@ -542,29 +499,25 @@ public:
   // Function to close (and possibly update) the output file.
   bool closeLHEF(bool updateInit = false);
 
-  // Some init and event block objects for convenience.
-  HEPRUP heprup;
-  HEPEUP hepeup;
+private:
 
   // Pointer to event that should be printed.
   Event* eventPtr;
 
-  // Constant info pointer, explicitly overwrites member from LHAup base class.
-  const Info* infoPtr;
-
-  ParticleData* particleDataPtr;
-
-private:
-
   // Pointer to settings and info objects.
   Settings* settingsPtr;
+  Info* infoPtr;
+  ParticleData* particleDataPtr;
 
   // LHEF3 writer
   Writer writer;
 
   // Number of digits to set width of double write out
-  int  pDigits;
-  bool writeToFile;
+  int pDigits;
+
+  // Some internal init and event block objects for convenience.
+  HEPRUP heprup;
+  HEPEUP hepeup;
 
 };
 

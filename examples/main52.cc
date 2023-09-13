@@ -1,19 +1,16 @@
 // main52.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Keywords: parton distribution; LHAPDF; minimum bias; tuning
-
 // Studies of hadron-level and parton-level minimum-bias quantities,
-// comparing the internal default PDF with an external one from LHAPDF.
-// Major differences indicate the need for major retuning, e.g. pT0Ref.
+// comparing internal default PDF with one from LHAPDF.
+// Major differences indicate need for major retuning, e.g. pT0Ref.
 
 // Access time information.
 #include <ctime>
 
 #include "Pythia8/Pythia.h"
-#include "Pythia8/Plugins.h"
 
 using namespace Pythia8;
 
@@ -28,11 +25,7 @@ int main() {
   //string pdfSet = "LHAPDF5:cteq61.LHpdf";
   //string pdfSet = "LHAPDF5:cteq61.LHgrid";
   //string pdfSet = "LHAPDF5:MRST2004nlo.LHgrid";
-  //string pdfSet = "LHAPDF5:MRST2001lo.LHgrid";
-
-  // Select new PDF set; LHAPDF6 file name conventions.
-  // (Bad/unoptimized choice, to illustrate that the PDF matters.)
-  string pdfSet = "LHAPDF6:PDF4LHC15_nlo_asvar";
+  string pdfSet = "LHAPDF5:MRST2001lo.LHgrid";
 
   // Histograms for hadron-level quantities.
   double nMax = (machine == 1) ? 199.5 : 399.5;
@@ -57,9 +50,6 @@ int main() {
   Hist pTDistNew("MPI pT (=Q) distribution new PDF", 100, 0., 20.);
   Hist pTDistRat("MPI pT (=Q) distribution new/old PDF", 100, 0., 20.);
 
-  // PDF path.
-  string pdfPath;
-
   // Loop over one default run and one with new PDF.
   for (int iRun = 0; iRun < 2; ++iRun) {
 
@@ -69,7 +59,6 @@ int main() {
     // Generator.
     Pythia pythia;
     Event& event = pythia.event;
-    pdfPath = pythia.settings.word("xmlPath") + "../pdfdata";
 
     // Generate minimum-bias events, with or without double diffraction.
     pythia.readString("SoftQCD:nonDiffractive = on");
@@ -79,21 +68,18 @@ int main() {
     //pythia.readString("HardQCD:all = on");
     //pythia.readString("PhaseSpace:pTHatMin = 50.");
 
-    // Reduce output.
-    pythia.readString("Next:numberShowEvent = 0");
-
     // In second run pick new PDF set.
     if (iRun == 1) {
       pythia.readString("PDF:pSet = " + pdfSet);
 
-      // Need to change at least pT0Ref depending on choice of PDF.
+     // Allow extrapolation of PDF's beyond x and Q2 boundaries, at own risk.
+     // Default behaviour is to freeze PDF's at boundaries.
+     pythia.readString("PDF:extrapolate = on");
+
+      // Need to change pT0Ref depending on choice of PDF.
       // One possibility: retune to same <n_charged>.
       //pythia.readString("MultipartonInteractions:pT0Ref = 2.17");
     }
-
-    // Allow extrapolation of PDF's beyond x and Q2 boundaries, at own risk.
-    // Default behaviour is to freeze PDF's at boundaries.
-    pythia.readString("PDF:extrapolate = on");
 
     // Tevatron/LHC initialization.
     double eCM =  (machine == 1) ? 1960. : 7000.;
@@ -186,23 +172,18 @@ int main() {
   // Second part of study, as simple extra check:
   // Begin fill shape of effective PDF at typical MPI Q2 = 10 scale:
   // F_effective(x) = (9/4) x*g(x) + Sum_i (x*q_i(x) + x*qbar_i(x)).
-  Logger logger;
+  Info info;
   double Q2 = 10.;
-  // Current default is NNPDF2.3 QCD+QED LO alpha_s(M_Z) = 0.130.
-  PDFPtr oldPDF = make_shared<LHAGrid1>(
-    2212, "NNPDF23_lo_as_0130_qed_0000.dat", pdfPath, &logger);
-  PDFPtr newPDF = make_plugin<PDF>(
-    "libpythia8lhapdf" + pdfSet.substr(6, 1) + ".so", pdfSet.substr(0, 7));
-  if (newPDF == nullptr) return -1;
-  else newPDF->init(2212, pdfSet.substr(8), 0, &logger);
+  PDF* oldPDF = new CTEQ5L(2212);
+  PDF* newPDF = new LHAPDF(2212, pdfSet, &info);
 
   // Histograms.
   Hist effFlinOld("F_effective( x, Q2 = 10) old", 100 , 0., 1.);
   Hist effFlinNew("F_effective( x, Q2 = 10) new", 100 , 0., 1.);
   Hist effFlinRat("F_effective( x, Q2 = 10) new/old", 100 , 0., 1.);
-  Hist effFlogOld("F_effective( log(x), Q2 = 10) old", 80 , -8., 0.);
-  Hist effFlogNew("F_effective( log(x), Q2 = 10) new", 80 , -8., 0.);
-  Hist effFlogRat("F_effective( log(x), Q2 = 10) new/old", 80 , -8., 0.);
+  Hist effFlogOld("F_effective( x, Q2 = 10) old", 80 , -8., 0.);
+  Hist effFlogNew("F_effective( x, Q2 = 10) new", 80 , -8., 0.);
+  Hist effFlogRat("F_effective( x, Q2 = 10) new/old", 80 , -8., 0.);
 
   // Loop over x values, in a linear scale.
   for (int iX = 0; iX < 99; ++iX) {
@@ -220,7 +201,7 @@ int main() {
       newSum += newPDF->xf( i, x, Q2) + newPDF->xf( -i, x, Q2);
     effFlinNew.fill ( x, newSum );
 
-  // End loop over x values, in a linear scale.
+  //End loop over x values, in a linear scale.
   }
 
   // Loop over x values, in a logarithmic scale
@@ -252,5 +233,7 @@ int main() {
        << effFlogOld  << effFlogNew  << effFlogRat;
 
   // Done.
+  delete oldPDF;
+  delete newPDF;
   return 0;
 }

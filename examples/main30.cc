@@ -1,11 +1,8 @@
 // main30.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Authors: Steve Mrenna <mrenna@fnal.gov>
-
-// Keywords: event record; pythia 6; analysis
+// Author: Steve Mrenna.
 
 // Example how to create a copy of the event record, where the original one
 // is translated to another format, to meet various analysis needs.

@@ -1,6 +1,6 @@
 // EvtGen.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 // Author: Philip Ilten.
 
@@ -20,7 +20,7 @@
 #include "EvtGenBase/EvtDecayBase.hh"
 #include "EvtGenExternal/EvtExternalGenList.hh"
 
-namespace Pythia8 {
+using namespace Pythia8;
 
 //==========================================================================
 
@@ -121,7 +121,7 @@ public:
   bool extOwner, fsrOwner;
   EvtExternalGenList *extPtr;
   EvtAbsRadCorr      *fsrPtr;
-  std::list<EvtDecayBase*> models;
+  list<EvtDecayBase*> models;
 
   // Map of signal particle info.
   struct Signal {int status; EvtId egId; vector<double> bfs; vector<int> map;
@@ -228,8 +228,8 @@ EvtGenDecays::EvtGenDecays(Pythia *pythiaPtrIn, string decayFile,
 
   // Initialize EvtGen.
   if (!extPtr && fsrPtr) {
-    cout << "Error in EvtGenDecays::"
-         << "EvtGenDecays: extPtr is null but fsrPtr is provided\n";
+    if (pythiaPtr) pythiaPtr->info.errorMsg("Error in EvtGenDecays::"
+      "EvtGenDecays: extPtr is null but fsrPtr is provided");
     return;
   }
   if (extPtr) extOwner = false;
@@ -345,8 +345,8 @@ double EvtGenDecays::decay() {
     if (pythiaPtr->rndm.flat() <= 1.0 / n) break;
     if (iTry == NTRYDECAY) {
       wgt = 2.;
-      cout << "Warning in EvtGenDecays::decay: maximum "
-           << "number of signal decay attempts exceeded";
+      pythiaPtr->info.errorMsg("Warning in EvtGenDecays::decay: maximum "
+        "number of signal decay attempts exceeded");
     }
   }
 
@@ -407,7 +407,7 @@ void EvtGenDecays::updatePythia() {
 
 void EvtGenDecays::updateEvtGen() {
   if (!pythiaPtr || !evtgen) return;
-  int pyId = pythiaPtr->particleData.nextId(1);
+  int pyId = pythiaPtr->particleData.nextId(0);
   while (pyId != 0) {
     EvtId egId = EvtPDL::evtIdFromStdHep(pyId);
     EvtPDL::reSetMass   (egId, pythiaPtr->particleData.m0(pyId));
@@ -615,7 +615,5 @@ bool EvtGenDecays::checkOsc(EvtParticle *egPro) {
 }
 
 //==========================================================================
-
-} // end namespace Pythia8
 
 #endif // end Pythia8_EvtGen_H

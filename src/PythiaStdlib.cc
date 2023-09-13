@@ -1,9 +1,9 @@
 // PythiaStdlib.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Function definitions (not found in the header) for
+// Function definitions (not found in the header) for the Gamma function.
 
 #include "Pythia8/PythiaStdlib.h"
 
@@ -11,23 +11,28 @@ namespace Pythia8 {
 
 //==========================================================================
 
-// Convert string to lowercase for case-insensitive comparisons.
-// By default remove any initial and trailing blanks or escape characters.
+// The Gamma function for real arguments, using the Lanczos approximation.
+// Code based on http://en.wikipedia.org/wiki/Lanczos_approximation
 
-string toLower(const string& name, bool trim) {
+double GammaCoef[9] = {
+     0.99999999999980993,     676.5203681218851,   -1259.1392167224028,
+      771.32342877765313,   -176.61502916214059,    12.507343278686905,
+    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7};
 
-  // Copy string without initial and trailing blanks or escape characters.
-  string temp = name;
-  if (trim) {
-    if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-    int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-    int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-    temp          = name.substr( firstChar, lastChar + 1 - firstChar);
-  }
+double GammaReal(double x) {
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  return temp;
+  // Reflection formula (recursive!) for x < 0.5.
+  if (x < 0.5) return M_PI / (sin(M_PI * x) * GammaReal(1 - x));
+
+  // Iterate through terms.
+  double z = x - 1.;
+  double gamma = GammaCoef[0];
+  for (int i = 1; i < 9; ++i) gamma += GammaCoef[i] / (z + i);
+
+  // Answer.
+  double t = z + 7.5;
+  gamma *= sqrt(2. * M_PI) * pow(t, z + 0.5) * exp(-t);
+  return gamma;
 
 }
 

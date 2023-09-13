@@ -6,13 +6,7 @@
 </head>
 <body>
  
-<h2>Event Statistics Summary</h2> 
-<ol id="toc">
-  <li><a href="#section0">Cross-section statistics</a></li>
-  <li><a href="#section1">Error messages</a></li>
-  <li><a href="#section2">Multiparton-interactions statistics</a></li>
-</ol>
-
+<h2>Event Statistics</h2> 
  
 At the end of the run you will want to write out the final statistics 
 on number of events generated, the corresponding cross sections and 
@@ -21,17 +15,8 @@ the number of errors encountered. This is done with the
 instance of the <code>Pythia</code> class.The method is steered entirely 
 by settings values, see <a href="MainProgramSettings.html" target="page">here</a>. 
  
-<p/> 
-Note that further methods for user access to generated 
-cross sections and event weights are documented on the 
-<a href="CrossSectionsAndWeights.html" target="page">Cross Sections and Weights</a> 
-page. 
- 
-<a name="section0"></a> 
 <h3>Cross-section statistics</h3> 
  
- 
-<p/> 
 The <code>ProcessLevel::statistics()</code> method cannot be accessed 
 directly, but only via the <code>Pythia::stat()</code> call above. 
 When called it will loop over the list of existing processes, and for 
@@ -64,7 +49,6 @@ and often vanish completely. Furthermore, while the number of events
 is shown for each user process, the cross section is only for the sum 
 of them. 
  
-<a name="section1"></a> 
 <h3>Error messages</h3> 
  
 When Pythia is run, errors may occur, and give rise to warning messages. 
@@ -103,7 +87,6 @@ The summary table printed by <code>Pythia::stat()</code>
 provides a table with all the different messages issued, in 
 alphabetical order, with the total number of times each was generated. 
  
-<a name="section2"></a> 
 <h3>Multiparton-interactions statistics</h3> 
  
 If you call <code>Pythia::stat()</code> with 
@@ -122,4 +105,4 @@ between the two.)
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

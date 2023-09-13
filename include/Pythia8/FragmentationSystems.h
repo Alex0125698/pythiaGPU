@@ -1,6 +1,6 @@
 // FragmentationSystems.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains auxiliary classes in the fragmentation process.
@@ -8,7 +8,6 @@
 // ColConfig describes the colour configuration of the whole event.
 // StringRegion keeps track on string momenta and directions.
 // StringSystem contains all the StringRegions of the colour singlet.
-// StringVertex contains information on space-time location of string breaks.
 
 #ifndef Pythia8_FragmentationSystems_H
 #define Pythia8_FragmentationSystems_H
@@ -62,18 +61,16 @@ class ColConfig {
 public:
 
   // Constructor.
-  ColConfig() : loggerPtr(), flavSelPtr(), mJoin(), mJoinJunction(),
-    mStringMin() {singlets.resize(0);}
+  ColConfig() {singlets.resize(0);}
 
   // Initialize and save pointers.
-  void init(Info* infoPtrIn, StringFlav* flavSelPtrIn);
+  void init(Info* infoPtrIn, Settings& settings, StringFlav* flavSelPtrIn);
 
   // Number of colour singlets.
   int size() const {return singlets.size();}
 
   // Overload index operator to access separate colour singlets.
   ColSinglet& operator[](int iSub) {return singlets[iSub];}
-  const ColSinglet& operator[](int iSub) const {return singlets[iSub];}
 
   // Clear contents.
   void clear() {singlets.resize(0);}
@@ -81,11 +78,6 @@ public:
   // Insert a new colour singlet system in ascending mass order.
   // Calculate its properties. Join nearby partons.
   bool insert( vector<int>& iPartonIn, Event& event);
-
-  // Insert a new qqbar colour singlet system in ascending mass order.
-  // Calculate its properties.
-  bool simpleInsert( vector<int>& iPartonIn, Event& event,
-    bool fixOrder = false);
 
   // Erase a colour singlet system. (Rare operation.)
   void erase(int iSub) {singlets.erase(singlets.begin() + iSub);}
@@ -97,19 +89,15 @@ public:
   int findSinglet(int i);
 
   // List all currently identified singlets.
-  void list() const;
-
-  // Rapidity range [y_min, y_max] of all string pieces in all singlets.
-  // Only used when stringPT:closePacking is on.
-  vector< vector< pair<double,double> > > rapPairs;
+  void list(ostream& os = cout) const;
 
 private:
 
   // Constants: could only be changed in the code itself.
   static const double CONSTITUENTMASS;
 
-  // Pointer to logger.
-  Logger* loggerPtr;
+  // Pointer to various information on the generation.
+  Info*       infoPtr;
 
   // Pointer to class for flavour generation.
   StringFlav* flavSelPtr;
@@ -138,32 +126,21 @@ class StringRegion {
 public:
 
   // Constructor.
-  StringRegion() : isSetUp(false), isEmpty(true), w2(0.), xPosProj(0.),
-    xNegProj(0.), pxProj(0.), pyProj(0.), colPos(0), colNeg(0) {}
+  StringRegion() : isSetUp(false), isEmpty(true) {}
 
   // Constants: could only be changed in the code itself.
   static const double MJOIN, TINY;
 
   // Data members.
   bool   isSetUp, isEmpty;
-  Vec4   pPos, pNeg, eX, eY, pPosMass, pNegMass, massOffset;
+  Vec4   pPos, pNeg, eX, eY;
   double w2, xPosProj, xNegProj, pxProj, pyProj;
-  int    colPos, colNeg;
-
-  // Calculate offset of the region from parton list. Special junction case.
-  Vec4 gluonOffset(vector<int>& iSys, Event& event, int iPos, int iNeg);
-  Vec4 gluonOffsetJRF(vector<int>& iSys, Event& event, int iPos, int iNeg,
-    RotBstMatrix MtoJRF);
-
-  // If massive case, the offset of the initial regions is calculated.
-  bool massiveOffset(int iPos, int iNeg, int iMax, int id1, int id2,
-    double mc, double mb);
 
   // Set up four-vectors for longitudinal and transverse directions.
-  void setUp(Vec4 p1, Vec4 p2, int col1, int col2, bool isMassless = false);
+  void setUp(Vec4 p1, Vec4 p2, bool isMassless = false);
 
   // Construct a four-momentum from (x+, x-, px, py).
-  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn) const
+  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn)
     { return xPosIn * pPos + xNegIn * pNeg + pxIn * eX + pyIn * eY; }
 
   // Project a four-momentum onto (x+, x-, px, py). Read out projection.
@@ -187,11 +164,10 @@ class StringSystem {
 public:
 
   // Constructor.
-  StringSystem() : sizePartons(), sizeStrings(), sizeRegions(), indxReg(),
-    iMax(), mJoin(), m2Join() {}
+  StringSystem() {}
 
   // Set up system from parton list.
-  void setUp(const vector<int>& iSys, const Event& event);
+  void setUp(vector<int>& iSys, Event& event);
 
   // Calculate string region from (iPos, iNeg) pair.
   int iReg( int iPos, int iNeg) const
@@ -201,9 +177,9 @@ public:
   StringRegion& region(int iPos, int iNeg) {return system[iReg(iPos, iNeg)];}
 
   // Reference to low string region specified either by iPos or iNeg.
-  const StringRegion& regionLowPos(int iPos) const {
+  StringRegion& regionLowPos(int iPos) {
     return system[iReg(iPos, iMax - iPos)]; }
-  const StringRegion& regionLowNeg(int iNeg) const {
+  StringRegion& regionLowNeg(int iNeg) {
     return system[iReg(iMax - iNeg, iNeg)]; }
 
   // Main content: a vector with all the string regions of the system.
@@ -212,45 +188,6 @@ public:
   // Other data members.
   int    sizePartons, sizeStrings, sizeRegions, indxReg, iMax;
   double mJoin, m2Join;
-
-};
-
-//==========================================================================
-
-// The StringVertex class contains the space-time vertex location information
-// stored during the fragmentation process. No private members.
-
-class StringVertex {
-
-public:
-
-  // Constructors.
-  StringVertex() : fromPos(false), iRegPos(0), iRegNeg(0),
-    xRegPos(0.), xRegNeg(0.) { }
-
-  StringVertex(bool fromPosIn, int iRegPosIn,
-    int iRegNegIn, double xRegPosIn, double xRegNegIn)
-    : fromPos(fromPosIn), iRegPos(iRegPosIn), iRegNeg(iRegNegIn),
-    xRegPos(xRegPosIn), xRegNeg(xRegNegIn) { }
-
-  StringVertex(const StringVertex& v): fromPos(v.fromPos),
-    iRegPos(v.iRegPos), iRegNeg(v.iRegNeg),
-    xRegPos(v.xRegPos), xRegNeg(v.xRegNeg) { }
-
-  StringVertex& operator = (const StringVertex& v) {if (this != &v)
-    {fromPos = v.fromPos; iRegPos = v.iRegPos; iRegNeg = v.iRegNeg;
-    xRegPos = v.xRegPos; xRegNeg = v.xRegNeg;} return *this; }
-
-  // Save values.
-  void store(bool fromPosIn, int iRegPosIn, int iRegNegIn,
-    double xRegPosIn, double xRegNegIn) {
-    fromPos = fromPosIn; iRegPos = iRegPosIn; iRegNeg = iRegNegIn;
-    xRegPos = xRegPosIn; xRegNeg = xRegNegIn; }
-
-  // Variable members.
-  bool fromPos;
-  int iRegPos, iRegNeg;
-  double xRegPos, xRegNeg;
 
 };
 

@@ -1,9 +1,7 @@
 // main19.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: beam gas; fixed target; pileup; multi-instance
 
 // This program runs four instances of Pythia simultaneously,
 // one for signal events, one for pileup background ones, and two
@@ -12,17 +10,13 @@
 // The = and += overloaded operators are used to join several
 // event records into one, but should be used with caution.
 
-// The possibility to instantiate Pythia with Settings and ParticleData
-// databases is illustrated, but not essential here. It means that the
-// share/Pythia8/xmldoc/*.xml files are only read once, saving some time.
-
-// Note that each instance of Pythia is running independently of any other,
+// Note that each instance of Pythia is independent of any other,
 // but with two important points to remember.
 // 1) By default all generate the same random number sequence,
 //    which has to be corrected if they are to generate the same
 //    physics, like the two beam-gas ones below.
 // 2) Interfaces to external Fortran programs are "by definition" static.
-//    Thus it is not a good idea to use LHAPDF5 to set different PDF's
+//    Thus it is not a good idea to use LHAPDF to set different PDF's
 //    in different instances.
 
 #include "Pythia8/Pythia.h"
@@ -75,27 +69,28 @@ int main() {
   double nBeamAGasAvg = 0.5;
   double nBeamBGasAvg = 0.5;
 
-  // Signal generator instance.
+  // Four generator instances.
   Pythia pythiaSignal;
-
-  // Switch off automatic event listing (illustrates settings inheritance).
-  pythiaSignal.readString("Next:numberShowInfo = 0");
-  pythiaSignal.readString("Next:numberShowProcess = 0");
-  pythiaSignal.readString("Next:numberShowEvent = 0");
-
-  // Switch off K0S decay (illustrates particle data inheritance).
-  pythiaSignal.readString("130:mayDecay = off");
-
-  // Background generator instances copies settings and particle data.
-  Pythia pythiaPileup(   pythiaSignal.settings, pythiaSignal.particleData);
-  Pythia pythiaBeamAGas( pythiaSignal.settings, pythiaSignal.particleData);
-  Pythia pythiaBeamBGas( pythiaSignal.settings, pythiaSignal.particleData);
-
-  // Switch off Lambda decay (illustrates particle data non-inheritance).
-  pythiaSignal.readString("3122:mayDecay = off");
+  Pythia pythiaPileup;
+  Pythia pythiaBeamAGas;
+  Pythia pythiaBeamBGas;
 
   // One object where all individual events are to be collected.
   Event sumEvent;
+
+  // Switch off automatic event listing.
+  pythiaSignal.readString("Next:numberShowInfo = 0");
+  pythiaSignal.readString("Next:numberShowProcess = 0");
+  pythiaSignal.readString("Next:numberShowEvent = 0");
+  pythiaPileup.readString("Next:numberShowInfo = 0");
+  pythiaPileup.readString("Next:numberShowProcess = 0");
+  pythiaPileup.readString("Next:numberShowEvent = 0");
+  pythiaBeamAGas.readString("Next:numberShowInfo = 0");
+  pythiaBeamAGas.readString("Next:numberShowProcess = 0");
+  pythiaBeamAGas.readString("Next:numberShowEvent = 0");
+  pythiaBeamBGas.readString("Next:numberShowInfo = 0");
+  pythiaBeamBGas.readString("Next:numberShowProcess = 0");
+  pythiaBeamBGas.readString("Next:numberShowEvent = 0");
 
   // Initialize generator for signal processes.
   pythiaSignal.readString("HardQCD:all = on");

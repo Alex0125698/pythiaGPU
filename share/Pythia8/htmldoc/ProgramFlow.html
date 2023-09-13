@@ -7,17 +7,11 @@
 <body>
  
 <h2>Program Flow</h2> 
-<ol id="toc">
-  <li><a href="#section0">Normal usage</a></li>
-  <li><a href="#section1">Advanced usage, mainly for initialization</a></li>
-  <li><a href="#section2">The Pythia class methods and members</a></li>
-</ol>
-
  
 Recall that, to first order, the event generation process can be 
 subdivided into three stages: 
 <ol> 
-<li>Initialization.</li> 
+<li>Initializaion.</li> 
 <li>The event loop.</li> 
 <li>Finishing.</li> 
 </ol> 
@@ -35,10 +29,7 @@ At the bottom of this webpage is a complete survey of all public
 than the task-oriented descriptions found in the preceding sections. 
 This offers complementary information. 
  
-<a name="section0"></a> 
-<h3>Normal usage</h3> 
- 
-<h4>Initialization</h4> 
+<h3>Initialization - normal usage</h3> 
  
 <ol> 
  
@@ -66,7 +57,7 @@ will only contain one <code>Pythia</code> object. (But you can
 use several <code>Pythia</code> objects, which then will be 
 independent of each other.)<br/> 
 By default all output from <code>Pythia</code> will be on the 
-<code>cout</code> stream, but a few methods do 
+<code>cout</code> stream, but the <code>list</code> methods below do 
 allow output to alternative streams or files. 
 </li> 
  
@@ -156,7 +147,7 @@ is governed by the the beam parameters from the
 <code><a href="BeamParameters.html" target="page">Beams</a></code> 
 group of variables. If you don't change any of those you will 
 default to proton-proton collisions at 14 TeV, i.e. the nominal LHC 
-values.</li> 
+values. 
  
 <p/> 
 <li> 
@@ -172,7 +163,7 @@ either only what has been changed or everything, you can use
  
 </ol> 
  
-<h4>The event loop</h4> 
+<h3>The event loop</h3> 
  
 <ol> 
  
@@ -214,7 +205,7 @@ event.
  
 </ol> 
  
-<h4>Finishing</h4> 
+<h3>Finishing</h3> 
  
 <ol> 
  
@@ -228,7 +219,6 @@ and warnings encountered.
  
 </ol> 
  
-<a name="section1"></a> 
 <h3>Advanced usage, mainly for initialization</h3> 
  
 A) Necessary data are automatically loaded when you use the 
@@ -236,7 +226,7 @@ default PYTHIA installation directory structure and run the main
 programs in the <code>examples</code> subdirectory. However, in the 
 general case, you must provide the path of the <code>xmldoc</code> 
 directory, where default settings and particle data are found. 
-This can be done in several ways. 
+This can be done in two ways. 
  
 <ol> 
  
@@ -245,11 +235,11 @@ You can set the environment variable <code>PYTHIA8DATA</code> to
 contain the location of the <code>xmldoc</code> directory. In the 
 <code>csh</code> and <code>tcsh</code> shells this could e.g. be 
 <pre> 
-     setenv PYTHIA8DATA /home/myname/pythia82xx/share/Pythia8/xmldoc 
+     setenv PYTHIA8DATA /home/myname/pythia81xx/xmldoc 
 </pre> 
 while in other shells it could be 
 <pre> 
-     export PYTHIA8DATA=/home/myname/pythia82xx/share/Pythia8/xmldoc 
+     export PYTHIA8DATA=/home/myname/pythia81xx/xmldoc 
 </pre> 
 where xx is the subversion number.<br/> 
 Recall that environment variables set locally are only defined in the 
@@ -263,31 +253,14 @@ if you want a more permanent assignment.
 You can provide the path as argument to the <code>Pythia</code> 
 constructor, e.g. 
 <pre> 
-     Pythia pythia("/home/myname/pythia82xx/share/Pythia8/xmldoc"); 
-</pre> 
-where again xx is the subversion number.<br/> 
-When <code>PYTHIA8DATA</code> is set it takes precedence, else 
-the path in the constructor is used, else one defaults to the 
-<code>../share/Pythia8/xmldoc</code> directory. 
-</li> 
- 
-<li> 
-You can provide references to existing Settings and ParticleData 
-(useful if several identical copies of Pythia8 are constructed): 
-<pre> 
-     Pythia(Settings& settingsIn, ParticleData& particleDataIn); 
-</pre> 
-</li> 
- 
-<li> 
-You can take input from streams of Settings and ParticleData 
-information (which requires the user to create the streams with 
-the appropriate information): 
-<pre> 
-     Pythia(istream& settingsStrings, istream& particleDataStrings); 
+     Pythia pythia("/home/myname/pythia81xx/xmldoc"); 
 </pre> 
 </li> 
 </ol> 
+where again xx is the subversion number.<br/> 
+When <code>PYTHIA8DATA</code> is set it takes precedence, else 
+the path in the constructor is used, else one defaults to the 
+<code>../xmldoc</code> directory. 
  
 <p/> 
 B) You can override the default behaviour of PYTHIA not only by the 
@@ -321,8 +294,7 @@ event than the ones being used for everything else, the extended form
       pythia.setPDFptr( pdfAPtr, pdfBPtr, pdfHardAPtr, pdfHardBPtr); 
 </pre> 
 allows you to specify those separately, and then the first two sets 
-would only be used for the showers and for multiparton interactions.<br/> 
-There is a further method to set photon fluxes in a similar spirit. 
+would only be used for the showers and for multiparton interactions. 
 </li> 
  
 <p/> 
@@ -334,7 +306,7 @@ method
       pythia.setLHAupPtr( lhaUpPtr); 
 </pre> 
 where the  <code>lhaUpPtr</code> derives from the 
-<a href="LHA.html" target="page">LHAup</a> base class. 
+<a href="LesHouchesAccord.html" target="page">LHAup</a> base class. 
 </li> 
  
 <p/> 
@@ -384,7 +356,7 @@ matrix element + parton shower merging, you can call
       pythia.setMergingHooksPtr( mergingHooksPtr); 
 </pre> 
 where <code>mergingHooksPtr</code> derives from the 
-<code><a href="CKKWLMerging.html" target="page">MergingHooks</a></code> base class. 
+<code><a href="MatrixElementMerging.html" target="page">MergingHooks</a></code> base class. 
 </li> 
  
 <p/> 
@@ -403,28 +375,25 @@ where <code>beamShapePtr</code> derives from the
 <li> 
 If you want to implement a cross section of your own, you can use 
 <pre> 
-      pythia.addSigmaPtr( sigmaPtr ); 
+      pythia.setSigmaPtr( sigmaPtr ); 
 </pre> 
 or, optionally, 
 <pre> 
-      pythia.addSigmaPtr( sigmaPtr, phaseSpacePtr ); 
+      pythia.setSigmaPtr( sigmaPtr, phaseSpacePtr ); 
 </pre> 
-where <code>sigmaPtr</code> is a shared pointer of type 
-<code>SigmaProcess</code> and <code>phaseSpacePtr</code> is a shared 
-pointer of type <code>PhaseSpace</code>. When only the cross-section 
-expression is provided, the built-in phase-space selection machinery 
-will be used. Then <code>sigmaPtr</code> must be an instance of a 
-class derived from one of the <code>Sigma1Process</code>, 
-<code>Sigma2Process</code> and <code>Sigma3Process</code> classes for 
-1-, 2- and 3- particle production, in their turn derived from 
+where <code>sigmaPtr</code> is of type <code>SigmaProcess*</code> 
+and <code>phaseSpacePtr</code> is of type <code>PhaseSpace*</code>. 
+When only the cross-section expression is provided, the built-in 
+phase-space selection machinery will be used. Then <code>sigmaPtr</code> 
+must be an instance of a class derived from one of the 
+<code>Sigma1Process</code>, <code>Sigma2Process</code> and 
+<code>Sigma3Process</code> classes for 1-, 2- and 3- particle production, 
+in their turn derived from 
 <code><a href="SemiInternalProcesses.html" target="page">SigmaProcess</a></code>. 
 When you supply your own phase-space generator there is no fundamental 
-limit on the complexity of the process.  This call can be used 
-repeatedly to hand in several different processes, mixing ones with 
-and without their own phase-space generators. To reset the user provided 
-cross sections to a single cross section, the 
-<code>setSigmaPtr</code> method can be called, using the same 
-arguments as <code>addSigmaPtr</code>. 
+limit on the complexity of the process. 
+This call can be used repeatedly to hand in several different processes, 
+mixing ones with and ones without their own phase-space generators. 
 </li> 
  
 <p/> 
@@ -433,18 +402,15 @@ If your cross section contains the production of a new resonance
 with known analytical expression for all the relevant partial widths, 
 you can make this resonance available to the program with 
 <pre> 
-      pythia.addResonancePtr( resonancePtr); 
+      pythia.setResonancePtr( resonancePtr); 
 </pre> 
-where <code>resonancePtr</code> is a shared pointer of type 
-<code>ResonanceWidths</code>, and is an instance of a class derived 
-from the 
-<code><a href="SemiInternalResonances.html" target="page">ResonanceWidths</a></code> base 
-class. In addition you need to add the particle to the normal 
-<a href="ParticleDataScheme.html" target="page">particle and decay database</a>. This 
-procedure can be used repeatedly to hand in several different 
-resonances. To reset the user provided resonance widths to a single 
-pointer, the method <code>setResonancePtr</code> can be used instead, 
-with the same arguments as <code>addResonancePtr</code>. 
+where <code>resonancePtr</code> of type <code>ResonanceWidths*</code> 
+is an instance of a class derived from the 
+<code><a href="SemiInternalResonances.html" target="page">ResonanceWidths</a></code> 
+base class. In addition you need to add the particle to the normal 
+<a href="ParticleDataScheme.html" target="page">particle and decay database</a>. 
+This procedure can be used repeatedly to hand in several different 
+resonances. 
 </li> 
  
 <p/> 
@@ -452,35 +418,11 @@ with the same arguments as <code>addResonancePtr</code>.
 If you are a real expert and want to <a href="ImplementNewShowers.html" target="page">replace 
 the PYTHIA initial- and final-state showers</a>, you can use 
 <pre> 
-      pythia.setShowerModelPtr( showerModelPtr); 
+      pythia.setShowerPtr( timesDecPtr, timesPtr, spacePtr); 
 </pre> 
-where the <code>showerModelPtr</code> is a shared 
-<code>ShowerModel</code> pointer which stores the following shared 
-pointers: <code>timesPtr</code> and <code>timesDecPtr</code> of the 
-class <code>TimeShower</code>, <code>spacePtr</code> of the class 
-<code>SpaceShower</code>, <code>mergingPtr</code> of the class 
-<code>Merging</code>, and <code>mergingHooksPtr</code> of the class 
-<code>MergingHooks</code>. It is also possible to get back a pointer 
-to the parton shower machinery and perform diagnostics. 
-<pre> 
-      pythia.getShowerModelPtr(); 
-</pre> 
-</li> 
- 
-<p/> 
-<li> 
-With even bigger expertise you can plug in your own 
-<a href="HeavyIons.html" target="page">Heavy Ions</a> generator, to replace the 
-default Angantyr one, with 
-<pre> 
-      pythia.setHeavyIonsPtr( heavyIonsPtr); 
-</pre> 
-Maybe more useful is the possibility to get back a pointer to the 
-generator used, e.g. to probe various quantities that are not 
-available with the normal Pythia methods: 
-<pre> 
-      pythia.getHeavyIonsPtr(); 
-</pre> 
+where <code>timesDecPtr</code> and <code>timesPtr</code> 
+derive from the <code>TimeShower</code> base class, and 
+<code>spacePtr</code> from <code>SpaceShower</code>. 
 </li> 
  
 </ol> 
@@ -560,23 +502,21 @@ first-read file, when the full initialization is performed.
  
 </ol> 
  
-<br/><hr/> 
-<a name="section2"></a> 
-<h3>The Pythia class methods and members</h3> 
+<h2>The Pythia Class</h2> 
  
 Here follows the complete survey of all public <code>Pythia</code> 
 methods and data members. 
  
-<h4>Constructors and destructor</h4> 
+<h3>Constructor and destructor</h3> 
  
-<a name="anchor1"></a>
-<p/><strong> Pythia::Pythia(string xmlDir = &quot;../share/Pythia8/xmldoc&quot;, bool printBanner = true) &nbsp;</strong> <br/>
+<a name="method1"></a>
+<p/><strong>Pythia::Pythia(string xmlDir = &quot;../xmldoc&quot;, bool printBanner = true) &nbsp;</strong> <br/>
 creates an instance of the <code>Pythia</code> event generators, 
 and sets initial default values, notably for all settings and 
 particle data. You may use several <code>Pythia</code> instances 
 in the same run; only when you want to access external static 
 libraries could this cause problems. (This includes in particular 
-Fortran libraries such as <a href="PDFSelection.html" target="page">LHAPDF5</a>.) 
+Fortran libraries such as <a href="PDFSelection.html" target="page">LHAPDF</a>.) 
 <br/><code>argument</code><strong> xmlDir </strong> (<code>default = <strong>../xmldoc</strong></code>) : allows you to choose 
 from which directory the default settings and particle data values 
 are read in. If the <code>PYTHIA8DATA</code> environment variable 
@@ -586,7 +526,7 @@ that it is only the directory location you can change, its contents
 must be the ones of the <code>xmldoc</code> directory in the 
 standard distribution. 
    
-<br/><code>argument</code><strong> printBanner </strong> (<code>default = <strong>on</strong></code>) :  can be set 
+<br/><code>argument</code><strong> printBanner </strong> (<code>default = <strong>true</strong></code>) :  can be set 
 <code>false</code> to stop the program from printing a banner. 
 The banner contains useful information, so this option is only 
 intended for runs with multiple <code>Pythia</code> instances, 
@@ -594,53 +534,14 @@ where output needs to be restricted.
    
    
  
-<a name="anchor2"></a>
-<p/><strong> Pythia::Pythia(Settings& settingsIn, ParticleData& particleDataIn, bool printBanner = true) &nbsp;</strong> <br/>
-creates an instance of the <code>Pythia</code> event generators, 
-and sets initial default values, notably for all settings and 
-particle data. This option is intended for runs with multiple 
-Pythia instances, where only the first one needs to read the 
-<code>xmldoc</code> files, while subsequent ones can "inherit" 
-this information. 
-<br/><code>argument</code><strong> printBanner </strong> (<code>default = <strong>on</strong></code>) :  can be set 
-<code>false</code> to stop the program from printing a banner. 
-The banner contains useful information, so this option is only 
-intended for runs with multiple <code>Pythia</code> instances, 
-where output needs to be restricted. 
-   
-   
- 
-<a name="anchor3"></a>
-<p/><strong> Pythia::Pythia( istream& settingsStrings, istream& particleDataStrings, bool printBanner = true) &nbsp;</strong> <br/>
-creates an instance of the <code>Pythia</code> event generators, 
-and sets initial default values, notably for all settings and 
-particle data. This option is intended for runs with multiple 
-Pythia instances, where input streams can avoid file read congestion. 
-<br/><code>argument</code><strong> printBanner </strong> (<code>default = <strong>on</strong></code>) :  can be set 
-<code>false</code> to stop the program from printing a banner. 
-The banner contains useful information, so this option is only 
-intended for runs with multiple <code>Pythia</code> instances, 
-where output needs to be restricted. 
-   
-   
- 
-<a name="anchor4"></a>
-<p/><strong> Pythia::~Pythia &nbsp;</strong> <br/>
+<a name="method2"></a>
+<p/><strong>Pythia::~Pythia &nbsp;</strong> <br/>
 the destructor deletes the objects created by the constructor. 
-   
  
-<a name="anchor5"></a>
-<p/><strong> void Pythia::initPtrs() &nbsp;</strong> <br/>
-   
-<a name="anchor6"></a>
-<strong> bool Pythia::checkVersion() &nbsp;</strong> <br/>
-helper methods, that collects common tasks of the two constructors. 
-   
+<h3>Set up run</h3> 
  
-<h4>Set up run</h4> 
- 
-<a name="anchor7"></a>
-<p/><strong> bool Pythia::readString(string line, bool warn = true) &nbsp;</strong> <br/>
+<a name="method3"></a>
+<p/><strong>bool Pythia::readString(string line, bool warn = true) &nbsp;</strong> <br/>
 reads in a single string, that is interpreted as an instruction to 
 modify the value of a <a href="SettingsScheme.html" target="page">setting</a> or 
 <a href="ParticleDataScheme.html" target="page">particle data</a>, as already described 
@@ -648,7 +549,7 @@ above.
 <br/><code>argument</code><strong> line </strong>  :  
 the string to be interpreted as an instruction. 
    
-<br/><code>argument</code><strong> warn </strong> (<code>default = <strong>on</strong></code>) :  
+<br/><code>argument</code><strong> warn </strong> (<code>default = <strong>true</strong></code>) :  
 write a warning message or not whenever the instruction does not make 
 sense, e.g. if the variable does not exist in the databases. 
    
@@ -656,17 +557,14 @@ sense, e.g. if the variable does not exist in the databases.
 make sense out of the string. 
    
  
-<a name="anchor8"></a>
-<p/><strong> bool Pythia::readFile(string fileName, bool warn = true, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
+<a name="method4"></a>
+<p/><strong>bool Pythia::readFile(string fileName, bool warn = true, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
    
-<a name="anchor9"></a>
-<strong> bool Pythia::readFile(string fileName, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
+<strong>bool Pythia::readFile(string fileName, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
    
-<a name="anchor10"></a>
-<strong> bool Pythia::readFile(istream& inStream = cin, bool warn = true, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
+<strong>bool Pythia::readFile(istream& inStream = cin, bool warn = true, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
    
-<a name="anchor11"></a>
-<strong> bool Pythia::readFile(istream& inStream = cin, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
+<strong>bool Pythia::readFile(istream& inStream = cin, int subrun = SUBRUNDEFAULT) &nbsp;</strong> <br/>
 reads in a whole file, where each line is interpreted as an instruction 
 to modify the value of a <a href="SettingsScheme.html" target="page">setting</a> or 
 <a href="ParticleDataScheme.html" target="page">particle data</a>, cf. the above 
@@ -678,7 +576,7 @@ the file from which instructions are read.
 <br/><code>argument</code><strong> inStream </strong>  :  
 an istream from which instructions are read. 
    
-<br/><code>argument</code><strong> warn </strong> (<code>default = <strong>on</strong></code>) :  
+<br/><code>argument</code><strong> warn </strong> (<code>default = <strong>true</strong></code>) :  
 write a warning message or not whenever the instruction does not make 
 sense, e.g. if the variable does not exist in the databases. In the 
 command forms where <code>warn</code> is omitted it is true. 
@@ -694,8 +592,8 @@ The subrun number should not be negative; negative codes like
 make sense out of any one line. 
    
  
-<a name="anchor12"></a>
-<p/><strong> bool Pythia::setPDFPtr( PDF* pdfAPtr, PDF* pdfBPtr, PDF* pdfHardAPtr = 0, PDF* pdfHardBPtr = 0, PDF* pdfPomAPtr = 0, PDF* pdfPomBPtr = 0, PDF* pdfGamAPtr = 0, PDF* pdfGamBPtr = 0, PDF* pdfHardGamAPtr = 0, PDF* pdfHardGamBPtr = 0, PDF* pdfUnresAPtr = 0, PDF* pdfUnresBPtr = 0, PDF* pdfUnresGamAPtr = 0, PDF* pdfUnresGamBPtrIn = 0) &nbsp;</strong> <br/>
+<a name="method5"></a>
+<p/><strong>bool Pythia::setPDFPtr( PDF* pdfAPtr, PDF* pdfBPtr, PDF* pdfHardAPtr = 0, PDF* pdfHardBPtr = 0) &nbsp;</strong> <br/>
 offers the possibility to link in external PDF sets for usage inside 
 the program. The rules for constructing your own class from 
 the <code>PDF</code> base class are described 
@@ -718,37 +616,6 @@ used. This second set is then exclusively for the generation of the hard
 process from the process matrix elements library. The first set above 
 is for everything else, notably parton showers and multiparton interactions. 
    
-<br/><code>argument</code><strong> pdfPomAPtr, pdfPomBPtr </strong> (<code>default = <strong>0</strong></code>) :  
-pointers to two further <code>PDF</code>-derived objects, one for each 
-of the incoming beams. These define the pomeron PDFs used in hard diffraction. 
-   
-<br/><code>argument</code><strong> pdfGamAPtr, pdfGamBPtr </strong> (<code>default = <strong>0</strong></code>) :  
-pointers to two further <code>PDF</code>-derived objects, one for each 
-of the incoming beams. These define the photon PDFs when photons are 
-emitted from lepton beams. With resolved photon beams some additional 
-methods are required for initial state radiation and multiparton interactions 
-and to sample valence content. 
-   
-<br/><code>argument</code><strong> pdfHardGamAPtr, pdfHardGamBPtr </strong> (<code>default = <strong>0</strong></code>) :  
-pointers to two further <code>PDF</code>-derived objects, one for each 
-of the incoming beams. As above, but now these are used for hard-process 
-generation only, the parton showers and multiparton interactions uses the 
-<code>pdfGamAPtr</code> and <code>pdfGamBPtr</code> PDFs. Unlike above, 
-no additional methods are needed for these. 
-   
-<br/><code>argument</code><strong> pdfUnresAPtr, pdfUnresBPtr </strong> (<code>default = <strong>0</strong></code>) :  
-pointers to two further <code>PDF</code>-derived objects, one for each 
-of the incoming beams. Additional PDF pointers when the beam particle 
-has also unresolved PDFs in addition to usual resolved one. Currently 
-used only when mixing direct and resolved photon-initiated processes. 
-   
-<br/><code>argument</code><strong> pdfUnresGamAPtr, pdfUnresGamBPtr </strong> (<code>default = <strong>0</strong></code>) :  
-pointers to two further <code>PDF</code>-derived objects, one for each 
-of the incoming beams. Additional PDF pointers when having resolved and 
-unresolved photons coming from lepton beams. Currently used only when mixing 
-direct and resolved photon-initiated processes in lepton-lepton or 
-lepton-hadron collisions. 
-   
 <br/><b>Note 1:</b> The method returns false if the input is obviously 
 incorrect, e.g. if two (nonzero) pointers agree. 
 <br/><b>Note 2:</b> If you want to combine several subruns you can 
@@ -758,24 +625,11 @@ to the normal internal PDF selection you must call
 <code>setPDFPtr(0, 0)</code> before <code>Pythia::init()</code>. 
    
  
-<a name="anchor13"></a>
-<p/><strong> bool Pythia::setPhotonFluxPtr( PDF* photonFluxAIn, PDF* photonFluxBIn) &nbsp;</strong> <br/>
-offers the possibility to link in external photon fluxes for usage 
-inside the program. The rules for constructing your own class from 
-the <code>PDF</code> base class are described 
-<a href="PartonDistributions.html" target="page">here</a>. 
-<br/><code>argument</code><strong> photonFluxAIn, photonFluxBIn </strong>  :  
-pointers to two <code>PDF</code>-derived objects, one for each of 
-the incoming beams. The two objects have to be instantiated by you 
-in your program. 
-   
-   
- 
-<a name="anchor14"></a>
-<p/><strong> bool Pythia::setLHAupPtr( LHAup* lhaUpPtrIn) &nbsp;</strong> <br/>
+<a name="method6"></a>
+<p/><strong>bool Pythia::setLHAupPtr( LHAup* lhaUpPtrIn) &nbsp;</strong> <br/>
 offers linkage to an external generator that feeds in events 
 in the LHA format, see 
-<a href="LHA.html" target="page">Les Houches Accord</a>, 
+<a href="LesHouchesAccord.html" target="page">Les Houches Accord</a>, 
 assuming that 
 <code><a href="BeamParameters.html" target="page">Beams:frameType = 5</a></code> 
 has been set. 
@@ -785,8 +639,8 @@ pointer to a <code>LHAup</code>-derived object.
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor15"></a>
-<p/><strong> bool Pythia::setDecayPtr( DecayHandler* decayHandlePtr, vector&lt;int&gt; handledParticles) &nbsp;</strong> <br/>
+<a name="method7"></a>
+<p/><strong>bool Pythia::setDecayPtr( DecayHandler* decayHandlePtr, vector&lt;int&gt; handledParticles) &nbsp;</strong> <br/>
 offers the possibility to link to an external program that can do some 
 of the particle decays, instead of using the internal decay machinery. 
 With particles we here mean the normal hadrons and leptons, not 
@@ -808,8 +662,8 @@ antiparticle is always included as well.
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor16"></a>
-<p/><strong> bool Pythia::setRndmEnginePtr( RndmEngine* rndmEnginePtr) &nbsp;</strong> <br/>
+<a name="method8"></a>
+<p/><strong>bool Pythia::setRndmEnginePtr( RndmEngine* rndmEnginePtr) &nbsp;</strong> <br/>
 offers the possibility to link to an external random number generator. 
 The rules for constructing your own class from the 
 <code>RndmEngine</code> base class are described 
@@ -822,8 +676,8 @@ must be instantiated by you in your program.
 from 0. 
    
  
-<a name="anchor17"></a>
-<p/><strong> bool Pythia::setUserHooksPtr( UserHooks* userHooksPtr) &nbsp;</strong> <br/>
+<a name="method9"></a>
+<p/><strong>bool Pythia::setUserHooksPtr( UserHooks* userHooksPtr) &nbsp;</strong> <br/>
 offers the possibility to interact with the generation process at 
 a few different specified points, e.g. to reject undesirable events 
 at an early stage to save computer time. The rules for constructing 
@@ -838,19 +692,8 @@ must be instantiated by you in your program.
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor18"></a>
-<p/><strong> bool Pythia::addUserHooksPtr( UserHooks* userHooksPtr) &nbsp;</strong> <br/>
-offers the possibility to add further user hooks, see 
-<code>setUserHooksPtr</code> above for further information. 
-<br/><b>Note:</b> The method currently always returns true. 
-<br/><b>Warning:</b> usually it is meaningful to combine several 
-requirements, but there are examples where not. It is the responsibility 
-of the user to check that a particular combination works as intended. 
-Also see <a href="UserHooks.html" target="page">here</a>. 
-   
- 
-<a name="anchor19"></a>
-<p/><strong> bool Pythia::setBeamShapePtr( BeamShape* beamShapePtr) &nbsp;</strong> <br/>
+<a name="method10"></a>
+<p/><strong>bool Pythia::setBeamShapePtr( BeamShape* beamShapePtr) &nbsp;</strong> <br/>
 offers the possibility to provide your own shape of the momentum and 
 space-time spread of the incoming beams. The rules for constructing 
 your own class from the <code>BeamShape</code> base class are described 
@@ -862,40 +705,33 @@ must be instantiated by you in your program.
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor20"></a>
-<p/><strong> bool Pythia::setSigmaPtr( SigmaProcessPtr sigmaPtr, PhaseSpacePtr phaseSpacePtrIn = 0) &nbsp;</strong> <br/>
+<a name="method11"></a>
+<p/><strong>bool Pythia::setSigmaPtr( SigmaProcess* sigmaPtr, PhaseSpace* phaseSpacePtrIn = 0) &nbsp;</strong> <br/>
 offers the possibility to link your own implementation of a process 
 and its cross section, to make it a part of the normal process 
 generation machinery, without having to recompile the 
 <code>Pythia</code> library itself.  The rules for constructing your 
 own class from the <code>SigmaProcess</code> base class are described 
-<a href="SemiInternalProcesses.html" target="page">here</a>. Calling this method 
-removes any previously user provided processes. To add multiple 
-processes, use <code>addSigmaPtr</code>. 
+<a href="SemiInternalProcesses.html" target="page">here</a>. You may call this 
+routine repeatedly, to add as many new processes as you wish. 
 <br/><code>argument</code><strong> sigmaPtr </strong>  :  
-shared pointer to a <code>SigmaProcess</code>-derived object. 
+pointer to a <code>SigmaProcess</code>-derived object. This object 
+must be instantiated by you in your program. 
    
 <br/><code>argument</code><strong> phaseSpacePtr </strong>  :  
-shared pointer to a <code>PhaseSpace</code>-derived object. When not 
-provided the internal phase-space selection machinery will be 
-used. Then <code>sigmaPtr</code> should be an instance of a class 
-derived from one of the <code>Sigma1Process</code>, 
-<code>Sigma2Process</code> and <code>Sigma3Process</code> classes for 
-1-, 2- and 3- particle production, in their turn derived from 
-<code>SigmaProcess</code>. 
+pointer to a <code>PhaseSpace</code>-derived object. When not provided 
+the internal phase-space selection machinery wll be used. Then 
+<code>sigmaPtr</code> should be an instance of a class derived from 
+one of the <code>Sigma1Process</code>, <code>Sigma2Process</code> and 
+<code>Sigma3Process</code> classes for 1-, 2- and 3- particle production, 
+in their turn derived from <code>SigmaProcess</code>. 
+When provided, this object must be instantiated by you in your program. 
    
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor21"></a>
-<p/><strong> bool Pythia::addSigmaPtr( SigmaProcessPtr sigmaPtr, PhaseSpacePtr phaseSpacePtrIn = 0) &nbsp;</strong> <br/>
-offers the possibility to add further processes, see 
-<code>setSigmaPtr</code> above for further information. 
-<br/><b>Note:</b> The method currently always returns true. 
-   
- 
-<a name="anchor22"></a>
-<p/><strong> bool Pythia::setResonancePtr( ResonanceWidthsPtr resonancePtr) &nbsp;</strong> <br/>
+<a name="method12"></a>
+<p/><strong>bool Pythia::setResonancePtr( ResonanceWidths* resonancePtr) &nbsp;</strong> <br/>
 offers the possibility to link your own implementation of the 
 calculation of partial resonance widths, to make it a part of the 
 normal process generation machinery, without having to recompile the 
@@ -903,92 +739,62 @@ normal process generation machinery, without having to recompile the
 resonances to be handled internally, when combined with new particle 
 data. Note that the decay of normal hadrons cannot be modeled here; 
 this is for New Physics resonances. The rules for constructing your 
-own class from the <code>ResonanceWidths</code> base class are 
-described <a href="SemiInternalResonances.html" target="page">here</a>. Calling 
-this method removes any previously user provided resonances. To add as 
-many new resonances as you wish, instead call 
-<code>addResonancePtr</code> repeatedly. 
+own class from the <code>ResonanceWidths</code> base class are described 
+<a href="SemiInternalResonances.html" target="page">here</a>. You may call this 
+routine repeatedly, to add as many new resonances as you wish. 
 <br/><code>argument</code><strong> resonancePtr </strong>  :  
-shared pointer to a <code>ResonanceWidths</code>-derived object. 
+pointer to a <code>ResonanceWidths</code>-derived object. This object 
+must be instantiated by you in your program. 
    
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor23"></a>
-<p/><strong> bool Pythia::addResonancePtr( ResonanceWidthsPtr resonancePtr) &nbsp;</strong> <br/>
-offers the possibility to add further resonances, see 
-<code>setResonancePtr</code> above for further information. 
-<br/><b>Note:</b> The method currently always returns true. 
-   
- 
-<a name="anchor24"></a>
-<p/><strong> bool Pythia::setShowerModelPtr( ShowerModelPtr showerModelPtr) &nbsp;</strong> <br/>
+<a name="method13"></a>
+<p/><strong>bool Pythia::setShowerPtr( TimeShower* timesDecPtr, TimeShower* timesPtr = 0, SpaceShower* spacePtr = 0) &nbsp;</strong> <br/>
 offers the possibility to link your own parton shower routines as 
-replacements for the default ones. This is much more complicated since 
-the showers are so central and are so interlinked with other parts of 
-the program. Therefore it is also possible to do the replacement in 
-stages, from the more independent to the more intertwined. The rules 
-for constructing your own shower from the <code>ShowerModel</code> 
-class is described <a href="ImplementNewShowers.html" target="page">here</a>. This 
-model, which includes <code>TimeShower</code> and 
-<code>SpaceShower</code> derived objects, must be instantiated by you 
-in your program. 
-<br/><code>argument</code><strong> showerModelPtr </strong>  :  
-  shared pointer to a <code>ShowerModel</code>-derived object. This 
-  includes a decay time shower, time shower, space shower, merging 
-  pointer, and merging user hooks. 
+replacements for the default ones. This is much more complicated 
+since the showers are so central and are so interlinked with other 
+parts of the program. Therefore it is also possible to do the 
+replacement in stages, from the more independent to the more 
+intertwined. The rules for constructing your own classes from the 
+<code>TimeShower</code> and <code>SpaceShower</code>base classes 
+are described <a href="ImplementNewShowers.html" target="page">here</a>. These 
+objects must be instantiated by you in your program. 
+<br/><code>argument</code><strong> timesDecPtr </strong>  :  
+pointer to a <code>TimeShower</code>-derived object for doing 
+timelike shower evolution in resonance decays, e.g. of a 
+<i>Z^0</i>. This is decoupled from beam remnants and parton 
+distributions, and is therefore the simplest kind of shower 
+to write. If you provide a value 0 then the internal shower 
+routine will be used. 
+   
+<br/><code>argument</code><strong> timesPtr </strong> (<code>default = <strong>0</strong></code>) :  
+pointer to a <code>TimeShower</code>-derived object for doing 
+all other timelike shower evolution, which is normally interleaved 
+with multiparton interactions and spacelike showers, introducing 
+both further physics and further technical issues. If you retain 
+the default value 0 then the internal shower routine will be used. 
+You are allowed to use the same pointer as above for the 
+<code>timesDecPtr</code> if the same shower can fulfill both tasks. 
+   
+<br/><code>argument</code><strong> spacePtr </strong> (<code>default = <strong>0</strong></code>) :  
+pointer to a <code>SpaceShower</code>-derived object for doing 
+all spacelike shower evolution, which is normally interleaved 
+with multiparton interactions and timelike showers. If you retain 
+the default value 0 then the internal shower routine will be used. 
    
 <br/><b>Note:</b> The method currently always returns true. 
    
  
-<a name="anchor25"></a>
-<p/><strong> ShowerModelPtr Pythia::getShowerModelPtr() &nbsp;</strong> <br/>
-gives access to the current <a href="ImplementNewShowers.html" target="page">parton 
-shower</a> model, either one the default internal Pythia models or 
-an external one fed in by the method above this. This way a number of 
-further shower properties can be interrogated. 
-   
- 
-<a name="anchor26"></a>
-<p/><strong> bool Pythia::setHeavyIonsPtr( HeavyIonsPtr heavyIonsPtr) &nbsp;</strong> <br/>
-offers the possibility to feed in an external Heavy Ion generator that 
-can use the internal <code>Pythia</code> machinery for its tasks, 
-see further <a href="HeavyIons.html" target="page">here</a>. 
-<br/><code>argument</code><strong> heavyIonsPtr </strong>  :  
-pointer to a <code>HeavyIons</code>-derived object for doing 
-Heavy Ions collisions. 
-   
-<br/><b>Note:</b> The method currently always returns true. 
-   
- 
-<a name="anchor27"></a>
-<p/><strong> HeavyIons* Pythia::getHeavyIonsPtr() &nbsp;</strong> <br/>
-gives access to the current <a href="HeavyIons.html" target="page">Heavy Ions</a> 
-generator, either the default internal Angantyr one or an external 
-one fed in by the method above this. This way a number of further 
-event properties can be interrogated. 
-   
- 
-<a name="anchor28"></a>
-<p/><strong> bool Pythia::setPartonVertexPtr( PartonVertexPtr partonVertexPtrIn) &nbsp;</strong> <br/>
-offers the possibility to set production vertices for the MPI, 
-FSR and ISR parton-level evolution, instead of the default framework, 
-see further <a href="PartonVertexInformation.html" target="page">here</a>. 
-This part of the program is still in the early stages, and is 
-likely to evolve further. Currently it is only used for the 
-<a href="RopeHadronization.html" target="page">Rope Hadronization</a> framework. 
-<br/><b>Note:</b> The method currently always returns true. 
-   
- 
-<h4>Initialize</h4> 
+<h3>Initialize</h3> 
  
 At the initialization stage all the information provided above is 
 processed, and the stage is set up for the subsequent generation 
 of events. Currently only one <code>init</code> 
 method is available for this stage. 
  
-<a name="anchor29"></a>
-<p/><strong> bool Pythia::init() &nbsp;</strong> <br/>
+<a name="method14"></a>
+<p/><strong>bool Pythia::init() &nbsp;</strong> <br/>
 initialize for collisions. The beams are not specified by input 
 arguments, but instead by the settings in the 
 <a href="BeamParameters.html" target="page">Beam Parameters</a> section. 
@@ -999,14 +805,14 @@ initialization fails. It is then not possible to generate any
 events. 
    
  
-<h4>Generate events</h4> 
+<h3>Generate events</h3> 
  
 The <code>next()</code> method is the main one to generate events. 
 In this section we also put a few other specialized methods that 
 may be useful in some circumstances. 
  
-<a name="anchor30"></a>
-<p/><strong> bool Pythia::next() &nbsp;</strong> <br/>
+<a name="method15"></a>
+<p/><strong>bool Pythia::next() &nbsp;</strong> <br/>
 generate the next event. No input parameters are required; all 
 instructions have already been set up in the initialization stage. 
 <br/><b>Note:</b> The method returns false if the event generation 
@@ -1018,52 +824,8 @@ can be checked with the
 method. 
    
  
-<a name="anchor31"></a>
-<p/><strong> bool Pythia::next(int procType) &nbsp;</strong> <br/>
-By default all initialized processes are generated, properly mixed. 
-By specifying a <code>procType</code>, it possible to force a specific 
-process type, assuming that you start out e.g. from <code>SoftQCD:all 
-= on</code>. The possible interaction <code>procType</code>s are (1) 
-inelastic nondiffractive, (2) elastic, (3, 4) single diffractive where 
-either the first or second hadron is broken up, (5) double 
-diffractive, and (6) central diffraction. This matches the order of 
-the <code>SoftQCD</code> process codes 101 - 106.<br/> If the 
-collision energy can be so low that the <code>LowEnergyQCD</code> 
-processes are used, then also the options (7) excitation, (8) 
-annihilation and (9) resonant can be used. Then all the input numbers 
-match the order of the <code>LowEnergQCD</code> codes 151 - 159. In 
-the higher-energy description process types 7 - 9 default back to the 
-0 mixed option. 
-   
- 
-<a name="anchor32"></a>
-<p/><strong> bool Pythia::setKinematics(double eCM) &nbsp;</strong> <br/>
-   
-<a name="anchor33"></a>
-<strong> bool Pythia::setKinematics(double eA, double eB) &nbsp;</strong> <br/>
-   
-<a name="anchor34"></a>
-<strong> bool Pythia::setKinematics(double pxA, double pyA,                   double pzA, double pxB, double pyB, double pzB) &nbsp;</strong> <br/>
-   
-<a name="anchor35"></a>
-<strong> bool Pythia::setKinematics(Vec4 pA, Vec4 pB) &nbsp;</strong> <br/>
-When variable energy is set with 
-<code>Beams:allowVariableEnergy</code> change the beam energy. 
-   
- 
-<a name="anchor36"></a>
-<p/><strong> bool Pythia::setBeamIDs( int idAin, int idBin) &nbsp;</strong> <br/>
-Provides limited support for changing beam particles. Using this 
-method, <code>idA</code> can be changed to any hadron, while 
-<code>idB</code> must be a proton or a neutron when using this 
-feature. This is useful for example in hadronic cascades in a 
-medium. It is here assumed that only the <code>SoftQCD</code> (and 
-<code>LowEnergyQCD</code> if relevant) hadron-nucleon processes are 
-being used. 
-   
- 
-<a name="anchor37"></a>
-<p/><strong> int Pythia::forceTimeShower( int iBeg, int iEnd, double pTmax, int nBranchMax = 0) &nbsp;</strong> <br/>
+<a name="method16"></a>
+<p/><strong>int Pythia::forceTimeShower( int iBeg, int iEnd, double pTmax, int nBranchMax = 0) &nbsp;</strong> <br/>
 perform a final-state shower evolution on partons in the 
 <code>event</code> event record. This could be used for externally 
 provided simple events, or even parts of events, for which 
@@ -1094,8 +856,8 @@ will continue to the lower cutoff.
 has been generated. 
    
  
-<a name="anchor38"></a>
-<p/><strong> bool Pythia::forceHadronLevel(bool findJunctions = true) &nbsp;</strong> <br/>
+<a name="method17"></a>
+<p/><strong>bool Pythia::forceHadronLevel(bool findJunctions = true) &nbsp;</strong> <br/>
 hadronize the existing event record, i.e. perform string fragmentation 
 and particle decays. There are two main applications. Firstly, 
 you can use the same parton-level content as a basis for repeated 
@@ -1105,7 +867,7 @@ partonic level of the event - hard process, parton showers, multiparton
 interactions, beam remnants, colour flow, and so on - but not 
 hadronization. Further details are found 
 <a href="HadronLevelStandalone.html" target="page">here</a>. 
-<br/><code>argument</code><strong> findJunctions </strong> (<code>default = <strong>on</strong></code>) :  
+<br/><code>argument</code><strong> findJunctions </strong> (<code>default = <strong>true</strong></code>) :  
 normally this routine will search through the event record and try to 
 figure out if any colour junctions are present. If so, the colour 
 topology of such junctions must be sorted out. In tricky cases this 
@@ -1121,8 +883,8 @@ fails. The event record is then not consistent and should not be
 studied. 
    
  
-<a name="anchor39"></a>
-<p/><strong> bool Pythia::moreDecays() &nbsp;</strong> <br/>
+<a name="method18"></a>
+<p/><strong>bool Pythia::moreDecays() &nbsp;</strong> <br/>
 perform decays of all particles in the event record that have not been 
 decayed but should have been done so. This can be used e.g. for 
 repeated decay attempts, in schemes intended to save computer time. 
@@ -1131,15 +893,8 @@ Further details are found <a href="HadronLevelStandalone.html" target="page">her
 event record is then not consistent and should not be studied. 
    
  
-<a name="anchor40"></a>
-<p/><strong> bool Pythia::moreDecays(int i) &nbsp;</strong> <br/>
-perform decay of the particle at index <code>i</code> of the event record, 
-when possible. Sequential decays are not performed, but have to be taken 
-care of successively, if so desired. 
-   
- 
-<a name="anchor41"></a>
-<p/><strong> bool Pythia::forceRHadronDecays() &nbsp;</strong> <br/>
+<a name="method19"></a>
+<p/><strong>bool Pythia::forceRHadronDecays() &nbsp;</strong> <br/>
 perform decays of R-hadrons that were previously considered stable. 
 This could be if an R-hadron is sufficiently long-lived that 
 it may interact in the detector between production and decay, so that 
@@ -1149,104 +904,22 @@ its four-momentum is changed. Further details are found
 event record is then not consistent and should not be studied. 
    
  
-<a name="anchor42"></a>
-<p/><strong> bool Pythia::doLowEnergyProcess(int i1, int i2, int procType) &nbsp;</strong> <br/>
-allow two hadrons, located in positions <i>i1</i> and <i>i2</i> of 
-the normal event record to interact with each other and give rise to new 
-hadrons by 
-<a href="QCDLowEnergyProcesses.html" target="page">Low-energy QCD Processes</a>. 
-The possible interaction <code>procType</code>s are 
-(1) inelastic nondiffractive, (2) elastic, (3, 4) single diffractive 
-where either first or second hadron is broken up, (5) double diffractive, 
-(7) excitation, (8) annihilation and (9) resonant. It is also possible to 
-specify the formation of a specific resonance by setting 
-<code>procType</code> to the id of that particle. No perturbative stage 
-is applied in either case, as relevant at low energies. It can be used 
-e.g. to model <a href="HadronicRescattering.html" target="page">Hadronic Rescattering</a> 
-in the final state, where partial cross sections are first calculated 
-to provide the relevant mix of different collision types. This method 
-does not itself decay unstable hadrons, but that could be achieved e.g. 
-with a <code>Pythia::moreDecays()</code> call. 
-   
- 
-<a name="anchor43"></a>
-<p/><strong> double Pythia::getSigmaTotal() &nbsp;</strong> <br/>
-   
-<a name="anchor44"></a>
-<strong> double Pythia::getSigmaTotal(double eCM12, int mixLoHi = 0) &nbsp;</strong> <br/>
-   
-<a name="anchor45"></a>
-<strong> double Pythia::getSigmaTotal(int id1, int id2, double eCM12, int mixLoHi = 0) &nbsp;</strong> <br/>
-   
-<a name="anchor46"></a>
-<strong> double Pythia::getSigmaTotal(int id1, int id2, double eCM12, double m1, double m2, int mixLoHi = 0) &nbsp;</strong> <br/>
-these four methods return a total cross section for two hadrons to collide. 
-It can be useful to have this access for some applications, where one needs 
-to decide whether two hadrons should be allowed to collide or not before 
-calling Pythia. One example is for the already-mentioned 
-<a href="HadronicRescattering.html" target="page">Hadronic Rescattering</a>, 
-but it could also involve tracking a particle through a medium. 
-It combines separate low-energy and a high-energy descriptions, with a 
-reasonably transition. 
-<br/><code>argument</code><strong> id1, id2 </strong>  :  
-the identity codes of the two colliding hadrons. If unspecified, 
-the ids are taken from the beam configuration of the 
-<code>Pythia</code> object. 
-   
-<br/><code>argument</code><strong> eCM12 </strong>  :  
-the collision center-of-mass energy. If unspecified, the beam energy 
-is taken from the beam configuration of the <code>Pythia</code> object. 
-   
-<br/><code>argument</code><strong> m1, m2 </strong>  :  
-the masses of the two incoming hadrons. If unspecified, the particles are 
-assumed to be on-shell. 
-   
-<br/><code>argument</code><strong> mixLoHi </strong>  :  
-Gives a choice of cross section description. 
-<br/>Option <i>-1</i> gives the low-energy cross sections implemented 
-for hadronic rescattering in [<a href="Bibliography.html#refSjo20" target="page">Sjo20</a>]. 
-<br/>Option <i>1</i> gives high-energy cross sections based on the 
-SaS/DL setup in <a href="TotalCrossSections.html" target="page">TotalCrossSections</a>, 
-as extended in [<a href="Bibliography.html#refSjo21" target="page">Sjo21</a>]. 
-<br/>Default option <i>0</i> gives the former behaviour at low energies 
-and the latter at high, with a mix in between. 
-   
-   
- 
-<a name="anchor47"></a>
-<p/><strong> double Pythia::getSigmaPartial(int procType) &nbsp;</strong> <br/>
-   
-<a name="anchor48"></a>
-<strong> double Pythia::getSigmaPartial(double eCM, int procType, int mixLoHi = 0) &nbsp;</strong> <br/>
-   
-<a name="anchor49"></a>
-<strong> double Pythia::getSigmaPartial(int id1, int id2, double eCM12, int procType, int mixLoHi = 0) &nbsp;</strong> <br/>
-   
-<a name="anchor50"></a>
-<strong> double Pythia::getSigmaPartial(int id1, int id2, double eCM12, double m1, double m2, int procType, int mixLoHi = 0) &nbsp;</strong> <br/>
-these two methods match the <code>getSigmaTotal</code> ones above, but 
-offers the total cross section split into interaction <code>procType</code>, 
-(1) inelastic nondiffractive, (2) elastic, (3, 4) single diffractive 
-where either first or second hadron is broken up, (5) double diffractive, 
-(7) excitation, (8) annihilation and (9) resonant. You can also get the 
-same total cross sections as in <code>getSigmaTotal</code> for 
-<code>procType = 0</code>, but with a larger time consumption if this is 
-the only number you want. 
-   
- 
-<a name="anchor51"></a>
-<p/><strong> void Pythia::LHAeventList() &nbsp;</strong> <br/>
+<a name="method20"></a>
+<p/><strong>void Pythia::LHAeventList(ostream& os = cout) &nbsp;</strong> <br/>
 list the Les Houches Accord information on the current event, see 
-<code><a href="LHA.html" target="page">LHAup::listEvent(...)</a></code>. 
+<code><a href="LesHouchesAccord.html" target="page">LHAup::listEvent(...)</a></code>. 
 (Other listings are available via the class members below, so this 
 listing is a special case that would not fit elsewhere.) 
+<br/><code>argument</code><strong> os </strong> (<code>default = <strong>cout</strong></code>) :  
+output stream where the listing occurs. 
+   
    
  
-<a name="anchor52"></a>
-<p/><strong> bool Pythia::LHAeventSkip(int nSkip) &nbsp;</strong> <br/>
+<a name="method21"></a>
+<p/><strong>bool Pythia::LHAeventSkip(int nSkip) &nbsp;</strong> <br/>
 skip ahead a number of events in the Les Houches generation 
 sequence, without doing anything further with them, see 
-<code><a href="LHA.html" target="page">LHAup::skipEvent(nSkip)</a></code>. 
+<code><a href="LesHouchesAccord.html" target="page">LHAup::skipEvent(nSkip)</a></code>. 
 Mainly intended for debug purposes, e.g. when an event at a known 
 location in a Les Houches Event File is causing problems. 
 <br/><code>argument</code><strong> nSkip </strong>  :  
@@ -1257,22 +930,22 @@ specifically if the end of a LHEF has been reached, cf.
 <code>next()</code> above. 
    
  
-<h4>Finalize</h4> 
+<h3>Finalize</h3> 
  
 There is no required finalization step; you can stop generating events 
 when and how you want. It is still recommended that you make it a 
 routine to call the following method at the end. A second method provides 
 a deprecated alternative. 
  
-<a name="anchor53"></a>
-<p/><strong> void Pythia::stat() &nbsp;</strong> <br/>
+<a name="method22"></a>
+<p/><strong>void Pythia::stat() &nbsp;</strong> <br/>
 list statistics on the event generation, specifically total and partial 
 cross sections and the number of different errors. For more details see 
 <a href="EventStatistics.html" target="page">here</a> and for available options 
 <a href="MainProgramSettings.html" target="page">here</a>. 
    
  
-<h4>Interrogate settings</h4> 
+<h3>Interrogate settings</h3> 
  
 Normally settings are used in the setup and initialization stages 
 to determine the character of a run, e.g. read from a file with the 
@@ -1287,24 +960,24 @@ be the number of events to generate. For such applications the
 following shortcuts to some <code>Settings</code> methods may be 
 convenient. 
  
-<a name="anchor54"></a>
-<p/><strong> bool Pythia::flag(string key) &nbsp;</strong> <br/>
+<a name="method23"></a>
+<p/><strong>bool Pythia::flag(string key) &nbsp;</strong> <br/>
 read in a boolean variable from the <code>Settings</code> database. 
 <br/><code>argument</code><strong> key </strong>  :  
 the name of the variable to be read. 
    
    
  
-<a name="anchor55"></a>
-<p/><strong> int Pythia::mode(string key) &nbsp;</strong> <br/>
+<a name="method24"></a>
+<p/><strong>int Pythia::mode(string key) &nbsp;</strong> <br/>
 read in an integer variable from the <code>Settings</code> database. 
 <br/><code>argument</code><strong> key </strong>  :  
 the name of the variable to be read. 
    
    
  
-<a name="anchor56"></a>
-<p/><strong> double Pythia::parm(string key) &nbsp;</strong> <br/>
+<a name="method25"></a>
+<p/><strong>double Pythia::parm(string key) &nbsp;</strong> <br/>
 read in a double-precision variable from the <code>Settings</code> 
 database. 
 <br/><code>argument</code><strong> key </strong>  :  
@@ -1312,22 +985,22 @@ the name of the variable to be read.
    
    
  
-<a name="anchor57"></a>
-<p/><strong> string Pythia::word(string key) &nbsp;</strong> <br/>
+<a name="method26"></a>
+<p/><strong>string Pythia::word(string key) &nbsp;</strong> <br/>
 read in a string variable from the <code>Settings</code> database. 
 <br/><code>argument</code><strong> key </strong>  :  
 the name of the variable to be read. 
    
    
  
-<h4>Get a PDF set</h4> 
+<h3>Get a PDF set</h3> 
  
 <code>Pythia</code> contains an number of parton density sets 
-internally, plus an interface to LHAPDF (5 or 6). With the method below, 
+internally, plus an interface to LHAPDF. With the method below, 
 this machinery is also made available for external usage. 
  
-<a name="anchor58"></a>
-<p/><strong> PDF* getPDFPtr(int id, int sequence = 1) &nbsp;</strong> <br/>
+<a name="method27"></a>
+<p/><strong>PDF* getPDFPtr(int id, int sequence = 1) &nbsp;</strong> <br/>
 get a pointer to a PDF object. Which PDF is returned depends on the 
 <a href="PDFSelection.html" target="page">PDF Selection</a> settings. 
 <br/><code>argument</code><strong> id </strong>  :  
@@ -1340,62 +1013,62 @@ selection be determined by the special settings for hard processes
    
    
  
-<h4>Data members</h4> 
+<h3>Data members</h3> 
  
 The <code>Pythia</code> class contains a few public data members, 
 several of which play a central role. We list them here, with 
 links to the places where they are further described. 
  
-<a name="anchor59"></a>
-<p/><strong> Event Pythia::process &nbsp;</strong> <br/>
+<a name="method28"></a>
+<p/><strong>Event Pythia::process &nbsp;</strong> <br/>
 the hard-process event record, see <a href="EventRecord.html" target="page">here</a> 
 for further details. 
    
  
-<a name="anchor60"></a>
-<p/><strong> Event Pythia::event &nbsp;</strong> <br/>
+<a name="method29"></a>
+<p/><strong>Event Pythia::event &nbsp;</strong> <br/>
 the complete event record, see <a href="EventRecord.html" target="page">here</a> 
 for further details. 
    
  
-<a name="anchor61"></a>
-<p/><strong> Info Pythia::info &nbsp;</strong> <br/>
+<a name="method30"></a>
+<p/><strong>Info Pythia::info &nbsp;</strong> <br/>
 further information on the event-generation process, see 
 <a href="EventInformation.html" target="page">here</a> for further details. 
    
  
-<a name="anchor62"></a>
-<p/><strong> Settings Pythia::settings &nbsp;</strong> <br/>
+<a name="method31"></a>
+<p/><strong>Settings Pythia::settings &nbsp;</strong> <br/>
 the settings database, see <a href="SettingsScheme.html" target="page">here</a> 
 for further details. 
    
  
-<a name="anchor63"></a>
-<p/><strong> ParticleData Pythia::particleData &nbsp;</strong> <br/>
+<a name="method32"></a>
+<p/><strong>ParticleData Pythia::particleData &nbsp;</strong> <br/>
 the particle properties and decay tables database, see 
 <a href="ParticleDataScheme.html" target="page">here</a> for further details. 
    
  
-<a name="anchor64"></a>
-<p/><strong> Rndm Pythia::rndm &nbsp;</strong> <br/>
+<a name="method33"></a>
+<p/><strong>Rndm Pythia::rndm &nbsp;</strong> <br/>
 the random number generator, see <a href="RandomNumberSeed.html" target="page">here</a> 
 and <a href="RandomNumbers.html" target="page">here</a> for further details. 
    
  
-<a name="anchor65"></a>
-<p/><strong> CoupSM Pythia::coupSM &nbsp;</strong> <br/>
+<a name="method34"></a>
+<p/><strong>CoupSM Pythia::coupSM &nbsp;</strong> <br/>
 Standard Model couplings and mixing matrices, see 
 <a href="StandardModelParameters.html" target="page">here</a> for further details. 
    
  
-<a name="anchor66"></a>
-<p/><strong> SusyLesHouches Pythia::slha &nbsp;</strong> <br/>
+<a name="method35"></a>
+<p/><strong>SusyLesHouches Pythia::slha &nbsp;</strong> <br/>
 parameters and particle data in the context of supersymmetric models, 
 see <a href="SUSYLesHouchesAccord.html" target="page">here</a> for further details. 
    
  
-<a name="anchor67"></a>
-<p/><strong> PartonSystems Pythia::partonSystems &nbsp;</strong> <br/>
+<a name="method36"></a>
+<p/><strong>PartonSystems Pythia::partonSystems &nbsp;</strong> <br/>
 a grouping of the partons in the event record by subsystem, 
 see <a href="AdvancedUsage.html" target="page">here</a> for further details. 
    
@@ -1403,4 +1076,4 @@ see <a href="AdvancedUsage.html" target="page">here</a> for further details.
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

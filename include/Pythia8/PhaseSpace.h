@@ -1,6 +1,6 @@
 // PhaseSpace.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for phase space generators in kinematics selection.
@@ -18,14 +18,12 @@
 #include "Pythia8/MultipartonInteractions.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonDistributions.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/SigmaProcess.h"
 #include "Pythia8/SigmaTotal.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/StandardModel.h"
 #include "Pythia8/UserHooks.h"
-#include "Pythia8/GammaKinematics.h"
 
 namespace Pythia8 {
 
@@ -39,7 +37,7 @@ class UserHooks;
 // PhaseSpace is a base class for  phase space generators
 // used in the selection of hard-process kinematics.
 
-class PhaseSpace : public PhysicsBase {
+class PhaseSpace {
 
 public:
 
@@ -47,18 +45,17 @@ public:
   virtual ~PhaseSpace() {}
 
   // Perform simple initialization and store pointers.
-  void init(bool isFirst, SigmaProcessPtr sigmaProcessPtrIn);
-
-  // Switch to new beam particle identities; for similar hadrons only.
-  void updateBeamIDs() { idAold = idA; idBold = idB; idA = beamAPtr->id();
-    idB = beamBPtr->id(); mA = beamAPtr->m(); mB = beamBPtr->m();
-    sigmaProcessPtr->updateBeamIDs();}
+  void init(bool isFirst, SigmaProcess* sigmaProcessPtrIn,
+    Info* infoPtrIn, Settings* settingsPtrIn, ParticleData* particleDataPtrIn,
+    Rndm* rndmPtrIn, BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
+    Couplings* couplingsPtrIn, SigmaTotal* sigmaTotPtrIn,
+    UserHooks* userHooksPtrIn);
 
   // Update the CM energy of the event.
   void newECM(double eCMin) {eCM = eCMin; s = eCM * eCM;}
 
   // Store or replace Les Houches pointer.
-  void setLHAPtr(LHAupPtr lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;}
+  void setLHAPtr(LHAup* lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;}
 
   // A pure virtual method, wherein an optimization procedure
   // is used to determine how phase space should be sampled.
@@ -82,19 +79,12 @@ public:
   bool   newSigmaMax() const {return newSigmaMx;}
   void   setSigmaMax(double sigmaMaxIn) {sigmaMx = sigmaMaxIn;}
 
-  // New value for switched beam identity or energy (for SoftQCD processes).
-  double sigmaMaxSwitch() {sigmaNw = sigmaProcessPtr->sigmaHatWrap();
-    sigmaMx = sigmaNw; return sigmaMx;}
-
   // For Les Houches with negative event weight needs
   virtual double sigmaSumSigned() const {return sigmaMx;}
 
   // Give back constructed four-vectors and known masses.
   Vec4   p(int i)   const {return pH[i];}
   double m(int i)   const {return mH[i];}
-
-  // Reset the four-momentum.
-  void   setP(int i, Vec4 pNew) { pH[i] = pNew; }
 
   // Give back other event properties.
   double ecm()      const {return eCM;}
@@ -113,82 +103,67 @@ public:
   // Inform whether beam particles are resolved in partons or scatter directly.
   virtual bool isResolved() const {return true;}
 
-  // Functions to rescale momenta and cross section for new sHat
-  // Currently implemented only for PhaseSpace2to2tauyz class.
-  virtual void rescaleSigma( double){}
-  virtual void rescaleMomenta( double){}
-
-  // Calculate the weight for over-estimated cross section.
-  virtual double weightGammaPDFApprox(){ return 1.;}
-
-  // Set the GammaKinematics pointer needed for soft photoproduction.
-  virtual void setGammaKinPtr( GammaKinematics* gammaKinPtrIn) {
-    gammaKinPtr = gammaKinPtrIn; }
-
 protected:
 
   // Constructor.
-  PhaseSpace() : sigmaProcessPtr(), lhaUpPtr(), gammaKinPtr(),
-    useBreitWigners(), doEnergySpread(), showSearch(), showViolation(),
-    increaseMaximum(), hasQ2Min(), gmZmodeGlobal(), mHatGlobalMin(),
-    mHatGlobalMax(), pTHatGlobalMin(), pTHatGlobalMax(), Q2GlobalMin(),
-    pTHatMinDiverge(), minWidthBreitWigners(), minWidthNarrowBW(), idA(),
-    idB(), idAold(), idBold(), idAgm(), idBgm(), mA(), mB(), eCM(), s(),
-    sigmaMxGm(), hasLeptonBeamA(), hasLeptonBeamB(), hasOneLeptonBeam(),
-    hasTwoLeptonBeams(), hasPointGammaA(), hasPointGammaB(),
-    hasOnePointParticle(), hasTwoPointParticles(), hasGamma(), hasVMD(),
-    newSigmaMx(), canModifySigma(), canBiasSelection(), canBias2Sel(),
-    gmZmode(), bias2SelPow(), bias2SelRef(), wtBW(), sigmaNw(),
-    sigmaMx(), sigmaPos(), sigmaNeg(), biasWt(), mHatMin(), mHatMax(),
-    sHatMin(), sHatMax(), pTHatMin(), pTHatMax(), pT2HatMin(), pT2HatMax(),
-    x1H(), x2H(), m3(), m4(), m5(), s3(), s4(), s5(), mHat(), sH(), tH(), uH(),
-    pAbs(), p2Abs(), pTH(), theta(), phi(), betaZ(), mH(), idResA(), idResB(),
-    mResA(), mResB(), GammaResA(), GammaResB(), tauResA(), tauResB(),
-    widResA(), widResB(), sameResMass(), useMirrorWeight(), hasNegZ(),
-    hasPosZ(), tau(), y(), z(), tauMin(), tauMax(), yMax(), zMin(), zMax(),
-    ratio34(), unity34(), zNeg(), zPos(), wtTau(), wtY(), wtZ(), wt3Body(),
-    runBW3H(), runBW4H(), runBW5H(), intTau0(), intTau1(), intTau2(),
-    intTau3(), intTau4(), intTau5(), intTau6(), intY0(), intY12(), intY34(),
-    intY56(), mTchan1(), sTchan1(), mTchan2(), sTchan2(), frac3Flat(),
-    frac3Pow1(), frac3Pow2(), zNegMin(), zNegMax(), zPosMin(), zPosMax(),
-    nTau(), nY(), nZ(), tauCoef(), yCoef(), zCoef(), tauCoefSum(), yCoefSum(),
-    zCoefSum(), useBW(), useNarrowBW(), idMass(), mPeak(), sPeak(), mWidth(),
-    mMin(), mMax(), mw(), wmRat(), mLower(), mUpper(), sLower(), sUpper(),
-    fracFlatS(), fracFlatM(), fracInv(), fracInv2(), atanLower(), atanUpper(),
-    intBW(), intFlatS(), intFlatM(), intInv(), intInv2() {}
+  PhaseSpace() {}
 
   // Constants: could only be changed in the code itself.
   static const int    NMAXTRY, NTRY3BODY;
-  static const double SAFETYMARGIN, TINY, EVENFRAC, SAMESIGMA, MRESMINABS,
-                      WIDTHMARGIN, SAMEMASS, MASSMARGIN, EXTRABWWTMAX,
-                      THRESHOLDSIZE, THRESHOLDSTEP, YRANGEMARGIN, LEPTONXMIN,
-                      LEPTONXMAX, LEPTONXLOGMIN, LEPTONXLOGMAX, LEPTONTAUMIN,
+  static const double SAFETYMARGIN, TINY, EVENFRAC, SAMESIGMA, WIDTHMARGIN,
+                      SAMEMASS, MASSMARGIN, EXTRABWWTMAX, THRESHOLDSIZE,
+                      THRESHOLDSTEP, YRANGEMARGIN, LEPTONXMIN, LEPTONXMAX,
+                      LEPTONXLOGMIN, LEPTONXLOGMAX, LEPTONTAUMIN,
                       SHATMINZ, PT2RATMINZ, WTCORRECTION[11];
 
+  // MBR constants: form factor appoximation with two exponents.
+  static const double FFA1, FFA2,FFB1, FFB2;
+
   // Pointer to cross section.
-  SigmaProcessPtr sigmaProcessPtr;
+  SigmaProcess* sigmaProcessPtr;
+
+  // Pointer to various information on the generation.
+  Info*         infoPtr;
+
+  // Pointer to the settings database.
+  Settings*     settingsPtr;
+
+  // Pointer to the particle data table.
+  ParticleData* particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*         rndmPtr;
+
+  // Pointers to incoming beams.
+  BeamParticle* beamAPtr;
+  BeamParticle* beamBPtr;
+
+  // Pointer to Standard Model couplings.
+  Couplings*         couplingsPtr;
+
+  // Pointer to the total/elastic/diffractive cross section object.
+  SigmaTotal*   sigmaTotPtr;
+
+  // Pointer to userHooks object for user interaction with program.
+  UserHooks*    userHooksPtr;
 
   // Pointer to LHAup for generating external events.
-  LHAupPtr      lhaUpPtr;
-
-  // Pointer to object that samples photon kinematics from leptons.
-  GammaKinematics* gammaKinPtr;
+  LHAup*        lhaUpPtr;
 
   // Initialization data, normally only set once.
   bool   useBreitWigners, doEnergySpread, showSearch, showViolation,
-         increaseMaximum, hasQ2Min;
+         increaseMaximum;
   int    gmZmodeGlobal;
   double mHatGlobalMin, mHatGlobalMax, pTHatGlobalMin, pTHatGlobalMax,
-         Q2GlobalMin, pTHatMinDiverge, minWidthBreitWigners, minWidthNarrowBW;
+         pTHatMinDiverge, minWidthBreitWigners;
 
   // Information on incoming beams.
-  int    idA, idB, idAold, idBold, idAgm, idBgm;
-  double mA, mB, eCM, s, sigmaMxGm;
-  bool   hasLeptonBeamA, hasLeptonBeamB, hasOneLeptonBeam, hasTwoLeptonBeams,
-         hasPointGammaA, hasPointGammaB, hasOnePointParticle,
-         hasTwoPointParticles, hasGamma, hasVMD;
+  int    idA, idB;
+  double mA, mB, eCM, s;
+  bool   hasLeptonBeamA, hasLeptonBeamB, hasOneLeptonBeam,
+         hasTwoLeptonBeams, hasOnePointLepton, hasTwoPointLeptons;
 
-  // Cross section information.
+ // Cross section information.
   bool   newSigmaMx, canModifySigma, canBiasSelection, canBias2Sel;
   int    gmZmode;
   double bias2SelPow, bias2SelRef, wtBW, sigmaNw, sigmaMx, sigmaPos,
@@ -211,10 +186,11 @@ protected:
 
   // Determine how phase space should be sampled.
   void setup3Body();
-  bool setupSampling123(bool is2, bool is3);
+  bool setupSampling123(bool is2, bool is3, ostream& os = cout);
 
   // Select a trial kinematics phase space point.
-  bool trialKin123(bool is2, bool is3, bool inEvent = true);
+  bool trialKin123(bool is2, bool is3, bool inEvent = true,
+    ostream& os = cout);
 
   // Presence and properties of any s-channel resonances.
   int    idResA, idResB;
@@ -223,12 +199,12 @@ protected:
   bool   sameResMass;
 
   // Kinematics properties specific to 2 -> 1/2/3.
-  bool   useMirrorWeight, hasNegZ, hasPosZ;
+  bool   useMirrorWeight;
   double tau, y, z, tauMin, tauMax, yMax, zMin, zMax, ratio34, unity34,
          zNeg, zPos, wtTau, wtY, wtZ, wt3Body, runBW3H, runBW4H, runBW5H,
          intTau0, intTau1, intTau2, intTau3, intTau4, intTau5, intTau6,
          intY0, intY12, intY34, intY56, mTchan1, sTchan1, mTchan2, sTchan2,
-         frac3Flat, frac3Pow1, frac3Pow2, zNegMin, zNegMax, zPosMin, zPosMax;
+         frac3Flat, frac3Pow1, frac3Pow2;
   Vec4   p3cm, p4cm, p5cm;
 
   // Coefficients for optimized selection in 2 -> 1/2/3.
@@ -249,15 +225,15 @@ protected:
 
   // Solve equation system for better phase space coefficients in 2 -> 1/2/3.
   void solveSys( int n, int bin[8], double vec[8], double mat[8][8],
-    double coef[8]);
+    double coef[8], ostream& os = cout);
 
   // Properties specific to resonance mass selection in 2 -> 2 and 2 -> 3.
-  bool   useBW[6], useNarrowBW[6];
+  bool   useBW[6];
   int    idMass[6];
   double mPeak[6], sPeak[6], mWidth[6], mMin[6], mMax[6], mw[6], wmRat[6],
-         mLower[6], mUpper[6], sLower[6], sUpper[6], fracFlatS[6],
-         fracFlatM[6], fracInv[6], fracInv2[6], atanLower[6], atanUpper[6],
-         intBW[6], intFlatS[6], intFlatM[6], intInv[6], intInv2[6];
+         mLower[6], mUpper[6], sLower[6], sUpper[6], fracFlat[6], fracInv[6],
+         fracInv2[6], atanLower[6], atanUpper[6], intBW[6], intFlat[6],
+         intInv[6], intInv2[6];
 
   // Setup mass selection for one resonance at a time. Split in two parts.
   void   setupMass1(int iM);
@@ -266,23 +242,6 @@ protected:
   // Do mass selection and find the associated weight.
   void   trialMass(int iM);
   double weightMass(int iM);
-
-  // Standard methods to find t range of a 2 -> 2 process
-  // and to check whether a given t value is in that range.
-  pair<double,double> tRange( double sIn, double s1In, double s2In,
-    double s3In,  double s4In) {
-    double lambda12 = pow2( sIn - s1In - s2In) - 4. * s1In * s2In;
-    double lambda34 = pow2( sIn - s3In - s4In) - 4. * s3In * s4In;
-    if (lambda12 < 0. || lambda34 < 0.) return make_pair( 0., 0.);
-    double tLow = -0.5 * (sIn - (s1In + s2In + s3In + s4In) + (s1In - s2In)
-      * (s3In - s4In) / sIn + sqrtpos(lambda12 *  lambda34) / sIn);
-    double tUpp = ( (s3In - s1In) * (s4In - s2In) + (s1In + s4In - s2In - s3In)
-      * (s1In * s4In - s2In * s3In) / sIn ) / tLow;
-    return make_pair( tLow, tUpp); }
-  bool tInRange( double tIn, double sIn, double s1In, double s2In,
-    double s3In,  double s4In) {
-    pair<double, double> tRng = tRange( sIn, s1In, s2In, s3In, s4In);
-    return (tIn > tRng.first && tIn < tRng.second); }
 
   // The error function erf(x) should normally be in your math library,
   // but if not uncomment this simple parametrization by Sergei Winitzki.
@@ -344,16 +303,6 @@ public:
   // Construct the final event kinematics.
   virtual bool finalKin();
 
-  // Rescales the momenta of incoming and outgoing partons according to
-  // new sHat.
-  virtual void rescaleMomenta ( double sHatNew);
-
-  // Recalculates cross section with rescaled sHat.
-  virtual void rescaleSigma ( double sHatNew);
-
-  // Calculate the weight for over-estimated cross section.
-  virtual double weightGammaPDFApprox();
-
 private:
 
   // Set up for fixed or Breit-Wigner mass selection.
@@ -378,10 +327,7 @@ class PhaseSpace2to2elastic : public PhaseSpace {
 public:
 
   // Constructor.
-  PhaseSpace2to2elastic() : isOneExp(), useCoulomb(), s1(), s2(), alphaEM0(),
-    lambda12S(), lambda12(), lambda34(), tempA(), tempB(), tempC(),
-    tLow(), tUpp(), bSlope1(), bSlope2(), sigRef1(), sigRef2(),
-    sigRef(), sigNorm1(), sigNorm2(), sigNorm3(), sigNormSum(), rel2() {}
+  PhaseSpace2to2elastic() {}
 
   // Construct the trial or final event kinematics.
   virtual bool setupSampling();
@@ -394,14 +340,15 @@ public:
 private:
 
   // Constants: could only be changed in the code itself.
-  static const int    NTRY;
-  static const double BNARROW, BWIDE, WIDEFRAC, TOFFSET;
+  static const double EXPMAX, CONVERTEL;
 
   // Kinematics properties specific to 2 -> 2 elastic.
-  bool   isOneExp, useCoulomb;
-  double s1, s2, alphaEM0, lambda12S, lambda12, lambda34, tempA, tempB, tempC,
-         tLow, tUpp, bSlope1, bSlope2, sigRef1, sigRef2, sigRef,
-         sigNorm1, sigNorm2, sigNorm3, sigNormSum, rel2;
+  bool   useCoulomb;
+  double s1, s2, bSlope, lambda12S, tLow, tUpp, tAux, sigmaTot, rho,
+         lambda, tAbsMin, phaseCst, alphaEM0, sigmaNuc, sigmaCou, signCou;
+
+ // Calculation of alphaElectromagnetic.
+ AlphaEM alphaEM;
 
 };
 
@@ -415,11 +362,7 @@ public:
 
   // Constructor.
   PhaseSpace2to2diffractive(bool isDiffAin = false, bool isDiffBin = false)
-    : isDiffA(isDiffAin), isDiffB(isDiffBin), splitxit(), m3ElDiff(),
-    m4ElDiff(), s1(), s2(), xiMin(), xiMax(), xiNow(), sigNow(), sigMax(),
-    sigMaxNow(), lambda12(), lambda34(), bNow(), tempA(), tempB(), tempC(),
-    tLow(), tUpp(), tWeight(), fWid1(), fWid2(), fWid3(), fWid4(), fbWid1(),
-    fbWid2(), fbWid3(), fbWid4(), fbWid1234() {isSD = !isDiffA || !isDiffB;}
+    : isDiffA(isDiffAin), isDiffB(isDiffBin) {}
 
   // Construct the trial or final event kinematics.
   virtual bool setupSampling();
@@ -433,21 +376,21 @@ private:
 
   // Constants: could only be changed in the code itself.
   static const int    NTRY;
-  static const double BWID1, BWID2, BWID3, BWID4, FWID1SD, FWID2SD, FWID3SD,
-                      FWID4SD, FWID1DD, FWID2DD, FWID3DD, FWID4DD, MAXFUDGESD,
-                      MAXFUDGEDD, MAXFUDGET, DIFFMASSMARGIN, SPROTON;
+  static const double EXPMAX, DIFFMASSMARGIN;
 
-  // Initialization data.
-  bool   isDiffA, isDiffB, isSD, splitxit;
+  // Initialization data, in constructor or read from Settings.
+  bool   isDiffA, isDiffB;
+  int    PomFlux;
+  double epsilonPF, alphaPrimePF;
 
-  // Pion mass, cached for efficiency.
-  double mPi;
+  // Initialization: kinematics properties specific to 2 -> 2 diffractive.
+  double m3ElDiff, m4ElDiff, s1, s2, lambda12, lambda34, tLow, tUpp,
+         cRes, sResXB, sResAX, sProton, bMin, bSlope, bSlope1, bSlope2,
+         probSlope1, xIntPF, xtCorPF, mp24DL, coefDL, tAux, tAux1, tAux2;
 
-  // Kinematics properties specific to 2 -> 2 diffraction.
-  double m3ElDiff, m4ElDiff, s1, s2, xiMin, xiMax, xiNow, sigNow, sigMax,
-         sigMaxNow, lambda12, lambda34, bNow, tempA, tempB, tempC,
-         tLow, tUpp, tWeight, fWid1, fWid2, fWid3, fWid4, fbWid1, fbWid2,
-         fbWid3, fbWid4, fbWid1234;
+  // Parameters for MBR model.
+  double sdpmax, ddpmax, dymin0, dymax, amx, am1, am2, t;
+  double eps, alph, alph2, m2min, dyminSD, dyminDD, dyminSigSD, dyminSigDD;
 
 };
 
@@ -461,9 +404,7 @@ class PhaseSpace2to3diffractive : public PhaseSpace {
 public:
 
   // Constructor.
- PhaseSpace2to3diffractive() : PhaseSpace(), splitxit(), s1(), s2(), m5min(),
-    s5min(), sigNow(), sigMax(), sigMaxNow(), xiMin(), xi1(), xi2(), fWid1(),
-    fWid2(), fWid3(), fbWid1(), fbWid2(), fbWid3(), fbWid123() {}
+  PhaseSpace2to3diffractive() {}
 
   // Construct the trial or final event kinematics.
   virtual bool setupSampling();
@@ -476,26 +417,26 @@ public:
  private:
 
   // Constants: could only be changed in the code itself.
-  static const int    NTRY;
-  static const double BWID1, BWID2, BWID3, BWID4, FWID1, FWID2, FWID3,
-                      MAXFUDGECD, MAXFUDGET, DIFFMASSMARGIN;
-
-  // Initialization data.
-  bool   splitxit;
+  static const int    NTRY, NINTEG2;
+  static const double EXPMAX, DIFFMASSMIN, DIFFMASSMARGIN;
 
   // Local variables to calculate DPE kinematics.
-  double s1, s2, m5min, s5min, sigNow, sigMax, sigMaxNow, xiMin, xi1, xi2,
-         fWid1, fWid2, fWid3, fbWid1, fbWid2, fbWid3, fbWid123;
+  int    PomFlux;
+  double epsilonPF, alphaPrimePF, s1, s2, m5min, s5min, tLow[2], tUpp[2],
+         bMin[2], tAux[2], bSlope1, bSlope2, probSlope1[2], tAux1[2],
+         tAux2[2], bSlope, xIntPF, xIntInvPF, xtCorPF, mp24DL, coefDL,
+         epsMBR, alphMBR, m2minMBR, dyminMBR, dyminSigMBR, dyminInvMBR,
+         dpepmax, t1, t2;
   Vec4   p1, p2, p3, p4, p5;
 
 };
 
 //==========================================================================
 
-class PhaseSpace2to2nondiffractive : public PhaseSpace {
-
 // A derived class for nondiffractive events. Hardly does anything, since
 // the real action is taken care of by the MultipartonInteractions class.
+
+class PhaseSpace2to2nondiffractive : public PhaseSpace {
 
 public:
 
@@ -503,10 +444,10 @@ public:
   PhaseSpace2to2nondiffractive() {}
 
   // Construct the trial or final event kinematics.
-  virtual bool setupSampling();
-  virtual bool trialKin( bool , bool = false);
-  virtual bool finalKin() { if (hasGamma) gammaKinPtr->finalize();
-    return true;}
+  virtual bool setupSampling() {sigmaNw = sigmaProcessPtr->sigmaHat();
+    sigmaMx = sigmaNw; return true;}
+  virtual bool trialKin( bool , bool = false) {return true;}
+  virtual bool finalKin() {return true;}
 
 private:
 
@@ -560,10 +501,7 @@ class PhaseSpace2to3yyycyl : public PhaseSpace {
 public:
 
   // Constructor.
-  PhaseSpace2to3yyycyl() : pTHat3Min(), pTHat3Max(), pTHat5Min(), pTHat5Max(),
-    RsepMin(), R2sepMin(), hasBaryonBeams(), pT3Min(), pT3Max(), pT5Min(),
-    pT5Max(), y3Max(), y4Max(), y5Max(), pT3(), pT4(), pT5(), phi3(), phi4(),
-    phi5(), y3(), y4(), y5(), dphi() {}
+  PhaseSpace2to3yyycyl() {}
 
   // Optimize subsequent kinematics selection.
   virtual bool setupSampling();
@@ -596,8 +534,7 @@ class PhaseSpaceLHA : public PhaseSpace {
 public:
 
   // Constructor.
-  PhaseSpaceLHA() : strategy(), stratAbs(), nProc(), idProcSave(0),
-    xMaxAbsSum(), xSecSgnSum(), sigmaSgn() {}
+  PhaseSpaceLHA() {idProcSave = 0;}
 
   // Find maximal cross section for comparison with internal processes.
   virtual bool setupSampling();
@@ -621,50 +558,6 @@ private:
   double xMaxAbsSum, xSecSgnSum, sigmaSgn;
   vector<int>    idProc;
   vector<double> xMaxAbsProc;
-
-};
-
-//==========================================================================
-
-// Rambo flat phase-space generator.
-
-// This is an implementation of the Rambo phase-space generator as
-// presented in A New Monte Carlo Treatment Of Multiparticle Phase
-// Space At High-Energies, R. Kleiss, W.J. Stirling, S.D. Ellis, CPC40
-// (1986) 359.
-
-class Rambo {
-
- public:
-
-  // Deafult constructor.
-  Rambo() { rndmPtr=nullptr; isInitPtr=false;}
-
-  // Initializing constructor.
-  Rambo(Rndm* rndmPtrIn) { initPtr(rndmPtrIn); }
-
-  // Destructor.
-  virtual ~Rambo() {}
-
-  // Initialize pointers.
-  void initPtr(Rndm* rndmPtrIn) {rndmPtr = rndmPtrIn; isInitPtr = true;}
-
-  // Rambo phase space generator. Generates nOut uniformly distributed
-  // massless 4-vectors with sqrt(s) = eCM. Output in pOut.
-  double genPoint(double eCM,int nOut,vector<Vec4>& pOut);
-
-  // Massive generalisation, weights NOT 1 anymore - literal implementation
-  // of original RAMBO paper by Ellis, Kleiss and Stirling. Number of particles
-  // determined from size of mIn vector.
-  double genPoint(double eCM,vector<double> mIn,vector<Vec4>& pOut);
-
- private:
-
-  // Is initialized.
-  bool isInitPtr;
-
-  // Pointer to the random number generator.
-  Rndm*  rndmPtr;
 
 };
 

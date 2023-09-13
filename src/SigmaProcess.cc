@@ -1,6 +1,6 @@
 // SigmaProcess.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -35,13 +35,20 @@ const int    SigmaProcess::NCOMPSTEP  = 10;
 
 // Perform simple initialization and store pointers.
 
-void SigmaProcess::init(BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
-  SLHAinterface* slhaInterfacePtrIn) {
+void SigmaProcess::init(Info* infoPtrIn, Settings* settingsPtrIn,
+  ParticleData* particleDataPtrIn, Rndm* rndmPtrIn, BeamParticle* beamAPtrIn,
+  BeamParticle* beamBPtrIn, Couplings* couplingsPtrIn,
+  SigmaTotal* sigmaTotPtrIn, SLHAinterface* slhaInterfacePtrIn) {
 
-  // Beam pointers can differ from the main beam pointers in PhysicsBase.
-  beamAPtr = beamAPtrIn;
-  beamBPtr = beamBPtrIn;
-
+  // Store pointers.
+  infoPtr         = infoPtrIn;
+  settingsPtr     = settingsPtrIn;
+  particleDataPtr = particleDataPtrIn;
+  rndmPtr         = rndmPtrIn;
+  beamAPtr        = beamAPtrIn;
+  beamBPtr        = beamBPtrIn;
+  couplingsPtr    = couplingsPtrIn;
+  sigmaTotPtr     = sigmaTotPtrIn;
   // Pointer to SLHA object allows semi-internal processes to access
   // SLHA blocks via getEntry() methods, see arXiv:1109.5852
   slhaPtr         = (slhaInterfacePtrIn != 0) ? &slhaInterfacePtrIn->slha : 0;
@@ -55,59 +62,51 @@ void SigmaProcess::init(BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
   isLeptonB       = (beamBPtr != 0) ? beamBPtr->isLepton() : false;
   hasLeptonBeams  = isLeptonA || isLeptonB;
 
-  // Photon sub-beams from leptons or hadrons.
-  beamA2gamma     = (beamAPtr != 0) ? flag("PDF:beamA2gamma") : false;
-  beamB2gamma     = (beamBPtr != 0) ? flag("PDF:beamB2gamma") : false;
-  hasGamma        = beamA2gamma || beamB2gamma || idA == 22 || idB == 22;
-
   // K factor, multiplying resolved processes. (But not here for MPI.)
-  Kfactor         = parm("SigmaProcess:Kfactor");
-
-  // Allow variable energy, and optionally also variable beam kinds.
-  doVarE         = flag("Beams:allowVariableEnergy");
+  Kfactor         = settingsPtr->parm("SigmaProcess:Kfactor");
 
   // Maximum incoming quark flavour.
-  nQuarkIn        = mode("PDFinProcess:nQuarkIn");
+  nQuarkIn        = settingsPtr->mode("PDFinProcess:nQuarkIn");
 
   // Medium heavy fermion masses set massless or not in ME expressions.
-  mcME            = (flag("SigmaProcess:cMassiveME"))
+  mcME            = (settingsPtr->flag("SigmaProcess:cMassiveME"))
                   ? particleDataPtr->m0(4)  : 0.;
-  mbME            = (flag("SigmaProcess:bMassiveME"))
+  mbME            = (settingsPtr->flag("SigmaProcess:bMassiveME"))
                   ? particleDataPtr->m0(5)  : 0.;
-  mmuME           = (flag("SigmaProcess:muMassiveME"))
+  mmuME           = (settingsPtr->flag("SigmaProcess:muMassiveME"))
                   ? particleDataPtr->m0(13) : 0.;
-  mtauME          = (flag("SigmaProcess:tauMassiveME"))
+  mtauME          = (settingsPtr->flag("SigmaProcess:tauMassiveME"))
                   ? particleDataPtr->m0(15) : 0.;
 
   // Renormalization scale choice.
-  renormScale1    = mode("SigmaProcess:renormScale1");
-  renormScale2    = mode("SigmaProcess:renormScale2");
-  renormScale3    = mode("SigmaProcess:renormScale3");
-  renormScale3VV  = mode("SigmaProcess:renormScale3VV");
-  renormMultFac   = parm("SigmaProcess:renormMultFac");
-  renormFixScale  = parm("SigmaProcess:renormFixScale");
+  renormScale1    = settingsPtr->mode("SigmaProcess:renormScale1");
+  renormScale2    = settingsPtr->mode("SigmaProcess:renormScale2");
+  renormScale3    = settingsPtr->mode("SigmaProcess:renormScale3");
+  renormScale3VV  = settingsPtr->mode("SigmaProcess:renormScale3VV");
+  renormMultFac   = settingsPtr->parm("SigmaProcess:renormMultFac");
+  renormFixScale  = settingsPtr->parm("SigmaProcess:renormFixScale");
 
   // Factorization scale choice.
-  factorScale1    = mode("SigmaProcess:factorScale1");
-  factorScale2    = mode("SigmaProcess:factorScale2");
-  factorScale3    = mode("SigmaProcess:factorScale3");
-  factorScale3VV  = mode("SigmaProcess:factorScale3VV");
-  factorMultFac   = parm("SigmaProcess:factorMultFac");
-  factorFixScale  = parm("SigmaProcess:factorFixScale");
+  factorScale1    = settingsPtr->mode("SigmaProcess:factorScale1");
+  factorScale2    = settingsPtr->mode("SigmaProcess:factorScale2");
+  factorScale3    = settingsPtr->mode("SigmaProcess:factorScale3");
+  factorScale3VV  = settingsPtr->mode("SigmaProcess:factorScale3VV");
+  factorMultFac   = settingsPtr->parm("SigmaProcess:factorMultFac");
+  factorFixScale  = settingsPtr->parm("SigmaProcess:factorFixScale");
 
   // CP violation parameters for the BSM Higgs sector.
-  higgsH1parity   = mode("HiggsH1:parity");
-  higgsH1eta      = parm("HiggsH1:etaParity");
-  higgsH1phi      = parm("HiggsH1:phiParity");
-  higgsH2parity   = mode("HiggsH2:parity");
-  higgsH2eta      = parm("HiggsH2:etaParity");
-  higgsH2phi      = parm("HiggsH2:phiParity");
-  higgsA3parity   = mode("HiggsA3:parity");
-  higgsA3eta      = parm("HiggsA3:etaParity");
-  higgsA3phi      = parm("HiggsA3:phiParity");
+  higgsH1parity   = settingsPtr->mode("HiggsH1:parity");
+  higgsH1eta      = settingsPtr->parm("HiggsH1:etaParity");
+  higgsH1phi      = settingsPtr->parm("HiggsH1:phiParity");
+  higgsH2parity   = settingsPtr->mode("HiggsH2:parity");
+  higgsH2eta      = settingsPtr->parm("HiggsH2:etaParity");
+  higgsH2phi      = settingsPtr->parm("HiggsH2:phiParity");
+  higgsA3parity   = settingsPtr->mode("HiggsA3:parity");
+  higgsA3eta      = settingsPtr->parm("HiggsA3:etaParity");
+  higgsA3phi      = settingsPtr->parm("HiggsA3:phiParity");
 
   // If BSM not switched on then H1 should have SM properties.
-  if (!flag("Higgs:useBSM")){
+  if (!settingsPtr->flag("Higgs:useBSM")){
     higgsH1parity = 1;
     higgsH1eta    = 0.;
     higgsH1phi    = M_PI / 2.;
@@ -194,14 +193,13 @@ bool SigmaProcess::initFlux() {
 
   // Case with f f', f fbar', fbar fbar' incoming state.
   else if (fluxType == "ff") {
-    // If beams are leptons then they are also the colliding partons
-    // unless lepton includes a photon beam.
-    if ( isLeptonA && isLeptonB && !beamA2gamma && !beamB2gamma ) {
+    // If beams are leptons then they are also the colliding partons.
+    if ( isLeptonA && isLeptonB ) {
       addBeamA(idA);
       addBeamB(idB);
       addPair(idA, idB);
     // First beam is lepton and second is hadron.
-    } else if ( isLeptonA && !beamA2gamma ) {
+    } else if ( isLeptonA ) {
       addBeamA(idA);
       for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
       if (idNow != 0) {
@@ -209,7 +207,7 @@ bool SigmaProcess::initFlux() {
         addPair(idA, idNow);
       }
     // First beam is hadron and second is lepton.
-    } else if ( isLeptonB && !beamB2gamma ) {
+    } else if ( isLeptonB ) {
       addBeamB(idB);
       for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
       if (idNow != 0) {
@@ -233,10 +231,8 @@ bool SigmaProcess::initFlux() {
 
   // Case with f fbar' generic incoming state.
   else if (fluxType == "ffbar") {
-    // If beams are leptons then also colliding partons
-    // unless lepton includes a photon beam.
-    if (isLeptonA && isLeptonB && idA * idB < 0
-        && !beamA2gamma && !beamB2gamma) {
+    // If beams are leptons then also colliding partons.
+    if (isLeptonA && isLeptonB && idA * idB < 0) {
       addBeamA(idA);
       addBeamB(idB);
       addPair(idA, idB);
@@ -257,9 +253,8 @@ bool SigmaProcess::initFlux() {
 
   // Case with f fbar incoming state.
   else if (fluxType == "ffbarSame") {
-    // If beams are antiparticle pair and leptons then also colliding partons
-    // unless lepton includes a photon beam.
-    if ( idA + idB == 0 && isLeptonA && !beamA2gamma && !beamB2gamma) {
+    // If beams are antiparticle pair and leptons then also colliding partons.
+    if ( idA + idB == 0 && isLeptonA ) {
       addBeamA(idA);
       addBeamB(idB);
       addPair(idA, idB);
@@ -278,11 +273,9 @@ bool SigmaProcess::initFlux() {
 
   // Case with f fbar' charged(+-1) incoming state.
   else if (fluxType == "ffbarChg") {
-    // If beams are leptons then also colliding partons
-    // unless lepton includes a photon beam.
-    if ( isLeptonA && isLeptonB && !beamA2gamma && !beamB2gamma
-         && abs( particleDataPtr->chargeType(idA)
-           + particleDataPtr->chargeType(idB) ) == 3 ) {
+    // If beams are leptons then also colliding partons.
+    if ( isLeptonA && isLeptonB && abs( particleDataPtr->chargeType(idA)
+             + particleDataPtr->chargeType(idB) ) == 3 ) {
       addBeamA(idA);
       addBeamB(idB);
       addPair(idA, idB);
@@ -303,9 +296,9 @@ bool SigmaProcess::initFlux() {
 
   // Case with f gamma incoming state.
   else if (fluxType == "fgm") {
-    // Fermion from incoming side A if no photon beam inside.
-    if ( isLeptonA && !beamA2gamma ) {
-      addBeamA( idA);
+    // Fermion from incoming side A.
+    if ( isLeptonA ) {
+      addBeamA(idA);
       addPair(idA, 22);
     } else {
       for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
@@ -314,8 +307,8 @@ bool SigmaProcess::initFlux() {
         addPair(idNow, 22);
       }
     }
-    // Fermion from incoming side B if no photon beam inside.
-    if ( isLeptonB && !beamB2gamma ) {
+    // Fermion from incoming side B.
+    if ( isLeptonB ) {
       addBeamB( idB);
       addPair(22, idB);
     } else {
@@ -330,60 +323,13 @@ bool SigmaProcess::initFlux() {
     addBeamB(22);
   }
 
-  // Case with quark gamma incoming state.
-  else if (fluxType == "qgm") {
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addPair(idNow, 22);
-      }
-    // Initialize initiators both ways if not photoproductions.
-    if (!hasGamma) {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-        if (idNow != 0) {
-          addBeamB(idNow);
-          addPair(22, idNow);
-        }
-    }
-    // Photons in the beams.
-    if (!hasGamma) {
-      addBeamA(22);
-    }
-    addBeamB(22);
-  }
-
-  // Case with gamma quark incoming state.
-  // Need this when both resolved and unresolved photon beams.
-  else if (fluxType == "gmq") {
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamB(idNow);
-        addPair(22, idNow);
-      }
-    // Photon in the beam.
-    addBeamA(22);
-  }
-
-  // Case with gluon gamma incoming state.
+  // Case with gamma gamma incoming state.
   else if (fluxType == "ggm") {
     addBeamA(21);
-    addBeamB(22);
-    addPair(21, 22);
-
-    // If not photoproduction, initialize both ways. Otherwise keep track of
-    // initiator ordering to generate correct combinations (direct, resolved).
-    if (!hasGamma) {
-      addBeamA(22);
-      addBeamB(21);
-      addPair(22, 21);
-    }
-  }
-
-  // Case with gamma gluon incoming state.
-  // Need this when both resolved and unresolved photon beams.
-  else if (fluxType == "gmg") {
     addBeamA(22);
     addBeamB(21);
+    addBeamB(22);
+    addPair(21, 22);
     addPair(22, 21);
   }
 
@@ -396,10 +342,10 @@ bool SigmaProcess::initFlux() {
 
   // Unrecognized fluxType is bad sign. Else done.
   else {
-    loggerPtr->ERROR_MSG("unrecognized inFlux type", fluxType);
+    infoPtr->errorMsg("Error in SigmaProcess::initFlux: "
+    "unrecognized inFlux type", fluxType);
     return false;
   }
-
   return true;
 
 }
@@ -407,41 +353,14 @@ bool SigmaProcess::initFlux() {
 //--------------------------------------------------------------------------
 
 // Convolute matrix-element expression(s) with parton flux and K factor.
-// Possibly different PDFs for the phase-space initialization.
-// Can also take new values for x's to correct for oversampling, as
-// needed with external photon flux.
 
-double SigmaProcess::sigmaPDF(bool initPS, bool samexGamma,
-    bool useNewXvalues, double x1New, double x2New) {
+double SigmaProcess::sigmaPDF() {
 
   // Evaluate and store the required parton densities.
-  for (int j = 0; j < sizeBeamA(); ++j) {
-    if ( initPS)
-      inBeamA[j].pdf = beamAPtr->xfMax( inBeamA[j].id, x1Save, Q2FacSave);
-    else if ( samexGamma)
-      inBeamA[j].pdf = beamAPtr->xfSame( inBeamA[j].id, x1Save, Q2FacSave);
-    else if ( useNewXvalues && x1New > 0.)
-      inBeamA[j].pdf = beamAPtr->xfGamma( inBeamA[j].id, x1New, Q2FacSave);
-    else
-      inBeamA[j].pdf = beamAPtr->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
-  }
-  for (int j = 0; j < sizeBeamB(); ++j){
-    if ( initPS)
-      inBeamB[j].pdf = beamBPtr->xfMax( inBeamB[j].id, x2Save, Q2FacSave);
-    else if ( samexGamma)
-      inBeamB[j].pdf = beamBPtr->xfSame( inBeamB[j].id, x2Save, Q2FacSave);
-    else if ( useNewXvalues && x2New > 0.)
-      inBeamB[j].pdf = beamBPtr->xfGamma( inBeamB[j].id, x2New, Q2FacSave);
-    else
-      inBeamB[j].pdf = beamBPtr->xfHard( inBeamB[j].id, x2Save, Q2FacSave);
-  }
-
-  // Save the x_gamma values after PDFs are called if new value is sampled
-  // if using internal photon flux from leptons.
-  if ( !useNewXvalues && !samexGamma && beamAPtr->hasResGamma() )
-    beamAPtr->xGammaPDF();
-  if ( !useNewXvalues && !samexGamma && beamBPtr->hasResGamma() )
-    beamBPtr->xGammaPDF();
+  for (int j = 0; j < sizeBeamA(); ++j)
+    inBeamA[j].pdf = beamAPtr->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
+  for (int j = 0; j < sizeBeamB(); ++j)
+    inBeamB[j].pdf = beamBPtr->xfHard( inBeamB[j].id, x2Save, Q2FacSave);
 
   // Loop over allowed incoming channels.
   sigmaSumSave = 0.;
@@ -689,10 +608,10 @@ double SigmaProcess::weightHiggsDecay( Event& process, int iResBeg,
 
   // Z0 Z0 decay: vector and axial couplings of two fermion pairs.
   if (idZW1 == 23) {
-    double vf1 = coupSMPtr->vf(process[i3].idAbs());
-    double af1 = coupSMPtr->af(process[i3].idAbs());
-    double vf2 = coupSMPtr->vf(process[i5].idAbs());
-    double af2 = coupSMPtr->af(process[i5].idAbs());
+    double vf1 = couplingsPtr->vf(process[i3].idAbs());
+    double af1 = couplingsPtr->af(process[i3].idAbs());
+    double vf2 = couplingsPtr->vf(process[i5].idAbs());
+    double af2 = couplingsPtr->af(process[i5].idAbs());
     double va12asym = 4. * vf1 * af1 * vf2 * af2
       / ( (vf1*vf1 + af1*af1) * (vf2*vf2 + af2*af2) );
     double vh = 1;
@@ -806,8 +725,8 @@ void Sigma1Process::store1Kin( double x1in, double x2in, double sHin) {
   if (factorScale1 == 2) Q2FacSave = factorFixScale;
 
   // Evaluate alpha_strong and alpha_EM.
-  alpS   = coupSMPtr->alphaS(Q2RenSave);
-  alpEM  = coupSMPtr->alphaEM(Q2RenSave);
+  alpS   = couplingsPtr->alphaS(Q2RenSave);
+  alpEM  = couplingsPtr->alphaEM(Q2RenSave);
 
 }
 
@@ -900,7 +819,6 @@ void Sigma2Process::store2Kin( double x1in, double x2in, double sHin,
     else                        Q2RenSave = sH;
     Q2RenSave                            *= renormMultFac;
     if      (renormScale2 == 5) Q2RenSave = renormFixScale;
-    if      (renormScale2 == 6) Q2RenSave = -tH * renormMultFac;
 
     // Different options for factorization scale.
     if (masslessKin)            Q2FacSave = (factorScale2 < 4) ? pT2 : sH;
@@ -910,12 +828,11 @@ void Sigma2Process::store2Kin( double x1in, double x2in, double sHin,
     else                        Q2FacSave = sH;
     Q2FacSave                            *= factorMultFac;
     if      (factorScale2 == 5) Q2FacSave = factorFixScale;
-    if      (factorScale2 == 6) Q2FacSave = -tH * factorMultFac;
   }
 
   // Evaluate alpha_strong and alpha_EM.
-  alpS  = coupSMPtr->alphaS(Q2RenSave);
-  alpEM = coupSMPtr->alphaEM(Q2RenSave);
+  alpS  = couplingsPtr->alphaS(Q2RenSave);
+  alpEM = couplingsPtr->alphaEM(Q2RenSave);
 
 }
 
@@ -988,8 +905,8 @@ bool Sigma2Process::final2KinMPI( int i1Res, int i2Res, Vec4 p1Res, Vec4 p2Res,
   setIdColAcol();
 
   // Check that masses of outgoing particles not too big.
-  if (m3 == 0.) m3  = particleDataPtr->m0(idSave[3]);
-  if (m4 == 0.) m4  = particleDataPtr->m0(idSave[4]);
+  m3           = particleDataPtr->m0(idSave[3]);
+  m4           = particleDataPtr->m0(idSave[4]);
   mH           = sqrt(sH);
   if (m3 + m4 + MASSMARGIN > mH) return false;
   s3           = m3 * m3;
@@ -1017,7 +934,6 @@ bool Sigma2Process::final2KinMPI( int i1Res, int i2Res, Vec4 p1Res, Vec4 p2Res,
   double pX    = pTFin * sin(phi);
   double pY    = pTFin * cos(phi);
   double scale = 0.5 * mH * sinTheta;
-  if (swappedTU()) pZ = -pZ;
 
   // Fill particle info.
   int status1  = (i1Res == 0) ? -31 : -34;
@@ -1229,8 +1145,8 @@ void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
   }
 
   // Evaluate alpha_strong and alpha_EM.
-  alpS  = coupSMPtr->alphaS(Q2RenSave);
-  alpEM = coupSMPtr->alphaEM(Q2RenSave);
+  alpS  = couplingsPtr->alphaS(Q2RenSave);
+  alpEM = couplingsPtr->alphaEM(Q2RenSave);
 
 }
 
@@ -1450,11 +1366,11 @@ void SigmaLHAProcess::setScale() {
   // If alpha_strong and alpha_EM have not been set, then set them.
   if (lhaUpPtr->alphaQCD() < 0.001) {
     double Q2RenNow = (scaleLHA < 0.) ? Q2RenSave : pow2(scaleLHA);
-    alpS = coupSMPtr->alphaS(Q2RenNow);
+    alpS = couplingsPtr->alphaS(Q2RenNow);
   }
   if (lhaUpPtr->alphaQED() < 0.001) {
     double Q2RenNow = (scaleLHA < 0.) ? Q2RenSave : pow2(scaleLHA);
-    alpEM = coupSMPtr->alphaEM(Q2RenNow);
+    alpEM = couplingsPtr->alphaEM(Q2RenNow);
   }
 
 }

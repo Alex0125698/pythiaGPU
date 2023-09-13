@@ -1,6 +1,6 @@
 // SigmaCompositeness.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -37,8 +37,8 @@ void Sigma1qg2qStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = parm("ExcitedFermion:Lambda");
-  coupFcol      = parm("ExcitedFermion:coupFcol");
+  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
+  coupFcol      = settingsPtr->parm("ExcitedFermion:coupFcol");
 
   // Set pointer to particle properties and decay table.
   qStarPtr      = particleDataPtr->particleDataEntryPtr(idRes);
@@ -101,7 +101,6 @@ double Sigma1qg2qStar::weightDecay( Event& process, int iResBeg,
 
   // q* should sit in entry 5. Sequential Z/W decay assumed isotropic.
   if (iResBeg != 5 || iResEnd != 5) return 1.;
-  if (process[5].daughter1() != 6 || process[5].daughter2() != 7) return 1.;
 
   // Sign of asymmetry.
   int sideIn    = (process[3].idAbs() < 20) ? 1 : 2;
@@ -161,9 +160,9 @@ void Sigma1lgm2lStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = parm("ExcitedFermion:Lambda");
-  double coupF  = parm("ExcitedFermion:coupF");
-  double coupFp = parm("ExcitedFermion:coupFprime");
+  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
+  double coupF  = settingsPtr->parm("ExcitedFermion:coupF");
+  double coupFp = settingsPtr->parm("ExcitedFermion:coupFprime");
   coupChg       = -0.5 * coupF - 0.5 * coupFp;
 
   // Set pointer to particle properties and decay table.
@@ -225,7 +224,6 @@ double Sigma1lgm2lStar::weightDecay( Event& process, int iResBeg,
 
   // l* should sit in entry 5. Sequential Z/W decay assumed isotropic.
   if (iResBeg != 5 || iResEnd != 5) return 1.;
-  if (process[5].daughter1() != 6 || process[5].daughter2() != 7) return 1.;
 
   // Sign of asymmetry.
   int sideIn    = (process[3].idAbs() < 20) ? 1 : 2;
@@ -281,7 +279,7 @@ void Sigma2qq2qStarq::initProc() {
   else               nameSave = "q q -> b^* q";
 
   // Locally stored properties and couplings.
-  Lambda        = parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
   preFac        = M_PI / pow4(Lambda);
 
   // Secondary open width fractions.
@@ -441,7 +439,7 @@ void Sigma2qqbar2lStarlbar::initProc() {
   openFracNeg = particleDataPtr->resOpenFrac(-idRes);
 
   // Locally stored properties and couplings.
-  Lambda        = parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
   preFac        = (M_PI / pow4(Lambda)) * (openFracPos + openFracNeg) / 3.;
 
 }
@@ -544,7 +542,7 @@ void Sigma2qqbar2lStarlStarBar::initProc() {
   openFracNeg = particleDataPtr->resOpenFrac(-idRes);
 
   // Locally stored properties and couplings.
-  Lambda        = parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
   preFac        = (M_PI / pow4(Lambda)) * openFracPos * openFracNeg / 12.;
 
 }
@@ -630,10 +628,10 @@ double Sigma2qqbar2lStarlStarBar::weightDecay( Event& process, int iResBeg,
 
 void Sigma2QCqq2qq::initProc() {
 
-  qCLambda2  = parm("ContactInteractions:Lambda");
-  qCetaLL    = mode("ContactInteractions:etaLL");
-  qCetaRR    = mode("ContactInteractions:etaRR");
-  qCetaLR    = mode("ContactInteractions:etaLR");
+  qCLambda2  = settingsPtr->parm("ContactInteractions:Lambda");
+  qCetaLL    = settingsPtr->mode("ContactInteractions:etaLL");
+  qCetaRR    = settingsPtr->mode("ContactInteractions:etaRR");
+  qCetaLR    = settingsPtr->mode("ContactInteractions:etaLR");
   qCLambda2 *= qCLambda2;
 
 }
@@ -751,11 +749,11 @@ void Sigma2QCqq2qq::setIdColAcol() {
 
 void Sigma2QCqqbar2qqbar::initProc() {
 
-  qCnQuarkNew = mode("ContactInteractions:nQuarkNew");
-  qCLambda2   = parm("ContactInteractions:Lambda");
-  qCetaLL     = mode("ContactInteractions:etaLL");
-  qCetaRR     = mode("ContactInteractions:etaRR");
-  qCetaLR     = mode("ContactInteractions:etaLR");
+  qCnQuarkNew = settingsPtr->mode("ContactInteractions:nQuarkNew");
+  qCLambda2   = settingsPtr->parm("ContactInteractions:Lambda");
+  qCetaLL     = settingsPtr->mode("ContactInteractions:etaLL");
+  qCetaRR     = settingsPtr->mode("ContactInteractions:etaRR");
+  qCetaLR     = settingsPtr->mode("ContactInteractions:etaLR");
   qCLambda2  *= qCLambda2;
 
 }
@@ -813,11 +811,10 @@ void Sigma2QCqqbar2qqbar::setIdColAcol() {
 
 void Sigma2QCffbar2llbar::initProc() {
 
-  qCLambda2   = parm("ContactInteractions:Lambda");
-  qCetaLL     = mode("ContactInteractions:etaLL");
-  qCetaRR     = mode("ContactInteractions:etaRR");
-  qCetaLR     = mode("ContactInteractions:etaLR");
-  qCetaRL     = mode("ContactInteractions:etaRL");
+  qCLambda2   = settingsPtr->parm("ContactInteractions:Lambda");
+  qCetaLL     = settingsPtr->mode("ContactInteractions:etaLL");
+  qCetaRR     = settingsPtr->mode("ContactInteractions:etaRR");
+  qCetaLR     = settingsPtr->mode("ContactInteractions:etaLR");
   qCLambda2  *= qCLambda2;
 
   // Process name.
@@ -861,18 +858,18 @@ double Sigma2QCffbar2llbar::sigmaHat() {
   int idAbs      = abs(id1);
 
   // Couplings and constants.
-  double tmPe2QfQl = 4. * M_PI * alpEM * coupSMPtr->ef(idAbs)
-                   * coupSMPtr->ef(idNew);
-  double tmPgvf = 0.25 * coupSMPtr->vf(idAbs);
-  double tmPgaf = 0.25 * coupSMPtr->af(idAbs);
+  double tmPe2QfQl = 4. * M_PI * alpEM * couplingsPtr->ef(idAbs)
+                   * couplingsPtr->ef(idNew);
+  double tmPgvf = 0.25 * couplingsPtr->vf(idAbs);
+  double tmPgaf = 0.25 * couplingsPtr->af(idAbs);
   double tmPgLf = tmPgvf + tmPgaf;
   double tmPgRf = tmPgvf - tmPgaf;
-  double tmPgvl = 0.25 * coupSMPtr->vf(idNew);
-  double tmPgal = 0.25 * coupSMPtr->af(idNew);
+  double tmPgvl = 0.25 * couplingsPtr->vf(idNew);
+  double tmPgal = 0.25 * couplingsPtr->af(idNew);
   double tmPgLl = tmPgvl + tmPgal;
   double tmPgRl = tmPgvl - tmPgal;
   double tmPe2s2c2 = 4. * M_PI * alpEM
-    / (coupSMPtr->sin2thetaW() * coupSMPtr->cos2thetaW());
+    / (couplingsPtr->sin2thetaW() * couplingsPtr->cos2thetaW());
 
   // Complex amplitudes.
   complex I(0., 1.);
@@ -893,7 +890,7 @@ double Sigma2QCffbar2llbar::sigmaHat() {
        + 4. * M_PI * qCetaLR / qCLambda2;
   meRL = tmPe2QfQl * qCPropGm
        + tmPe2s2c2 * tmPgRf * tmPgLl * (qCrePropZ + I * qCimPropZ)
-       + 4. * M_PI * qCetaRL / qCLambda2;
+       + 4. * M_PI * qCetaLR / qCLambda2;
 
   double sigma = sigma0 * uH2 * real(meLL*conj(meLL));
   sigma += sigma0 * uH2 * real(meRR*conj(meRR));

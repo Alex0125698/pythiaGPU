@@ -1,6 +1,6 @@
 // ParticleDecays.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the classes to perform a particle decay.
@@ -15,7 +15,6 @@
 #include "Pythia8/FragmentationFlavZpT.h"
 #include "Pythia8/Info.h"
 #include "Pythia8/ParticleData.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/TimeShower.h"
@@ -35,18 +34,9 @@ public:
   // Destructor.
   virtual ~DecayHandler() {}
 
-  // A virtual method, wherein the derived class method does a decay.
-  // Usage: decay( idProd, mProd, pProd, iDec, event).
-  virtual bool decay(vector<int>& , vector<double>& , vector<Vec4>& ,
-   int , const Event& ) {return false;}
-
-  // A virtual method, to do sequential decay chains.
-  // Usage: decay( idProd, motherProd, mProd, pProd, iDec, event).
-  virtual bool chainDecay(vector<int>& , vector<int>& , vector<double>& ,
-    vector<Vec4>& , int , const Event& ) {return false;}
-
-  // A virtual method, to return the particles the handler should decay.
-  virtual vector<int> handledParticles() {return {};}
+  // A pure virtual method, wherein the derived class method does a decay.
+  virtual bool decay(vector<int>& idProd, vector<double>& mProd,
+    vector<Vec4>& pProd, int iDec, const Event& event) = 0;
 
 };
 
@@ -54,37 +44,25 @@ public:
 
 // The ParticleDecays class contains the routines to decay a particle.
 
-class ParticleDecays : public PhysicsBase {
+class ParticleDecays {
 
 public:
 
   // Constructor.
-  ParticleDecays() : timesDecPtr(), flavSelPtr(), decayHandlePtr(),
-    limitTau0(), limitTau(),
-    limitRadius(), limitCylinder(), limitDecay(), mixB(), doFSRinDecays(),
-    doGammaRad(), tauMode(), mSafety(), tau0Max(), tauMax(), rMax(), xyMax(),
-    zMax(), xBdMix(), xBsMix(), sigmaSoft(), multIncrease(),
-    multIncreaseWeak(), multRefMass(), multGoffset(), colRearrange(),
-    stopMass(), sRhoDal(), wRhoDal(), hasPartons(), keepPartons(), idDec(),
-    meMode(), mult(), scale(), decDataPtr() {}
+  ParticleDecays() {}
 
   // Initialize: store pointers and find settings
-  void init(TimeShowerPtr timesDecPtrIn, StringFlav* flavSelPtrIn,
-            DecayHandlerPtr decayHandlePtrIn, vector<int> handledParticles);
+  void init(Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
+    Couplings* couplingsPtrIn, TimeShower* timesDecPtrIn,
+    StringFlav* flavSelPtrIn, DecayHandler* decayHandlePtrIn,
+    vector<int> handledParticles);
 
   // Perform a decay of a single particle.
   bool decay(int iDec, Event& event);
 
-  // Perform decays on all particles in the event.
-  bool decayAll(Event& event, double minWidth = 0.);
-
   // Did decay result in new partons to hadronize?
   bool moreToDo() const {return hasPartons && keepPartons;}
-
-protected:
-
-  virtual void onInitInfoPtr() override {
-    registerSubObject(tauDecayer); }
 
 private:
 
@@ -92,14 +70,26 @@ private:
   static const int    NTRYDECAY, NTRYPICK, NTRYMEWT, NTRYDALITZ;
   static const double MSAFEDALITZ, WTCORRECTION[11];
 
+  // Pointer to various information on the generation.
+  Info*         infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData* particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*         rndmPtr;
+
+  // Pointers to Standard Model couplings.
+  Couplings*    couplingsPtr;
+
   // Pointers to timelike showers, for decays to partons (e.g. Upsilon).
-  TimeShowerPtr timesDecPtr;
+  TimeShower*   timesDecPtr;
 
   // Pointer to class for flavour generation; needed when to pick hadrons.
   StringFlav*   flavSelPtr;
 
   // Pointer to a handler of external decays.
-  DecayHandlerPtr decayHandlePtr;
+  DecayHandler* decayHandlePtr;
 
   // Initialization data, read from Settings.
   bool   limitTau0, limitTau, limitRadius, limitCylinder, limitDecay,
@@ -113,7 +103,7 @@ private:
   bool   hasPartons, keepPartons;
   int    idDec, meMode, mult;
   double scale;
-  vector<int>    iProd, idProd, motherProd, cols, acols, idPartons;
+  vector<int>    iProd, idProd, cols, acols, idPartons;
   vector<double> mProd, mInv, rndmOrd;
   vector<Vec4>   pInv, pProd;
   vector<FlavContainer> flavEnds;

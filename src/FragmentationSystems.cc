@@ -1,6 +1,6 @@
 // FragmentationSystems.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the
@@ -26,23 +26,22 @@ const double ColConfig::CONSTITUENTMASS = 0.325;
 
 // Initialize and save pointers.
 
-void ColConfig::init(Info* infoPtrIn, StringFlav* flavSelPtrIn) {
-
-  Settings* settingsPtr = infoPtrIn->settingsPtr;
+void ColConfig::init(Info* infoPtrIn, Settings& settings,
+  StringFlav* flavSelPtrIn) {
 
   // Save pointers.
-  loggerPtr     = infoPtrIn->loggerPtr;
+  infoPtr       = infoPtrIn;
   flavSelPtr    = flavSelPtrIn;
 
   // Joining of nearby partons along the string.
-  mJoin         = settingsPtr->parm("FragmentationSystems:mJoin");
+  mJoin         = settings.parm("FragmentationSystems:mJoin");
 
   // For consistency ensure that mJoin is bigger than in StringRegion.
   mJoin         = max( mJoin, 2. * StringRegion::MJOIN);
 
   // Simplification of q q q junction topology to quark - diquark one.
-  mJoinJunction = settingsPtr->parm("FragmentationSystems:mJoinJunction");
-  mStringMin    = settingsPtr->parm("HadronLevel:mStringMin");
+  mJoinJunction = settings.parm("FragmentationSystems:mJoinJunction");
+  mStringMin    = settings.parm("HadronLevel:mStringMin");
 
 }
 
@@ -73,13 +72,13 @@ bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
 
   // Check for rare triple- and higher junction systems (like J-Jbar-J)
   if (nJunctionLegs >= 5) {
-    loggerPtr->ERROR_MSG(
+    infoPtr->errorMsg("Error in ColConfig::insert: "
       "junction topology too complicated; too many junction legs");
     return false;
   }
   // Check that junction systems have at least three legs.
   else if (nJunctionLegs > 0 && nJunctionLegs <= 2) {
-    loggerPtr->ERROR_MSG(
+    infoPtr->errorMsg("Error in ColConfig::insert: "
       "junction topology inconsistent; too few junction legs");
     return false;
   }
@@ -87,7 +86,8 @@ bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
   // Check that momenta do not contain not-a-number.
   if (abs(massExcessIn) >= 0.);
   else {
-    loggerPtr->ERROR_MSG("not-a-number system mass");
+    infoPtr->errorMsg("Error in ColConfig::insert: "
+      "not-a-number system mass");
     return false;
   }
 
@@ -129,7 +129,7 @@ bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
     // If sufficiently nearby then join into one new parton.
     // Note: error sensitivity to mJoin indicates unstable precedure??
     hasJoined = false;
-    if (mJoinMin < mJoin && nSize > 0) {
+    if (mJoinMin < mJoin) {
       int iJoin1  = iPartonIn[iJoinMin];
       int iJoin2  = iPartonIn[(iJoinMin + 1)%nSize];
       int idNew   = (event[iJoin1].isGluon()) ? event[iJoin2].id()
@@ -200,33 +200,6 @@ bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
 
 //--------------------------------------------------------------------------
 
-// Insert a new qqbar colour singlet system in ascending mass order.
-// Simple version for at most two triplet-antitriplet systems.
-
-bool ColConfig::simpleInsert( vector<int>& iPartonIn, Event& event,
-  bool fixOrder) {
-
-  // Find momentum and invariant mass of system, minus endpoint masses.
-  Vec4 pSumIn   = event[ iPartonIn[0] ].p() + event[ iPartonIn[1] ].p();
-  double mSumIn = event[ iPartonIn[0] ].constituentMass()
-                + event[ iPartonIn[1] ].constituentMass();
-  double massIn = pSumIn.mCalc();
-  double massExcessIn = massIn - mSumIn;
-
-  // Store new colour singlet system at the end.
-  singlets.push_back( ColSinglet(iPartonIn, pSumIn, massIn,
-    massExcessIn, false, false) );
-
-  // If necessary flip so that smallest mass excesses come first.
-  if (!fixOrder && singlets.size() == 2 && massExcessIn
-    < singlets[0].massExcess) swap( singlets[0], singlets[1]);
-
-  // Done.
-  return true;
-}
-
-//--------------------------------------------------------------------------
-
 // Join two legs of junction to a diquark for small invariant masses.
 // Note: for junction system, iPartonIn points to structure
 // (-code0) g...g.q0 (-code1) g...g.q1 (-code2) g...g.q2
@@ -235,17 +208,17 @@ bool ColConfig::joinJunction( vector<int>& iPartonIn, Event& event,
   double massExcessIn) {
 
   // Find four-momentum and endpoint quarks and masses on the three legs.
-  Vec4   pLeg[3] = {Vec4(), Vec4(), Vec4()};
-  double mLeg[3] = {0., 0., 0.};
-  int    idAbsLeg[3] = {0, 0, 0};
+  Vec4   pLeg[3];
+  double mLeg[3] = { 0., 0., 0.};
+  int    idAbsLeg[3];
   int leg = -1;
   for (int i = 0; i < int(iPartonIn.size()); ++ i) {
     if (iPartonIn[i] < 0) ++leg;
-    else if (leg < 3) {
+    else {
       pLeg[leg]    += event[ iPartonIn[i] ].p();
       mLeg[leg]     = event[ iPartonIn[i] ].m();
       idAbsLeg[leg] = event[ iPartonIn[i] ].idAbs();
-    } else loggerPtr->WARNING_MSG("more than three legs found");
+    }
   }
 
   // Calculate invariant mass of three pairs, minus endpoint masses.
@@ -276,8 +249,8 @@ bool ColConfig::joinJunction( vector<int>& iPartonIn, Event& event,
 
   // Nothing to do if no two legs have small invariant mass, and
   // system as a whole is above MiniStringFragmentation threshold.
-  if (legA == -1 || legB == -1 || (mMin > mJoinJunction
-    && massExcessIn > mStringMin)) return false;
+  if (legA == -1 || (mMin > mJoinJunction && massExcessIn > mStringMin))
+    return false;
 
   // Construct separate index arrays for the three legs.
   vector<int> iLegA, iLegB, iLegC;
@@ -304,10 +277,6 @@ bool ColConfig::joinJunction( vector<int>& iPartonIn, Event& event,
       int iNew = event.append( event[iQ].id(), 74, iQ, iG, 0, 0,
         colNew, acolNew, pNew, pNew.mCalc() );
 
-      // Displaced lifetime/vertex.
-      event[iNew].tau( event[iQ].tau() );
-      if (event[iQ].hasVertex()) event[iNew].vProd( event[iQ].vProd() );
-
       // Mark joined partons and update iLeg end.
       event[iQ].statusNeg();
       event[iG].statusNeg();
@@ -329,10 +298,6 @@ bool ColConfig::joinJunction( vector<int>& iPartonIn, Event& event,
   Vec4 pNew   = pLeg[legA] + pLeg[legB];
   int iNew    = event.append( idNew, 74, min(iQA, iQB), max( iQA, iQB),
      0, 0, colNew, acolNew, pNew, pNew.mCalc() );
-
-  // Displaced lifetime/vertex; assume both quarks carry same info.
-  event[iNew].tau( event[iQA].tau() );
-  if (event[iQA].hasVertex()) event[iNew].vProd( event[iQA].vProd() );
 
   // Mark joined partons and reduce remaining system.
   event[iQA].statusNeg();
@@ -366,7 +331,8 @@ void ColConfig::collect(int iSub, Event& event, bool skipTrivial) {
   for (int i = 0; i < singlets[iSub].size(); ++i) {
     int iNow = singlets[iSub].iParton[i];
     if (iNow > 0 && event[iNow].e() < 0.)
-    loggerPtr->WARNING_MSG("negative-energy parton encountered");
+    infoPtr->errorMsg("Warning in ColConfig::collect: "
+      "negative-energy parton encountered");
   }
 
   // Partons may already have been collected, e.g. at ministring collapse.
@@ -418,17 +384,17 @@ int ColConfig::findSinglet(int i) {
 
 // List all currently identified singlets.
 
-void ColConfig::list() const {
+void ColConfig::list(ostream& os) const {
 
   // Header. Loop over all individual singlets.
-  cout << "\n --------  Colour Singlet Systems Listing -------------------\n";
+  os << "\n --------  Colour Singlet Systems Listing -------------------\n";
   for (int iSub = 0; iSub < int(singlets.size()); ++iSub) {
 
     // List all partons belonging to each singlet.
-    cout << " singlet " << iSub << " contains " ;
+    os << " singlet " << iSub << " contains " ;
     for (int i = 0; i < singlets[iSub].size(); ++i)
-      cout << singlets[iSub].iParton[i] << " ";
-    cout << "\n";
+      os << singlets[iSub].iParton[i] << " ";
+    os << "\n";
 
   // Done.
   }
@@ -455,77 +421,9 @@ const double StringRegion::TINY  = 1e-20;
 
 //--------------------------------------------------------------------------
 
-// Calculate offset of the region due to presence of gluons from parton list.
-
-Vec4 StringRegion::gluonOffset(vector<int>& iSys, Event& event, int iPos,
-  int iNeg) {
-
-  // Half sum of all intervening gluon momenta.
-  Vec4 offset = Vec4(0., 0., 0., 0.);
-  for (int i = iPos + 1; i < int(iSys.size()) - iNeg - 1; ++i)
-    offset += 0.5 * event[ iSys[i] ].p();
-
-  return offset;
-}
-
-//--------------------------------------------------------------------------
-
-// Calculate offset when calculation needed in junction rest frame.
-
-Vec4 StringRegion::gluonOffsetJRF(vector<int>& iSys, Event& event, int iPos,
-  int iNeg, RotBstMatrix MtoJRF) {
-
-  // Half sum of all intervening gluon momenta, boosted to junction rest frame.
-  Vec4 offset = Vec4( 0., 0., 0., 0.);
-  for (int i = iPos + 1; i < int(iSys.size()) - iNeg; ++i) {
-    Vec4 pGluon = event[ iSys[i] ].p();
-    pGluon.rotbst( MtoJRF );
-    if(pGluon.m2Calc() < -1e-8)  pGluon.e( pGluon.pAbs() );
-    offset += 0.5 * pGluon;
-  }
-
-  return offset;
-}
-
-//--------------------------------------------------------------------------
-
-// Calculate offset if system contains c or b quarks, where the location of
-// energy-momentum-picture breakup points in the initial regions are shifted
-// with respect to the origin, to be removed for the space-time vertices.
-
-bool StringRegion::massiveOffset( int iPos, int iNeg, int iMax,
-  int id1, int id2, double mc, double mb) {
-
-  // Done if not in either of endpoint regions or no massive endpoint quark.
-  massOffset  = Vec4( 0., 0., 0., 0.);
-  if (iPos + iNeg != iMax) return false;
-  bool idcb1 = (iPos == 0 && (id1 == 4 || id1 == 5));
-  bool idcb2 = (iNeg == 0 && (id2 == 4 || id2 == 5));
-  if (!idcb1 && !idcb2) return false;
-
-  // Calculate the offset of initial-region massive endpoint quark.
-  double posMass2 = (idcb1) ? ((id1 == 4) ? pow2(mc) : pow2(mb)) : 0.;
-  double negMass2 = (idcb2) ? ((id2 == 4) ? pow2(mc) : pow2(mb)) : 0.;
-  double eCM      = (pPosMass + pNegMass).mCalc();
-  double ePosMass = 0.5 * (pow2(eCM) + posMass2 - negMass2) / eCM;
-  double eNegMass = 0.5 * (pow2(eCM) + negMass2 - posMass2) / eCM;
-  double p0       = 0.5 * sqrt( pow2(pow2(eCM) - negMass2 - posMass2)
-                  - 4. * negMass2 * posMass2) / eCM;
-  massOffset      = ((eNegMass - p0) * pPos + (ePosMass - p0) * pNeg) / eCM;
-
-  return true;
-}
-
-//--------------------------------------------------------------------------
-
 // Set up four-vectors for longitudinal and transverse directions.
 
-void StringRegion::setUp(Vec4 p1, Vec4 p2, int col1, int col2,
-  bool isMassless) {
-
-  // Store the original four-momenta; needed for the massive-quark case.
-  pPosMass = p1;
-  pNegMass = p2;
+void StringRegion::setUp(Vec4 p1, Vec4 p2, bool isMassless) {
 
   // Simple case: the two incoming four-vectors guaranteed massless.
   if (isMassless) {
@@ -591,21 +489,13 @@ void StringRegion::setUp(Vec4 p1, Vec4 p2, int col1, int col2,
   double pPosNeg = pPos * pNeg;
   double kXPos = eX * pPos / pPosNeg;
   double kXNeg = eX * pNeg / pPosNeg;
-  double kXtmp = 1. + 2. * kXPos * kXNeg * pPosNeg;
-  if (kXtmp < TINY) {isSetUp = true; isEmpty = true; return;}
-  double kXX = 1. / sqrt( kXtmp );
+  double kXX = 1. / sqrt( 1. + 2. * kXPos * kXNeg * pPosNeg );
   double kYPos = eY * pPos / pPosNeg;
   double kYNeg = eY * pNeg / pPosNeg;
   double kYX = kXX * (kXPos * kYNeg + kXNeg * kYPos) * pPosNeg;
-  double kYtmp = 1. + 2. * kYPos * kYNeg * pPosNeg - pow2(kYX);
-  if (kYtmp < TINY) {isSetUp = true; isEmpty = true; return;}
-  double kYY = 1. / sqrt( kYtmp );
+  double kYY = 1. / sqrt(1. + 2. * kYPos * kYNeg * pPosNeg - pow2(kYX));
   eX = kXX * (eX - kXNeg * pPos - kXPos * pNeg);
   eY = kYY * (eY - kYNeg * pPos - kYPos * pNeg - kYX * eX);
-
-  // Remember colour indices.
-  colPos = col1;
-  colNeg = col2;
 
   // Done.
   isSetUp = true;
@@ -635,7 +525,7 @@ void StringRegion::project(Vec4 pIn) {
 
 // Set up system from parton list.
 
-void StringSystem::setUp(const vector<int>& iSys, const Event& event) {
+void StringSystem::setUp(vector<int>& iSys, Event& event) {
 
   // Figure out how big the system is. (Closed gluon loops?)
   sizePartons = iSys.size();
@@ -647,7 +537,6 @@ void StringSystem::setUp(const vector<int>& iSys, const Event& event) {
   // Reserve space for the required number of regions.
   system.clear();
   system.resize(sizeRegions);
-  bool forward = ( event[iSys[0]].col() != 0 );
 
   // Set up the lowest-lying regions.
   for (int i = 0; i < sizeStrings; ++i) {
@@ -655,8 +544,7 @@ void StringSystem::setUp(const vector<int>& iSys, const Event& event) {
     if ( event[ iSys[i] ].isGluon() ) p1 *= 0.5;
     Vec4 p2 = event[ iSys[i+1] ].p();
     if ( event[ iSys[i+1] ].isGluon() ) p2 *= 0.5;
-    int col = forward ? event[ iSys[i] ].col() : event[ iSys[i] ].acol();
-    system[ iReg(i, iMax - i) ].setUp( p1, p2, col, col, false);
+    system[ iReg(i, iMax - i) ].setUp( p1, p2, false);
   }
 
 }

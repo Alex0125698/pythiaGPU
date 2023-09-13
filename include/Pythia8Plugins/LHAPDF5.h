@@ -1,6 +1,6 @@
 // LHAPDF5.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the LHAPDF5 PDF plugin class.
@@ -9,7 +9,6 @@
 #define Pythia8_LHAPDF5_H
 
 #include "Pythia8/PartonDistributions.h"
-#include "Pythia8/Plugins.h"
 
 namespace Pythia8 {
 
@@ -31,19 +30,9 @@ extern "C" {
 
   extern void evolvepdfm_(int&, double&, double&, double*);
 
-  extern void evolvepdfpm_(int&, double&, double&, double&, double&, double*);
-
   extern void evolvepdfphotonm_(int&, double&, double&, double*, double&);
 
   extern void setlhaparm_(const char*, int);
-
-  extern void getxminm_(int &, int &, double &);
-
-  extern void getxmaxm_(int &, int &, double &);
-
-  extern void getq2minm_(int &, int &, double &);
-
-  extern void getq2maxm_(int &, int &, double &);
 
 }
 
@@ -75,12 +64,6 @@ namespace LHAPDF5Interface {
     evolvepdfm_( nSet, x, Q, xfArray);
   }
 
-  // Evaluate x f_i(x, Q) for photon beams.
-  void evolvePDFpM( int& nSet, double x, double Q, double P2, double IP2,
-    double* xfArray) {
-    evolvepdfpm_( nSet, x, Q, P2, IP2, xfArray);
-  }
-
   // Evaluate x f_i(x, Q) including photon
   void evolvePDFPHOTONM(int& nSet, double x, double Q, double* xfArray,
     double& xPhoton) {
@@ -93,24 +76,18 @@ namespace LHAPDF5Interface {
     setlhaparm_( cName, lenName);
   }
 
-  // Simple structure to hold LHAPDF set information.
-  struct LHAPDFInfo {
-    string name;
-    int member;
-    bool photon;
-  };
-
   // Global tracking of opened PDF sets.
-  map<int, LHAPDFInfo> initializedSets;
+  map< int, pair<string, int> > initializedSets;
 
   // Method to find the nSet number corresponding to a name and member.
   // Returns -1 if no such LHAPDF5 set has been initialized.
   int findNSet(string setName, int member) {
-    for (map<int, LHAPDFInfo>::const_iterator i = initializedSets.begin();
-      i != initializedSets.end(); ++i) {
+    for (map<int, pair<string, int> >::const_iterator
+         i = initializedSets.begin();
+         i != initializedSets.end(); ++i) {
       int    iSet    = i->first;
-      string iName   = i->second.name;
-      int    iMember = i->second.member;
+      string iName   = i->second.first;
+      int    iMember = i->second.second;
       if (iName == setName && iMember == member) return iSet;
     }
     return -1;
@@ -140,31 +117,25 @@ class LHAPDF5 : public PDF {
 public:
 
   // Constructor.
-  LHAPDF5(Pythia*, Settings* settingsPtr, Logger*) :
-    PDF(), doExtraPol(false) {
-    if (settingsPtr == nullptr) return;
-    sSymmetric(settingsPtr->flag("LHAPDF:sSymmetric"));
-    cSymmetric(settingsPtr->flag("LHAPDF:cSymmetric"));
-    bSymmetric(settingsPtr->flag("LHAPDF:bSymmetric"));
-  }
-
-  // Initialization of PDF set.
-  bool init(int idBeamIn, string setName, int member, Logger* loggerPtr)
-    override;
+  LHAPDF5(int idBeamIn, string setName, int member,  int nSetIn = -1,
+    Info* infoPtr = 0) : PDF(idBeamIn), nSet(nSetIn)
+    {init(setName, member, infoPtr);}
 
   // Allow extrapolation beyond boundaries. This is optional.
   void setExtrapolate(bool extrapol);
 
 private:
 
+  // Initialization of PDF set.
+  void init(string setName, int member, Info* infoPtr);
+
   // Update all PDF values.
   void xfUpdate(int , double x, double Q2);
 
   // Current set and pdf values.
-  bool   doExtraPol;
   int    nSet;
   double xfArray[13];
-  bool   hasPhoton, isPhoton;
+  bool   hasPhoton;
   double xPhoton;
 
 };
@@ -173,22 +144,27 @@ private:
 
 // Initialize a parton density function from LHAPDF5.
 
-bool LHAPDF5::init(int idBeamIn, string setName, int member,
-  Logger* loggerPtr) {
-  idBeam = idBeamIn;
-  idBeamAbs = abs(idBeamIn);
-  isPhoton = idBeamIn == 22;
-  nSet = LHAPDF5Interface::findNSet(setName, member);
-  if (nSet == -1) nSet = LHAPDF5Interface::freeNSet();
+void LHAPDF5::init(string setName, int member, Info*) {
+
+  // Determine whether the pdf set contains the photon or not.
+  // So far only MRST2004QED and  NNPDF2.3QED.
+  if ( setName == "MRST2004qed.LHgrid"
+    || setName == "NNPDF23_lo_as_0130_qed.LHgrid"
+    || setName == "NNPDF23_lo_as_0130_qed_mem0.LHgrid"
+    || setName == "NNPDF23_lo_as_0119_qed_mem0.LHgrid"
+    || setName == "NNPDF23_lo_as_0130_qed_mem0.LHgrid"
+    || setName == "NNPDF23_nlo_as_0119_qed_mc.LHgrid"
+    || setName == "NNPDF23_nlo_as_0119_qed_mc_mem0.LHgrid"
+    || setName == "NNPDF23_nnlo_as_0119_qed_mc.LHgrid"
+    || setName == "NNPDF23_nnlo_as_0119_qed_mc_mem0.LHgrid" ) hasPhoton = true;
+  else hasPhoton = false;
 
   // If already initialized then need not do anything further.
-  LHAPDF5Interface::LHAPDFInfo initializedInfo =
+  pair<string, int> initializedNameMember =
     LHAPDF5Interface::initializedSets[nSet];
-  string initializedSetName   = initializedInfo.name;
-  int    initializedMember    = initializedInfo.member;
-  hasPhoton                   = initializedInfo.photon;
-  if (setName == initializedSetName && member == initializedMember)
-    return true;
+  string initializedSetName   = initializedNameMember.first;
+  int    initializedMember    = initializedNameMember.second;
+  if (setName == initializedSetName && member == initializedMember) return;
 
   // Initialize set. If first character is '/' then assume that name
   // is given with path, else not.
@@ -203,17 +179,9 @@ bool LHAPDF5::init(int idBeamIn, string setName, int member,
   LHAPDF5Interface::setPDFparm( "NOSTAT" );
   LHAPDF5Interface::setPDFparm( "LOWKEY" );
 
-  // Check if photon PDF available (has_photon does not work properly).
-  xPhoton = 0;
-  LHAPDF5Interface::evolvePDFPHOTONM(nSet, 0.01, 1, xfArray, xPhoton);
-  hasPhoton = xPhoton != 0;
-
   // Save values to avoid unnecessary reinitializations.
-  initializedInfo.name   = setName;
-  initializedInfo.member = member;
-  initializedInfo.photon = hasPhoton;
-  if (nSet > 0) LHAPDF5Interface::initializedSets[nSet] = initializedInfo;
-  return true;
+  if (nSet > 0) LHAPDF5Interface::initializedSets[nSet] =
+                  make_pair(setName, member);
 
 }
 
@@ -223,8 +191,7 @@ bool LHAPDF5::init(int idBeamIn, string setName, int member,
 
 void LHAPDF5::setExtrapolate(bool extrapol) {
 
-  doExtraPol = extrapol;
-  LHAPDF5Interface::setPDFparm( (extrapol) ? "EXTRAPOLATE" : "18" );
+   LHAPDF5Interface::setPDFparm( (extrapol) ? "EXTRAPOLATE" : "18" );
 
 }
 
@@ -234,29 +201,13 @@ void LHAPDF5::setExtrapolate(bool extrapol) {
 
 void LHAPDF5::xfUpdate(int, double x, double Q2) {
 
-  // Freeze at boundary value if PDF is evaluated outside the fit region.
-  int member = LHAPDF5Interface::initializedSets[nSet].member;
-  double xMin, xMax, q2Min, q2Max;
-  getxminm_( nSet, member, xMin);
-  getxmaxm_( nSet, member, xMax);
-  getq2minm_(nSet, member, q2Min);
-  getq2maxm_(nSet, member, q2Max);
-  if (x < xMin && !doExtraPol) x = xMin;
-  if (x > xMax)    x = xMax;
-  if (Q2 < q2Min) Q2 = q2Min;
-  if (Q2 > q2Max) Q2 = q2Max;
+  // Let LHAPDF5 do the evaluation of parton densities.
   double Q = sqrt( max( 0., Q2));
 
   // Use special call if photon included in proton.
   if (hasPhoton) {
     LHAPDF5Interface::evolvePDFPHOTONM( nSet, x, Q, xfArray, xPhoton);
   }
-
-  // Use special call with photon beams. No virtualities implemented yet.
-  else if (isPhoton) {
-    LHAPDF5Interface::evolvePDFpM( nSet, x, Q, 0., 0., xfArray);
-  }
-
   // Else use default LHAPDF5 call.
   else {
     LHAPDF5Interface::evolvePDFM( nSet, x, Q, xfArray);
@@ -265,17 +216,21 @@ void LHAPDF5::xfUpdate(int, double x, double Q2) {
 
   // Update values.
   xg     = xfArray[6];
-  xd     = xfArray[7];
-  xdbar  = xfArray[5];
   xu     = xfArray[8];
-  xubar  = xfArray[4];
+  xd     = xfArray[7];
   xs     = xfArray[9];
+  xubar  = xfArray[4];
+  xdbar  = xfArray[5];
+  xsbar  = xfArray[3];
   xc     = xfArray[10];
   xb     = xfArray[11];
-  xsbar  = sSymmetricSave ? xs : xfArray[3];
-  xcbar  = cSymmetricSave ? xc : xfArray[2];
-  xbbar  = bSymmetricSave ? xb : xfArray[1];
   xgamma = xPhoton;
+
+  // Subdivision of valence and sea.
+  xuVal  = xu - xubar;
+  xuSea  = xubar;
+  xdVal  = xd - xdbar;
+  xdSea  = xdbar;
 
   // idSav = 9 to indicate that all flavours reset.
   idSav = 9;
@@ -284,10 +239,22 @@ void LHAPDF5::xfUpdate(int, double x, double Q2) {
 
 //--------------------------------------------------------------------------
 
-// Declare the plugin.
+// Define external handles to the plugin for dynamic loading.
 
-PYTHIA8_PLUGIN_CLASS(PDF, LHAPDF5, false, false, false)
-PYTHIA8_PLUGIN_VERSIONS(PYTHIA_VERSION_INTEGER)
+extern "C" {
+
+  LHAPDF5* newLHAPDF(int idBeamIn, string setName, int member,
+                    Info* infoPtr) {
+    int nSet = LHAPDF5Interface::findNSet(setName, member);
+    if (nSet == -1) nSet = LHAPDF5Interface::freeNSet();
+    return new LHAPDF5(idBeamIn, setName, member, nSet, infoPtr);
+  }
+
+  void deleteLHAPDF(LHAPDF5* pdf) {
+    delete pdf;
+  }
+
+}
 
 //==========================================================================
 

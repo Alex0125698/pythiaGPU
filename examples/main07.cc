@@ -1,9 +1,7 @@
 // main07.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: two-body decay; astroparticle; python; matplotlib
 
 // Illustration how to generate various two-body channels from
 // astroparticle processes, e.g. neutralino annihilation or decay.
@@ -14,7 +12,6 @@
 // neutrinos are stable, everything else is set to decay.
 // (The "single-particle gun" of main21.cc offers another possible
 // approach to the same problem.)
-// Also illustrated output to be plotted by Python/Matplotlib/pyplot.
 
 #include "Pythia8/Pythia.h"
 
@@ -53,10 +50,10 @@ int main() {
   Pythia pythia;
 
   // A class to generate the fictitious resonance initial state.
-  SigmaProcessPtr sigma1GenRes = make_shared<Sigma1GenRes>();
+  SigmaProcess* sigma1GenRes = new Sigma1GenRes();
 
   // Hand pointer to Pythia.
-  pythia.addSigmaPtr( sigma1GenRes);
+  pythia.setSigmaPtr( sigma1GenRes);
 
   // Read in the rest of the settings and data from a separate file.
   pythia.readFile("main07.cmnd");
@@ -104,32 +101,11 @@ int main() {
   // End of event loop.
   }
 
-  // Final statistics.
+  // Final statistics and histograms.
   pythia.stat();
-
-  // Divide histograms by bin width, and normalize by 1/nEvent.
-  eGamma.normalizeSpectrum(nEvent);
-  eE.normalizeSpectrum(nEvent);
-  eP.normalizeSpectrum(nEvent);
-  eNu.normalizeSpectrum(nEvent);
-  eRest.normalizeSpectrum(nEvent);
   cout << eGamma << eE << eP << eNu << eRest;
 
-  // Write Python code that can generate a PDF file with the spectra.
-  // Assuming you have Python installed on your platform, do as follows.
-  // After the program has run, type "python main07plot.py" (without the " ")
-  // in a terminal window, and open "out07plot.pdf" in a PDF viewer.
-  HistPlot hpl("main07plot");
-  hpl.frame( "out07plot", "Particle energy spectra", "$E$ (GeV)",
-    "$(1/N_{\\mathrm{event}}) \\mathrm{d}N / \\mathrm{d}E$ (GeV$^{-1}$)");
-  hpl.add( eGamma, "-", "$\\gamma$");
-  hpl.add( eE, "-", "$e^{\\pm}$");
-  hpl.add( eP, "-", "$p/\\overline{p}$");
-  hpl.add( eNu, "-", "$\\nu$");
-  hpl.add( eRest, "-", "others");
-  // Use logarithmic y scale.
-  hpl.plot( true);
-
   // Done.
+  delete sigma1GenRes;
   return 0;
 }

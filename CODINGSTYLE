@@ -51,8 +51,8 @@ An incomplete list is as follows.
 
  8. Begin each code file with
 // (filename) is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
     to establish the legal structure. Follow that with specific
     information on authorship of the particular file, where relevant,
@@ -159,7 +159,7 @@ An incomplete list is as follows.
 30. Use the Pythia Vec4 class for four-vectors.
 
 31. Use string for all text, except when C++ leaves you no option but
-    to use char or char*.
+    to use char or char*, e.g. for the name of a file to be opened.
 
 32. Use the Boolean operators &&, || and !, not the alternative old
     cleartext "and", "or" and "not".
@@ -188,8 +188,7 @@ An incomplete list is as follows.
     During running printing should either be located in special methods
     that the user has to call explicitly (with ostream& os = cout as
     last argument) or, for error messages, make use of the
-    Logger class. Read the manual for a description of what types of
-    error messages are available.
+    Info::errorMsg(..) method.
 
 38. No global variables. It should be possible to have several
     instances of Pythia running without any risk of interference
@@ -224,11 +223,6 @@ An incomplete list is as follows.
 44. Only use == and != for comparisons between two pointers,
     or a pointer and 0. Thus comparisons like (Xptr > 0) are forbidden.
 
-45. Initialize all class variables in constructors. When there is no
-    nontrivial default value, use the default constructor:
-    Thrust(int selectIn = 2) : select(selectIn), eVal1(), eVal2(), eVal3(),
-      nFew(0) {}
-
 -----------------------------------------------------------------------
 
 Remember to update the xmldoc documentation in parallel with the
@@ -253,11 +247,10 @@ and <tag/> for single (=combined begin+end). Note that the parsing
 of the conversion program assumes a "sensible" layout of the text.
 
 A) Standard html concepts:
-<h1></h1> a top-level header, only used on the Frontpage;
-<h2></h2> a subheader, one on top each separate xml file;
-<h3></h3> a subsubheader, giving (indexed) main subdivisions of an xml file;
+<h1></h1> a top-level header;
+<h2></h2> a subheader;
+<h3></h3> a subsubheader;
 <h4></h4> a subsubsubheader;
-<hr/> a horizontal ruler line, to separate very distinct parts of a page; 
 <br/> a new line;
 <p/> a new paragraph;
 <ol></ol> an ordered list, with <li> items;
@@ -300,8 +293,6 @@ C) New concepts for user interaction in php files (but no interactivity
 in html):
 <ref></ref>
     reference to an article; replaced by [...] and anchor;
-<refit></refit>
-    entry of an article in the Bibilography.xml file; generates anchors;
 <aloc href="..."></aloc>
     anchor among local pages; automatically fills with file type and
     target="page";
@@ -341,10 +332,6 @@ in html):
     typed in, and written to file as a line with name = value;
 <wordfix name="..." default="..."></wordfix>
     ditto but no interactivity;
-For most of these a "more" variant exists, cf. methodmore above,
-where no new paragraph break is inserted before it in the conversion
-from xml to html, allowing visual grouping of settings belonging together.
-Main examples would be flagmore, modemore, parmmore and wordmore.
 
 D) New concepts that could one day be made interactive, but currently
 are not:

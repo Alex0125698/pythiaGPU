@@ -1,7 +1,7 @@
 // SusyLesHouches.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
+// Copyright (C) 2015 Torbjorn Sjostrand.
 // Main authors of this file: N. Desai, P. Skands
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 #include "Pythia8/SusyLesHouches.h"
@@ -28,8 +28,8 @@ int SusyLesHouches::readFile(string slhaFileIn, int verboseIn,
   // Exit if input file not found. Else print file name.
   if (!file.good()) {
     message(2,"readFile",slhaFile+" not found",0);
-    slhaRead = false;
     return -1;
+    slhaRead=false;
   }
   if (verboseSav >= 3) {
     message(0,"readFile","parsing "+slhaFile,0);
@@ -78,7 +78,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
 
     //Rewrite string in lowercase, removing initial and tralining blanks
     //as well as garbage characters
-    toLowerRep(line);
+    toLower(line);
 
     //Detect whether read-in is from a Les Houches Event File (LHEF).
     if (line.find("<leshouches") != string::npos
@@ -101,7 +101,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
         lhefSlha     = true;
         foundSlhaTag = true;
         //Print header if not already done
-        if (! headerPrinted) listHeader();
+        if (! headerPrinted) printHeader();
       }
       //Stop looking when </header> or <init> tag reached
       if (line.find("</header>") != string::npos ||
@@ -139,7 +139,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
     if (line.find("block") <= 1) {
 
       //Print header if not already done
-      if (! headerPrinted) listHeader();
+      if (! headerPrinted) printHeader();
 
       blockIn=line ;
       decay="";
@@ -155,7 +155,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
         string pdgString = blockIn.substr(pdgBegin,pdgEnd-pdgBegin);
         istringstream linestream(pdgString);
         // Create and add new block with this code as zero'th entry
-        LHblock<double> newQnumbers;
+        LHblock<int> newQnumbers;
         newQnumbers.set(0,linestream);
         qnumbers.push_back(newQnumbers);
         // Default name: PDG code
@@ -290,7 +290,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
     else if (line.find("decay") <= 1) {
 
       // Print header if not already done
-      if (! headerPrinted) listHeader();
+      if (! headerPrinted) printHeader();
 
       // If previous had zero length, print now
       if (decay != "" && ! decayPrinted) {
@@ -628,7 +628,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
   };
 
   //Print footer
-  listFooter();
+  printFooter();
 
   //Return 0 if read-in successful
   if ( lhefRead && !foundSlhaTag) {
@@ -642,13 +642,13 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
 
 // Print a header with information on version, last date of change, etc.
 
-void SusyLesHouches::listHeader() {
+void SusyLesHouches::printHeader() {
   if (verboseSav == 0) return;
-  cout << setprecision(3);
+  setprecision(3);
   if (! headerPrinted) {
     cout << " *-----------------------  SusyLesHouches SUSY/BSM"
          << " Interface  ------------------------*\n";
-    message(0,"","Last Change 12 Apr 2017 - P. Skands",0);
+    message(0,"","Last Change 14 Jan 2015 - P. Skands",0);
     if (!filePrinted && slhaFile != "" && slhaFile != " ") {
       message(0,"","Parsing: "+slhaFile,0);
       filePrinted=true;
@@ -661,7 +661,7 @@ void SusyLesHouches::listHeader() {
 
 // Print a footer
 
-void SusyLesHouches::listFooter() {
+void SusyLesHouches::printFooter() {
   if (verboseSav == 0) return;
   if (! footerPrinted) {
     //    cout << " *" << endl;
@@ -677,13 +677,13 @@ void SusyLesHouches::listFooter() {
 // Print the current spectrum on stdout.
 // Not yet fully implemented.
 
-void SusyLesHouches::listSpectrum(int ifail) {
+void SusyLesHouches::printSpectrum(int ifail) {
 
   // Exit if output switched off
   if (verboseSav <= 0) return;
 
   // Print header if not already done
-  if (! headerPrinted) listHeader();
+  if (! headerPrinted) printHeader();
   message(0,"","");
 
   // Print Calculator and File name
@@ -707,87 +707,75 @@ void SusyLesHouches::listSpectrum(int ifail) {
 
   // d squarks
   message(0,"","");
-  cout << " |  ~d                  m   |~dL|   |~sL|   |~bL|"
-       << "   |~dR|   |~sR|   |~bR|" << endl;
+  cout << " |  ~d                  m     ~dL     ~sL     ~bL"
+       << "     ~dR     ~sR     ~bR" << endl;
 
   cout << setprecision(3)  << " |     1000001 " << setw(10)
        << ( (mass(1000001) > 1e7) ? scientific : fixed) << mass(1000001)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(1,icur))+pow2(imdsqmix(1,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(1,icur) << "  ";
 
   cout << endl << " |     1000003 " << setw(10)
        << ( (mass(1000003) > 1e7) ? scientific : fixed) << mass(1000003)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(2,icur))+pow2(imdsqmix(2,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(2,icur) << "  ";
 
   cout << endl << " |     1000005 " << setw(10)
        << ( (mass(1000005) > 1e7) ? scientific : fixed) << mass(1000005)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(3,icur))+pow2(imdsqmix(3,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(3,icur) << "  ";
 
   cout << endl << " |     2000001 " << setw(10)
        << ( (mass(2000001) > 1e7) ? scientific : fixed) << mass(2000001)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(4,icur))+pow2(imdsqmix(4,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(4,icur) << "  ";
 
   cout << endl << " |     2000003 " << setw(10)
        << ( (mass(2000003) > 1e7) ? scientific : fixed) << mass(2000003)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(5,icur))+pow2(imdsqmix(5,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(5,icur) << "  ";
 
   cout << endl << " |     2000005 " << setw(10)
        << ( (mass(2000005) > 1e7) ? scientific : fixed) << mass(2000005)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(dsqmix(6,icur))+pow2(imdsqmix(6,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << dsqmix(6,icur) << "  ";
 
   cout << endl;
 
   // u squarks
   message(0,"","");
-  cout << " |  ~u                  m   |~uL|   |~cL|   |~tL|"
-       << "   |~uR|   |~cR|   |~tR|"  <<  endl;
+  cout << " |  ~u                  m     ~uL     ~cL     ~tL"
+       << "     ~uR     ~cR     ~tR"  <<  endl;
 
   cout << setprecision(3) << " |     1000002 " << setw(10)
        << ( (mass(1000002) > 1e7) ? scientific : fixed) << mass(1000002)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout <<setw(6)
-       << sqrt(pow2(usqmix(1,icur))+pow2(imusqmix(1,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(1,icur) << "  ";
 
   cout << endl << " |     1000004 " << setw(10)
        << ( (mass(1000004) > 1e7) ? scientific : fixed) << mass(1000004)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(usqmix(2,icur))+pow2(imusqmix(2,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(2,icur) << "  ";
 
   cout << endl << " |     1000006 " << setw(10)
        << ( (mass(1000006) > 1e7) ? scientific : fixed) << mass(1000006)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(usqmix(3,icur))+pow2(imusqmix(3,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(3,icur) << "  ";
 
   cout << endl << " |     2000002 " << setw(10)
        << ( (mass(2000002) > 1e7) ? scientific : fixed) << mass(2000002)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(usqmix(4,icur))+pow2(imusqmix(4,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(4,icur) << "  ";
 
   cout << endl << " |     2000004 " << setw(10)
        << ( (mass(2000004) > 1e7) ? scientific : fixed) << mass(2000004)
        << fixed << "  " ;
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(usqmix(5,icur))+pow2(imusqmix(5,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(5,icur) << "  ";
 
   cout << endl << " |     2000006 " << setw(10)
        << ( (mass(2000006) > 1e7) ? scientific : fixed) << mass(2000006)
        << fixed << "  ";
-  for (int icur=1;icur<=6;icur++) cout << setw(6)
-       << sqrt(pow2(usqmix(6,icur))+pow2(imusqmix(6,icur))) << "  ";
+  for (int icur=1;icur<=6;icur++) cout << setw(6) << usqmix(6,icur) << "  ";
 
   cout << endl;
 
@@ -796,44 +784,38 @@ void SusyLesHouches::listSpectrum(int ifail) {
 
   // R-conserving:
   if (modsel(4) < 1) {
-    cout << " |  ~e                  m   |~eL|  |~muL| |~tauL|"
-         << "   |~eR|  |~muR| |~tauR|"  <<  endl;
+    cout << " |  ~e                  m     ~eL    ~muL   ~tauL"
+         << "     ~eR    ~muR   ~tauR"  <<  endl;
 
     cout << setprecision(3) << " |     1000011 " << setw(10)
          << ( (mass(1000011) > 1e7) ? scientific : fixed) << mass(1000011)
          << fixed << "  ";
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(1,icur))+pow2(imselmix(1,icur))) << "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(1,icur) << "  ";
 
     cout << endl << " |     1000013 " << setw(10)
          << ( (mass(1000013) > 1e7) ? scientific : fixed) << mass(1000013)
          << fixed << "  ";
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(2,icur))+pow2(imselmix(2,icur))) << "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(2,icur) << "  ";
 
     cout << endl << " |     1000015 " << setw(10)
          << ( (mass(1000015) > 1e7) ? scientific : fixed) << mass(1000015)
          << fixed << "  ";
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(3,icur))+pow2(imselmix(3,icur))) << "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(3,icur) << "  ";
 
     cout << endl << " |     2000011 " << setw(10)
          << ( (mass(2000011) > 1e7) ? scientific : fixed) << mass(2000011)
          << fixed << "  ";
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(4,icur))+pow2(imselmix(4,icur))) << "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(4,icur) << "  ";
 
     cout << endl << " |     2000013 " << setw(10)
          << ( (mass(2000013) > 1e7) ? scientific : fixed) << mass(2000013)
          << fixed << "  " ;
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(5,icur))+pow2(imselmix(5,icur))) << "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(5,icur) << "  ";
 
     cout << endl << " |     2000015 " << setw(10)
          << ( (mass(2000015) > 1e7) ? scientific : fixed) << mass(2000015)
          << fixed << "  ";
-    for (int icur=1;icur<=6;icur++) cout << setw(6)
-         << sqrt(pow2(selmix(6,icur))+pow2(imselmix(6,icur)))<< "  ";
+    for (int icur=1;icur<=6;icur++) cout << setw(6) << selmix(6,icur) << "  ";
   }
 
   // R-violating
@@ -883,29 +865,26 @@ void SusyLesHouches::listSpectrum(int ifail) {
   // R-conserving:
   if (modsel(4) < 1) {
     cout << " |  ~nu                 m";
-    if (snumix.exists()) cout << "  |~nu_e| |~nu_mu||~nu_tau|";
+    if (snumix.exists()) cout << "   ~nu_e  ~nu_mu ~nu_tau";
     cout << endl;
 
     cout << setprecision(3) << " |     1000012 " << setw(10)
          << ( (mass(1000012) > 1e7) ? scientific : fixed) << mass(1000012)
          << fixed << "  ";
-    if (snumix.exists())
-      for (int icur=1;icur<=3;icur++) cout << setw(7)
-        << sqrt(pow2(snumix(1,icur))+pow2(imsnumix(1,icur))) << "  ";
+    if (snumix.exists()) for (int icur=1;icur<=3;icur++)
+                           cout << setw(6) << snumix(1,icur) << "  ";
 
     cout << endl << " |     1000014 " << setw(10)
          << ( (mass(1000014) > 1e7) ? scientific : fixed) << mass(1000014)
          << fixed << "  ";
-    if (snumix.exists())
-      for (int icur=1;icur<=3;icur++) cout << setw(7)
-         << sqrt(pow2(snumix(2,icur))+pow2(imsnumix(2,icur))) << "  ";
+    if (snumix.exists()) for (int icur=1;icur<=3;icur++)
+                           cout << setw(6) << snumix(2,icur) << "  ";
 
     cout << endl << " |     1000016 " << setw(10)
          << ( (mass(1000016) > 1e7) ? scientific : fixed) << mass(1000016)
          << fixed << "  ";
-    if (snumix.exists())
-      for (int icur=1;icur<=3;icur++) cout << setw(7)
-         << sqrt(pow2(snumix(3,icur))+pow2(imsnumix(3,icur))) << "  ";
+    if (snumix.exists()) for (int icur=1;icur<=3;icur++)
+                           cout << setw(6) << snumix(3,icur) << "  ";
   }
 
   // R-violating
@@ -980,69 +959,60 @@ void SusyLesHouches::listSpectrum(int ifail) {
 
   // NMSSM
   if (modsel(3) >= 1) {
-    cout << " |  ~chi0               m    |~B|  |~W_3|  |~H_1|  |~H_2|    |~S|"
+    cout << " |  ~chi0               m      ~B    ~W_3    ~H_1    ~H_2      ~S"
          << endl;
 
     cout << setprecision(3) << " |     1000022 " << setw(10)
          << ( (mass(1000022) > 1e7) ? scientific : fixed) << mass(1000022)
          << fixed << "  ";
-    for (int icur=1;icur<=5;icur++)
-      cout <<setw(6)<< sqrt(pow2(nmnmix(1,icur))+pow2(imnmnmix(1,icur)))<<"  ";
+    for (int icur=1;icur<=5;icur++) cout << setw(6) << nmnmix(1,icur) << "  ";
 
     cout << endl << " |     1000023 " << setw(10)
          << ( (mass(1000023) > 1e7) ? scientific : fixed) << mass(1000023)
          << fixed << "  ";
-    for (int icur=1;icur<=5;icur++)
-      cout <<setw(6)<< sqrt(pow2(nmnmix(2,icur))+pow2(imnmnmix(2,icur)))<<"  ";
+    for (int icur=1;icur<=5;icur++) cout << setw(6) << nmnmix(2,icur) << "  ";
 
     cout << endl << " |     1000025 " << setw(10)
          << ( (mass(1000025) > 1e7) ? scientific : fixed) << mass(1000025)
          << fixed << "  ";
-    for (int icur=1;icur<=5;icur++) cout << setw(6)
-         << sqrt(pow2(nmnmix(3,icur))+pow2(imnmnmix(3,icur))) << "  ";
+    for (int icur=1;icur<=5;icur++) cout << setw(6) << nmnmix(3,icur) << "  ";
 
     cout << endl << " |     1000035 " << setw(10)
          << ( (mass(1000035) > 1e7) ? scientific : fixed) << mass(1000035)
          << fixed << "  ";
-    for (int icur=1;icur<=5;icur++) cout << setw(6)
-         << sqrt(pow2(nmnmix(4,icur))+pow2(imnmnmix(4,icur))) << "  ";
+    for (int icur=1;icur<=5;icur++) cout << setw(6) << nmnmix(4,icur) << "  ";
 
     cout << endl << " |     1000045 " << setw(10)
          << ( (mass(1000045) > 1e7) ? scientific : fixed) << mass(1000045)
          << fixed << "  ";
-    for (int icur=1;icur<=5;icur++) cout << setw(6)
-         << sqrt(pow2(nmnmix(5,icur))+pow2(imnmnmix(5,icur))) << "  ";
+    for (int icur=1;icur<=5;icur++) cout << setw(6) << nmnmix(5,icur) << "  ";
 
   }
 
   // R-Conserving MSSM
   else if (modsel(4) < 1) {
-    cout << " |  ~chi0               m    |~B|  |~W_3|  |~H_1|  |~H_2|"
+    cout << " |  ~chi0               m      ~B    ~W_3    ~H_1    ~H_2"
          << endl;
 
     cout << setprecision(3) << " |     1000022 " << setw(10)
          << ( (mass(1000022) > 1e7) ? scientific : fixed) << mass(1000022)
          << fixed << "  ";
-    for (int icur=1;icur<=4;icur++)
-      cout << setw(6) << sqrt(pow2(nmix(1,icur))+pow2(imnmix(1,icur))) << "  ";
+    for (int icur=1;icur<=4;icur++) cout << setw(6) << nmix(1,icur) << "  ";
 
     cout << endl << " |     1000023 " << setw(10)
          << ( (mass(1000023) > 1e7) ? scientific : fixed) << mass(1000023)
          << fixed << "  ";
-    for (int icur=1;icur<=4;icur++)
-      cout << setw(6) << sqrt(pow2(nmix(2,icur))+pow2(imnmix(2,icur))) << "  ";
+    for (int icur=1;icur<=4;icur++) cout << setw(6) << nmix(2,icur) << "  ";
 
     cout << endl << " |     1000025 " << setw(10)
          << ( (mass(1000025) > 1e7) ? scientific : fixed) << mass(1000025)
          << fixed << "  ";
-    for (int icur=1;icur<=4;icur++)
-      cout << setw(6) << sqrt(pow2(nmix(3,icur))+pow2(imnmix(3,icur))) << "  ";
+    for (int icur=1;icur<=4;icur++) cout << setw(6) << nmix(3,icur) << "  ";
 
     cout << endl << " |     1000035 " << setw(10)
          << ( (mass(1000035) > 1e7) ? scientific : fixed) << mass(1000035)
          << fixed << "  ";
-    for (int icur=1;icur<=4;icur++)
-      cout << setw(6) << sqrt(pow2(nmix(4,icur))+pow2(imnmix(4,icur))) << "  ";
+    for (int icur=1;icur<=4;icur++) cout << setw(6) << nmix(4,icur) << "  ";
 
   }
 
@@ -1092,26 +1062,22 @@ void SusyLesHouches::listSpectrum(int ifail) {
 
   // R-conserving:
   if (modsel(4) < 1) {
-    cout << " |  ~chi+               m   U: |~W|    |~H|  ;  V: |~W|    |~H|"
+    cout << " |  ~chi+               m   U:   ~W      ~H  |  V:   ~W      ~H"
          << endl;
 
     cout << setprecision(3) << " |     1000024 " << setw(10)
          << ((mass(1000024) > 1e7) ? scientific : fixed) << mass(1000024)
          << fixed << "    ";
-    for (int icur=1;icur<=2;icur++)
-      cout << setw(6) << sqrt(pow2(umix(1,icur))+pow2(imumix(1,icur))) << "  ";
-    cout << ";   ";
-    for (int icur=1;icur<=2;icur++)
-      cout << setw(6) << sqrt(pow2(vmix(1,icur))+pow2(imvmix(1,icur))) << "  ";
+    for (int icur=1;icur<=2;icur++) cout << setw(6) << umix(1,icur) << "  ";
+    cout << "|   ";
+    for (int icur=1;icur<=2;icur++) cout << setw(6) << vmix(1,icur) << "  ";
 
     cout << endl << " |     1000037 " << setw(10)
          << ((mass(1000037) > 1e7) ? scientific : fixed) << mass(1000037)
          << fixed << "    ";
-    for (int icur=1;icur<=2;icur++)
-      cout << setw(6) << sqrt(pow2(umix(2,icur))+pow2(imumix(2,icur))) << "  ";
-    cout << ";   " ;
-    for (int icur=1;icur<=2;icur++)
-      cout << setw(6) << sqrt(pow2(vmix(2,icur))+pow2(imvmix(2,icur))) << "  ";
+    for (int icur=1;icur<=2;icur++) cout << setw(6) << umix(2,icur) << "  ";
+    cout << "|   " ;
+    for (int icur=1;icur<=2;icur++) cout << setw(6) << vmix(2,icur) << "  ";
   }
 
   // R-violating
@@ -1270,21 +1236,16 @@ void SusyLesHouches::listSpectrum(int ifail) {
   // Print footer
   footerPrinted=false;
   message(0,"","");
-  listFooter();
+  printFooter();
 }
 
 //--------------------------------------------------------------------------
 
 // Check consistency of spectrum, unitarity of matrices, etc.
-// Return codes:
-// 2  : no SUSY spectrum, and no MASS block either.
-// 1  : no SUSY spectrum; but there is a MASS block.
-// 0  : there is a SUSY spectrum and it looks ok.
-// -1 : there is a SUSY spectrum but it does not look ok.
 
 int SusyLesHouches::checkSpectrum() {
 
-  if (! headerPrinted) listHeader();
+  if (! headerPrinted) printHeader();
   int ifail=0;
   bool foundModsel = modsel.exists();
   if (! foundModsel) {
@@ -1296,6 +1257,7 @@ int SusyLesHouches::checkSpectrum() {
   if (!modsel.exists(1)) {
     message(1,"checkSpectrum","MODSEL(1) undefined. Assuming = 0",0);
     modsel.set(1,0);
+    ifail=0;
   }
   if (!modsel.exists(3)) modsel.set(3,0);
   if (!modsel.exists(4)) modsel.set(4,0);
@@ -1423,8 +1385,7 @@ int SusyLesHouches::checkSpectrum() {
           for (int j=6; j<=6; j++)
             rvlmix.set(i+1,j+2,selmix(i,j));
         }
-      }
-      if (staumix.exists()) {
+      } if (staumix.exists()) {
         message(1,"checkSpectrum",
                 "MODSEL 4 != 0 but STAUMIX given instead of RVLMIX",0);
         rvlmix.set(2,3,1.0);
@@ -1522,22 +1483,25 @@ int SusyLesHouches::checkSpectrum() {
         message(1,"checkSpectrum","quark FLV on but VCKMIN not found",0);
         ifail=-1;
       }
-      // The following checks are not considered crucial since the entries
-      // *may* not be needed to compute required derived couplings.
       if (!msq2in.exists()) {
         message(0,"checkSpectrum","note: quark FLV on but MSQ2IN not found",0);
+        ifail=min(ifail,0);
       }
       if (!msu2in.exists()) {
         message(0,"checkSpectrum","note: quark FLV on but MSU2IN not found",0);
+        ifail=min(ifail,0);
       }
       if (!msd2in.exists()) {
         message(0,"checkSpectrum","note: quark FLV on but MSD2IN not found",0);
+        ifail=min(ifail,0);
       }
       if (!tuin.exists()) {
         message(0,"checkSpectrum","note: quark FLV on but TUIN not found",0);
+        ifail=min(ifail,0);
       }
       if (!tdin.exists()) {
         message(0,"checkSpectrum","note: quark FLV on but TDIN not found",0);
+        ifail=min(ifail,0);
       }
     }
     // Lepton FLV
@@ -1545,14 +1509,17 @@ int SusyLesHouches::checkSpectrum() {
       if (!msl2in.exists()) {
         message(0,"checkSpectrum",
                   "note: lepton FLV on but MSL2IN not found",0);
+        ifail=min(ifail,0);
       }
       if (!mse2in.exists()) {
         message(0,"checkSpectrum",
                   "note: lepton FLV on but MSE2IN not found",0);
+        ifail=min(ifail,0);
       }
       if (!tein.exists()) {
         message(0,"checkSpectrum",
                   "note: lepton FLV on but TEIN not found",0);
+        ifail=min(ifail,0);
       }
     }
   }
@@ -1636,13 +1603,9 @@ int SusyLesHouches::checkSpectrum() {
       for (int j=1;j<=4;j++) {
         cn1 += pow(nmix(i,j),2);
         cn2 += pow(nmix(j,i),2);
-        if (imnmix.exists()) {
-          cn1 += pow(imnmix(i,j),2);
-          cn2 += pow(imnmix(j,i),2);
-        }
       }
       if (abs(1.0-cn1) > 1e-3 || abs(1.0-cn2) > 1e-3) {
-        ifail=-1;
+        ifail=2;
         message(2,"checkSpectrum","NMIX is not unitary (wrong format?)",0);
         break;
       }
@@ -1663,20 +1626,12 @@ int SusyLesHouches::checkSpectrum() {
         cu2 += pow(umix(j,i),2);
         cv1 += pow(vmix(i,j),2);
         cv2 += pow(vmix(j,i),2);
-        if (imumix.exists()) {
-          cu1 += pow(imumix(i,j),2);
-          cu2 += pow(imumix(j,i),2);
-        }
-        if (imvmix.exists()) {
-          cv1 += pow(imvmix(i,j),2);
-          cv2 += pow(imvmix(j,i),2);
-        }
       }
       if (abs(1.0-cu1) > 1e-3 || abs(1.0-cu2) > 1e-3) {
         cu1 += pow(umix(1,1),2);
         cu2 += pow(umix(1,1),2);
         if (abs(1.0-cu1) > 1e-3 || abs(1.0-cu2) > 1e-3) {
-          ifail=-1;
+          ifail=max(1,ifail);
           message(2,"checkSpectrum","UMIX is not unitary (wrong format?)",0);
           break;
         } else {
@@ -1689,7 +1644,7 @@ int SusyLesHouches::checkSpectrum() {
         cv1 += pow(vmix(1,1),2);
         cv2 += pow(vmix(1,1),2);
         if (abs(1.0-cv1) > 1e-3 || abs(1.0-cv2) > 1e-3) {
-          ifail=-1;
+          ifail=max(1,ifail);
           message(2,"checkSpectrum","VMIX is not unitary (wrong format?)",0);
           break;
         } else {
@@ -1753,10 +1708,6 @@ int SusyLesHouches::checkSpectrum() {
       for (int j=1;j<=6;j++) {
         sr += pow(dsqmix(i,j),2);
         sc += pow(dsqmix(j,i),2);
-        if (imdsqmix.exists()) {
-          sr += pow(imdsqmix(i,j),2);
-          sc += pow(imdsqmix(j,i),2);
-        }
       }
       if (abs(1.0-sr) > 1e-3 || abs(1.0-sc) > 1e-3) {
         ifail=-1;
@@ -1774,10 +1725,6 @@ int SusyLesHouches::checkSpectrum() {
       for (int j=1;j<=6;j++) {
         sr += pow(usqmix(i,j),2);
         sc += pow(usqmix(j,i),2);
-        if (imusqmix.exists()) {
-          sr += pow(imusqmix(i,j),2);
-          sc += pow(imusqmix(j,i),2);
-        }
       }
       if (abs(1.0-sr) > 1e-3 || abs(1.0-sc) > 1e-3) {
         ifail=-1;
@@ -1795,10 +1742,6 @@ int SusyLesHouches::checkSpectrum() {
       for (int j=1;j<=6;j++) {
         sr += pow(selmix(i,j),2);
         sc += pow(selmix(j,i),2);
-        if (imselmix.exists()) {
-          sr += pow(imselmix(i,j),2);
-          sc += pow(imselmix(j,i),2);
-        }
       }
       if (abs(1.0-sr) > 1e-3 || abs(1.0-sc) > 1e-3) {
         ifail=-1;
@@ -1816,10 +1759,6 @@ int SusyLesHouches::checkSpectrum() {
         for (int j=1;j<=5;j++) {
           cn1 += pow(nmnmix(i,j),2);
           cn2 += pow(nmnmix(j,i),2);
-          if (imnmnmix.exists()) {
-            cn1 += pow(imnmnmix(i,j),2);
-            cn2 += pow(imnmnmix(j,i),2);
-          }
         }
         if (abs(1.0-cn1) > 1e-3 || abs(1.0-cn2) > 1e-3) {
           ifail=-1;
@@ -1842,7 +1781,6 @@ int SusyLesHouches::checkSpectrum() {
         if (abs(1.0-cn1) > 1e-3) {
           ifail=-1;
           message(2,"checkSpectrum","NMAMIX is not unitary (wrong format?)",0);
-          break;
         }
       }
     }
@@ -1862,7 +1800,6 @@ int SusyLesHouches::checkSpectrum() {
         if (abs(1.0-cn1) > 1e-3 || abs(1.0-cn2) > 1e-3) {
           ifail=-1;
           message(2,"checkSpectrum","NMHMIX is not unitary (wrong format?)",0);
-          break;
         }
       }
     }
@@ -1887,11 +1824,11 @@ int SusyLesHouches::checkSpectrum() {
   }
 
   //Give status
-  if (ifail == -1)
-    message(0,"checkSpectrum","one or more inconsistencies in SUSY setup");
+  if (ifail >= 2)
+    message(0,"checkSpectrum","one or more serious problems were found");
 
   //Print Footer
-  listFooter();
+  printFooter();
 
   //Return
   return ifail;
@@ -1919,6 +1856,31 @@ void SusyLesHouches::message(int level, string place,string themessage,
   //  if (level == 2) *outstream  << endl;
   footerPrinted=false;
   return;
+}
+
+//--------------------------------------------------------------------------
+
+// Convert string to lowercase for case-insensitive comparisons.
+// Also remove initial and trailing blanks and garbage characters, if any.
+// (eg removes DOS line break characters and similar)
+// Adapted from PYTHIA 8 Settings::toLower() method.
+
+void SusyLesHouches::toLower(string& name) {
+
+  // Copy string without initial and trailing blanks.
+  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
+    name = "";
+    return;
+  }
+  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+
+  // Convert to lowercase letter by letter.
+  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+  // Copy to input string and return
+  name=temp;
+
 }
 
 //==========================================================================

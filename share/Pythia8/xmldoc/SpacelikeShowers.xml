@@ -8,7 +8,7 @@ transverse-momentum-ordered backwards evolution scheme is introduced,
 with the extension to fully interleaved evolution covered in 
 <ref>Cor10a</ref>. 
 This algorithm is a further development of the virtuality-ordered one 
-presented in <ref>Sjo85</ref>, with matching to first-order matrix 
+presented in <ref>Sj085</ref>, with matching to first-order matrix 
 element for <ei>Z^0</ei>, <ei>W^+-</ei> and Higgs (in the 
 <ei>m_t &rarr; infinity</ei> limit) production as introduced in 
 <ref>Miu99</ref>. 
@@ -16,13 +16,9 @@ element for <ei>Z^0</ei>, <ei>W^+-</ei> and Higgs (in the
 <p/> 
 The normal user is not expected to call <code>SpaceShower</code> 
 directly, but only have it called from <code>Pythia</code>, 
-via <code>PartonLevel</code>. Nonetheless, some of the parameters below, 
+via <code>PartonLevel</code>. Some of the parameters below, 
 in particular <code>SpaceShower:alphaSvalue</code>, 
-would be of interest for uncertainty estimates and tuning exercises. 
-Note that 
-PYTHIA also incorporates an 
-<aloc href="Variations">automated framework</aloc> for shower 
-uncertainty variations. 
+would be of interest for a tuning exercise, however. 
  
 <h3>Main variables</h3> 
  
@@ -139,12 +135,12 @@ where <ei>Q_ren</ei> is the renormalization scale and <ei>k</ei> is a
 multiplicative fudge factor stored in <code>pTdampFudge</code> below. 
 </option> 
 <option value="3">as option 1, but in addition to the standard requirements 
-for dampening it is further necessary to have at least two top or 
+for dampening it is further necessary to have ar least two top or 
 beyond-the-Standard-Model coloured particles in the final state. 
 Examples include <ei>t tbar</ei> and <ei>squark gluino</ei> production. 
 </option> 
 <option value="4">as option 2, but in addition to the standard requirements 
-for dampening it is further necessary to have at least two top or 
+for dampening it is further necessary to have ar least two top or 
 beyond-the-Standard-Model coloured particles in the final state. 
 Examples include <ei>t tbar</ei> and <ei>squark gluino</ei> production. 
 </option> 
@@ -167,12 +163,13 @@ away from this value could do better in some processes.
 The amount of QCD radiation in the shower is determined by 
 <parm name="SpaceShower:alphaSvalue" default="0.1365" min="0.06" max="0.25"> 
 The <ei>alpha_strong</ei> value at scale <code>M_Z^2</code>. 
+Default value is picked equal to the one used in CTEQ 5L. 
 </parm> 
  
 <p/> 
 The actual value is then regulated by the running to the scale 
 <ei>pT^2</ei>, at which it is evaluated 
-<modepick name="SpaceShower:alphaSorder" default="1" min="0" max="3"> 
+<modepick name="SpaceShower:alphaSorder" default="1" min="0" max="2"> 
 Order at which <ei>alpha_strong</ei> runs, 
 <option value="0">zeroth order, i.e. <ei>alpha_strong</ei> is kept 
 fixed.</option> 
@@ -180,8 +177,6 @@ fixed.</option>
 <option value="2">second order. Since other parts of the code do 
 not go to second order there is no strong reason to use this option, 
 but there is also nothing wrong with it.</option> 
-<option value="3">third order, with the same comment as for second 
-order. The expression in the 2006 RPP is used here.</option> 
 </modepick> 
  
 <p/> 
@@ -190,9 +185,9 @@ The CMW rescaling of <ei>Lambda_QCD</ei> (see the section on
 can be applied to the <ei>alpha_strong</ei> values used for spacelike showers. 
 Note that tunes using this option need lower values of 
 <ei>alpha_strong(m_Z^2)</ei> than tunes that do not. 
-<flag name="SpaceShower:alphaSuseCMW" default="off"> 
-<option value="off">Do not apply the CMW rescaling. </option> 
-<option value="on">Apply the CMW rescaling, increasing 
+<flag name="SpaceShower:alphaSuseCMW" default="false"> 
+<option value="false">Do not apply the CMW rescaling. </option> 
+<option value="true">Apply the CMW rescaling, increasing 
 <ei>Lambda_QCD</ei> for spacelike showers by a factor roughly 1.6. 
 </option> 
 </flag> 
@@ -218,9 +213,7 @@ at the <ei>Z^0</ei> mass.
 The natural scale for couplings and PDFs is <ei>pT^2</ei>. To explore 
 uncertainties it is possibly to vary around this value, however, in 
 analogy with what can be done for 
-<aloc href="CouplingsAndScales">hard processes</aloc>. (Note that 
-there is also an <aloc href="Variations">automated framework</aloc> for shower 
-uncertainties.) 
+<aloc href="CouplingsAndScales">hard processes</aloc>. 
  
 <parm name="SpaceShower:renormMultFac" default="1." min="0.1" max="10."> 
 The default <ei>pT^2</ei> renormalization scale is multiplied by 
@@ -253,8 +246,6 @@ all ISR QCD radiation, rather than the corresponding parameters below.
 This is a sensible physics ansatz, based on the assumption that colour 
 screening effects influence both MPI and ISR in the same way. Photon 
 radiation is regularized separately in either case. 
-<note>Note:</note> For photon-photon collisions these parameters are set 
-as in <aloc href="Photoproduction">Photoproduction</aloc>. 
 <note>Warning:</note> if a large <code>pT0</code> is picked for multiparton 
 interactions, such that the integrated interaction cross section is 
 below the nondiffractive inelastic one, this <code>pT0</code> will 
@@ -263,26 +254,13 @@ does NOT propagate to <code>SpaceShower</code>, however.
 </flag> 
  
 <p/> 
-The actual <ei>pT0</ei> parameter used at a given CM energy scale, 
-<ei>ecmNow</ei>, is obtained from a power law or a logarithmic 
-parametrization. The former is default with hadron beams and 
-the latter for photon-photon collisions. 
- 
-<modepick name="SpaceShower:pT0parametrization" default="0" min="0" max="1"> 
-Choice of <ei>pT0</ei> parametrization. 
-<option value="0"> Power law dependence on <ei>ecmNow</ei>:<br/> 
-<ei> 
-    pT0 = pT0(ecmNow) = pT0Ref * (ecmNow / ecmRef)^ecmPow 
-</ei> 
-</option> 
-<option value="1"> Logarithmic dependence on <ei>ecmNow</ei>: 
+The actual <code>pT0</code> parameter used at a given CM energy scale, 
+<ei>ecmNow</ei>, is obtained as 
 <eq> 
-    pT0 = pT0(ecmNow) = pT0Ref + ecmPow * log (ecmNow / ecmRef) 
+    pT0 = pT0(ecmNow) = pT0Ref * (ecmNow / ecmRef)^ecmPow 
 </eq> 
-</option> 
 where <ei>pT0Ref</ei>, <ei>ecmRef</ei> and <ei>ecmPow</ei> are the 
 three parameters below. 
-</modepick> 
  
 <parm name="SpaceShower:pT0Ref" default="2.0" 
 min="0.5" max="10.0"> 
@@ -328,59 +306,7 @@ Assumed smaller than (or equal to) <ei>pTminChgQ</ei>.
 Force emissions, after the first,  to be ordered in rapidity, 
 i.e. in terms of decreasing angles in a backwards-evolution sense. 
 Could be used to probe sensitivity to unordered emissions. 
-Only affects QCD emissions, and only the hard subcollision of an event. 
-(For the case "soft QCD" processes the first MPI counts as the hard 
-subcollision.) 
- 
-</flag> 
- 
-<flag name="SpaceShower:rapidityOrderMPI" default="on"> 
-Same as the last switch, but this time only emissions in secondary 
-scattering systems from MPIs are forced to be ordered in rapidity. 
-Each MPI is ordered separately from the others. 
-</flag> 
- 
-<h3>Dipole showers</h3> 
- 
-By default the recoil of an ISR emission is taken by the whole final 
-state. The option below gives an alternative approach with local recoils, 
-where only one final-state parton takes the recoil of an emission. 
-See <ref>Cab17</ref> for further details on the philosophy and 
-implementation. 
- 
-<p/> 
-The existing initial-initial global recoil scheme is maintained for 
-an emission off a colour line that stretches through the hard process, 
-so it is the handling of initial-final dipole ends that is changed. 
-Here the single recoiler is picked based on the colour flow of the 
-hard process. Additionally the description unifies the emission of 
-a gluon from the initial-final and final-initial dipole ends, and 
-handles both as part of the ISR framework. Therefore the separation 
-into ISR and FSR is not a meaningful classification, and either both 
-should be simulated or none. 
- 
-<p/> 
-Note that this option should not be combined with the global option 
-for FSR, <code>TimeShower:globalRecoil</code>. Furthermore some settings 
-are neglected internally to ensure the same behaviour as obtained for 
-<code>TimeShower:allowBeamRecoil = on</code>, 
-<code>TimeShower:dampenBeamRecoil = off</code>, and 
-<code>SpaceShower:phiIntAsym = off</code>. 
- 
-<p/> 
-The dipole recoil option for the first time allows the simulation 
-of Deeply Inelastic Scattering processes in PYTHIA 8, see the 
-<code>main36.cc</code> example. Note that the simultaneous emission of 
-photons off the lepton leg has not yet been implemented, so you need to 
-set <code>PDF:lepton = off</code> and 
-<code>TimeShower:QEDshowerByL = off</code>. You are further recommended 
-to set <code>SpaceShower:pTmaxMatch = 2</code> to fill the whole phase 
-space with parton showers. This is allowed since the shower and 
-matrix-element behaviours match well over the whole phase space 
-(at least for the first emission). 
- 
-<flag name="SpaceShower:dipoleRecoil" default="off"> 
-Option to switch on the dipole-recoil scheme as described above. 
+Only affects QCD emissions. 
 </flag> 
  
 <h3>Weak showers</h3> 
@@ -405,7 +331,6 @@ Determine which branchings are allowed.
  
 <parm name ="SpaceShower:pTminWeak" default="1.0" min="0.1" max="2.0"> 
 Parton shower cut-off <ei>pT</ei> for weak branchings. 
-</parm> 
  
 <h3>Further variables</h3> 
  
@@ -446,11 +371,6 @@ switched on.
 Azimuthal asymmetry induced by gluon polarization; on/off = true/false. 
 </flag> 
  
-<flag name="SpaceShower:phiPolAsymHard" default="on"> 
-Extend the above azimuthal asymmetry (if on) also back to gluons produced 
-in the hard process itself, where feasible; on/off = true/false. 
-</flag> 
- 
 <flag name="SpaceShower:phiIntAsym" default="on"> 
 Azimuthal asymmetry induced by interference; on/off = true/false. 
 </flag> 
@@ -478,31 +398,10 @@ The fixed factorization scale, in GeV, that would be used in the
 evaluation of parton densities if the <code>flag</code> above is on. 
 </parm> 
  
-<modepick name="SpaceShower:pdfMode" default="0" min="0" max="2"> 
-This setting should not be touched by non-experts. Deviating 
-from the default setting will only lead to consistent results 
-after explicit external intervention. This setting can be useful 
-in the context of interfaces to external code as done when using 
-the flag <code>Merging:runtimeAMCATNLOInterface</code> described under 
-<aloc href="CKKWLMerging">Merging</aloc>. 
-<option value="0">this default setting corresponds to the typical 
-shower treatment of including PDF ratios in the backwards-evolution 
-branching rates, leading to the generation of normal no-emission 
-probabilities. 
-</option> 
-<option value="1">disable the PDF dependence, which leads to the 
-generation of Sudakov factors according to the momentum sum rule. 
-</option> 
-<option value="2">disable the PDF dependence, which leads to the 
-generation of Sudakov factors like option 1, but with a lower cut-off 
-<ei>zMin = 0.5</ei> on the energy-fraction integral. 
-</option> 
-</modepick> 
- 
 <h3>Technical notes</h3> 
  
-Almost everything is equivalent to the algorithm in 
-<ref>Sjo05,Cor10a</ref>. Minor changes are as follows. 
+Almost everything is equivalent to the algorithm in [1]. Minor changes 
+are as follows. 
 <ul> 
 <li> 
 It is now possible to have a second-order running <ei>alpha_s</ei>, 
@@ -549,4 +448,4 @@ photon backwards-evolution in lepton beams.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

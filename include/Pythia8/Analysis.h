@@ -1,6 +1,6 @@
 // Analysis.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for the Sphericity, Thrust, ClusterJet and CellJet classes.
@@ -30,13 +30,13 @@ public:
 
   // Constructor.
   Sphericity(double powerIn = 2., int selectIn = 2) : power(powerIn),
-    select(selectIn), eVal1(), eVal2(), eVal3(), nFew(0) {powerInt = 0;
+    select(selectIn), nFew(0) {powerInt = 0;
     if (abs(power - 1.) < 0.01) powerInt = 1;
     if (abs(power - 2.) < 0.01) powerInt = 2;
     powerMod = 0.5 * power - 1.;}
 
   // Analyze event.
-  bool analyze(const Event& event);
+  bool analyze(const Event& event, ostream& os = cout);
 
   // Return info on results of analysis.
   double sphericity()      const {return 1.5 * (eVal2 + eVal3);}
@@ -47,7 +47,7 @@ public:
     ( (i < 3) ? eVec2 : eVec3 ) ;}
 
   // Provide a listing of the info.
-  void list() const;
+  void list(ostream& os = cout) const;
 
   // Tell how many events could not be analyzed.
   int nError() const {return nFew;}
@@ -82,11 +82,10 @@ class Thrust {
 public:
 
   // Constructor.
-  Thrust(int selectIn = 2) : select(selectIn), eVal1(), eVal2(), eVal3(),
-    nFew(0) {}
+  Thrust(int selectIn = 2) : select(selectIn), nFew(0) {}
 
   // Analyze event.
-  bool analyze(const Event& event);
+  bool analyze(const Event& event, ostream& os = cout);
 
   // Return info on results of analysis.
   double thrust()       const {return eVal1;}
@@ -97,7 +96,7 @@ public:
     ( (i < 3) ? eVec2 : eVec3 ) ;}
 
   // Provide a listing of the info.
-  void list() const;
+  void list(ostream& os = cout) const;
 
   // Tell how many events could not be analyzed.
   int nError() const {return nFew;}
@@ -133,10 +132,6 @@ public:
   SingleClusterJet(Vec4 pJetIn = 0., int motherIn = 0) :
     pJet(pJetIn), mother(motherIn), daughter(0), multiplicity(1),
     isAssigned(false) {pAbs = max( PABSMIN, pJet.pAbs());}
-  SingleClusterJet(const SingleClusterJet& j) {
-    pJet = j.pJet;  mother = j.mother; daughter = j.daughter;
-    multiplicity = j.multiplicity; pAbs = j.pAbs;
-    isAssigned = j.isAssigned; }
   SingleClusterJet& operator=(const SingleClusterJet& j) { if (this != &j)
     { pJet = j.pJet;  mother = j.mother; daughter = j.daughter;
     multiplicity = j.multiplicity; pAbs = j.pAbs;
@@ -184,17 +179,15 @@ public:
   ClusterJet(string measureIn = "Lund", int selectIn = 2, int massSetIn = 2,
     bool preclusterIn = false, bool reassignIn = false) : measure(1),
     select(selectIn), massSet(massSetIn), doPrecluster(preclusterIn),
-    doReassign(reassignIn), yScale(), pTscale(), nJetMin(), nJetMax(),
-    dist2Join(), dist2BigMin(), distPre(), dist2Pre(), nParticles(), nFew(0)
-    {
-      char firstChar = toupper(measureIn[0]);
-      if (firstChar == 'J') measure = 2;
-      if (firstChar == 'D') measure = 3;
-    }
+    doReassign(reassignIn), nFew(0) {
+    char firstChar = toupper(measureIn[0]);
+    if (firstChar == 'J') measure = 2;
+    if (firstChar == 'D') measure = 3;
+  }
 
   // Analyze event.
   bool analyze(const Event& event, double yScaleIn, double pTscaleIn,
-    int nJetMinIn = 1, int nJetMaxIn = 0);
+    int nJetMinIn = 1, int nJetMaxIn = 0, ostream& os = cout);
 
   // Return info on jets produced.
   int  size()      const {return jets.size();}
@@ -208,7 +201,7 @@ public:
     return -1;}
 
   // Provide a listing of the info.
-  void list() const;
+  void list(ostream& os = cout) const;
 
   // Return info on clustering values.
   int    distanceSize() const {return distances.size();}
@@ -314,12 +307,11 @@ public:
     double upperCutIn = 2., double thresholdIn = 0., Rndm* rndmPtrIn = 0)
     : etaMax(etaMaxIn), nEta(nEtaIn), nPhi(nPhiIn), select(selectIn),
     smear(smearIn), resolution(resolutionIn), upperCut(upperCutIn),
-    threshold(thresholdIn), eTjetMin(), coneRadius(), eTseed(), nFew(0),
-    rndmPtr(rndmPtrIn) { }
+    threshold(thresholdIn), nFew(0), rndmPtr(rndmPtrIn) { }
 
   // Analyze event.
   bool analyze(const Event& event, double eTjetMinIn = 20.,
-    double coneRadiusIn = 0.7, double eTseedIn = 1.5);
+    double coneRadiusIn = 0.7, double eTseedIn = 1.5, ostream& os = cout);
 
   // Return info on results of analysis.
   int    size()              const {return jets.size();}
@@ -336,7 +328,7 @@ public:
   double m(int i)            const {return jets[i].pMassive.mCalc();}
 
   // Provide a listing of the info.
-  void list() const;
+  void list(ostream& os = cout) const;
 
   // Tell how many events could not be analyzed: so far never.
   int nError() const {return nFew;}
@@ -430,28 +422,22 @@ public:
     bool useStandardRin = true) : power(powerIn), R(Rin),
     pTjetMin(pTjetMinIn), etaMax(etaMaxIn), select(selectIn),
     massSet(massSetIn), sjHookPtr(sjHookPtrIn), useFJcore(useFJcoreIn),
-    useStandardR(useStandardRin), origSize(), clSize(), clLast(), jtSize(),
-    iMin(), jMin(), dPhi(), dijTemp(), dMin() { isAnti = (power < 0);
-    isKT = (power > 0); R2 = R*R; pT2jetMin = pTjetMin*pTjetMin;
-    cutInEta = (etaMax <= 20.); chargedOnly = (select > 2);
-    visibleOnly = (select == 2); modifyMass = (massSet < 2);
-    noHook = (sjHookPtr == 0);}
-
-  // Destructor.
-  virtual ~SlowJet() {};
+    useStandardR(useStandardRin) { isAnti = (power < 0); isKT = (power > 0);
+    R2 = R*R; pT2jetMin = pTjetMin*pTjetMin; cutInEta = (etaMax <= 20.);
+    chargedOnly = (select > 2); visibleOnly = (select == 2);
+    modifyMass = (massSet < 2); noHook = (sjHookPtr == 0);}
 
   // Analyze event, all in one go.
   bool analyze(const Event& event) {
     if ( !setup(event) ) return false;
     if (useFJcore) return clusterFJ();
-    while (clSize > 0) doStep();
-    return true; }
+    while (clSize > 0) doStep(); return true; }
 
   // Set up list of particles to analyze, and initial distances.
   bool setup(const Event& event);
 
   // Do one recombination step, possibly giving a jet.
-  virtual bool doStep();
+  bool doStep();
 
   // Do several recombinations steps, if possible.
   bool doNSteps(int nStep) { if (useFJcore) return false;
@@ -486,20 +472,20 @@ public:
   double dNext() const {return dMin;}
 
   // Provide a listing of the info.
-  void list(bool listAll = false) const;
+  void list(bool listAll = false, ostream& os = cout) const;
 
   // Give a list of all particles in the jet.
   vector<int> constituents(int j) { vector<int> cTemp;
     for (set<int>::iterator idxTmp = jets[j].idx.begin();
-      idxTmp != jets[j].idx.end(); ++idxTmp) cTemp.push_back( *idxTmp);
-    return cTemp;
+       idxTmp != jets[j].idx.end(); ++idxTmp)
+       cTemp.push_back( *idxTmp); return cTemp;
   }
 
   // Give a list of all particles in the cluster.
   vector<int> clusConstituents(int j) { vector<int> cTemp;
     for (set<int>::iterator idxTmp = clusters[j].idx.begin();
-      idxTmp != clusters[j].idx.end(); ++idxTmp) cTemp.push_back( *idxTmp);
-    return cTemp;
+       idxTmp != clusters[j].idx.end(); ++idxTmp)
+       cTemp.push_back( *idxTmp); return cTemp;
   }
 
   // Give the index of the jet that the particle i of the event record
@@ -517,7 +503,7 @@ public:
     jtSize--;
   }
 
-protected:
+private:
 
   // Constants: could only be changed in the code itself.
   static const int    TIMESTOPRINT;
@@ -545,7 +531,7 @@ protected:
   double dPhi, dijTemp, dMin;
 
   // Find next cluster pair to join.
-  virtual void findNext();
+  void findNext();
 
   // Use FJcore interface to perform clustering.
   bool clusterFJ();

@@ -1,6 +1,6 @@
 // ProcessContainer.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the collected machinery of a process.
@@ -17,7 +17,6 @@
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/PartonDistributions.h"
 #include "Pythia8/PhaseSpace.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
 #include "Pythia8/ResonanceDecays.h"
 #include "Pythia8/Settings.h"
@@ -36,46 +35,33 @@ namespace Pythia8 {
 // The ProcessContainer class combines pointers to matrix element and
 // phase space generator with general generation info.
 
-class ProcessContainer : public PhysicsBase {
+class ProcessContainer {
 
 public:
 
   // Constructor.
-  ProcessContainer(SigmaProcessPtr sigmaProcessPtrIn = 0,
-    PhaseSpacePtr phaseSpacePtrIn = 0) :
+  ProcessContainer(SigmaProcess* sigmaProcessPtrIn = 0,
+    bool externalPtrIn = false, PhaseSpace* phaseSpacePtrIn = 0) :
       sigmaProcessPtr(sigmaProcessPtrIn),
-      phaseSpacePtr(phaseSpacePtrIn), resDecaysPtr(), gammaKinPtr(),
-      matchInOut(), idRenameBeams(), setLifetime(), setQuarkMass(),
-      setLeptonMass(), idNewM(), mRecalculate(), mNewM(), isLHA(), isNonDiff(),
-      isResolved(), isDiffA(), isDiffB(), isDiffC(), isQCD3body(),
-      allowNegSig(), isSameSave(), increaseMaximum(), canVetoResDecay(),
-      lhaStrat(), lhaStratAbs(), processCode(), useStrictLHEFscales(),
-      isAsymLHA(), betazLHA(), newSigmaMx(), nTry(), nSel(), nAcc(),
-      nTryStat(), sigmaMx(), sigmaSgn(), sigmaSum(), sigma2Sum(), sigmaNeg(),
-      sigmaAvg(), sigmaFin(), deltaFin(), weightNow(), wtAccSum(),
-      beamAhasResGamma(), beamBhasResGamma(), beamHasResGamma(),
-      beamHasGamma(), beamAgammaMode(), beamBgammaMode(), gammaModeEvent(),
-      approximatedGammaFlux(), nTryRequested(), nSelRequested(),
-      nAccRequested(), sigmaTemp(), sigma2Temp(), normVar3() {}
+      externalPtr(externalPtrIn), phaseSpacePtr(phaseSpacePtrIn) {}
+
+  // Destructor. Do not destroy external sigmaProcessPtr.
+  ~ProcessContainer() {delete phaseSpacePtr;
+    if (!externalPtr) delete sigmaProcessPtr;}
 
   // Initialize phase space and counters.
-  bool init(bool isFirst, ResonanceDecays* resDecaysPtrIn,
-    SLHAinterface* slhaInterfacePtr, GammaKinematics* gammaKinPtrIn);
+  bool init(bool isFirst, Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn, BeamParticle* beamAPtr,
+    BeamParticle* beamBPtr, Couplings* couplings, SigmaTotal* sigmaTotPtr,
+    ResonanceDecays* resDecaysPtrIn, SLHAinterface* slhaInterfacePtr,
+    UserHooks* userHooksPtr);
 
   // Store or replace Les Houches pointer.
-  void setLHAPtr( LHAupPtr lhaUpPtrIn,  ParticleData* particleDataPtrIn = 0,
-    Settings* settingsPtrIn = 0, Rndm* rndmPtrIn = 0)
-    {lhaUpPtr = lhaUpPtrIn; setLifetime = 0;
-    if (settingsPtrIn && rndmPtrIn) {
-      rndmPtr = rndmPtrIn;
-      setLifetime = settingsPtrIn->mode("LesHouches:setLifetime");
-    }
+  void setLHAPtr( LHAup* lhaUpPtrIn,  ParticleData* particleDataPtrIn = 0)
+    {lhaUpPtr = lhaUpPtrIn;
     if (particleDataPtrIn != 0) particleDataPtr = particleDataPtrIn;
     if (sigmaProcessPtr != 0) sigmaProcessPtr->setLHAPtr(lhaUpPtr);
     if (phaseSpacePtr != 0) phaseSpacePtr->setLHAPtr(lhaUpPtr);}
-
-  // Switch to new beam particle identities; for similar hadrons only.
-  void updateBeamIDs() {phaseSpacePtr->updateBeamIDs();}
 
   // Update the CM energy of the event.
   void newECM(double eCM) {phaseSpacePtr->newECM(eCM);}
@@ -101,18 +87,11 @@ public:
   // Reset statistics on events generated so far.
   void reset();
 
-  // Set whether (photon) beam is resolved or unresolved.
-  // Method propagates the choice of photon process type to beam pointers.
-  void setBeamModes(bool setVMD = false, bool isSampled = true);
-
   // Process name and code, and the number of final-state particles.
-  string name()             const {return sigmaProcessPtr->name();}
-  int    code()             const {return sigmaProcessPtr->code();}
-  int    nFinal()           const {return sigmaProcessPtr->nFinal();}
-  bool   isSUSY()           const {return sigmaProcessPtr->isSUSY();}
-  bool   isNonDiffractive() const {return isNonDiff;}
-  bool   isSoftQCD()        const {return (code() > 100 && code() < 107);}
-  bool   isElastic()        const {return (code() == 102);}
+  string name()        const {return sigmaProcessPtr->name();}
+  int    code()        const {return sigmaProcessPtr->code();}
+  int    nFinal()      const {return sigmaProcessPtr->nFinal();}
+  bool   isSUSY()      const {return sigmaProcessPtr->isSUSY();}
 
   // Member functions for info on generation process.
   bool   newSigmaMax() const {return newSigmaMx;}
@@ -121,16 +100,9 @@ public:
   long   nSelected()   const {return nSel;}
   long   nAccepted()   const {return nAcc;}
   double weightSum()   const {return wtAccSum;}
-  double sigmaSelMC( bool doAccumulate = true)
-    { if (nTry > nTryStat && doAccumulate) sigmaDelta(); return sigmaAvg;}
-  double sigmaMC(    bool doAccumulate = true)
-    { if (nTry > nTryStat && doAccumulate) sigmaDelta(); return sigmaFin;}
-  double deltaMC(    bool doAccumulate = true)
-    { if (nTry > nTryStat && doAccumulate) sigmaDelta(); return deltaFin;}
-
-  // New value for switched beam identity or energy (for SoftQCD processes).
-  double sigmaMaxSwitch() {sigmaMx = phaseSpacePtr->sigmaMaxSwitch();
-    return sigmaMx;}
+  double sigmaSelMC()  {if (nTry > nTryStat) sigmaDelta(); return sigmaAvg;}
+  double sigmaMC()     {if (nTry > nTryStat) sigmaDelta(); return sigmaFin;}
+  double deltaMC()     {if (nTry > nTryStat) sigmaDelta(); return deltaFin;}
 
   // Some kinematics quantities.
   int    id1()         const {return sigmaProcessPtr->id(1);}
@@ -162,34 +134,40 @@ private:
   static const int N12SAMPLE, N3SAMPLE;
 
   // Pointer to the subprocess matrix element. Mark if external.
-  SigmaProcessPtr  sigmaProcessPtr;
+  SigmaProcess*    sigmaProcessPtr;
+  bool             externalPtr;
 
   // Pointer to the phase space generator.
-  PhaseSpacePtr    phaseSpacePtr;
+  PhaseSpace*      phaseSpacePtr;
+
+  // Pointer to various information on the generation.
+  Info*            infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData*    particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*            rndmPtr;
 
   // Pointer to ResonanceDecays object for sequential resonance decays.
   ResonanceDecays* resDecaysPtr;
 
-  // Pointer to LHAup for generating external events.
-  LHAupPtr         lhaUpPtr;
+  // Pointer to userHooks object for user interaction with program.
+  UserHooks*       userHooksPtr;
 
-  // Pointer to the phase space generator of photons from leptons.
-  GammaKinematics* gammaKinPtr;
+  // Pointer to LHAup for generating external events.
+  LHAup*           lhaUpPtr;
 
   // Possibility to modify Les Houches input.
   bool   matchInOut;
-  int    idRenameBeams, setLifetime, setQuarkMass, setLeptonMass, idNewM[9];
-  double mRecalculate, mNewM[9];
+  int    idRenameBeams, setLifetime, setLeptonMass, idLep[3];
+  double mRecalculate, mLep[3];
 
   // Info on process.
   bool   isLHA, isNonDiff, isResolved, isDiffA, isDiffB, isDiffC, isQCD3body,
          allowNegSig, isSameSave, increaseMaximum, canVetoResDecay;
-  int    lhaStrat, lhaStratAbs, processCode;
+  int    lhaStrat, lhaStratAbs;
   bool   useStrictLHEFscales;
-
-  // Boost Les Houches events to CM frame (when originally asymmetric).
-  bool   isAsymLHA;
-  double betazLHA;
 
   // Statistics on generation process. (Long integers just in case.)
   bool   newSigmaMx;
@@ -197,22 +175,9 @@ private:
   double sigmaMx, sigmaSgn, sigmaSum, sigma2Sum, sigmaNeg, sigmaAvg,
          sigmaFin, deltaFin, weightNow, wtAccSum;
 
-  // Flags to store whether beam has a (un)resolved photon.
-  bool   beamAhasResGamma, beamBhasResGamma, beamHasResGamma, beamHasGamma;
-  int    beamAgammaMode, beamBgammaMode, gammaModeEvent;
-
-  // Use approximated photon flux for process sampling.
-  bool   approximatedGammaFlux;
-
   // Statistics for Les Houches event classification.
   vector<int> codeLHA;
   vector<long> nTryLHA, nSelLHA, nAccLHA;
-
-  // More fine-grained event counting.
-  long nTryRequested, nSelRequested, nAccRequested;
-
-  // Temporary summand for handling (weighted) events when vetoes are applied.
-  double sigmaTemp, sigma2Temp, normVar3;
 
   // Estimate integrated cross section and its uncertainty.
   void sigmaDelta();
@@ -229,13 +194,14 @@ class SetupContainers {
 public:
 
   // Constructor.
-  SetupContainers() : nVecA(), nVecB() {}
+  SetupContainers() {}
 
   // Initialization assuming all necessary data already read.
-  bool init(vector<ProcessContainer*>& containerPtrs, Info* infoPtr);
+  bool init(vector<ProcessContainer*>& containerPtrs, Info* infoPtr,
+    Settings& settings, ParticleData* particleDataPtr, Couplings* couplings);
 
   // Initialization of a second hard process.
-  bool init2(vector<ProcessContainer*>& container2Ptrs, Info* infoPtr);
+  bool init2(vector<ProcessContainer*>& container2Ptrs, Settings& settings);
 
 private:
 

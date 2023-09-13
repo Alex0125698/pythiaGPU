@@ -1,6 +1,6 @@
 // HiddenValleyFragmentation.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the classes for Hidden-Valley fragmentation.
@@ -30,33 +30,25 @@ class HVStringFlav : public StringFlav {
 public:
 
   // Constructor.
-  HVStringFlav() : separateFlav(), nFlav(), probFlav(), probDiquark(),
-    probVector(), probKeepEta1(), sumProbFlav(), probKeepLast(),
-    probVecEta1() {}
+  HVStringFlav() {}
 
   // Destructor.
   ~HVStringFlav() {}
 
   // Initialize data members.
-  void init() override;
+  void init(Settings& settings, Rndm* rndmPtrIn);
 
   // Pick a new flavour (including diquarks) given an incoming one.
-  FlavContainer pick(FlavContainer& flavOld, double, double, bool) override;
+  FlavContainer pick(FlavContainer& flavOld);
 
   // Combine two flavours (including diquarks) to produce a hadron.
-  int combine(FlavContainer& flav1, FlavContainer& flav2) override;
-
-  // Lightest flavour-neutral meson.
-  int idLightestNeutralMeson() override { return 4900111; }
+  int combine(FlavContainer& flav1, FlavContainer& flav2);
 
 private:
 
   // Initialization data, to be read from Settings.
-  bool   separateFlav;
   int    nFlav;
-  vector<double> probFlav;
-  double probDiquark, probVector, probKeepEta1, sumProbFlav, probKeepLast,
-    probVecEta1;
+  double probVector;
 
 };
 
@@ -75,7 +67,7 @@ public:
   ~HVStringPT() {}
 
   // Initialize data members.
-  void init() override;
+  void init(Settings& settings, ParticleData& particleData, Rndm* rndmPtrIn);
 
 };
 
@@ -88,21 +80,21 @@ class HVStringZ : public StringZ {
 public:
 
   // Constructor.
-  HVStringZ() : mqv2(), bmqv2(), rFactqv(), mhvMeson() {}
+  HVStringZ() {}
 
   // Destructor.
-  virtual ~HVStringZ() {}
+  ~HVStringZ() {}
 
   // Initialize data members.
-  void init() override;
+  void init(Settings& settings, ParticleData& particleData, Rndm* rndmPtrIn);
 
   // Fragmentation function: top-level to determine parameters.
-  double zFrag( int idOld, int idNew = 0, double mT2 = 1.) override;
+  double zFrag( int idOld, int idNew = 0, double mT2 = 1.);
 
   // Parameters for stopping in the middle; for now hardcoded.
-  virtual double stopMass()    override {return 1.5 * mhvMeson;}
-  virtual double stopNewFlav() override {return 2.0;}
-  virtual double stopSmear()   override {return 0.2;}
+  virtual double stopMass()    {return 1.5 * mhvMeson;}
+  virtual double stopNewFlav() {return 2.0;}
+  virtual double stopSmear()   {return 0.2;}
 
 private:
 
@@ -116,36 +108,41 @@ private:
 // The HiddenValleyFragmentation class contains the routines
 // to fragment a Hidden Valley partonic system.
 
-class HiddenValleyFragmentation : public PhysicsBase {
+class HiddenValleyFragmentation {
 
 public:
 
   // Constructor.
-  HiddenValleyFragmentation() : doHVfrag(false), separateFlav(), nFlav(),
-    hvOldSize(), hvNewSize(), idEnd1(), idEnd2(), mhvMeson(), mSys() {}
+  HiddenValleyFragmentation() : doHVfrag(false), hvFlavSelPtr(NULL),
+    hvPTSelPtr(NULL), hvZSelPtr(NULL) {}
+
+  // Destructor.
+  ~HiddenValleyFragmentation() { if (doHVfrag) {
+    if (hvZSelPtr) delete hvZSelPtr; if (hvPTSelPtr) delete hvPTSelPtr;
+    if (hvFlavSelPtr) delete hvFlavSelPtr;} }
 
   // Initialize and save pointers.
-  bool init();
+  bool init(Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn);
 
   // Do the fragmentation: driver routine.
   bool fragment(Event& event);
 
-protected:
-
-  virtual void onInitInfoPtr() override {
-    registerSubObject(hvStringFrag);
-    registerSubObject(hvMinistringFrag);
-    registerSubObject(hvFlavSel);
-    registerSubObject(hvPTSel);
-    registerSubObject(hvZSel);
-  }
-
 private:
 
+  // Pointer to various information on the generation.
+  Info*         infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData* particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*         rndmPtr;
+
   // Data mambers.
-  bool          doHVfrag, separateFlav;
-  int           nFlav, hvOldSize, hvNewSize, idEnd1, idEnd2;
-  double        mhvMeson, mhvMin[9], mSys;
+  bool          doHVfrag;
+  int           nFlav, hvOldSize, hvNewSize;
+  double        mhvMeson, mSys;
   vector<int>   ihvParton;
 
   // Configuration of colour-singlet systems.
@@ -161,15 +158,12 @@ private:
   MiniStringFragmentation hvMinistringFrag;
 
   // Pointers to classes for flavour, pT and z generation in HV sector.
-  HVStringFlav hvFlavSel;
-  HVStringPT   hvPTSel;
-  HVStringZ    hvZSel;
+  StringFlav*   hvFlavSelPtr;
+  StringPT*     hvPTSelPtr;
+  StringZ*      hvZSelPtr;
 
-  // Extract HV-particles from event to hvEvent.
+  // Extract HV-particles from event to hvEvent. Assign HV-colours.
   bool extractHVevent(Event& event);
-
-  // Trace HV-colours of HV-partons.
-  bool traceHVcols();
 
   // Collapse of low-mass system to one HV-meson.
   bool collapseToMeson();

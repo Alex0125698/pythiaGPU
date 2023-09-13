@@ -1,6 +1,6 @@
 // SigmaQCD.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for QCD process differential cross sections.
@@ -25,8 +25,7 @@ public:
   Sigma0nonDiffractive() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaND();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 1);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaND();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol() {}
@@ -52,8 +51,7 @@ public:
   Sigma0AB2AB() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaEl();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 2);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaEl();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -79,8 +77,7 @@ public:
   Sigma0AB2XB() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaXB();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 3);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaXB();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -107,8 +104,7 @@ public:
   Sigma0AB2AX() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaAX();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 4);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaAX();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -135,8 +131,7 @@ public:
   Sigma0AB2XX() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaXX();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 5);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaXX();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -164,8 +159,7 @@ public:
   Sigma0AB2AXB() {}
 
   // Evaluate sigma.
-  virtual double sigmaHat() {if (!doVarE) return sigmaTotPtr->sigmaAXB();
-    return sigmaCmbPtr->sigmaPartial(idA, idB, infoPtr->eCM(), mA, mB, 6);}
+  virtual double sigmaHat() {return sigmaTotPtr->sigmaAXB();}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -190,7 +184,7 @@ class Sigma2gg2gg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2gg() : sigTS(), sigUS(), sigTU(), sigSum(), sigma() {}
+  Sigma2gg2gg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -222,8 +216,7 @@ class Sigma2gg2qqbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2qqbar() : nQuarkNew(), idNew(), mNew(), m2New(), sigTS(), sigUS(),
-    sigSum(), sigma() {}
+  Sigma2gg2qqbar() {}
 
   // Initialize process.
   virtual void initProc();
@@ -263,7 +256,7 @@ class Sigma2qg2qg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2qg() : sigTS(), sigTU(), sigSum(), sigma() {}
+  Sigma2qg2qg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -296,7 +289,7 @@ class Sigma2qq2qq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2qq() : sigT(), sigU(), sigTU(), sigST(), sigSum() {}
+  Sigma2qq2qq() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -328,7 +321,7 @@ class Sigma2qqbar2gg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2gg() : sigTS(), sigUS(), sigSum(), sigma() {}
+  Sigma2qqbar2gg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -360,8 +353,7 @@ class Sigma2qqbar2qqbarNew : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2qqbarNew() : nQuarkNew(), idNew(), mNew(), m2New(), sigS(),
-    sigma() {}
+  Sigma2qqbar2qqbarNew() {}
 
   // Initialize process.
   virtual void initProc();
@@ -400,8 +392,7 @@ class Sigma2gg2QQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn),
-    sigTS(), sigUS(), sigSum(), sigma(), openFracPair() {}
+  Sigma2gg2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -443,8 +434,7 @@ class Sigma2qqbar2QQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn),
-    sigma(), openFracPair() {}
+  Sigma2qqbar2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -486,7 +476,7 @@ class Sigma3gg2ggg : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3gg2ggg() : sigma(), pp() {}
+  Sigma3gg2ggg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -525,7 +515,7 @@ class Sigma3qqbar2ggg : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qqbar2ggg() : config(), a(), b(), pp(), ab(), sigma() {}
+  Sigma3qqbar2ggg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -574,7 +564,7 @@ class Sigma3qg2qgg : public Sigma3qqbar2ggg {
 public:
 
   // Constructor.
-  Sigma3qg2qgg() : sigma() {}
+  Sigma3qg2qgg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -609,7 +599,7 @@ class Sigma3gg2qqbarg : public Sigma3qqbar2ggg {
 public:
 
   // Constructor.
-  Sigma3gg2qqbarg() : nQuarkNew() {}
+  Sigma3gg2qqbarg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -643,7 +633,7 @@ class Sigma3qq2qqgDiff : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qq2qqgDiff() : config(), s(), t(), u(), sp(), tp(), up(), sigma() {}
+  Sigma3qq2qqgDiff() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -693,7 +683,7 @@ class Sigma3qqbar2qqbargDiff : public Sigma3qq2qqgDiff {
 public:
 
   // Constructor.
-  Sigma3qqbar2qqbargDiff() : nQuarkNew() {}
+  Sigma3qqbar2qqbargDiff() {}
 
   // Initialize process.
   virtual void initProc();
@@ -731,7 +721,7 @@ class Sigma3qg2qqqbarDiff : public Sigma3qq2qqgDiff {
 public:
 
   // Constructor.
-  Sigma3qg2qqqbarDiff() : nQuarkNew(), sigma() {}
+  Sigma3qg2qqqbarDiff() {}
 
   // Initialize process.
   virtual void initProc();
@@ -771,8 +761,7 @@ class Sigma3qq2qqgSame : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qq2qqgSame() : config(), s(), t(), u(), sp(), tp(), up(), ssp(),
-    ttp(), uup(), s_sp(), t_tp(), u_up(), sigma() {}
+  Sigma3qq2qqgSame() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -855,7 +844,7 @@ class Sigma3qg2qqqbarSame : public Sigma3qq2qqgSame {
 public:
 
   // Constructor.
-  Sigma3qg2qqqbarSame() : sigma() {}
+  Sigma3qg2qqqbarSame() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();

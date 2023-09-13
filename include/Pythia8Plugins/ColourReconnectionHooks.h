@@ -1,6 +1,6 @@
 // ColourReconnectionHooks.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains two UserHooks that, along with the internal models,
@@ -60,8 +60,7 @@ public:
 
     // Double diffraction not yet implemented, so return without action.
     // (But works for internal move implementation.)
-    if (infoPtr->isDiffractiveA() && infoPtr->isDiffractiveB())
-      return true;
+    if (infoPtr->isDiffractiveA() && infoPtr->isDiffractiveB()) return true;
 
     // Initial setup: relevant gluons and coloured partons.
     if (!setupConfig( event)) return false;
@@ -200,14 +199,15 @@ private:
     nGlu = iGlu.size();
     nCol = colMap.size();
     if (int(acolMap.size()) != nCol) {
-      loggerPtr->ERROR_MSG("map sizes do not match");
+      infoPtr->errorMsg("Error in MBReconUserHooks: map sizes do not match");
       return false;
     }
     map<int, int>::iterator colM = colMap.begin();
     map<int, int>::iterator acolM = acolMap.begin();
     for (int iCol = 0; iCol < nCol; ++iCol) {
       if (colM->first != acolM->first) {
-        loggerPtr->ERROR_MSG("map elements do not match");
+        infoPtr->errorMsg("Error in MBReconUserHooks: map elements"
+          " do not match");
         return false;
       }
       ++colM;
@@ -223,7 +223,7 @@ private:
       for (int jAC = iAC + 1; jAC < nAllCol; ++jAC) {
         j = iAllCol[jAC];
         lambdaij[nAllCol * iAC + jAC]
-          = log1p(m2( event[i], event[j]) / m2Ref);
+          = log(1. + m2( event[i], event[j]) / m2Ref);
       }
     }
 
@@ -798,7 +798,7 @@ private:
       + abs(tqrkDiff.pz()) + abs(tqrkDiff.e()) + abs(tbarDiff.px())
       + abs(tbarDiff.py()) + abs(tbarDiff.pz()) + abs(tqrkDiff.e());
     if (totErr > pTolerance) {
-      loggerPtr->ERROR_MSG("Error in t/tbar daughter search");
+      infoPtr->errorMsg("Error in TopReconUserHooks::checkClassification");
       cout << "\n Error in t/tbar daughter search: \n t    difference "
            << tqrkDiff << " tbar difference "<< tbarDiff;
       listClassification();
@@ -876,7 +876,7 @@ private:
     }
     int nGR    = iGR.size();
     int iR, colT, acolT, iColT, iAcolT, colR, acolR, iColR, iAcolR;
-    double mTR2, mTR2now, dLam = 0.0, lamT, lamNow, lamRec;
+    double mTR2, mTR2now, dLam, lamT, lamNow, lamRec;
 
     // Loop through all top gluons; study fraction given by strength.
     if (nGT > 0 && nGR > 0)
@@ -904,24 +904,24 @@ private:
         acolT  = event[iGT[iT]].acol();
         iColT  = acolMap[colT];
         iAcolT = colMap[acolT];
-        lamT   = log1p(m2( event[iGT[iT]], event[iColT]) / m2Ref)
-               + log1p(m2( event[iGT[iT]], event[iAcolT]) / m2Ref);
+        lamT   = log(1. + m2( event[iGT[iT]], event[iColT]) / m2Ref)
+               + log(1. + m2( event[iGT[iT]], event[iAcolT]) / m2Ref);
         for (int ii = 0; ii < nGR; ++ii) {
           colR   = event[iGR[ii]].col();
           acolR  = event[iGR[ii]].acol();
           iColR  = acolMap[colR];
           iAcolR = colMap[acolR];
           lamNow = lamT
-                 + log1p(m2( event[iGR[ii]], event[iColR]) / m2Ref)
-                 + log1p(m2( event[iGR[ii]], event[iAcolR]) / m2Ref);
-          lamRec = log1p(m2( event[iGT[iT]], event[iColR]) / m2Ref)
-                 + log1p(m2( event[iGT[iT]], event[iAcolR]) / m2Ref)
-                 + log1p(m2( event[iGR[ii]], event[iColT]) / m2Ref)
-                 + log1p(m2( event[iGR[ii]], event[iAcolT]) / m2Ref);
+                 + log(1. + m2( event[iGR[ii]], event[iColR]) / m2Ref)
+                 + log(1. + m2( event[iGR[ii]], event[iAcolR]) / m2Ref);
+          lamRec = log(1. + m2( event[iGT[iT]], event[iColR]) / m2Ref)
+                 + log(1. + m2( event[iGT[iT]], event[iAcolR]) / m2Ref)
+                 + log(1. + m2( event[iGR[ii]], event[iColT]) / m2Ref)
+                 + log(1. + m2( event[iGR[ii]], event[iAcolT]) / m2Ref);
           if (lamRec - lamNow < dLam) {iR = ii; dLam = lamRec - lamNow;}
         }
-        if (mode == 5 && dLam > 0.) continue;
       }
+      if (mode == 5 && dLam > 0.) continue;
 
       // Swap top and rest gluon colour and anticolour.
       ++nRec;

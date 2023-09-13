@@ -23,8 +23,7 @@ be compiled with HepMC support, using the same version of HepMC used when
 compiling RIVET. This is setup through the PYTHIA <code>configure</code> 
 script e.g. 
 <pre> 
-  ./configure --with-hepmc=/path/to/HepMC 
- 
+  ./configure --with-hepmc=/path/to/HepMC --with-hepmcversion=HepMC.version.number 
 </pre> 
 The PYTHIA library itself does not need to be recompiled. 
  
@@ -36,7 +35,6 @@ the main program can be built and used as follows
 <pre> 
   make main42 
   ./main42 main42.cmnd main42.hepmc 
- 
 </pre> 
 The first argument is the input file which provides the options for event 
 generation, while the second is the output file where the HepMC events 
@@ -46,7 +44,6 @@ should be written.
 This HepMC file may now be read and processed by RIVET 
 <pre> 
   rivet --analysis=ANALYSIS_NAME main42.hepmc 
- 
 </pre> 
 where <code>ANALYSIS_NAME</code> is a 
 <a href="http://projects.hepforge.org/rivet/analyses">built-in RIVET 
@@ -65,95 +62,9 @@ pipe. This is done with the <code>mkfifo</code> command
   mkfifo my_fifo 
   ./main42.exe main42.cmnd my_fifo & 
   rivet --analysis=ANALYSIS_NAME my_fifo 
- 
 </pre> 
 Note that <code>main42</code> is run in the background. 
  
-<h3>Compiling PYTHIA with RIVET </h3> 
- 
-It is also possible to compile a PYTHIA main program together with the RIVET 
-library. To facilitate this, there is a header file called 
-<code>Pythia8Plugins/Pythia8Rivet.h</code> defining a helper class called 
-<code>Pythia8::Pythia8Rivet</code>. To use this class, a main program needs to 
-be modified as follows: 
- 
-<pre> 
-  #include "Pythia8/Pythia.h" 
- 
-  // Include the Pythia8Rivet header file. 
-  #include "Pythia8Plugins/Pythia8Rivet.h" 
- 
-  int main() { 
- 
-    Pythia pythia; 
- 
-    // Setup the run by reading strings or a command file. 
- 
-    pythia.init(); 
- 
-    // Create a Pythia8Rivet object and add (one or several) analyses. 
- 
-    Pythia8Rivet rivet(pythia, "outputfile.yoda"); 
-    rivet.addAnalysis("AnalysisName"); 
-    rivet.addAnalysis("AnotherAnalysisName"); 
- 
-    for (int iEvent = 0; iEvent &lt; 100; ++iEvent) { 
-      if (!pythia.next()) continue; 
- 
-      // Push event to Rivet. 
-      rivet(); 
- 
-      // Maybe do other non-Rivet analysis. 
-    } 
- 
-    // Tell Rivet to finalise the run. 
-    rivet.done(); 
- 
-  } 
- 
-</pre> 
-To compile the program, information about where Rivet and its 
-dependencies are installed is needed. This information is available 
-via the <code>rivet-config</code> script via the following. 
-<pre> 
-  rivet-config --includedir --libdir --cppflags --libs 
- 
-</pre> 
- 
-<p/> 
-The example program <code>main111.cc</code> includes optional analysis with 
-<code>Pythia8::Pythia8Rivet</code>. To use it configure Pythia with 
-the option <code>--with-rivet</code>. This will automatically use the 
-<code>rivet-config</code> script to determine all the necessary 
-paths. If one wishes to pass a specific config script, use the option 
-<code>--with-rivet-config=CONFIG</code> where <code>CONFIG</code> is 
-the Rivet configuration script. Note, a RIVET configuration script 
-must be available to compile the Rivet examples. 
- 
-<p/> 
-The most common user case (run PYTHIA with a run card, using one or 
-several RIVET analyses) is implemented in the example <code>main93</code>. 
-The sample command file <code>main93.cmnd</code> provides a good starting 
-point. The lines: 
-<pre> 
-    Main:runRivet = on 
-    Main:analyses = ATLAS_2010_S8817804,ALICE_2010_S8625980,CMS_2011_S8957746 
-    Main:writeHepMC = on 
- 
-</pre> 
-provides the switch to run RIVET, and gives the user the possibility 
-to add any number of (installed) RIVET analyses to the run, as a comma 
-separated list. The last line is the switch needed to write a HepMC 
-file.  The example is run with: 
-<pre> 
-  ./main93 -c main93.cmnd 
- 
-</pre> 
-and a .yoda file (the RIVET output) is then written. 
- 
-There are several other useful command line options to <code>main93</code>. 
-They are all displayed by running <code>./main93 -h</code>. 
- 
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

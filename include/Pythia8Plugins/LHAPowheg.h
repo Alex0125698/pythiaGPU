@@ -1,13 +1,12 @@
 // LHAPowheg.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 // Author: Philip Ilten, May 2015.
 
 #ifndef Pythia8_LHAPowheg_H
 #define Pythia8_LHAPowheg_H
 
-#include "Pythia8/Plugins.h"
 #include "Pythia8Plugins/LHAFortran.h"
 #include <sys/stat.h>
 #include <unistd.h>
@@ -50,22 +49,18 @@ extern "C" {
 
 //==========================================================================
 
-// A plugin class to generate events with hard processes from
-// POWHEGBOX matrix elements. See http://powhegbox.mib.infn.it/ for
-// further details on POWHEGBOX.
-
-// WARNING: If one wishes to use LHAPDF with both POWHEGBOX and
-// Pythia, only LHAPDF 6 should be used. If not, and differing PDF
-// sets are used between POWHEGBOX and Pythia, POWHEGBOX will not
-// re-initialize the PDF set and consequently will use the PDF set
-// last used by Pythia.
+// A derived class from LHAupFortran which allows a POWHEGBOX binary
+// to be directly interfaced with Pythia via a plugin structure. The
+// class PowhegProcs handles the loading of these plugin libraries.
 
 class LHAupPowheg : public LHAupFortran {
 
 public:
 
   // Constructor.
-  LHAupPowheg(Pythia* pythiaPtr, Settings* settingsPtr, Logger* loggerPtr);
+  LHAupPowheg(Pythia *pythiaIn);
+
+protected:
 
   // Call pwhginit and fill the HEPRUP commonblock.
   bool fillHepRup();
@@ -75,26 +70,14 @@ public:
 
 private:
 
-  // Read a POWHEG settings string.
-  bool readString(string line);
+  // The PYTHIA object.
+  Pythia *pythia;
 
-  // Read a POWHEG settings file.
-  bool readFile(string name);
+  // The run directory.
+  string dir;
 
-  // Write out the input for POWHEG.
-  bool init();
-
-  // The external random number generator.
-  Rndm* rndmPtr{};
-
-  // Logger.
-  Logger* loggerPtr{};
-
-  // The POWHEG run directory and PDF file (if not LHAPDF).
-  string dir, pdf;
-
-  // The map of POWHEG settings.
-  map<string, string> settings;
+  // Flag to reset the random number generator from Pythia.
+  bool random;
 
   // The current working directory.
   char cwd[FILENAME_MAX];
@@ -105,27 +88,14 @@ private:
 
 // Constructor.
 
-LHAupPowheg::LHAupPowheg(Pythia *pythiaPtr, Settings *settingsPtr,
-  Logger* loggerPtrIn) : loggerPtr(loggerPtrIn), dir("powhegrun"), pdf("") {
+LHAupPowheg::LHAupPowheg(Pythia *pythiaIn) : dir("./") {
 
-  // Load the settings.
-  if (settingsPtr != nullptr) {
-    dir = settingsPtr->word("POWHEG:dir");
-    pdf = settingsPtr->word("POWHEG:pdf");
-
-    // Read the command files and strings.
-    for (string cmndFile : settingsPtr->wvec("POWHEG:cmndFiles"))
-      readFile(cmndFile);
-    for (string cmnd : settingsPtr->wvec("POWHEG:cmnds"))
-      readString(cmnd);
-  }
-
-  // Set up the random number generator.
-  if (pythiaPtr != nullptr) {
-    if (settingsPtr->isFlag("POWHEG:pythiaRandom")) rndmPtr = &pythiaPtr->rndm;
-  }
+  pythia = pythiaIn;
+  if (pythia && pythia->settings.isWord("POWHEG:dir"))
+    dir = pythia->settings.word("POWHEG:dir");
+  if (pythia && pythia->settings.isFlag("POWHEG:pythiaRandom"))
+    random = pythia->settings.flag("POWHEG:pythiaRandom");
   mkdir(dir.c_str(), 0777);
-  init();
 
 }
 
@@ -136,6 +106,7 @@ LHAupPowheg::LHAupPowheg(Pythia *pythiaPtr, Settings *settingsPtr,
 bool LHAupPowheg::fillHepRup() {
 
   // Set multiple random seeds to none.
+  if (!pythia) return false;
   getcwd(cwd, sizeof(cwd));
   chdir(dir.c_str());
   strcpy(pwhg_rnd_.rnd_cwhichseed, "none");
@@ -149,7 +120,7 @@ bool LHAupPowheg::fillHepRup() {
   resetcnt_("upper bound failures in generation of radiation", 47);
   resetcnt_("vetoed radiation", 16);
   chdir(cwd);
-  return fillHepEup();
+  return true;
 
 }
 
@@ -160,15 +131,16 @@ bool LHAupPowheg::fillHepRup() {
 bool LHAupPowheg::fillHepEup() {
 
   // Change directory.
+  if (!pythia) return false;
   getcwd(cwd, sizeof(cwd));
   chdir(dir.c_str());
 
   // Reset the random block if requested.
-  if (rndmPtr != nullptr) {
+  if (random) {
     r48st1_.i97 = 97;
     r48st1_.j97 = 33;
-    r48st1_.c = rndmPtr->flat();
-    for (int i = 0; i < 97; ++i) r48st1_.u[i] = rndmPtr->flat();
+    r48st1_.c = pythia->rndm.flat();
+    for (int i = 0; i < 97; ++i) r48st1_.u[i] = pythia->rndm.flat();
   }
 
   // Generate the event.
@@ -180,92 +152,16 @@ bool LHAupPowheg::fillHepEup() {
 
 //--------------------------------------------------------------------------
 
-// Read a POWHEG settings string. If a setting is repeated a warning
-// is printed but the most recent setting is used.
+// Define external handles to the plugin for dynamic loading.
 
-bool LHAupPowheg::readString(string line) {
+extern "C" {
 
-  // Copy string without initial and trailing blanks.
-  if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
-  int firstChar = line.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = line.find_last_not_of(" \n\t\v\b\r\f\a");
-  line = line.substr(firstChar, lastChar + 1 - firstChar);
+  LHAupPowheg* newLHAupPowheg(Pythia *PythiaIn) {
+    return new LHAupPowheg(PythiaIn);}
 
-  // Find the key.
-  firstChar = line.find_first_of("  \t\f\v\n\r");
-  string key = toLower( line.substr(0, firstChar), false);
-
-  // Add the setting.
-  if (key.size() > 0
-    && key.find_first_of("abcdedfghijklmnopqrtsuvwxyz") == 0) {
-    map<string, string>::iterator setting = settings.find(key);
-    if (setting != settings.end()) {
-      if (loggerPtr) loggerPtr->WARNING_MSG(
-        "replacing previous POWHEG setting for " + key);
-      setting->second = line;
-    } else settings[key] = line;
-  }
-  return true;
+  void deleteLHAupPowheg(LHAupPowheg *lhaupIn) {delete lhaupIn;}
 
 }
-
-//--------------------------------------------------------------------------
-
-// Read a POWHEG settings file.
-
-bool LHAupPowheg::readFile(string name) {
-
-  fstream config(name.c_str(), ios::in); string line;
-  while (getline(config, line, '\n')) readString(line);
-  config.close();
-  return true;
-
-}
-
-//--------------------------------------------------------------------------
-
-// Write the input for POWHEG.
-
-bool LHAupPowheg::init() {
-
-  // Copy over the PDF file if needed.
-  if (pdf != "") {
-    fstream pdfin(pdf.c_str(), ios::in | ios::binary);
-    fstream pdfout((dir + "/" + pdf.substr(0, pdf.find_last_of("/"))).c_str(),
-      ios::out | ios::binary);
-    pdfout << pdfin.rdbuf();
-    pdfin.close();
-    pdfout.close();
-  }
-
-  // Copy the settings to the configuration file.
-  fstream config((dir + "/" + "powheg.input").c_str(), ios::out);
-  for (map<string, string>::iterator setting = settings.begin();
-    setting != settings.end(); ++setting) config << setting->second << "\n";
-  config.close();
-  return true;
-
-}
-
-//--------------------------------------------------------------------------
-
-// Register POWHEG settings.
-
-void powhegSettings(Settings *settingsPtr) {
-  settingsPtr->addWord("POWHEG:dir", "powhegrun");
-  settingsPtr->addWord("POWHEG:pdf", "");
-  settingsPtr->addWVec("POWHEG:cmnds", {});
-  settingsPtr->addWVec("POWHEG:cmndFiles", {});
-  settingsPtr->addFlag("POWHEG:pythiaRandom", true);
-}
-
-//--------------------------------------------------------------------------
-
-// Declare the plugin.
-
-PYTHIA8_PLUGIN_CLASS(LHAup, LHAupPowheg, true, true, true)
-PYTHIA8_PLUGIN_SETTINGS(powhegSettings)
-PYTHIA8_PLUGIN_VERSIONS(PYTHIA_VERSION_INTEGER)
 
 //==========================================================================
 

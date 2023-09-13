@@ -1,6 +1,6 @@
 // SigmaNewGaugeBosons.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for new-gauge-boson-process differential cross sections.
@@ -59,11 +59,7 @@ class Sigma1ffbar2gmZZprime : public Sigma1ffbarZprimeWprime {
 public:
 
   // Constructor.
-  Sigma1ffbar2gmZZprime() : gmZmode(), maxZpGen(), mRes(), GammaRes(),
-    m2Res(), GamMRat(), sin2tW(), cos2tW(), thetaWRat(), mZ(), GammaZ(), m2Z(),
-    GamMRatZ(), afZp(), vfZp(), coupZpWW(), anglesZpWW(), gamSum(), gamZSum(),
-    ZSum(), gamZpSum(), ZZpSum(), ZpSum(), gamNorm(), gamZNorm(), ZNorm(),
-    gamZpNorm(), ZZpNorm(), ZpNorm(), particlePtr() {}
+  Sigma1ffbar2gmZZprime() {}
 
   // Initialize process.
   virtual void initProc();
@@ -97,7 +93,7 @@ private:
          gamNorm, gamZNorm, ZNorm, gamZpNorm, ZZpNorm, ZpNorm;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -110,9 +106,7 @@ class Sigma1ffbar2Wprime : public Sigma1ffbarZprimeWprime {
 public:
 
   // Constructor.
-  Sigma1ffbar2Wprime() : mRes(), GammaRes(), m2Res(), GamMRat(), thetaWRat(),
-    sigma0Pos(), sigma0Neg(), aqWp(), vqWp(), alWp(), vlWp(), coupWpWZ(),
-    anglesWpWZ(), particlePtr() {}
+  Sigma1ffbar2Wprime() {}
 
   // Initialize process.
   virtual void initProc();
@@ -142,7 +136,7 @@ private:
          aqWp, vqWp, alWp, vlWp, coupWpWZ, anglesWpWZ;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 //==========================================================================
@@ -154,8 +148,7 @@ class Sigma1ffbar2Rhorizontal : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2Rhorizontal() : mRes(), GammaRes(), m2Res(), GamMRat(),
-    thetaWRat(), sigma0Pos(), sigma0Neg(), particlePtr() {}
+  Sigma1ffbar2Rhorizontal() {}
 
   // Initialize process.
   virtual void initProc();
@@ -181,7 +174,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, thetaWRat, sigma0Pos, sigma0Neg;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 

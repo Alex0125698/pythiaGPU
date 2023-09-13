@@ -7,12 +7,6 @@
 <body>
  
 <h2>Hadron-Level Standalone</h2> 
-<ol id="toc">
-  <li><a href="#section0">Input configuration</a></li>
-  <li><a href="#section1">Extensions to resonance decays</a></li>
-  <li><a href="#section2">Repeated hadronization or decay</a></li>
-</ol>
-
  
 The Les Houches Accord allows external process-level configurations 
 to be fed in, for subsequent parton-level and hadron-level generation 
@@ -48,7 +42,7 @@ main program therefore should be something like
   Event& event = pythia.event                  // Convenient shorthand. 
   pythia.readString("ProcessLevel:all = off"); // The trick! 
   pythia.init();                               // Initialization. 
-  for (int iEvent = 0; iEvent &lt; nEvent; ++iEvent) { 
+  for (int iEvent = 0; iEvent < nEvent; ++iEvent) { 
     // Insert filling of event here! 
     pythia.next();                             // Do the hadron level. 
   } 
@@ -58,7 +52,6 @@ and so on, as for a normal PYTHIA run. The unique aspect is how to fill
 the <code>event</code> inside the loop, before <code>pythia.next()</code> 
 is called. 
  
-<a name="section0"></a> 
 <h3>Input configuration</h3> 
  
 To set up a new configuration the first step is to throw away the current 
@@ -76,8 +69,7 @@ or as four individual components:
   append( id, status, col, acol, p, m) 
   append( id, status, col, acol, px, py, pz, e, m) 
   append( id, status, mother1, mother2, daughter1, daughter2, col, acol, p, m) 
-  append( id, status, mother1, mother2, daughter1, daughter2, col, acol, 
-          px, py, pz, e, m) 
+  append( id, status, mother1, mother2, daughter1, daughter2, col, acol, px, py, pz, e, m) 
 </pre> 
 The methods return the index at which the entry has been stored, 
 but normally you would not use this feature. 
@@ -156,7 +148,7 @@ complicated ones with junctions, and also how to force a shower.
  
 <p/> 
 As an alternative to setting up a topology with the methods above, 
-a <a href="LHEF.html" target="page">Les Houches Event File</a> (LHEF) 
+a <a href="LesHouchesAccord.html" target="page">Les Houches Event File</a> (LHEF) 
 can also provide the configurations, using the "no-beams" extension. 
 For parsing reasons the <code>&lt;init&gt;</code> and 
 <code>&lt;/init&gt;</code> tags need to be present as two separate 
@@ -179,7 +171,6 @@ difference is in status codes: outgoing particles should have 1
 instead of 23, and intermediate resonances 2 instead of -22. 
 Incoming partons, if any, are -1 instead of -21. 
  
-<a name="section1"></a> 
 <h3>Extensions to resonance decays</h3> 
  
 With the above scheme, <code>pythia.next()</code> will generate 
@@ -221,7 +212,6 @@ however, since this is not a fully tested core functionality,
 so don't combine wildly if there is no reason to. 
  
  
-<a name="section2"></a> 
 <h3>Repeated hadronization or decay</h3> 
  
 An alternative approach is possible with the 
@@ -280,4 +270,4 @@ events.
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

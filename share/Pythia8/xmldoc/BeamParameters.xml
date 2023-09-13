@@ -14,11 +14,10 @@ should be specified using the settings in this section.
 Note that, if nothing is done, you will default to LHC at 14 TeV. 
  
 <p/> 
-Currently the beam particles must be either a hadron pair, a lepton 
-pair, a photon pair, a lepton and a hadron or a photon and a hadron. 
-In the first category <ei>p p</ei> and <ei>pbar p</ei> 
+Currently the beam particles must be either a hadron pair or a lepton 
+pair. In the former category <ei>p p</ei> and <ei>pbar p</ei> 
 combinations dominate, but it is also possible to combine with 
-<ei>pi^+</ei>, <ei>pi^-</ei> and <ei>pi^0</ei>. In the second 
+<ei>pi^+</ei>, <ei>pi^-</ei> and <ei>pi^0</ei>. In the latter 
 <ei>e^+ e^-</ei> and <ei>mu^+ mu^-</ei> would be the most useful 
 combinations, but also others should work if combined with an 
 appropriate hard process. 
@@ -31,20 +30,9 @@ Allowed codes include
 <br/><ei>211 = pi^+</ei>, <ei>-211 = pi^-</ei>, <ei>111 = pi^0</ei>, 
 <br/><ei>990 = Pomeron</ei> (used in diffractive machinery; 
 here mainly for debug purposes), 
-<br/><ei>22 = gamma</ei> (for <ei>gamma-gamma</ei> and <ei>gamma-hadron</ei> 
-interactions, more info <aloc href="Photoproduction">here</aloc>), 
 <br/><ei>11 = e^-</ei>, <ei>-11 = e^+</ei>, 
 <br/><ei>13 = mu^-</ei>, <ei>-13 = mu^+</ei>, 
 <br/>and a few more leptons/neutrinos in a few combinations. 
-<br/>Recently <aloc href="HeavyIons">heavy-ion collisions</aloc> have 
-been implemented in PYTHIA. Therefore a handful of nuclei have been 
-added as allowed incoming beams, using PDG codes of the format 
-<code>100ZZZAAAI</code>: 
-1000020040 = <sup>4</sup>He , 1000030060 = <sup>6</sup>Li, 
-1000060120 = <sup>12</sup>C, 1000080160 = <sup>16</sup>O, 
-1000290630 = <sup>63</sup>Cu, 1000791970 = <sup>197</sup>Au, and 
-1000822080 = <sup>208</sup>Pb. More can be added using the function 
-<code>ParticleData::addParticle</code>. 
 </modeopen> 
  
 <modeopen name="Beams:idB" default="2212"> 
@@ -68,16 +56,16 @@ three-momentum of each incoming particle needs to be specified, see
 <code>Beams:pxA</code> through <code>Beams:pzB</code> below. 
 </option> 
 <option value="4">the beam and event information is stored in a 
-<aloc href="LHEF">Les Houches Event File</aloc>, 
+<aloc href="LesHouchesAccord">Les Houches Event File</aloc>, 
 see <code>Beams:LHEF</code> below. 
 </option> 
 <option value="5">the beam and event information is obtained by a 
-pointer to an <code><aloc href="LHA">LHAup</aloc></code> 
+pointer to an <code><aloc href="LesHouchesAccord">LHAup</aloc></code> 
 class instance. 
 </option> 
 </modepick> 
  
-<parm name="Beams:eCM" default="14000." min="0."> 
+<parm name="Beams:eCM" default="14000." min="10."> 
 Collision CM energy, to be set if <code>Beams:frameType</code> = 1. 
 </parm> 
  
@@ -148,9 +136,7 @@ Only useful when <code>Beams:frameType</code> = 4 or 5.
 <flag name="Beams:readLHEFheaders" default="on"> 
 Read in LHEF header blocks and store them in the 
 <aloc href="EventInformation">Info</aloc> class. See also 
-<aloc href="LHA">LHAupLHEF</aloc> 
-and the <aloc href="LHEF">Les Houches Event files</aloc> 
-section for more information. 
+<aloc href="LesHouchesAccord">LHAupLHEF</aloc> for more information. 
 </flag> 
  
 <mode name="Beams:nSkipLHEFatInit" default="0"> 
@@ -187,137 +173,16 @@ of particles three and four to 100 GeV and 50 GeV, respectively, provided
 that these particles have status 1. 
 </flag> 
  
-<flag name="Beams:setDipoleShowerStartingScalesFromLHEF" default="off"> 
-If enabled, the parton shower starting scales for emissions of 
-individual radiator-recoiler pairs in the final-state showers will be 
-set by auxiliary informaton provided in an input Les Houches 
-event. This settings relies on the use of LHEF 3.0, and the existence 
-of the <ei>&lt;scales&gt;</ei> tag for each event. It is assumed that 
-the <ei>&lt;scales&gt;</ei> tag contains multiple attributes with 
-names <code>scalup_r_s</code>, where <code>r</code> gives the position 
-of the radiating particle, and <code>s</code> determines the position 
-of the recoiling particle, and where <code>r, s</code> may range from 
-zero to the sum of initial and final-state particles. 
-</flag> 
- 
- 
-<h3>Variable collision energy and particle type</h3> 
- 
-There are two different machineries that can provide an event-by-event 
-spread of collision energies. The one in this section is intended 
-to allow for very large variations in collision energy, more-or-less 
-from threshold to the highest LHC/FCC/cosmic-ray energies. This is made 
-possible by interpolation in a grid of CM energies. Such a strategy 
-requires the processes to have a smooth and well-understood energy 
-dependence. In practice this limits us to the soft QCD processes 
-betweeen two incoming hadrons. Thus the framework is convenient e.g. 
-for studies of cosmic-ray cascades, or for secondary collisions in 
-general. 
- 
-<p/> 
-The core extension in this option is that the multiparticle interactions 
-(MPI) machinery is initialized over a (logarithmically spaced) grid of 
-collision energies, from the maximal energy provided at the 
-initialization down to a lower cutoff (see <code>eMinPert</code> below). 
-For each new event, with a new CM energy, a suitable interpolation is 
-then performed among the generation coefficients determined at 
-initialization. The MPI framework is what is needed to simulate 
-hadronic nondiffractive events (<code>SoftQCD:nonDiffractive</code>). 
-Pretty much the same strategy is already used for diffraction, to handle 
-MPIs inside the variable-mass diffractive systems. Thus all the 
-<aloc href="QCDSoftProcesses">Soft QCD processes</aloc> can be used 
-within this framework. Below the minimal energy for a perturbative 
-description (see below) instead the simplified 
-<aloc href="QCDLowEnergyProcesses">Low-energy QCD processes</aloc> 
-can be used. It is not possible to generate other processes 
-with the variable-energy framework, however, and the program will abort 
-if you try. 
- 
-<p/> 
-The initialization involves setting up optimal coefficients for 
-the kinematics selection in the subsequent MPI generation, and 
-finding the associated maximum of the differentialcross section. 
-At a fixed energy this typically takes less than a second, and so 
-normally is not noticeable.It is a major fraction of the full PYTHIA 
-initialization time, however. Thus the initialization over a grid of 
-energies raises the total initialization time appreciable, to the order 
-of ten seconds. Initialization of diffraction contributes comparable 
-numbers, when switched on. You should therefore not be surprised that 
-the startup time is longer than usual. The subsequent event generation 
-should not become noticeably slower, however. 
- 
-<p/> 
-There are three main settings in this framework. 
- 
-<flag name="Beams:allowVariableEnergy" default="off"> 
-Master switch to allow collision energies below the initialization one, 
-as described above. 
-</flag> 
- 
-<parm name="Beams:eMinPert" default="10." min="10."> 
-The lowest CM energy that collisions are allowed to have. The highest 
-is set by the full energy at initialization, as calculated in the 
-respective options above. If you do not want to generate events with 
-a higher collision energy than this you can save some initialization 
-time by raising this number accordingly, so that fewer grid energies need 
-to be used. You should not lower the value below the default one, however, 
-since the perturbative MPI machinery cannot be made to work at lower 
-energies. If you do want to generate events with lower energies, it 
-is possible in a nonperturbative framework, see next. 
-</parm> 
- 
-<parm name="Beams:eWidthPert" default="10." min="1."> 
-A simpler low-mass description can be used for energies below the 
-threshold energy <ei>e_min</ei> = <code>eMinPert</code> above, with 
-only longitudinally stretched strings. A gradual switch-over between 
-the simple low-energy and perturbative high-energy regimes is then 
-natural. The probability for the latter picture is parametrized as 
-<eq> 
-P_pert = 1 - exp( (e_CM - e_min) / e_width ) 
-</eq> 
-which vanishes for the CM energy <ei>e_CM &lt; e_min</ei>, and is 
-<ei>1 - 1/e = 0.632</ei> for <ei>e_CM = e_min + e_width</ei>. 
-The current parameter is this <ei>e_width.</ei> 
-</parm> 
- 
-<p/> 
-When variable energy is enabled, the <code>setKinematics</code> methods 
-can be used to change the beam energies. The method used must match the frame 
-type as specified by <code>Beams:frameType</code>. 
- 
-There is also a limited support for changing beam particles using the 
-<code>setBeamIDs</code> method. Using this method, <code>idA</code> can 
-be changed to any hadron, while <code>idB</code> must be a proton or a 
-neutron when using this feature. This is useful for example in 
-hadronic cascades in a medium. It is here assumed that only 
-the <code>SoftQCD</code> (and <code>LowEnergyQCD</code> if relevant) 
-hadron-nucleon processes are being used. 
- 
-In order to change <code>idA</code> with any of the <code>next</code> 
-methods above, the beam configuration requires 
-additional setup. To limit the risks of inadvertent use, you need to 
-initialize with <code>Beams:allowIDAswitch = on</code>. The 
-functionality of <code>MultipartonInteractions:setAntiSame = true</code> 
-is used automatically to limit the number of cases to handle. 
- 
-<flag name="Beams:allowIDAswitch" default="off"> 
-Switch to initialize for a range of possible projectile hadrons, to 
-hit a target of protons and neutrons. 
-</flag> 
- 
 <h3>Beam momentum spread</h3> 
  
 This framework currently is intended for a modest beam spread, such as 
 experienced at hadron colliders. Thus it can be safely assumed that the 
 physics does not change over the CM energy range probed, so that the 
 parameters of the physics initialization at the nominal energy can be 
-used as is. Therefore it can be used for all processes implemented in 
-PYTHIA. It can <b>not</b> be used for the more extensive energy spread, 
-however, e.g. as expected at linear <ei>e^+ e^-</ei> colliders. Also, 
+used as is. Currently it can <b>not</b> be used for the more extensive 
+energy spread expected at linear <ei>e^+ e^-</ei> colliders. Also, 
 any attempt to combine it with external Les Houches input of 
-parton-level events is at own risk. This option cannot be combined with 
-the variable-collision-energy option above, but will be switced off in 
-such a case. 
+parton-level events is at own risk. 
  
 <p/> 
 On this page you can set the momentum spread according to a simple 
@@ -351,7 +216,7 @@ a maximal total deviation from the nominal values <ei>(p_x0, p_y0, p_z0)</ei>
 for the first incoming particle, like 
 <eq> 
 (p_x - p_x0)^2/sigma_px^2 + (p_y - p_y0)^2/sigma_py^2 + 
-(p_z - p_z0)^2/sigma_pz^2 &lt; maxDev^2 
+(p_z - p_z0)^2/sigma_pz^2 < maxDev^2 
 </eq> 
 (Note the absence of a factor 2 in the denominator, unlike the Gaussians 
 used to pick <ei>(p_x, p_y, p_z)</ei>.) 
@@ -378,7 +243,7 @@ a maximal total deviation from the nominal values <ei>(p_x0, p_y0, p_z0)</ei>,
 for the second incoming particle, like 
 <eq> 
 (p_x - p_x0)^2/sigma_px^2 + (p_y - p_y0)^2/sigma_py^2 + 
-(p_z - p_z0)^2/sigma_pz^2 &lt; maxDev^2 
+(p_z - p_z0)^2/sigma_pz^2 < maxDev^2 
 </eq> 
 (Note the absence of a factor 2 in the denominator, unlike the Gaussians 
 used to pick <ei>(p_x, p_y, p_z)</ei>.) 
@@ -416,7 +281,7 @@ The triply Gaussian distribution of interaction vertex position
 <ei>(x, y, z)</ei> is restricted to a maximal total deviation from the 
 origin, like 
 <eq> 
-x^2/sigma_x^2 + y^2/sigma_y^2 + z^2/sigma_z^2 &lt; maxDevVertex^2 
+x^2/sigma_x^2 + y^2/sigma_y^2 + z^2/sigma_z^2 < maxDevVertex^2 
 </eq> 
 (Note the absence of a factor 2 in the denominator, unlike the Gaussians 
 used to pick <ei>(x, y, z)</ei>.) 
@@ -461,4 +326,4 @@ The time <ei>t</ei> of the interaction vertex is centered at this value.
  
 </chapter> 
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

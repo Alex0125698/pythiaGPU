@@ -1,6 +1,6 @@
 // StringFragmentation.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file contains the classes for string fragmentation.
@@ -16,9 +16,7 @@
 #include "Pythia8/FragmentationFlavZpT.h"
 #include "Pythia8/FragmentationSystems.h"
 #include "Pythia8/ParticleData.h"
-#include "Pythia8/PhysicsBase.h"
 #include "Pythia8/PythiaStdlib.h"
-#include "Pythia8/Ropewalk.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/UserHooks.h"
 
@@ -35,45 +33,30 @@ class StringEnd {
 public:
 
   // Constructor.
-  StringEnd() : particleDataPtr(), flavSelPtr(), pTSelPtr(), zSelPtr(),
-    fromPos(), thermalModel(), mT2suppression(), iEnd(), iMax(), idHad(),
-    iPosOld(), iNegOld(), iPosNew(), iNegNew(), hadSoFar(), colOld(), colNew(),
-    pxOld(), pyOld(), pxNew(), pyNew(), pxHad(), pyHad(), mHad(), mT2Had(),
-    zHad(), GammaOld(), GammaNew(), xPosOld(), xPosNew(), xPosHad(), xNegOld(),
-    xNegNew(), xNegHad(), aLund(), bLund() {}
+  StringEnd() {}
 
   // Save pointers.
   void init( ParticleData* particleDataPtrIn, StringFlav* flavSelPtrIn,
-    StringPT* pTSelPtrIn, StringZ* zSelPtrIn, Settings& settings) {
+    StringPT* pTSelPtrIn, StringZ* zSelPtrIn) {
     particleDataPtr = particleDataPtrIn; flavSelPtr = flavSelPtrIn;
-    pTSelPtr = pTSelPtrIn; zSelPtr = zSelPtrIn;
-    bLund = zSelPtr->bAreaLund(); aLund = zSelPtr->aAreaLund();
-    thermalModel   = settings.flag("StringPT:thermalModel");
-    mT2suppression = settings.flag("StringPT:mT2suppression"); }
+    pTSelPtr = pTSelPtrIn; zSelPtr = zSelPtrIn;}
 
   // Set up initial endpoint values from input.
   void setUp(bool fromPosIn, int iEndIn, int idOldIn, int iMaxIn,
-    double pxIn, double pyIn, double GammaIn, double xPosIn,
-    double xNegIn, int colIn);
+    double pxIn, double pyIn, double GammaIn, double xPosIn, double xNegIn);
 
   // Fragment off one hadron from the string system, in flavour and pT.
-  void newHadron(double nNSP = 0.0, bool forbidPopcornNow = false);
+  void newHadron();
 
   // Fragment off one hadron from the string system, in momentum space,
   // by taking steps either from positive or from negative end.
-  Vec4 kinematicsHadron(StringSystem& system, StringVertex& newVertex,
-    bool useInputZ = false, double zHadIn = 0.);
-
-  // Generate momentum for some possible next hadron, based on mean values
-  // to get an estimate for rapidity and pT.
-  Vec4 kinematicsHadronTmp(StringSystem system, Vec4 pRem, double phi,
-    double mult);
+  Vec4 kinematicsHadron(StringSystem& system);
 
   // Update string end information after a hadron has been removed.
   void update();
 
   // Constants: could only be changed in the code itself.
-  static const double TINY, PT2SAME, MEANMMIN, MEANM, MEANPT;
+  static const double TINY, PT2SAME;
 
   // Pointer to the particle data table.
   ParticleData* particleDataPtr;
@@ -84,12 +67,11 @@ public:
   StringZ*      zSelPtr;
 
   // Data members.
-  bool   fromPos, thermalModel, mT2suppression;
-  int    iEnd, iMax, idHad, iPosOld, iNegOld, iPosNew, iNegNew, hadSoFar,
-         colOld, colNew;
+  bool   fromPos;
+  int    iEnd, iMax, idHad, iPosOld, iNegOld, iPosNew, iNegNew;
   double pxOld, pyOld, pxNew, pyNew, pxHad, pyHad, mHad, mT2Had, zHad,
          GammaOld, GammaNew, xPosOld, xPosNew, xPosHad, xNegOld, xNegNew,
-         xNegHad, aLund, bLund;
+         xNegHad;
   FlavContainer flavOld, flavNew;
   Vec4   pHad, pSoFar;
 
@@ -100,26 +82,21 @@ public:
 // The StringFragmentation class contains the top-level routines
 // to fragment a colour singlet partonic system.
 
-class StringFragmentation : public PhysicsBase {
+class StringFragmentation {
 
 public:
 
   // Constructor.
-  StringFragmentation() :
-    flavSelPtr(), pTSelPtr(), zSelPtr(), flavRopePtr(),
-    closePacking(), setVertices(), constantTau(), smearOn(),
-    traceColours(false), hadronVertex(), stopMass(), stopNewFlav(),
-    stopSmear(), eNormJunction(), eBothLeftJunction(), eMaxLeftJunction(),
-    eMinLeftJunction(), mJoin(), bLund(), pT20(), xySmear(), maxSmear(),
-    maxTau(), kappaVtx(), mc(), mb(), hasJunction(), isClosed(), iPos(),
-    iNeg(), w2Rem(), stopMassNow(), idDiquark(), legMin(), legMid() {}
+  StringFragmentation() {}
 
   // Initialize and save pointers.
-  void init(StringFlav* flavSelPtrIn, StringPT* pTSelPtrIn, StringZ* zSelPtrIn,
-    FragModPtr fragModPtrIn = nullptr);
+  void init(Info* infoPtrIn, Settings& settings,
+    ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
+    StringFlav* flavSelPtrIn, StringPT* pTSelPtrIn, StringZ* zSelPtrIn,
+    UserHooks* userHooksPtrIn = NULL);
 
   // Do the fragmentation: driver routine.
-  bool fragment( int iSub, const ColConfig& colConfig, Event& event);
+  bool fragment( int iSub, ColConfig& colConfig, Event& event);
 
   // Find the boost matrix to the rest frame of a junction.
   RotBstMatrix junctionRestFrame(Vec4& p0, Vec4& p1, Vec4& p2);
@@ -128,28 +105,32 @@ private:
 
   // Constants: could only be changed in the code itself.
   static const int    NTRYFLAV, NTRYJOIN, NSTOPMASS, NTRYJNREST,
-                      NTRYJNMATCH, NTRYJRFEQ, NTRYSMEAR;
+                      NTRYJNMATCH, NTRYJRFEQ;
   static const double FACSTOPMASS, CLOSEDM2MAX, CLOSEDM2FRAC, EXPMAX,
                       MATCHPOSNEG, EJNWEIGHTMAX, CONVJNREST, M2MAXJRF,
-                      M2MINJRF, EEXTRAJNMATCH, MDIQUARKMIN, CONVJRFEQ,
-                      CHECKPOS;
+                      M2MINJRF, EEXTRAJNMATCH, MDIQUARKMIN, CONVJRFEQ;
+
+  // Pointer to various information on the generation.
+  Info*         infoPtr;
+
+  // Pointer to the particle data table.
+  ParticleData* particleDataPtr;
+
+  // Pointer to the random number generator.
+  Rndm*         rndmPtr;
 
   // Pointers to classes for flavour, pT and z generation.
   StringFlav*   flavSelPtr;
   StringPT*     pTSelPtr;
   StringZ*      zSelPtr;
 
-  // Pointer to flavour-composition-changing ropes.
-  FragModPtr  flavRopePtr;
+  // Pointer to the User Hooks class for user intervention
+  UserHooks*    userHooksPtr;
 
   // Initialization data, read from Settings.
-  bool   closePacking, setVertices, constantTau, smearOn,
-         traceColours,  hardRemn;
-  int    hadronVertex;
   double stopMass, stopNewFlav, stopSmear, eNormJunction,
          eBothLeftJunction, eMaxLeftJunction, eMinLeftJunction,
-         mJoin, bLund, pT20, xySmear, maxSmear, maxTau, kappaVtx, mc, mb,
-         dampPopcorn, aRemn, bRemn;
+         mJoin, bLund;
 
   // Data members.
   bool   hasJunction, isClosed;
@@ -158,20 +139,7 @@ private:
   Vec4   pSum, pRem, pJunctionHadrons;
 
   // List of partons in string system.
-  vector<int> iParton, iPartonMinLeg, iPartonMidLeg, iPartonMax;
-
-  // Vertex information from the fragmentation process.
-  vector<StringVertex> stringVertices, legMinVertices, legMidVertices;
-  StringVertex newVertex;
-
-  // Boost from/to rest frame of a junction to original frame.
-  RotBstMatrix MfromJRF, MtoJRF;
-
-  // Information on diquark created at the junction.
-  int    idDiquark;
-
-  // Fictitious opposing partons in JRF: string ends for vertex location.
-  Vec4 pMinEnd, pMidEnd;
+  vector<int> iParton;
 
   // Temporary event record for the produced particles.
   Event hadrons;
@@ -183,26 +151,16 @@ private:
   StringEnd posEnd, negEnd;
 
   // Find region where to put first string break for closed gluon loop.
-  vector<int> findFirstRegion(int iSub, const ColConfig& colConfig,
-    const Event& event) const;
+  vector<int> findFirstRegion(vector<int>& iPartonIn, Event& event);
 
   // Set flavours and momentum position for initial string endpoints.
-  void setStartEnds(int idPos, int idNeg, const StringSystem& systemNow,
-    int legNow = 3);
+  void setStartEnds(int idPos, int idNeg, StringSystem systemNow);
 
   // Check remaining energy-momentum whether it is OK to continue.
   bool energyUsedUp(bool fromPos);
 
   // Produce the final two partons to complete the system.
-  bool finalTwo(bool fromPos, const Event& event, bool usedPosJun,
-    bool usedNegJun,
-  double nNSP);
-
-  // Final region information.
-  Vec4 pPosFinalReg, pNegFinalReg, eXFinalReg, eYFinalReg;
-
-  // Set hadron production points in space-time picture.
-  bool setHadronVertices(Event& event);
+  bool finalTwo(bool fromPos, Event& event, bool usedPosJun, bool usedNegJun);
 
   // Construct a special joining region for the final two hadrons.
   StringRegion finalRegion();
@@ -213,15 +171,8 @@ private:
   // Fragment off two of the string legs in to a junction.
   bool fragmentToJunction(Event& event);
 
-  // Initially considered legs from the junction.
-  int legMin, legMid;
-
   // Join extra nearby partons when stuck.
   int extraJoin(double facExtra, Event& event);
-
-  // Get the number of nearby strings given the energies.
-  double nearStringPieces(StringEnd end,
-    vector< vector< pair<double,double> > >& rapPairs);
 
 };
 

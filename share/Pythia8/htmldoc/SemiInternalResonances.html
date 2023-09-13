@@ -7,11 +7,6 @@
 <body>
  
 <h2>Semi-Internal Resonances</h2> 
-<ol id="toc">
-  <li><a href="#section0">The ResonanceWidths Class</a></li>
-  <li><a href="#section1">Access to resonance widths</a></li>
-</ol>
-
  
 The introduction of a new <a href="SemiInternalProcesses.html" target="page"> 
 semi-internal process</a> may also involve a new particle, 
@@ -28,7 +23,7 @@ simple threshold behaviour.
 If you want to have complete freedom, however, there are two 
 ways to go. One is that you make the resonance decay part of the 
 hard process itself, either using the 
-<a href="LHA.html" target="page">Les Houches interface</a> or 
+<a href="LesHouchesAccord.html" target="page">Les Houches interface</a> or 
 a semi-internal process. The other is for you to create a new 
 <code>ResonanceWidths</code> object, where you write the code 
 needed for a calculation of the partial width of a particular 
@@ -53,7 +48,6 @@ by the dynamically calculated values.
 <br/>3) handing in a pointer to an instance of this class to PYTHIA. 
 <br/>We consider the latter two aspects in turn. 
  
-<a name="section0"></a> 
 <h3>The ResonanceWidths Class</h3> 
  
 The resonance-width calculation has to be encoded in a new class. 
@@ -106,18 +100,22 @@ member variables, a number of quantities that you later may find useful:
 <br/><code>GamMRat</code> : the ratio of width to mass. 
  
 <p/> 
-A <b>destructor</b> is only needed if you require some special behaviour. 
+A <b>destructor</b> is only needed if you plan to delete the resonance 
+before the natural end of the run, and require some special behaviour 
+at that point. If you call such a destructor you will leave a pointer 
+dangling inside the <code>Pythia</code> object you gave it in to, 
+if that still exists. 
  
-<a name="anchor1"></a>
-<p/><strong> void ResonanceWidths::initConstants() &nbsp;</strong> <br/>
+<a name="method1"></a>
+<p/><strong>void ResonanceWidths::initConstants() &nbsp;</strong> <br/>
 is called once during initialization, and can then be used to set up 
 further parameters specific to this particle species, such as couplings, 
 and perform calculations that need not be repeated for each new event, 
 thereby saving time. This method needs not be implemented. 
    
  
-<a name="anchor2"></a>
-<p/><strong> void ResonanceWidths::calcPreFac(bool calledFromInit = false) &nbsp;</strong> <br/>
+<a name="method2"></a>
+<p/><strong>void ResonanceWidths::calcPreFac(bool calledFromInit = false) &nbsp;</strong> <br/>
 is called once a mass has been chosen for the resonance, but before 
 a specific final state is considered. This routine can therefore 
 be used to perform calculations that otherwise might have to be repeated 
@@ -136,8 +134,8 @@ At initialization this agrees with the nominal mass <code>mRes</code>,
 but during the run it will not (in general). 
    
  
-<a name="anchor3"></a>
-<p/><strong> void ResonanceWidths::calcWidth(bool calledFromInit = false) &nbsp;</strong> <br/>
+<a name="method3"></a>
+<p/><strong>void ResonanceWidths::calcWidth(bool calledFromInit = false) &nbsp;</strong> <br/>
 is the key method for width calculations and returns a partial width 
 value, as further described below. It is called for a specific 
 final state, typically in a loop over all allowed final states, 
@@ -175,16 +173,16 @@ couplings; see the existing code for examples.
 expressed in GeV. 
    
  
-<a name="anchor4"></a>
-<p/><strong> double ResonanceWidths::widthChan( double mHat, int idAbs1, int idAbs2) &nbsp;</strong> <br/>
+<a name="method4"></a>
+<p/><strong>double ResonanceWidths::widthChan( double mHat, int idAbs1, int idAbs2) &nbsp;</strong> <br/>
 is not normally used. In PYTHIA the only exception is Higgs decays, 
 where it is used to define the width (except for colour factors) 
 associated with a specific incoming/outgoing state. It allows the 
 results of some loop expressions to be pretabulated. 
    
  
-<a name="anchor5"></a>
-<p/><strong> bool ResonanceWidths::allowCalc() &nbsp;</strong> <br/>
+<a name="method5"></a>
+<p/><strong>bool ResonanceWidths::allowCalc() &nbsp;</strong> <br/>
 can normally be left dummy (and then always returns <code>true</code>) but 
 can optionally be used to determine whether to force dynamical width 
 calculation to be switched off (return <code>false</code>). 
@@ -195,8 +193,8 @@ particular resonance in question, and checks if those tables should be
 given precedence over the internal width calculation. 
    
  
-<a name="anchor6"></a>
-<p/><strong> bool ResonanceWidths::initBSM() &nbsp;</strong> <br/>
+<a name="method6"></a>
+<p/><strong>bool ResonanceWidths::initBSM() &nbsp;</strong> <br/>
 can normally be left dummy, but for advanced implementations it 
 provides a possibility to initialize data members of the derived class 
 at a very early stage during initialization, before any of the other 
@@ -208,7 +206,6 @@ an internal pointer to a derived <code>Couplings</code> class must be
 initialization step failed. 
    
  
-<a name="section1"></a> 
 <h3>Access to resonance widths</h3> 
  
 Once you have implemented a class, it is straightforward to 
@@ -217,7 +214,7 @@ make use of it in a run. Assume you have written a new class
 <code>ResonanceWidths</code>. You then create an instance of 
 this class and hand it in to a <code>pythia</code> object with 
 <pre> 
-      ResonanceWidthsPtr myResonance = make_shared&lt;MyResonance()&gt;; 
+      ResonanceWidths* myResonance = new MyResonance(); 
       pythia.setResonancePtr( myResonance); 
 </pre> 
 If you have several resonances you can repeat the procedure any number 
@@ -244,4 +241,4 @@ to <code>include/ResonanceWidths.h</code> and
 </body>
 </html>
  
-<!-- Copyright (C) 2023 Torbjorn Sjostrand --> 
+<!-- Copyright (C) 2015 Torbjorn Sjostrand --> 

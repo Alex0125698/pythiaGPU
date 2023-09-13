@@ -1,32 +1,29 @@
 // Streams.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Classes to implement reading from or writing to gzipped files.
 // Adapted for Sherpa by Frank Siegert from:
 // gzstream, C++ iostream classes wrapping the zlib compression library.
-// Copyright (C) 2023  Deepak Bandyopadhyay, Lutz Kettner
+// Copyright (C) 2001  Deepak Bandyopadhyay, Lutz Kettner
 // (http://www.cs.unc.edu/Research/compgeom/gzstream).
 // Further adapted to PYTHIA by Stefan Prestel.
 
 #ifndef Pythia8_Streams_H
 #define Pythia8_Streams_H
 
-#include <cstddef>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 #include <fstream>
 #include <string.h>
-#ifdef GZIP
-#include <zlib.h>
-#endif
 
 namespace Pythia8 {
 
-#ifdef GZIP
-
+#ifdef GZIPSUPPORT
+#include <zlib.h>
 //==========================================================================
 
 // Internal classes to implement gzstream. See below for user classes.
@@ -38,10 +35,10 @@ private:
     static const int bufferSize = 47+256;    // size of data buff
     // totals 512 bytes under g++ for igzstream at the end.
 
-    gzFile           file{};               // file handle for compressed file
-    char             buffer[bufferSize]{}; // data buffer
-    char             opened{};             // open/close state of stream
-    int              mode{};               // I/O mode
+    gzFile           file;               // file handle for compressed file
+    char             buffer[bufferSize]; // data buffer
+    char             opened;             // open/close state of stream
+    int              mode;               // I/O mode
 
     int flush_buffer();
 public:
@@ -106,20 +103,10 @@ public:
         gzstreambase::open( name, mode);
     }
 };
-
-//==========================================================================
-
 #else
 typedef std::ifstream igzstream;
 typedef std::ofstream ogzstream;
 #endif
-
-// Dummy to avoid harmless compiler warning that Streams.o has no symbols.
-class DummyForStreams {
-public:
-  DummyForStreams() {}
-  double xtox(double x);
-};
 
 //==========================================================================
 

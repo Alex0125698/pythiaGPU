@@ -1,27 +1,26 @@
 // main71.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Richard Corke.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
-// Keywords: fastjet; jet finding
-
-// Simple example of fastjet analysis. Roughly follows analysis of:
-// T. Aaltonen et al. [CDF Collaboration],
-// Measurement of the cross section for W-boson production in association
-// with jets in ppbar collisions at sqrt(s)=1.96$ TeV
-// Phys. Rev. D 77 (2008) 011108
-// arXiv:0711.4044 [hep-ex]
-//
-// Cuts:
-//   ET(elec)     > 20GeV
-//   |eta(elec)|  < 1.1
-//   ET(missing)  > 30GeV
-//   ET(jet)      > 20GeV
-//   |eta(jet)|   < 2.0
-//   deltaR(elec, jet) > 0.52
-// Not used:
-//   mT(W)        > 20GeV
-//
+/*
+ * Simple example of fastjet analysis. Roughly follows analysis of:
+ * T. Aaltonen et al. [CDF Collaboration],
+ * Measurement of the cross section for W-boson production in association
+ * with jets in ppbar collisions at sqrt(s)=1.96$ TeV
+ * Phys. Rev. D 77 (2008) 011108
+ * arXiv:0711.4044 [hep-ex]
+ *
+ * Cuts:
+ *   ET(elec)     > 20GeV
+ *   |eta(elec)|  < 1.1
+ *   ET(missing)  > 30GeV
+ *   ET(jet)      > 20GeV
+ *   |eta(jet)|   < 2.0
+ *   deltaR(elec, jet) > 0.52
+ * Not used:
+ *   mT(W)        > 20GeV
+ */
 
 #include "Pythia8/Pythia.h"
 
@@ -141,7 +140,7 @@ int main() {
           pythia.event[i].idAbs() == 16)     continue;
 
       // Only |eta| < 3.6
-      if (abs(pythia.event[i].eta()) > 3.6) continue;
+      if (fabs(pythia.event[i].eta()) > 3.6) continue;
 
       // Missing ET
       missingETvec += pythia.event[i].p();
@@ -193,7 +192,7 @@ int main() {
 
     for (unsigned int i = 0; i < sortedJets.size(); i++) {
       // Only count jets that have |eta| < 2.0
-      if (abs(sortedJets[i].rap()) > 2.0) continue;
+      if (fabs(sortedJets[i].rap()) > 2.0) continue;
       // Check distance between W decay electron and jets
       if (fjElec.squared_distance(sortedJets[i]) < 0.52 * 0.52)
         { vetoEvent = true; break; }
@@ -243,14 +242,10 @@ int main() {
     if (i != 0) {
       cout << scientific << setprecision(3)
            << ", Pythia ratio to " << i - 1 << "-jet = "
-           << nEventAccept25[i - 1]
-        ? ((double) nEventAccept25[i] / (double) nEventAccept25[i - 1])
-        : numeric_limits<double>::quiet_NaN();
+           << ((double) nEventAccept25[i] / (double) nEventAccept25[i - 1]);
       cout << scientific << setprecision(3)
            << ", Experimental ratio to " << i - 1 << "-jet = "
-           << expCrossSec[i - 1]
-        ? expCrossSec[i] / expCrossSec[i - 1]
-        : numeric_limits<double>::quiet_NaN();
+           << expCrossSec[i] / expCrossSec[i - 1];
     }
     cout << endl;
   }

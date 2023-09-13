@@ -1,7 +1,7 @@
 // SLHAinterface.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
+// Copyright (C) 2015 Torbjorn Sjostrand.
 // Main authors of this file: N. Desai, P. Skands
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for SUSY Les Houches Accord Interface.
@@ -16,6 +16,7 @@
 #include "Pythia8/Settings.h"
 #include "Pythia8/StandardModel.h"
 #include "Pythia8/SusyCouplings.h"
+#include "Pythia8/SusyLesHouches.h"
 
 namespace Pythia8 {
 
@@ -29,45 +30,36 @@ class SLHAinterface {
 public:
 
   // Constructor.
-  SLHAinterface() : infoPtr(), settingsPtr(), particleDataPtr(),
-    rndmPtr(), coupSMPtr(), coupSUSYPtr(), meMode() {}
+  SLHAinterface() {} ;
 
   // Set pointers
-  void setPtr( Info* infoPtrIn ) {infoPtr  = infoPtrIn;
-    settingsPtr     = infoPtr->settingsPtr;
-    particleDataPtr = infoPtr->particleDataPtr;
-    rndmPtr         = infoPtr->rndmPtr;
-    loggerPtr       = infoPtr->loggerPtr;
-    coupSMPtr       = infoPtr->coupSMPtr;
-    coupSUSYPtr     = infoPtr->coupSUSYPtr;
-}
+  void setPtr( Info* infoPtrIn ) {infoPtr     = infoPtrIn;}
 
   // Initialize and switch to SUSY couplings if reading SLHA spectrum
-  void init( bool& useSHLAcouplings, stringstream& ParticleDataBuffer );
+  void init( Settings& settings, Rndm* rndmPtr, Couplings* couplingsPtrIn,
+    ParticleData* particleDataPtr, bool& useSHLAcouplings,
+    stringstream& ParticleDataBuffer );
 
   // Initialize SUSY Les Houches Accord data.
-  bool initSLHA();
+  bool initSLHA(Settings& settings, ParticleData* particleDataPtr);
 
   // Initialize SLHA blocks SMINPUTS and MASS from PYTHIA SM parameter values.
   // E.g., to make sure that there are no important unfilled entries
-  void pythia2slha();
+  void pythia2slha(ParticleData* particleDataPtr);
 
   // SusyLesHouches - SLHA object for interface to SUSY spectra.
   SusyLesHouches slha;
 
-  // Pointers to PYTHIA objects
-  Info*                infoPtr;
-  Settings*            settingsPtr;
-  ParticleData*        particleDataPtr;
-  Rndm*                rndmPtr;
-  Logger*              loggerPtr;
+  // SLHA derived couplings class and pointer to Couplings object
+  CoupSUSY       coupSUSY;
+  Couplings*     couplingsPtr;
 
-  // SM couplings and SLHA derived couplings class.
-  CoupSM*              coupSMPtr;
-  CoupSUSY*            coupSUSYPtr;
+  // Pointers to PYTHIA objects
+  Info*          infoPtr;
+  Settings*      settingsPtr;
 
   // Internal data members
-  int                  meMode;
+  int            meMode;
 
 };
 

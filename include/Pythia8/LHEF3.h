@@ -1,6 +1,6 @@
 // LHEF3.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // This file is written by Stefan Prestel. The code evolved from
@@ -30,7 +30,7 @@ struct XMLTag {
   typedef string::size_type pos_t;
 
   // Convenient alias for npos.
-  static const pos_t end;
+  static const pos_t end = string::npos;
 
   // The destructor also destroys any sub-tags.
   ~XMLTag() {
@@ -107,28 +107,8 @@ struct XMLTag {
       // Find the first tag.
       pos_t begin = str.find("<", curr);
 
-      // Skip tags in lines beginning with #.
-      pos_t lastbreak_before_begin = str.find_last_of("\n",begin);
-      pos_t lastpound_before_begin = str.find_last_of("#",begin);
-      // Logic: Last newline before begin was before last pound sign (or there
-      // was no last newline at all, i.e. this is the special case of the
-      // first line), and hence the pound sign was before the tag was opened
-      // (at begin) with '<'. Thus, skip forward to next new line.
-      if ( (lastbreak_before_begin < lastpound_before_begin
-         || lastbreak_before_begin == end)
-        && begin > lastpound_before_begin) {
-        pos_t endcom = str.find_first_of("\n",begin);
-        if ( endcom == end ) {
-          if ( leftover ) *leftover += str.substr(curr);
-             return tags;
-        }
-        if ( leftover ) *leftover += str.substr(curr, endcom - curr);
-        curr = endcom;
-        continue;
-      }
-
-      // Skip xml-style comments.
-      if ( begin != end && str.find("<!--", curr) == begin ) {
+      // Skip comments.
+      if ( str.find("<!--", curr) == begin ) {
         pos_t endcom = str.find("-->", begin);
         if ( endcom == end ) {
           if ( leftover ) *leftover += str.substr(curr);
@@ -220,7 +200,7 @@ struct XMLTag {
   }
 
   // Print out this tag to a stream.
-  void list(ostream & os) const {
+  void print(ostream & os) const {
     os << "<" << name;
     for ( map<string,string>::const_iterator it = attr.begin();
           it != attr.end(); ++it )
@@ -231,7 +211,7 @@ struct XMLTag {
     }
     os << ">" << endl;
     for ( int i = 0, N = tags.size(); i < N; ++i )
-      tags[i]->list(os);
+      tags[i]->print(os);
 
     os << "````" << contents << "''''</" << name << ">" << endl;
   }
@@ -251,7 +231,7 @@ struct LHAweights {
   LHAweights(const XMLTag & tag);
 
   // Print out an XML tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -269,9 +249,6 @@ struct LHAweights {
   // The contents of the tag.
   string contents;
 
-  // Return number of weights.
-  int size() const { return int(weights.size()); }
-
 };
 
 //==========================================================================
@@ -288,7 +265,7 @@ struct LHAscales {
   LHAscales(const XMLTag & tag, double defscale = -1.0);
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -332,7 +309,7 @@ struct LHAgenerator {
   LHAgenerator(const XMLTag & tag, string defname = "");
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -370,7 +347,7 @@ struct LHAwgt {
   LHAwgt(const XMLTag & tag, double defwgt = 1.0);
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -404,7 +381,7 @@ struct LHAweight {
   LHAweight(const XMLTag & tag, string defname = "");
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -438,7 +415,7 @@ struct LHAweightgroup {
   LHAweightgroup(const XMLTag & tag);
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -456,13 +433,9 @@ struct LHAweightgroup {
 
   // The vector of weights.
   map<string, LHAweight> weights;
-  vector<string> weightsKeys;
 
   // Any other attributes.
   map<string,string> attributes;
-
-  // Return number of weights.
-  int size() const { return int(weights.size()); }
 
 };
 
@@ -480,7 +453,7 @@ struct LHArwgt {
   LHArwgt(const XMLTag & tag);
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -494,13 +467,9 @@ struct LHArwgt {
 
   // The map of weights.
   map<string, LHAwgt> wgts;
-  vector<string> wgtsKeys;
 
   // Any other attributes.
   map<string,string> attributes;
-
-  // Return number of weights.
-  int size() const { return int(wgts.size()); }
 
 };
 
@@ -518,7 +487,7 @@ struct LHAinitrwgt {
   LHAinitrwgt(const XMLTag & tag);
 
   // Print out the corresponding XML-tag.
-  void list(ostream & file) const;
+  void print(ostream & file) const;
 
   // Function to reset this object.
   void clear() {
@@ -533,20 +502,12 @@ struct LHAinitrwgt {
 
   // The vector of weight's.
   map<string, LHAweight> weights;
-  vector<string> weightsKeys;
 
   // The vector of weightgroup's.
   map<string, LHAweightgroup> weightgroups;
-  vector<string> weightgroupsKeys;
 
   // Any other attributes.
   map<string,string> attributes;
-
-  // Return number of weights.
-  int size() const { return int(weights.size());}
-
-  // Return number of weights.
-  int sizeWeightGroups() const { return int(weightgroups.size()); }
 
 };
 
@@ -678,7 +639,9 @@ public:
       SCALUP(0.0), AQEDUP(0.0), AQCDUP(0.0), heprup(0) {}
 
   // Copy constructor
-  HEPEUP(const HEPEUP & x) { operator=(x); }
+  HEPEUP(const HEPEUP & x) {
+    operator=(x);
+  }
 
   // Copy information from the given HEPEUP.
   HEPEUP & setEvent(const HEPEUP & x);
@@ -783,13 +746,13 @@ public:
   vector<double> weights_compressed;
 
   // Contents of the LHAscales tag
-  LHAscales scalesSave;
+  LHAscales scales;
 
   // Contents of the LHAweights tag (compressed format)
-  LHAweights weightsSave;
+  LHAweights weights;
 
   // Contents of the LHArwgt tag (detailed format)
-  LHArwgt rwgtSave;
+  LHArwgt rwgt;
 
   // Any other attributes.
   map<string,string> attributes;
@@ -825,23 +788,11 @@ public:
   // filename: the name of the file to read from.
   //
   Reader(string filenameIn)
-    : filename(filenameIn), intstream(nullptr), file(nullptr), version() {
+    : filename(filenameIn), intstream(NULL), file(NULL) {
     intstream = new igzstream(filename.c_str());
     file = intstream;
     isGood = init();
   }
-
-  Reader(istream* is)
-    : filename(""), intstream(nullptr), file(is), version() {
-    isGood = init();
-  }
-
-  // Clean up
-  ~Reader() {
-    if (intstream) delete intstream;
-  }
-
-
 
   // (Re)initialize the Reader with a filename from which to read an event
   // file. After this, all information from the header and init block is
@@ -869,15 +820,6 @@ public:
   // object. Optional comment lines are stored in the eventComments
   // member variable.
   bool readEvent(HEPEUP * peup = 0);
-
-  // Reset values of all event-related members to their defaults.
-  void clearEvent() {
-   currentLine = "";
-   hepeup.clear();
-   eventComments = "";
-   weights_detailed_vec.resize(0);
-   weightnames_detailed_vec.resize(0);
-  }
 
 protected:
 
@@ -934,14 +876,6 @@ public:
   // Additional comments found with the last read event.
   string eventComments;
 
-  // The detailed weights associated with this event, linearized to a vector.
-  vector<double> weights_detailed_vec;
-  vector<double> weights_detailed_vector()
-    { return weights_detailed_vec; }
-  vector<string> weightnames_detailed_vec;
-  vector<string> weightnames_detailed_vector()
-    { return weightnames_detailed_vec; }
-
 private:
 
   // The default constructor should never be used.
@@ -960,7 +894,7 @@ private:
 // The Writer class is initialized with a stream to which to write a
 // version 1.0 or 3.0 Les Houches Accord event file. In the init() function of
 // the Writer object the main XML tag, header and init blocks are written,
-// with the corresponding end tag is written by list_end_tag().
+// with the corresponding end tag is written by print_end_tag().
 // After a Writer object (in the following called "writer") has been created,
 // it is possible to assign version (3 by default) information by
 //
@@ -1028,7 +962,7 @@ public:
   }
 
   // Write out the final XML end-tag.
-  void list_end_tag() {
+  void print_end_tag() {
     file << "</LesHouchesEvents>" << endl;
   }
 
@@ -1039,8 +973,6 @@ public:
   // Write out the event stored in hepeup, followed by optional
   // comment lines.
   bool writeEvent(HEPEUP * peup = 0, int pDigits = 15);
-  // Write out an event as a string.
-  string getEventString(HEPEUP * peup = 0);
 
 protected:
 

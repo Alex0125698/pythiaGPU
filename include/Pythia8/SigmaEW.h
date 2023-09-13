@@ -1,6 +1,6 @@
 // SigmaEW.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for electroweak process differential cross sections.
@@ -25,7 +25,7 @@ class Sigma2qg2qgamma : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2qgamma() : sigUS(), sigma0() {}
+  Sigma2qg2qgamma() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -57,7 +57,7 @@ class Sigma2qqbar2ggamma : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2ggamma() : sigma0() {}
+  Sigma2qqbar2ggamma() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -89,7 +89,7 @@ class Sigma2gg2ggamma : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2ggamma() : chargeSum(), sigma() {}
+  Sigma2gg2ggamma() {}
 
   // Initialize process.
   virtual void initProc();
@@ -124,7 +124,7 @@ class Sigma2ffbar2gammagamma : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2gammagamma() : sigTU(), sigma0() {}
+  Sigma2ffbar2gammagamma() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -156,7 +156,7 @@ class Sigma2gg2gammagamma : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2gammagamma() : charge2Sum(), sigma() {}
+  Sigma2gg2gammagamma() {}
 
   // Initialize process.
   virtual void initProc();
@@ -190,8 +190,7 @@ class Sigma2ff2fftgmZ : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ff2fftgmZ() : gmZmode(), mZ(), mZS(), thetaWRat(), sigmagmgm(),
-    sigmagmZ(), sigmaZZ() {}
+  Sigma2ff2fftgmZ() {}
 
   // Initialize process.
   virtual void initProc();
@@ -227,7 +226,7 @@ class Sigma2ff2fftW : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ff2fftW() : mW(), mWS(), thetaWRat(), sigma0() {}
+  Sigma2ff2fftW() {}
 
   // Initialize process.
   virtual void initProc();
@@ -263,8 +262,7 @@ class Sigma2qq2QqtW : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2QqtW(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn), mW(),
-    mWS(), thetaWRat(), sigma0(), openFracPos(), openFracNeg() {}
+  Sigma2qq2QqtW(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -305,9 +303,7 @@ class Sigma1ffbar2gmZ : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2gmZ() : gmZmode(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    thetaWRat(), gamSum(), intSum(), resSum(), gamProp(), intProp(),
-    resProp(), particlePtr() {}
+  Sigma1ffbar2gmZ() {}
 
   // Initialize process.
   virtual void initProc();
@@ -338,7 +334,7 @@ private:
          gamSum, intSum, resSum, gamProp, intProp, resProp;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -351,8 +347,7 @@ class Sigma1ffbar2W : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2W() : mRes(), GammaRes(), m2Res(), GamMRat(), thetaWRat(),
-    sigma0Pos(), sigma0Neg(), particlePtr() {}
+  Sigma1ffbar2W() {}
 
   // Initialize process.
   virtual void initProc();
@@ -381,7 +376,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, thetaWRat, sigma0Pos, sigma0Neg;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -395,7 +390,7 @@ class Sigma2ffbar2ffbarsgm : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2ffbarsgm() : idNew(), sigma0() {}
+  Sigma2ffbar2ffbarsgm() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -430,10 +425,7 @@ class Sigma2ffbar2ffbarsgmZ : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2ffbarsgmZ() : gmZmode(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), thetaWRat(), colQ(), gamSumT(), gamSumL(), intSumT(),
-    intSumL(), intSumA(), resSumT(), resSumL(), resSumA(), gamProp(),
-    intProp(), resProp(), cThe(), particlePtr() {}
+  Sigma2ffbar2ffbarsgmZ() {}
 
   // Initialize process.
   virtual void initProc();
@@ -467,7 +459,7 @@ private:
   vector<double> gamT, gamL, intT, intL, intA, resT, resL, resA, sigTLA;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -480,8 +472,7 @@ class Sigma2ffbar2ffbarsW : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2ffbarsW() : id3New(), id4New(), mRes(), GammaRes(), m2Res(),
-    GamMRat(), thetaWRat(), sigma0(), particlePtr() {}
+  Sigma2ffbar2ffbarsW() {}
 
   // Initialize process.
   virtual void initProc();
@@ -511,7 +502,7 @@ private:
   double mRes, GammaRes, m2Res, GamMRat, thetaWRat, sigma0;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -526,9 +517,7 @@ public:
 
   // Constructor.
   Sigma2ffbar2FFbarsgmZ(int idIn, int codeIn) : idNew(idIn),
-    codeSave(codeIn), gmZmode(), isPhysical(), ef(), vf(), af(), mRes(),
-    GammaRes(), m2Res(), GamMRat(), thetaWRat(), mr(), betaf(), cosThe(),
-    gamProp(), intProp(), resProp(), openFracPair() {}
+    codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -576,9 +565,7 @@ public:
 
   // Constructor.
   Sigma2ffbar2FfbarsW(int idIn, int idIn2, int codeIn) : idNew(idIn),
-    idNew2(idIn2), codeSave(codeIn), idPartner(), isPhysical(), V2New(),
-    mRes(), GammaRes(), m2Res(), GamMRat(), thetaWRat(), sigma0(),
-    openFracPos(), openFracNeg() {}
+    idNew2(idIn2), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -659,12 +646,7 @@ class Sigma2ffbar2gmZgmZ : public Sigma2ffbargmZWgmZW {
 public:
 
   // Constructor.
-  Sigma2ffbar2gmZgmZ() : gmZmode(), i1(), i2(), i3(), i4(), i5(), i6(),
-    mRes(), GammaRes(), m2Res(), GamMRat(), thetaWRat(), sigma0(), gamSum3(),
-    intSum3(), resSum3(), gamProp3(), intProp3(), resProp3(), gamSum4(),
-    intSum4(), resSum4(), gamProp4(), intProp4(), resProp4(), c3LL(), c3LR(),
-    c3RL(), c3RR(), c4LL(), c4LR(), c4RL(), c4RR(), flavWt(),
-    particlePtr() {}
+  Sigma2ffbar2gmZgmZ() {}
 
   // Initialize process.
   virtual void initProc();
@@ -701,7 +683,7 @@ private:
          c3LL, c3LR, c3RL, c3RR, c4LL, c4LR, c4RL, c4RR, flavWt;
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -714,9 +696,7 @@ class Sigma2ffbar2ZW : public Sigma2ffbargmZWgmZW {
 public:
 
   // Constructor.
-  Sigma2ffbar2ZW() : mW(), widW(), mWS(), mwWS(), sin2thetaW(), cos2thetaW(),
-    thetaWRat(), cotT(), thetaWpt(), thetaWmm(), lun(), lde(), sigma0(),
-    openFracPos(), openFracNeg() {}
+  Sigma2ffbar2ZW() {}
 
   // Initialize process.
   virtual void initProc();
@@ -758,9 +738,7 @@ class Sigma2ffbar2WW : public Sigma2ffbargmZWgmZW {
 public:
 
   // Constructor.
-  Sigma2ffbar2WW() : mZ(), widZ(), mZS(), mwZS(), thetaWRat(), sigma0(),
-    cgg(), cgZ(), cZZ(), cfg(), cfZ(), cff(), gSS(), gTT(), gST(), gUU(),
-    gSU(), openFracPair() {}
+  Sigma2ffbar2WW() {}
 
   // Initialize process.
   virtual void initProc();
@@ -802,9 +780,7 @@ class Sigma2ffbargmZggm : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbargmZggm() : gmZmode(), mRes(), GammaRes(), m2Res(), GamMRat(),
-    thetaWRat(), gamSum(), intSum(), resSum(), gamProp(), intProp(), resProp(),
-    particlePtr() {}
+  Sigma2ffbargmZggm() {}
 
   // Initialize process.
   virtual void initProc();
@@ -828,7 +804,7 @@ protected:
 private:
 
   // Pointer to properties of the particle species, to access decay channels.
-  ParticleDataEntryPtr particlePtr;
+  ParticleDataEntry* particlePtr;
 
 };
 
@@ -841,7 +817,7 @@ class Sigma2qqbar2gmZg : public Sigma2ffbargmZggm {
 public:
 
   // Constructor.
-  Sigma2qqbar2gmZg() : sigma0() {}
+  Sigma2qqbar2gmZg() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -874,7 +850,7 @@ class Sigma2qg2gmZq : public Sigma2ffbargmZggm {
 public:
 
   // Constructor.
-  Sigma2qg2gmZq() : sigma0() {}
+  Sigma2qg2gmZq() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -907,7 +883,7 @@ class Sigma2ffbar2gmZgm : public Sigma2ffbargmZggm {
 public:
 
   // Constructor.
-  Sigma2ffbar2gmZgm() : sigma0() {}
+  Sigma2ffbar2gmZgm() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -940,7 +916,7 @@ class Sigma2fgm2gmZf : public Sigma2ffbargmZggm {
 public:
 
   // Constructor.
-  Sigma2fgm2gmZf() : sigma0() {}
+  Sigma2fgm2gmZf() {}
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -991,7 +967,7 @@ class Sigma2qqbar2Wg : public Sigma2ffbarWggm {
 public:
 
   // Constructor.
-  Sigma2qqbar2Wg() : sigma0(), openFracPos(), openFracNeg() {}
+  Sigma2qqbar2Wg() {}
 
   // Initialize process.
   virtual void initProc();
@@ -1027,7 +1003,7 @@ class Sigma2qg2Wq : public Sigma2ffbarWggm {
 public:
 
   // Constructor.
-  Sigma2qg2Wq() : sigma0(), openFracPos(), openFracNeg() {}
+  Sigma2qg2Wq() {}
 
   // Initialize process.
   virtual void initProc();
@@ -1063,7 +1039,7 @@ class Sigma2ffbar2Wgm : public Sigma2ffbarWggm {
 public:
 
   // Constructor.
-  Sigma2ffbar2Wgm() : sigma0(), openFracPos(), openFracNeg() {}
+  Sigma2ffbar2Wgm() {}
 
   // Initialize process.
   virtual void initProc();
@@ -1099,7 +1075,7 @@ class Sigma2fgm2Wf : public Sigma2ffbarWggm {
 public:
 
   // Constructor.
-  Sigma2fgm2Wf() : sigma0(), openFracPos(), openFracNeg() {}
+  Sigma2fgm2Wf() {}
 
   // Initialize process.
   virtual void initProc();
@@ -1134,8 +1110,7 @@ class Sigma2gmgm2ffbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gmgm2ffbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn),
-    idMass(), idNow(), ef4(), s34Avg(), sigTU(), sigma(), openFracPair() {}
+  Sigma2gmgm2ffbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -1162,125 +1137,6 @@ private:
   int    idNew, codeSave, idMass, idNow;
   string nameSave;
   double ef4, s34Avg, sigTU, sigma, openFracPair;
-
-};
-
-//==========================================================================
-
-// A derived class for g gamma -> q qbar (q = u, d, s, c, b).
-
-class Sigma2ggm2qqbar : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2ggm2qqbar(int idIn, int codeIn, string inFluxIn = "ggm")
-    : idNew(idIn), codeSave(codeIn), idMass(), idNow(), inFluxSave(inFluxIn),
-    ef2(), s34Avg(), sigTU(), sigma(), openFracPair() {}
-
-  // Initialize process.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return inFluxSave;}
-  virtual int    id3Mass() const {return idMass;}
-  virtual int    id4Mass() const {return idMass;}
-
-private:
-
-  // Member variables.
-  int    idNew, codeSave, idMass, idNow;
-  string nameSave, inFluxSave;
-  double ef2, s34Avg, sigTU, sigma, openFracPair;
-
-};
-
-//==========================================================================
-
-// A derived class for q gamma -> q g (q = u, d, s, c, b).
-// Use massless approximation also for Q since no alternative.
-
-class Sigma2qgm2qg : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2qgm2qg(int codeIn, string inFluxIn = "qgm")
-    : codeSave(codeIn), sigUS(), sigma0(), inFluxSave(inFluxIn) {}
-
-  // Initialize process according to in flux.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat();
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return nameSave;}
-  virtual int    code()   const {return codeSave;}
-  virtual string inFlux() const {return inFluxSave;}
-
-private:
-
-  // Values stored for later use.
-  int    codeSave;
-  double sigUS, sigma0;
-  string nameSave, inFluxSave;
-
-};
-
-//==========================================================================
-
-// A derived class for q gamma -> q gamma (q = u, d, s, c, b).
-// Use massless approximation also for Q since no alternative.
-
-class Sigma2qgm2qgm : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2qgm2qgm(int codeIn, string inFluxIn = "qgm")
-    : codeSave(codeIn), sigUS(), sigma0(), inFluxSave(inFluxIn) {}
-
-  // Initialize process.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat();
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return nameSave;}
-  virtual int    code()   const {return codeSave;}
-  virtual string inFlux() const {return inFluxSave;}
-
-private:
-
-  // Values stored for later use.
-  int    codeSave;
-  double sigUS, sigma0;
-  string nameSave, inFluxSave;
 
 };
 

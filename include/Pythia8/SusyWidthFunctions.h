@@ -1,7 +1,7 @@
 // SusyResonanceWidths.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand
+// Copyright (C) 2015 Torbjorn Sjostrand
 // Main author of this file: N. Desai
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for resonance properties: dynamical widths etc.
@@ -10,7 +10,6 @@
 #ifndef Pythia8_SusyWidthFunctions_H
 #define Pythia8_SusyWidthFunctions_H
 
-#include "Pythia8/MathTools.h"
 #include "Pythia8/ParticleData.h"
 #include "Pythia8/SusyCouplings.h"
 
@@ -23,24 +22,24 @@ class WidthFunction {
 public:
 
   // Constructor and destructor.
-  WidthFunction() : particleDataPtr(), loggerPtr(), coupSMPtr(), coupSUSYPtr(),
-    idRes(), idInt(), id1(), id2(), id3(), id4(), mRes(),
-    mInt(), gammaInt(), m1(), m2(), m3(), m4() { };
+  WidthFunction() { };
   virtual ~WidthFunction() { };
 
   // Public methods.
-  void setPointers(Info* infoPtrIn);
+  void setPointers( ParticleData* particleDataPtrIn, CoupSUSY* coupSUSYPtrIn,
+    Info* infoPtrIn);
   virtual double getWidth( int, int) { return 0.0; };
-
-  // Definition of width function.
-  virtual double f(double xIn) = 0;
 
 protected:
 
+  virtual double function(double xin);
+
+  // Gaussian integrator.
+  double integrateGauss(double xmin, double xmax, double tol);
+
   ParticleData* particleDataPtr;
-  Logger*       loggerPtr;
-  CoupSM*       coupSMPtr;
-  CoupSUSY*     coupSUSYPtr;
+  CoupSUSY* coupSUSYPtr;
+  Info* infoPtr;
   int idRes, idInt, id1, id2, id3, id4;
   double mRes, mInt, gammaInt, m1, m2 , m3, m4;
 
@@ -54,20 +53,17 @@ class StauWidths : public WidthFunction {
 
 public:
 
-  // Constructor.
-  StauWidths() : fnSwitch(), delm(), f0(), gf(), cons(), wparam() {}
-
   // Destructor.
   ~StauWidths() { };
 
   // Public method.
-  double getWidth(int idResIn, int idIn) override;
+  double getWidth(int idResIn, int idIn);
 
 protected:
 
   int fnSwitch; // Switch between multiple functions
   void setChannel(int idResIn, int idIn);
-  double f(double xIn) override;
+  double function(double xin);
 
   double delm, f0, gf, cons, wparam;
   complex gL, gR;
@@ -76,6 +72,6 @@ protected:
 
 //==========================================================================
 
-} // end namespace Pythia8
+}  // end namespace Pythia8
 
-#endif // Pythia8_SusyResonanceWidths_H
+#endif // end Pythia8_SusyResonanceWidths_H

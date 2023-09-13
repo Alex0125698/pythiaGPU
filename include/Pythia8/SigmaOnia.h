@@ -1,6 +1,6 @@
 // SigmaOnia.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for charmonia/bottomonia process differential cross sections.
@@ -15,79 +15,54 @@ namespace Pythia8 {
 
 //==========================================================================
 
-// A helper class used to check onia settings. Used for the parton shower
-// and hard process.
+// A helper class used to setup the onia processes.
 
-class OniaSetup {
+class SigmaOniaSetup {
 
-protected:
+public:
 
   // Constructors.
-  OniaSetup() = default;
-  OniaSetup(Info* infoPtrIn, int flavourIn, string pre = "");
+  SigmaOniaSetup() {};
+  SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
+    ParticleData* particleDataPtrIn, int flavourIn);
+
+  // Initialise the SigmaProcesses for gg, qg, or qqbar production.
+  void setupSigma2gg(vector<SigmaProcess*> &procs, bool oniaIn = false);
+  void setupSigma2qg(vector<SigmaProcess*> &procs, bool oniaIn = false);
+  void setupSigma2qq(vector<SigmaProcess*> &procs, bool oniaIn = false);
+
+private:
 
   // Intialise and check settings.
   void initStates(string wave, const vector<int> &states,
-    vector<int> &jnums, bool &valid, bool duplicate = true);
+    vector<int> &jnums, bool &valid);
   void initSettings(string wave, unsigned int size,
     const vector<string> &names, vector< vector<double> > &pvecs, bool &valid);
   void initSettings(string wave, unsigned int size,
     const vector<string> &names, vector< vector<bool> > &fvecs, bool &valid);
 
   // Stored pointers.
-  Info* infoPtr = {};
-  Logger* loggerPtr = {};
-  Settings* settingsPtr = {};
-  ParticleData* particleDataPtr = {};
+  Info* infoPtr;
+  Settings* settingsPtr;
+  ParticleData* particleDataPtr;
 
   // Stored vectors of settings.
-  vector<int> states3S1, states3PJ, spins3S1, spins3PJ;
-  vector<string> meNames3S1, meNames3PJ;
-  vector< vector<double> > mes3S1, mes3PJ;
+  vector<int> states3S1, states3PJ, states3DJ, spins3S1, spins3PJ, spins3DJ;
+  vector<string> meNames3S1, meNames3PJ, meNames3DJ;
+  vector< vector<double> > mes3S1, mes3PJ, mes3DJ;
+  vector<string> ggNames3S1, qgNames3S1, qqNames3S1,
+    ggNames3PJ, qgNames3PJ, qqNames3PJ, ggNames3DJ, qgNames3DJ, qqNames3DJ;
+  vector< vector<bool> > ggs3S1, qgs3S1, qqs3S1, ggs3PJ, qgs3PJ, qqs3PJ,
+    ggs3DJ, qgs3DJ, qqs3DJ;
 
   // Stored validity and production flags.
-  bool onia{}, onia3S1{}, onia3PJ{}, oniaFlavour{},
-    valid3S1{true}, valid3PJ{true};
-  int flavour{};
+  bool onia, onia3S1, onia3PJ, onia3DJ, oniaFlavour;
+  bool valid3S1, valid3PJ, valid3DJ;
+  int flavour;
   string cat, key;
 
   // Stored parameters.
-  double mSplit{};
-
-};
-
-//==========================================================================
-
-// A helper class used to setup the onia processes.
-
-class SigmaOniaSetup : public OniaSetup {
-
-public:
-
-  // Constructors.
-  SigmaOniaSetup() = default;
-  SigmaOniaSetup(Info* infoPtrIn, int flavourIn);
-
-  // Initialise the SigmaProcesses for gg, qg, qqbar.
-  void setupSigma2gg(vector<SigmaProcessPtr> &procs, bool oniaIn = false);
-  void setupSigma2qg(vector<SigmaProcessPtr> &procs, bool oniaIn = false);
-  void setupSigma2qq(vector<SigmaProcessPtr> &procs, bool oniaIn = false);
-
-private:
-
-  // Additional stored validity and production flags.
-  bool onia3DJ{true}, valid3DJ{true}, validDbl3S1{true};
-
-  // Stored vectors of settings.
-  vector<int> states3DJ, spins3DJ, states1Dbl3S1, states2Dbl3S1, spins1Dbl3S1,
-    spins2Dbl3S1;
-  vector<string> meNames3DJ, meNamesDbl3S1;
-  vector< vector<double> > mes3DJ, mesDbl3S1;
-  vector<string> ggNames3S1, qgNames3S1, qqNames3S1,
-    ggNames3PJ, qgNames3PJ, qqNames3PJ, ggNames3DJ, qgNames3DJ, qqNames3DJ,
-    dblNames3S1;
-  vector< vector<bool> > ggs3S1, qgs3S1, qqs3S1, ggs3PJ, qgs3PJ, qqs3PJ,
-    ggs3DJ, qgs3DJ, qqs3DJ, dbls3S1;
+  double mSplit;
 
 };
 
@@ -101,7 +76,7 @@ public:
 
   // Constructor.
   Sigma2gg2QQbar3S11g(int idHadIn, double oniumMEIn, int codeIn) :
-    idHad(abs(idHadIn)), codeSave(codeIn), oniumME(oniumMEIn), sigma() {}
+    idHad(abs(idHadIn)), codeSave(codeIn), oniumME(oniumMEIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -132,46 +107,6 @@ public:
 
 //==========================================================================
 
-// A derived class for g g -> QQbar[3S1(1)] gamma (Q = c or b).
-
-class Sigma2gg2QQbar3S11gm : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2gg2QQbar3S11gm(int idHadIn, double oniumMEIn, int codeIn) :
-    idHad(abs(idHadIn)), codeSave(codeIn), qEM2(), oniumME(oniumMEIn),
-    sigma() {}
-
-  // Initialize process.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idHad;}
-
- private:
-
-  // Values stored for process type and colour flow selection.
-  int    idHad, codeSave;
-  string nameSave;
-  double qEM2, oniumME, sigma;
-
-};
-
-//==========================================================================
-
 // A derived class for g g -> QQbar[3PJ(1)] g (Q = c or b, J = 0, 1 or 2).
 
 class Sigma2gg2QQbar3PJ1g : public Sigma2Process {
@@ -180,8 +115,7 @@ public:
 
   // Constructor.
   Sigma2gg2QQbar3PJ1g(int idHadIn, double oniumMEIn, int jIn, int codeIn) :
-    idHad(idHadIn), jSave(jIn), codeSave(codeIn), oniumME(oniumMEIn), sigma()
-    {}
+    idHad(idHadIn), jSave(jIn), codeSave(codeIn), oniumME(oniumMEIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -305,7 +239,7 @@ public:
   // Constructor.
   Sigma2gg2QQbarX8g(int idHadIn, double oniumMEIn, int stateIn,
     double mSplitIn, int codeIn) : idHad(idHadIn), stateSave(stateIn),
-    codeSave(codeIn), oniumME(oniumMEIn), sigma(), mSplit(mSplitIn) {}
+    codeSave(codeIn), oniumME(oniumMEIn), mSplit(mSplitIn) {}
 
   // Initialize process.
   virtual void initProc();
@@ -371,7 +305,7 @@ protected:
 //==========================================================================
 
 // A derived class for q qbar -> QQbar[X(8)] g (Q = c or b,
-// X = 3S1, 1S0 or 3PJ).
+//   X = 3S1, 1S0 or 3PJ).
 
 class Sigma2qqbar2QQbarX8g : public Sigma2gg2QQbarX8g {
 
@@ -396,91 +330,6 @@ protected:
   // Name pre- and post-fix.
   virtual string namePrefix()  const {return "q qbar";}
   virtual string namePostfix() const {return "g";}
-
-};
-
-//==========================================================================
-
-// A derived class for g g -> QQbar[3S1(1)] QQbar[3S1(1)] (Q = c or b).
-
-class Sigma2gg2QQbar3S11QQbar3S11 : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2gg2QQbar3S11QQbar3S11(int idHad1In, int idHad2In,
-    double oniumME1In, double oniumME2In, int codeIn) :
-    idHad1(abs(idHad1In)), idHad2(abs(idHad2In)), codeSave(codeIn),
-    oniumME1(oniumME1In), oniumME2(oniumME2In), sigma() {}
-
-  // Initialize process.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idHad1;}
-  virtual int    id4Mass() const {return idHad2;}
-
- private:
-
-  // Values stored for process type and colour flow selection.
-  int    idHad1, idHad2, codeSave;
-  string nameSave;
-  double oniumME1, oniumME2, sigma;
-  vector<double> m2V;
-
-};
-
-//==========================================================================
-
-// A derived class for q qbar -> QQbar[3S1(1)] QQbar[3S1(1)] (Q = c or b).
-
-class Sigma2qqbar2QQbar3S11QQbar3S11 : public Sigma2Process {
-
-public:
-
-  // Constructor.
-  Sigma2qqbar2QQbar3S11QQbar3S11(int idHad1In, int idHad2In,
-    double oniumME1In, double oniumME2In, int codeIn) :
-    idHad1(abs(idHad1In)), idHad2(abs(idHad2In)), codeSave(codeIn), m2(),
-    oniumME1(oniumME1In), oniumME2(oniumME2In), sigma() {}
-
-  // Initialize process.
-  virtual void initProc();
-
-  // Calculate flavour-independent parts of cross section.
-  virtual void sigmaKin();
-
-  // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
-
-  // Select flavour, colour and anticolour.
-  virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idHad1;}
-  virtual int    id4Mass() const {return idHad2;}
-
- private:
-
-  // Values stored for process type and colour flow selection.
-  int    idHad1, idHad2, codeSave;
-  string nameSave;
-  double m2, oniumME1, oniumME2, sigma;
 
 };
 

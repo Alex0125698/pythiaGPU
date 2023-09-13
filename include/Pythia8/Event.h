@@ -1,6 +1,6 @@
 // Event.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for the Particle and Event classes.
@@ -77,12 +77,9 @@ public:
     tauSave = pt.tauSave; pdePtr = pt.pdePtr; evtPtr = pt.evtPtr; }
     return *this; }
 
-  // Destructor.
-  virtual ~Particle() {}
-
   // Member functions to set the Event and ParticleDataEntry pointers.
   void setEvtPtr(Event* evtPtrIn) { evtPtr = evtPtrIn; setPDEPtr();}
-  void setPDEPtr(ParticleDataEntryPtr pdePtrIn = nullptr);
+  void setPDEPtr(ParticleDataEntry* pdePtrIn = 0);
 
   // Member functions for input.
   void id(int idIn) {idSave = idIn; setPDEPtr();}
@@ -120,7 +117,6 @@ public:
   void yProd(double yProdIn) {vProdSave.py(yProdIn); hasVertexSave = true;}
   void zProd(double zProdIn) {vProdSave.pz(zProdIn); hasVertexSave = true;}
   void tProd(double tProdIn) {vProdSave.e(tProdIn); hasVertexSave = true;}
-  void vProdAdd(Vec4 vProdIn) {vProdSave += vProdIn; hasVertexSave = true;}
   void tau(double tauIn) {tauSave = tauIn;}
 
   // Member functions for output.
@@ -152,7 +148,6 @@ public:
   int    idAbs()     const {return abs(idSave);}
   int    statusAbs() const {return abs(statusSave);}
   bool   isFinal()   const {return (statusSave > 0);}
-  int    intPol()    const;
   bool   isRescatteredIncoming() const {return
     (statusSave == -34 || statusSave == -45 ||
      statusSave == -46 || statusSave == -54);}
@@ -179,8 +174,6 @@ public:
   double pNeg()      const {return pSave.pNeg();}
   double y()         const;
   double eta()       const;
-  double y(double mCut) const;
-  double y(double mCut, RotBstMatrix& M) const;
   Vec4   vDec()      const {return (tauSave > 0. && mSave > 0.)
     ? vProdSave + tauSave * pSave / mSave : vProdSave;}
   double xDec()      const {return (tauSave > 0. && mSave > 0.)
@@ -200,19 +193,11 @@ public:
   int iBotCopyId(bool simplify = false) const;
   vector<int> motherList()   const;
   vector<int> daughterList() const;
-  vector<int> daughterListRecursive() const;
   vector<int> sisterList(bool traceTopBot = false) const;
   bool isAncestor(int iAncestor) const;
   int statusHepMC()  const;
   bool isFinalPartonLevel() const;
   bool undoDecay();
-
-  // Get and set Hidden Valley colours, referring back to the event.
-  int  colHV() const;
-  int  acolHV() const;
-  void colHV(int colHVin);
-  void acolHV(int acolHVin);
-  void colsHV(int colHVin, int acolHVin);
 
   // Further output, based on a pointer to a ParticleDataEntry object.
   string name()      const {
@@ -266,8 +251,6 @@ public:
     return (pdePtr != 0) ? pdePtr->isParton() : false;}
   bool   isHadron()  const {
     return (pdePtr != 0) ? pdePtr->isHadron() : false;}
-  bool   isExotic()  const {
-    return (pdePtr != 0) ? pdePtr->isExotic() : false;}
   ParticleDataEntry& particleDataEntry() const {return *pdePtr;}
 
   // Member functions that perform operations.
@@ -290,8 +273,8 @@ public:
     if (hasVertexSave) vProdSave.bstback(pBst);}
   void bstback(const Vec4& pBst, double mBst) {pSave.bstback(pBst, mBst);
     if (hasVertexSave) vProdSave.bstback(pBst, mBst);}
-  void rotbst(const RotBstMatrix& M, bool boostVertex = true) {pSave.rotbst(M);
-    if (hasVertexSave && boostVertex) vProdSave.rotbst(M);}
+  void rotbst(const RotBstMatrix& M) {pSave.rotbst(M);
+    if (hasVertexSave) vProdSave.rotbst(M);}
   void offsetHistory( int minMother, int addMother, int minDaughter,
     int addDaughter);
   void offsetCol( int addCol);
@@ -314,7 +297,7 @@ protected:
   // Should no be saved in a persistent copy of the event record.
   // The //! below is ROOT notation that this member should not be saved.
   // Event::restorePtrs() can be called to restore the missing information.
-  ParticleDataEntryPtr pdePtr;  //!
+  ParticleDataEntry* pdePtr;  //!
 
   // Pointer to the whole event record to which the particle belongs (if any).
   // As above it should not be saved.
@@ -322,12 +305,10 @@ protected:
 
 };
 
-// Particles invariant mass, mass squared, and momentum dot product.
+// Invariant mass of a pair and its square.
 // (Not part of class proper, but tightly linked.)
-double m(const Particle& pp1, const Particle& pp2);
-double m2(const Particle& pp1, const Particle& pp2);
-double m2(const Particle& pp1, const Particle& pp2, const Particle& pp3);
-double dot4(const Particle& pp1, const Particle& pp2);
+double m(const Particle&, const Particle&);
+double m2(const Particle&, const Particle&);
 
 //==========================================================================
 
@@ -340,18 +321,16 @@ class Junction {
 public:
 
   // Constructors.
-  Junction() : remainsSave(true), kindSave(0), colSave(), endColSave(),
-    statusSave() { }
-
-  Junction( int kindIn, int col0In, int col1In, int col2In)
-    : remainsSave(true), kindSave(kindIn), colSave(), endColSave(),
-    statusSave() {
-      colSave[0] = col0In; colSave[1] = col1In; colSave[2] = col2In;
-      for (int j = 0; j < 3; ++j) {
-      endColSave[j] = colSave[j];  } }
-  Junction(const Junction& ju) : remainsSave(ju.remainsSave),
-    kindSave(ju.kindSave), colSave(), endColSave(), statusSave() {
+  Junction() : remainsSave(true), kindSave(0) {
     for (int j = 0; j < 3; ++j) {
+    colSave[j] = 0; endColSave[j] = 0; statusSave[j] = 0; } }
+  Junction( int kindIn, int col0In, int col1In, int col2In)
+    : remainsSave(true), kindSave(kindIn) {colSave[0] = col0In;
+    colSave[1] = col1In; colSave[2] = col2In;
+    for (int j = 0; j < 3; ++j) {
+    endColSave[j] = colSave[j]; statusSave[j] = 0; } }
+  Junction(const Junction& ju) : remainsSave(ju.remainsSave),
+    kindSave(ju.kindSave) { for (int j = 0; j < 3; ++j) {
     colSave[j] = ju.colSave[j]; endColSave[j] = ju.endColSave[j];
     statusSave[j] = ju.statusSave[j]; } }
   Junction& operator=(const Junction& ju) {if (this != &ju) {
@@ -385,24 +364,6 @@ private:
 
 //==========================================================================
 
-// The HVcols class stores Hidden Valley colours for HV-coloured particles.
-
-class HVcols {
-
-public:
-
-  // Default constructor and constructor with standard input.
-  HVcols() : iHV(0), colHV(0), acolHV(0) { }
-  HVcols( int iHVin, int colHVin, int acolHVin) : iHV(iHVin),
-    colHV(colHVin), acolHV(acolHVin) {}
-
-  // Index of HV-particle and its HV-colour and HV-anticolour.
-  int iHV, colHV, acolHV;
-
-};
-
-//==========================================================================
-
 // The Event class holds all info on the generated event.
 
 class Event {
@@ -411,8 +372,8 @@ public:
 
   // Constructors.
   Event(int capacity = 100) : startColTag(100), maxColTag(100),
-    savedSize(0), savedJunctionSize(0), savedHVcolsSize(0),
-    savedPartonLevelSize(0), scaleSave(0.), scaleSecondSave(0.),
+    savedSize(0), savedJunctionSize(0), savedPartonLevelSize(0),
+    scaleSave(0.), scaleSecondSave(0.),
     headerList("----------------------------------------"),
     particleDataPtr(0) { entry.reserve(capacity); }
   Event& operator=(const Event& oldEvent);
@@ -427,33 +388,19 @@ public:
   // Clear event record.
   void clear() {entry.resize(0); maxColTag = startColTag;
     savedPartonLevelSize = 0; scaleSave = 0.; scaleSecondSave = 0.;
-    clearJunctions(); clearHV();}
-  void free() {vector<Particle>().swap(entry); maxColTag = startColTag;
-    savedPartonLevelSize = 0; scaleSave = 0.; scaleSecondSave = 0.;
-    clearJunctions(); clearHV();}
+    clearJunctions();}
 
   // Clear event record, and set first particle empty.
   void reset() {clear(); append(90, -11, 0, 0, 0., 0., 0., 0., 0.);}
 
   // Overload index operator to access element of event record.
-  Particle& operator[](int i) {return entry.at(i);}
-  const Particle& operator[](int i) const {return entry.at(i);}
+  Particle& operator[](int i) {return entry[i];}
+  const Particle& operator[](int i) const {return entry[i];}
 
   // Implement standard references to elements in the particle array.
   Particle& front()   {return entry.front();}
   Particle& at(int i) {return entry.at(i);}
   Particle& back()    {return entry.back();}
-  const Particle& front()   const {return entry.front();}
-  const Particle& at(int i) const {return entry.at(i);}
-  const Particle& back()    const {return entry.back();}
-
-  // Implement iterators for the particle array.
-  vector<Pythia8::Particle>::iterator begin() { return entry.begin(); }
-  vector<Pythia8::Particle>::iterator end() { return entry.end(); }
-  vector<Pythia8::Particle>::const_iterator begin() const
-    { return entry.begin(); }
-  vector<Pythia8::Particle>::const_iterator end() const
-    { return entry.end(); }
 
   // Event record size.
   int size() const {return entry.size();}
@@ -509,19 +456,25 @@ public:
   int copy(int iCopy, int newStatus = 0);
 
   // List the particles in an event.
-  void list(bool showScaleAndVertex = false,
-    bool showMothersAndDaughters = false, int precision = 3) const;
+  void list(int precision = 3) const;
+  void list(ostream& os, int precision = 3) const;
+  void list(bool showScaleAndVertex, bool showMothersAndDaughters = false,
+    int precision = 3) const;
+  void list(bool showScaleAndVertex, bool showMothersAndDaughters,
+    ostream& os, int precision = 3) const;
 
   // Remove last n entries.
   void popBack(int nRemove = 1) { if (nRemove ==1) entry.pop_back();
     else {int newSize = max( 0, size() - nRemove);
     entry.resize(newSize);} }
 
-  // Remove entries from iFirst to iLast, including endpoints, and fix history.
-  // (To the extent possible; history pointers in removed range are zeroed.)
-  void remove(int iFirst, int iLast, bool shiftHistory = true);
+  // Remove entries from iFirst to iLast, including endpoints.
+  void remove(int iFirst, int iLast) {
+    if (iFirst < 0 || iLast >= int(entry.size()) || iLast < iFirst) return;
+    entry.erase( entry.begin() + iFirst, entry.begin() + iLast + 1);
+  }
 
-  // Restore all ParticleDataEntryPtr pointers in the Particle vector.
+  // Restore all ParticleDataEntry* pointers in the Particle vector.
   // Useful when a persistent copy of the event record is read back in.
   void restorePtrs() { for (int i = 0; i < size(); ++i) setEvtPtr(i); }
 
@@ -547,28 +500,6 @@ public:
   // Note: temporarily retained for CMS compatibility. Do not use!
   vector<int> daughterList(int i) const {return entry[i].daughterList();}
 
-  // Return number of final-state particles, optionally charged only.
-  int nFinal(bool chargedOnly = false) const {
-    int nFin = 0;
-    for (int i = 0; i < size(); ++i)
-      if (entry[i].isFinal() && (!chargedOnly || entry[i].isCharged()))
-        ++nFin;
-    return nFin; }
-
-  // Find separation in y, eta, phi or R between two particles.
-  double dyAbs(int i1, int i2) const {
-    return abs( entry[i1].y() - entry[i2].y() ); }
-  double detaAbs(int i1, int i2) const {
-    return abs( entry[i1].eta() - entry[i2].eta() ); }
-  double dphiAbs(int i1, int i2) const {
-    double dPhiTmp = abs( entry[i1].phi() - entry[i2].phi() );
-    if (dPhiTmp > M_PI) dPhiTmp = 2. * M_PI - dPhiTmp;
-    return dPhiTmp; }
-  double RRapPhi(int i1, int i2) const {
-    return sqrt( pow2(dyAbs(i1, i2)) + pow2(dphiAbs(i1, i2)) ); }
-  double REtaPhi(int i1, int i2) const {
-    return sqrt( pow2(detaAbs(i1, i2)) + pow2(dphiAbs(i1, i2)) ); }
-
   // Member functions for rotations and boosts of an event.
   void rot(double theta, double phi)
     {for (int i = 0; i < size(); ++i) entry[i].rot(theta, phi);}
@@ -579,8 +510,8 @@ public:
     gamma);}
   void bst(const Vec4& vec)
     {for (int i = 0; i < size(); ++i) entry[i].bst(vec);}
-  void rotbst(const RotBstMatrix& M, bool boostVertices = true)
-    {for (int i = 0; i < size(); ++i) entry[i].rotbst(M, boostVertices);}
+  void rotbst(const RotBstMatrix& M)
+    {for (int i = 0; i < size(); ++i) entry[i].rotbst(M);}
 
   // Clear the list of junctions.
   void clearJunctions() {junction.resize(0);}
@@ -612,18 +543,7 @@ public:
   void restoreJunctionSize() {junction.resize(savedJunctionSize);}
 
   // List any junctions in the event; for debug mainly.
-  void listJunctions() const;
-
-  // Tell whether event has Hidden Valley colours stored.
-  bool hasHVcols() const {return (hvCols.size() > 0);}
-
-  // List any Hidden Valley colours. Find largest HV colour.
-  void listHVcols() const;
-  int  maxHVcols()  const;
-
-  // Save or restore the size of the HV-coloured list (throwing at the end).
-  void saveHVcolsSize() {savedHVcolsSize = hvCols.size();}
-  void restoreHVcolsSize() {hvCols.resize(savedHVcolsSize);}
+  void listJunctions(ostream& os = cout) const;
 
   // Save event record size at Parton Level, i.e. before hadronization.
   void savePartonLevelSize() {savedPartonLevelSize = entry.size();}
@@ -651,25 +571,11 @@ private:
   // The explicit use of Pythia8:: qualifier patches a limitation in ROOT.
   vector<Pythia8::Junction> junction;
 
-  // The list of Hidden-Valley-coloured partons.
-  // The explicit use of Pythia8:: qualifier patches a limitation in ROOT.
-  vector<Pythia8::HVcols> hvCols;
-
-  // Find index in Hidden Valley list for a particle in the event record.
-  bool findIndexHV(int iIn) { if (iIn > 0 && iIn == iEventHV) return true;
-    for (int i = 0; i < int(hvCols.size()); ++i) if (hvCols[i].iHV == iIn)
-      {iEventHV = iIn; iIndexHV = i; return true; }
-    return false; }
-  int iEventHV, iIndexHV;
-
-  // Clear the list of Hidden Valley colours. Reset indices.
-  void clearHV() {hvCols.resize(0); iEventHV = -1; iIndexHV = -1;}
-
   // The maximum colour tag of the event so far.
   int maxColTag;
 
   // Saved entry and junction list sizes, for simple restoration.
-  int savedSize, savedJunctionSize, savedHVcolsSize, savedPartonLevelSize;
+  int savedSize, savedJunctionSize, savedPartonLevelSize;
 
   // The scale of the event; linear quantity in GeV.
   double scaleSave, scaleSecondSave;
@@ -687,4 +593,4 @@ private:
 
 } // end namespace Pythia8
 
-#endif // Pythia8_Event_H
+#endif // end Pythia8_Event_H

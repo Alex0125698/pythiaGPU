@@ -1,8 +1,7 @@
-
 // SusyCouplings.h is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
+// Copyright (C) 2015 Torbjorn Sjostrand.
 // Main authors of this file: N. Desai, P. Skands
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for setup of common SUSY couplings.
@@ -24,23 +23,19 @@ class ParticleData;
 // CoupSUSY
 // Auxiliary class to compute and store various SM and SUSY couplings.
 
-class CoupSUSY {
+class CoupSUSY : public Couplings{
 
 public:
 
   // Constructor
-  CoupSUSY() : isInit(false), isSUSY(false), isNMSSM(false),
-    isLLE(false), isLQD(false), isUDD(false), mWpole(), wWpole(), mZpole(),
-    wZpole(), mW(), mZ(), sin2W(), sinW(), cosW(), tanb(), cosb(), sinb(),
-    muHiggs(), alphaHiggs(), mAHiggs(), LqqZ(), RqqZ(), LllZ(), RllZ(),
-    rvLLE(), rvLQD(), rvUDD(), slhaPtr(), loggerPtr(), settingsPtr(),
-    particleDataPtr(), coupSMPtr() {}
+  CoupSUSY() {isInit=false; isNMSSM = false; isSUSY=true;}
 
   // Initialize
-  void initSUSY(SusyLesHouches* slhaPtrIn, Info* infoPtrIn);
+  void initSUSY(SusyLesHouches* slhaPtrIn, Info* infoPtrIn,
+                ParticleData* particleDataPtrIn, Settings* settingsPtrIn);
 
-  // Status flag. Flags for NMSSM and RPV couplings.
-  bool isInit, isSUSY, isNMSSM, isLLE, isLQD, isUDD;
+  // Status flag. Flag for NMSSM.
+  bool isInit, isNMSSM;
 
   // Z and W pole masses and widths
   double mWpole, wWpole, mZpole, wZpole;
@@ -139,6 +134,8 @@ public:
 
   // RPV couplings
   double rvLLE[4][4][4], rvLQD[4][4][4], rvUDD[4][4][4];
+  // Flags for RPV couplings
+  bool isLLE, isLQD, isUDD;
 
   //Squark and slepton mixing matrix: needed for RPV
   complex Rusq[7][7], Rdsq[7][7];
@@ -160,18 +157,17 @@ public:
   SusyLesHouches* slhaPtr;
 
 private:
+  // Debug flag
+  static const bool DBSUSY;
 
-  // Pointer to logger.
-  Logger*        loggerPtr;
+  // Pointer to the info class
+  Info*          infoPtr;
 
   // Pointer to the settings database.
   Settings*      settingsPtr;
 
   // Pointer to the particle data table.
   ParticleData*  particleDataPtr;
-
-  // Pointer to the Standard Model couplings.
-  CoupSM*        coupSMPtr;
 
 };
 

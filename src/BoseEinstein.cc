@@ -1,6 +1,6 @@
 // BoseEinstein.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the BoseEinsten class.
@@ -39,16 +39,20 @@ const int    BoseEinstein::NCOMPSTEP  = 10;
 
 // Find settings. Precalculate table used to find momentum shifts.
 
-bool BoseEinstein::init() {
+bool BoseEinstein::init(Info* infoPtrIn, Settings& settings,
+  ParticleData& particleData) {
+
+  // Save pointer.
+  infoPtr         = infoPtrIn;
 
   // Main flags.
-  doPion   = flag("BoseEinstein:Pion");
-  doKaon   = flag("BoseEinstein:Kaon");
-  doEta    = flag("BoseEinstein:Eta");
+  doPion   = settings.flag("BoseEinstein:Pion");
+  doKaon   = settings.flag("BoseEinstein:Kaon");
+  doEta    = settings.flag("BoseEinstein:Eta");
 
   // Shape of Bose-Einstein enhancement/suppression.
-  lambda   = parm("BoseEinstein:lambda");
-  QRef     = parm("BoseEinstein:QRef");
+  lambda   = settings.parm("BoseEinstein:lambda");
+  QRef     = settings.parm("BoseEinstein:QRef");
 
   // Multiples and inverses (= "radii") of distance parameters in Q-space.
   QRef2    = 2. * QRef;
@@ -59,7 +63,7 @@ bool BoseEinstein::init() {
 
   // Masses of particles with Bose-Einstein implemented.
   for (int iSpecies = 0; iSpecies < 9; ++iSpecies)
-    mHadron[iSpecies] = particleDataPtr->m0( IDHADRON[iSpecies] );
+    mHadron[iSpecies] = particleData.m0( IDHADRON[iSpecies] );
 
   // Pair pi, K, eta and eta' masses for use in tables.
   mPair[0] = 2. * mHadron[0];
@@ -180,8 +184,8 @@ bool BoseEinstein::shiftEvent( Event& event) {
   // Error if no convergence, and then return without doing BE shift.
   // However, not grave enough to kill event, so return true.
   if ( abs(eSumShifted - eSumOriginal) > COMPRELERR * eSumOriginal ) {
-    loggerPtr->WARNING_MSG(
-      "No consistent BE shift topology found; skipping BE");
+    infoPtr->errorMsg("Warning in BoseEinstein::shiftEvent: "
+      "no consistent BE shift topology found, so skip BE");
     return true;
   }
 

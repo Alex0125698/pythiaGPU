@@ -1,12 +1,11 @@
 // LesHouches.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2023 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
+// Copyright (C) 2015 Torbjorn Sjostrand.
+// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Function definitions (not found in the header) for the LHAup and
 // LHAupLHEF classes.
 
-#include "Pythia8/Pythia.h"
 #include "Pythia8/LesHouches.h"
 
 // Access time information.
@@ -30,40 +29,40 @@ const double LHAup::CONVERTMB2PB = 1e9;
 
 // Print the initialization info; to check it worked.
 
-void LHAup::listInit() {
+void LHAup::listInit(ostream& os) {
 
   // Header.
-  cout << "\n --------  LHA initialization information  ------------ \n";
+  os << "\n --------  LHA initialization information  ------------ \n";
 
   // Beam info.
-  cout << fixed << setprecision(3)
-       << "\n  beam    kind      energy  pdfgrp  pdfset \n"
-       << "     A  " << setw(6) << idBeamASave
-       <<  setw(12) << eBeamASave
-       << setw(8) << pdfGroupBeamASave
-       << setw(8) << pdfSetBeamASave << "\n"
-       << "     B  " << setw(6) << idBeamBSave
-       <<  setw(12) << eBeamBSave
-       << setw(8) << pdfGroupBeamBSave
-       << setw(8) << pdfSetBeamBSave << "\n";
+  os << fixed << setprecision(3)
+     << "\n  beam    kind      energy  pdfgrp  pdfset \n"
+     << "     A  " << setw(6) << idBeamASave
+     <<  setw(12) << eBeamASave
+     << setw(8) << pdfGroupBeamASave
+     << setw(8) << pdfSetBeamASave << "\n"
+     << "     B  " << setw(6) << idBeamBSave
+     <<  setw(12) << eBeamBSave
+     << setw(8) << pdfGroupBeamBSave
+     << setw(8) << pdfSetBeamBSave << "\n";
 
   // Event weighting strategy.
-  cout << "\n  Event weighting strategy = " << setw(2)
-       << strategySave << "\n" ;
+  os << "\n  Event weighting strategy = " << setw(2)
+     << strategySave << "\n" ;
 
   // Process list.
-  cout << scientific << setprecision(4)
-       << "\n  Processes, with strategy-dependent cross section info \n"
-       << "  number      xsec (pb)      xerr (pb)      xmax (pb) \n" ;
+  os << scientific << setprecision(4)
+     << "\n  Processes, with strategy-dependent cross section info \n"
+     << "  number      xsec (pb)      xerr (pb)      xmax (pb) \n" ;
   for (int ip = 0; ip < int(processes.size()); ++ip) {
-    cout << setw(8) << processes[ip].idProc
-         << setw(15) << processes[ip].xSecProc
-         << setw(15) << processes[ip].xErrProc
-         << setw(15) << processes[ip].xMaxProc << "\n";
+    os << setw(8) << processes[ip].idProc
+       << setw(15) << processes[ip].xSecProc
+       << setw(15) << processes[ip].xErrProc
+       << setw(15) << processes[ip].xMaxProc << "\n";
   }
 
   // Finished.
-  cout << "\n --------  End LHA initialization information  -------- \n";
+  os << "\n --------  End LHA initialization information  -------- \n";
 
 }
 
@@ -71,55 +70,55 @@ void LHAup::listInit() {
 
 // Print the event info; to check it worked.
 
-void LHAup::listEvent() {
+void LHAup::listEvent(ostream& os) {
 
   // Header.
-  cout << "\n --------  LHA event information and listing  -------------"
-       << "--------------------------------------------------------- \n";
+  os << "\n --------  LHA event information and listing  -------------"
+     << "--------------------------------------------------------- \n";
 
   // Basic event info.
-  cout << scientific << setprecision(4)
-       << "\n    process = " << setw(8) << idProc
-       << "    weight = " << setw(12) << weightProc
-       << "     scale = " << setw(12) << scaleProc << " (GeV) \n"
-       << "                   "
-       << "     alpha_em = " << setw(12) << alphaQEDProc
-       << "    alpha_strong = " << setw(12) << alphaQCDProc << "\n";
+  os << scientific << setprecision(4)
+     << "\n    process = " << setw(8) << idProc
+     << "    weight = " << setw(12) << weightProc
+     << "     scale = " << setw(12) << scaleProc << " (GeV) \n"
+     << "                   "
+     << "     alpha_em = " << setw(12) << alphaQEDProc
+     << "    alpha_strong = " << setw(12) << alphaQCDProc << "\n";
 
   // Particle list
-  cout << fixed << setprecision(3)
-       << "\n    Participating Particles \n"
-       << "    no        id stat     mothers     colours      p_x        "
-       << "p_y        p_z         e          m        tau    spin \n" ;
+  os << fixed << setprecision(3)
+     << "\n    Participating Particles \n"
+     << "    no        id stat     mothers     colours      p_x        "
+     << "p_y        p_z         e          m        tau    spin \n" ;
   for (int ip = 1; ip < int(particles.size()); ++ip) {
-    cout << setw(6) << ip
-         << setw(10) << particles[ip].idPart
-         << setw(5) << particles[ip].statusPart
-         << setw(6) << particles[ip].mother1Part
-         << setw(6) << particles[ip].mother2Part
-         << setw(6) << particles[ip].col1Part
-         << setw(6) << particles[ip].col2Part
-         << setw(11) << particles[ip].pxPart
-         << setw(11) << particles[ip].pyPart
-         << setw(11) << particles[ip].pzPart
-         << setw(11) << particles[ip].ePart
-         << setw(11) <<  particles[ip].mPart
-         << setw(8) <<  particles[ip].tauPart
-         << setw(8) <<  particles[ip].spinPart << "\n";
+    os << setw(6) << ip
+       << setw(10) << particles[ip].idPart
+       << setw(5) << particles[ip].statusPart
+       << setw(6) << particles[ip].mother1Part
+       << setw(6) << particles[ip].mother2Part
+       << setw(6) << particles[ip].col1Part
+       << setw(6) << particles[ip].col2Part
+       << setw(11) << particles[ip].pxPart
+       << setw(11) << particles[ip].pyPart
+       << setw(11) << particles[ip].pzPart
+       << setw(11) << particles[ip].ePart
+       << setw(11) <<  particles[ip].mPart
+       << setw(8) <<  particles[ip].tauPart
+       << setw(8) <<  particles[ip].spinPart << "\n";
   }
 
   // PDF info - optional.
-  if (pdfIsSetSave) cout << "\n     pdf: id1 =" << setw(5) << id1pdfSave
-      << " id2 =" << setw(5) << id2pdfSave
-      << " x1 ="  << scientific << setw(10) << x1pdfSave
-      << " x2 =" << setw(10) << x2pdfSave
-      << " scalePDF =" << setw(10) << scalePDFSave
-      << " pdf1 =" << setw(10) << pdf1Save
-      << " pdf2 =" << setw(10) << pdf2Save << "\n";
+  if (pdfIsSetSave) os << "\n     pdf: id1 =" << setw(5) << id1pdfSave
+    << " id2 =" << setw(5) << id2pdfSave
+    << " x1 ="  << scientific << setw(10) << x1pdfSave
+    << " x2 =" << setw(10) << x2pdfSave
+    << " scalePDF =" << setw(10) << scalePDFSave
+    << " pdf1 =" << setw(10) << pdf1Save
+    << " pdf2 =" << setw(10) << pdf2Save << "\n";
 
   // Finished.
-  cout << "\n --------  End LHA event information and listing  ---------"
-       << "--------------------------------------------------------- \n";
+  os << "\n --------  End LHA event information and listing  ---------"
+     << "--------------------------------------------------------- \n";
 
 }
 
@@ -134,7 +133,8 @@ bool LHAup::openLHEF(string fileNameIn) {
   const char* cstring = fileName.c_str();
   osLHEF.open(cstring, ios::out | ios::trunc);
   if (!osLHEF) {
-    loggerPtr->ERROR_MSG("could not open file", fileName);
+    infoPtr->errorMsg("Error in LHAup::openLHEF:"
+      " could not open file", fileName);
     return false;
   }
 
@@ -186,7 +186,7 @@ bool LHAup::initLHEF() {
 
 // Write event information to a Les Houches Event File.
 // Normal mode is to line up event info in columns, but the non-verbose
-// alternative saves space at the expense of human readability.
+// altnernative saves space at the expense of human readability.
 
 bool LHAup::eventLHEF(bool verbose) {
 
@@ -233,11 +233,6 @@ bool LHAup::eventLHEF(bool verbose) {
              << " " << setw(13) << pdf1Save
              << " " << setw(13) << pdf2Save << "\n";
 
-    // Optionally write information on shower scales, primarily in DPS events.
-    if (scaleShowersIsSetSave) osLHEF << "#scaleShowers"
-             << " " << setw(13) << scaleShowersSave[0]
-             << " " << setw(13) << scaleShowersSave[1] << "\n";
-
   // Alternative non-verbose option.
   } else {
 
@@ -269,10 +264,6 @@ bool LHAup::eventLHEF(bool verbose) {
              << " " << id2pdfSave << " " << x1pdfSave << " " << x2pdfSave
              << " " << scalePDFSave << " " << pdf1Save << " " << pdf2Save
              << "\n";
-
-    // Optionally write information on shower scales, primarily in DPS events.
-    if (scaleShowersIsSetSave) osLHEF << "#scaleShowers" << " "
-             << scaleShowersSave[0] << " " << scaleShowersSave[1] << "\n";
   }
 
   // Done.
@@ -433,7 +424,8 @@ bool LHAup::setInitLHEF(istream& is, bool readHeaders) {
               // Also check for forgotten close tag: next-to-last element
             } else if (keyVec.size() >= 2
                        && tag == "/" + keyVec[keyVec.size()-2]) {
-              loggerPtr->WARNING_MSG("corrupt LHEF end tag",keyVec.back());
+              infoPtr->errorMsg("Warning in LHAup::setInitLHEF:"
+                                " corrupt LHEF end tag",keyVec.back());
               keyVec.pop_back();
               keyVec.pop_back();
               newKey = true;
@@ -569,9 +561,8 @@ bool LHAup::setNewEventLHEF(istream& is) {
   x2InSave  = (eBeamBSave > 0.) ? particlesSave[2].ePart / eBeamBSave : 0.;
 
   // Continue parsing till </event>. Look for optional info on the way.
-  getPDFSave      = false;
-  getScale        = false;
-  getScaleShowers = false;
+  getPDFSave = false;
+  getScale   = false;
   do {
     if (!getline(is, line)) return false;
     istringstream getinfo(line);
@@ -584,12 +575,6 @@ bool LHAup::setNewEventLHEF(istream& is) {
               >> scalePDFInSave >> pdf1InSave >> pdf2InSave;
       if (!getinfo) return false;
       getPDFSave = true;
-
-    // Extract shower scales info if present.
-    } else if (tag == "#scaleShowers") {
-      getinfo >> scaleShowersInSave[0] >> scaleShowersInSave[1];
-      if (!getinfo) return false;
-      getScaleShowers = true;
 
     // Extract scale info if present.
     } else if (tag == "#" && !getScale) {
@@ -626,14 +611,12 @@ bool LHAup::setNewEventLHEF(istream& is) {
 
 bool LHAup::setOldEventLHEF() {
 
-  // Store saved event, optionally also parton density and scale information.
+  // Store saved event, optionally also parton density information.
   setProcess( idprupSave, xwgtupSave, scalupSave, aqedupSave, aqcdupSave);
   for (int ip = 1; ip <= nupSave; ++ip) addParticle( particlesSave[ip] );
   setIdX( id1InSave, id2InSave, x1InSave, x2InSave);
   setPdf( id1pdfInSave, id2pdfInSave, x1pdfInSave, x2pdfInSave,
     scalePDFInSave, pdf1InSave, pdf2InSave, getPDFSave);
-  if (getScaleShowers)
-    setScaleShowers( scaleShowersInSave[0], scaleShowersInSave[1]);
 
   // Done;
   return true;
@@ -660,7 +643,7 @@ void LHAup::closeFile(istream *&is, ifstream &ifs) {
   // If the istream pointer is not NULL and is not the
   // same as the ifstream, then delete pointer.
   if (is && is != &ifs) delete is;
-  is = nullptr;
+  is = NULL;
 
   // Close the file
   if (ifs.is_open()) ifs.close();
@@ -690,7 +673,7 @@ bool LHAupLHEF::setInitLHEF( istream & isIn, bool readHead ) {
   comments+=reader.initComments;
   comments+="</init>\n";
   istringstream is1(comments);
-  bool useComments = (headerfile == nullptr);
+  bool useComments = (headerfile == NULL);
   istream & iss((useComments ? is1 : isIn));
 
   // Check that first line is consistent with proper LHEF file.
@@ -731,13 +714,8 @@ bool LHAupLHEF::setInitLHEF( istream & isIn, bool readHead ) {
 
       // Tell XML parser to ignore comment and CDATA blocks
       // If we are currently inside a comment block, check for block end
-      if (commentDepth >= 1 && line.find("-->") != string::npos) {
+      if (commentDepth >= 1 && line.find("-->") != string::npos)
         commentDepth--;
-        size_t comBeg = line.find("-->")+2;
-        size_t comEnd = line.find_last_not_of("\n\t\v\b\r\f\a ");
-        if( comEnd == comBeg ) continue;
-        line = line.substr(comBeg,comEnd-comBeg+1);
-      }
       if (commentDepth >= 1 && line.find("]]>") != string::npos)
         commentDepth--;
       // If the comment block did not end on this line, skip to next line
@@ -784,7 +762,6 @@ bool LHAupLHEF::setInitLHEF( istream & isIn, bool readHead ) {
           lineClean = line.substr(posBeg, posEnd - posBeg + 1);
           posBeg = 0;
           posEnd = lineClean.size();
-          line = lineClean;
         }
 
         // Check for empty line
@@ -836,7 +813,8 @@ bool LHAupLHEF::setInitLHEF( istream & isIn, bool readHead ) {
               // Also check for forgotten close tag: next-to-last element
             } else if (keyVec.size() >= 2
                        && tag == "/" + keyVec[keyVec.size()-2]) {
-              loggerPtr->WARNING_MSG("corrupt LHEF end tag",keyVec.back());
+              infoPtr->errorMsg("Warning in LHAupLHEF::setInitLHEF:"
+                                " corrupt LHEF end tag",keyVec.back());
               keyVec.pop_back();
               keyVec.pop_back();
               newKey = true;
@@ -927,8 +905,7 @@ bool LHAupLHEF::setInitLHEF( istream & isIn, bool readHead ) {
   if (reader.version > 1) {
     infoPtr->setLHEF3InitInfo( reader.version,
       &reader.heprup.initrwgt, &(reader.heprup.generators),
-      &(reader.heprup.weightgroups), &(reader.heprup.weights),
-      reader.headerBlock);
+      &(reader.heprup.weightgroups), &(reader.heprup.weights));
   }
 
   // Reading worked.
@@ -989,9 +966,9 @@ bool LHAupLHEF::setNewEventLHEF() {
   // Parse event comments and look for optional info on the way.
   std::string line, tag;
   std::stringstream ss(reader.eventComments);
-  getPDFSave      = false;
-  getScale        = (setScalesFromLHEF && reader.version == 1) ? false : true;
-  getScaleShowers = false;
+  getPDFSave = false;
+  getScale   = false;
+  getScale   = (setScalesFromLHEF && reader.version == 1) ? false : true;
   while (getline(ss, line)) {
     istringstream getinfo(line);
     getinfo >> tag;
@@ -1002,11 +979,6 @@ bool LHAupLHEF::setNewEventLHEF() {
               >> scalePDFInSave >> pdf1InSave >> pdf2InSave;
       if (!getinfo) return false;
       getPDFSave = true;
-    // Extract shower scales info if present.
-    } else if (tag == "#scaleShowers") {
-      getinfo >> scaleShowersInSave[0] >> scaleShowersInSave[1];
-      if (!getinfo) return false;
-      getScaleShowers = true;
     // Extract scale info if present.
     } else if (tag == "#" && !getScale) {
       double scaleIn = 0;
@@ -1022,49 +994,18 @@ bool LHAupLHEF::setNewEventLHEF() {
 
   // Set production scales from <scales> tag.
   if ( setScalesFromLHEF && reader.version > 1 ){
-    // Reset scalup, to avoid using a too strict constraint
-    // on emissions when multiple scales are present.
-    double scaleMax = -1.;
     for ( map<string,double>::const_iterator
-      it  = reader.hepeup.scalesSave.attributes.begin();
-      it != reader.hepeup.scalesSave.attributes.end(); ++it ) {
+      it  = reader.hepeup.scales.attributes.begin();
+      it != reader.hepeup.scales.attributes.end(); ++it ) {
       if ( it->first.find_last_of("_") != string::npos) {
-        // Find the particle for which this scale applies.
-        string nameScale = it->first;
-        vector <string> pieces;
-        vector <int> ipieces;
-        do {
-          unsigned end = (nameScale.find_first_of("_",0)!=string::npos) ?
-            nameScale.find_first_of("_",0) : nameScale.size();
-          pieces.push_back( nameScale.substr(0,end) );
-          ipieces.push_back(atoi(pieces.back().c_str()));
-          if (end < nameScale.size())
-            nameScale=nameScale.substr(end+1,nameScale.size());
-          else
-            nameScale="";
-        } while (nameScale.size() > 0);
-        int iPos = 0;
-        if (ipieces.size()>2 && ipieces[ipieces.size()-2] > 0)
-          iPos = ipieces[ipieces.size()-2];
-        else if (ipieces.size()>1 && ipieces[ipieces.size()-1] > 0)
-          iPos = ipieces[ipieces.size()-1];
-
-        // Set production scales of final *and initial* particles to the
-        // minimal input scale found for the particle.
+        unsigned iFound = it->first.find_last_of("_") + 1;
+        int iPos = atoi(it->first.substr(iFound).c_str());
+        // Only set production scales of final particles.
         if ( iPos < int(particlesSave.size())
-          && abs(particlesSave[iPos].statusPart) == 1) {
-          if (it->second > 0.) {
-            if (particlesSave[iPos].scalePart<=0.)
-              particlesSave[iPos].scalePart = it->second;
-            else
-              particlesSave[iPos].scalePart
-                = min(particlesSave[iPos].scalePart,it->second);
-          }
-          scaleMax = max(scaleMax,particlesSave[iPos].scalePart);
-        }
+          && particlesSave[iPos].statusPart == 1)
+          particlesSave[iPos].scalePart = it->second;
       }
     }
-    scalupSave  = scaleMax;
   }
 
   // Need id and x values even when no PDF info. Rest empty.
@@ -1084,14 +1025,10 @@ bool LHAupLHEF::setNewEventLHEF() {
   if (reader.version > 1) {
     infoPtr->setLHEF3EventInfo( &reader.hepeup.attributes,
       &reader.hepeup.weights_detailed, &reader.hepeup.weights_compressed,
-      &reader.hepeup.scalesSave, &reader.hepeup.weightsSave,
-      &reader.hepeup.rwgtSave, reader.weights_detailed_vector(),
-      reader.weightnames_detailed_vector(),
-      reader.eventComments, reader.hepeup.XWGTUP);
+      &reader.hepeup.scales, &reader.hepeup.weights, &reader.hepeup.rwgt);
   // Try to at least set the event attributes for 1.0
   } else {
-    infoPtr->setLHEF3EventInfo( &reader.hepeup.attributes, 0, 0, 0, 0, 0,
-       vector<double>(), vector<string>(), "", reader.hepeup.XWGTUP);
+    infoPtr->setLHEF3EventInfo( &reader.hepeup.attributes, 0, 0, 0, 0, 0);
   }
 
   // Reading worked.
@@ -1156,7 +1093,6 @@ bool LHAupFromPYTHIA8::setEvent( int) {
   // Read in particle info one by one, excluding zero and beams, and store it.
   // Note unusual C++ loop range, to better reflect LHA/Fortran standard.
   int nup   = processPtr->size() - 3;
-  int n21   = 0;
   int    idup, statusup, istup, mothup1, mothup2, icolup1, icolup2;
   double pup1, pup2, pup3, pup4, pup5, vtimup, spinup;
   for (int ip = 1; ip <= nup; ++ip) {
@@ -1164,7 +1100,7 @@ bool LHAupFromPYTHIA8::setEvent( int) {
     idup     = particle.id();
     // Convert from PYTHIA8 to LHA status codes.
     statusup = particle.status();
-    if (statusup == -21)   istup = -1;
+    if (ip < 3)            istup = -1;
     else if (statusup < 0) istup =  2;
     else                   istup =  1;
     mothup1  = max(0, particle.mother1() - 2);
@@ -1180,7 +1116,6 @@ bool LHAupFromPYTHIA8::setEvent( int) {
     spinup   = particle.pol();
     addParticle(idup, istup, mothup1, mothup2, icolup1, icolup2,
       pup1, pup2, pup3, pup4, pup5, vtimup, spinup, -1.) ;
-    if (statusup == -21) ++n21;
   }
 
   // Extract hard-process initiator information from Info class, and store it.
@@ -1200,10 +1135,6 @@ bool LHAupFromPYTHIA8::setEvent( int) {
   double pdf2up     = infoPtr->pdf2();
   setPdf(id1pdfup, id2pdfup, x1pdfup, x2pdfup, scalePDFup, pdf1up,
     pdf2up, true);
-
-  // Extract parton shower scales from for DPS processes.
-  if (n21 == 4) setScaleShowers( processPtr->scale(),
-    processPtr->scaleSecond() );
 
   // Done.
   return true;
@@ -1242,8 +1173,8 @@ bool LHEF3FromPythia8::openLHEF(string fileNameIn) {
   const char* cstring = fileName.c_str();
   osLHEF.open(cstring, ios::out | ios::trunc);
   if (!osLHEF) {
-    cout << "Error in LHAup::openLHEF: could not open file "
-         <<  fileName << endl;
+    infoPtr->errorMsg("Error in LHAup::openLHEF:"
+      " could not open file", fileName);
     return false;
   }
 
@@ -1288,7 +1219,7 @@ bool LHEF3FromPythia8::setInit() {
   // The cross sections for the different subprocesses in pb.
   vector<double> XSECUP;
   for ( int i=0; i < heprup.NPRUP; ++i)
-    XSECUP.push_back(CONVERTMB2PB * (infoPtr->sigmaGen()));
+    XSECUP.push_back(CONVERTMB2PB * infoPtr->sigmaGen());
   heprup.XSECUP = XSECUP;
 
   // The statistical error in the cross sections for the different
@@ -1309,20 +1240,16 @@ bool LHEF3FromPythia8::setInit() {
   heprup.LPRUP = LPRUP;
 
   // Contents of the LHAinitrwgt tag
-  if (infoPtr->initrwgt )
-    heprup.initrwgt = *(infoPtr->initrwgt);
+  if (infoPtr->initrwgt) heprup.initrwgt = *(infoPtr->initrwgt);
 
   // Contents of the LHAgenerator tags.
-  if (infoPtr->generators)
-    heprup.generators = *(infoPtr->generators);
+  if (infoPtr->generators) heprup.generators = *(infoPtr->generators);
 
   // A map of the LHAweightgroup tags, indexed by name.
-  if (infoPtr->weightgroups)
-    heprup.weightgroups = *(infoPtr->weightgroups);
+  if (infoPtr->weightgroups) heprup.weightgroups = *(infoPtr->weightgroups);
 
   // A map of the LHAweight tags, indexed by name.
-  if (infoPtr->init_weights)
-    heprup.weights = *(infoPtr->init_weights);
+  if (infoPtr->init_weights) heprup.weights = *(infoPtr->init_weights);
 
   // Get init information.
   writer.version = 3;
@@ -1335,7 +1262,7 @@ bool LHEF3FromPythia8::setInit() {
 
   // Print Pythia settings
   stringstream setout;
-  settingsPtr->writeFile(setout, true);
+  settingsPtr->listAll(setout);
   while ( getline(setout,line) )
     writer.headerBlock() << line << "\n";
 
@@ -1571,33 +1498,30 @@ bool LHEF3FromPythia8::setEvent(int) {
 
   // The weights associated with this event, as given by the LHAwgt tags.
   if (infoPtr->weights_detailed)
-    hepeup.weights_detailed               = *(infoPtr->weights_detailed);
+    hepeup.weights_detailed = *(infoPtr->weights_detailed);
 
   // The weights associated with this event, as given by the LHAweights tags.
   if (infoPtr->weights_compressed)
-    hepeup.weights_compressed             = *(infoPtr->weights_compressed);
+    hepeup.weights_compressed = *(infoPtr->weights_compressed);
 
   // Contents of the LHAscales tag
-  if (infoPtr->scales)
-    hepeup.scalesSave                     = *(infoPtr->scales);
+  if (infoPtr->scales) hepeup.scales = *(infoPtr->scales);
 
   // Contents of the LHAweights tag (compressed format)
-  if (infoPtr->weights)
-    hepeup.weightsSave                    = *(infoPtr->weights);
+  if (infoPtr->weights) hepeup.weights = *(infoPtr->weights);
 
   // Contents of the LHArwgt tag (detailed format)
-  if (infoPtr->rwgt)
-    hepeup.rwgtSave                       = *(infoPtr->rwgt);
+  if (infoPtr->rwgt) hepeup.rwgt = *(infoPtr->rwgt);
 
   // Any other attributes.
   if (infoPtr->eventAttributes)
-    hepeup.attributes                     = *(infoPtr->eventAttributes);
+    hepeup.attributes = *(infoPtr->eventAttributes);
 
   // Not implemented yet:
   // Write event comments of input LHEF.
 
   writer.hepeup = hepeup;
-  if (writeToFile) writer.writeEvent(&hepeup,pDigits);
+  writer.writeEvent(&hepeup,pDigits);
 
   return true;
 
