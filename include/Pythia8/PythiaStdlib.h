@@ -37,6 +37,8 @@ extern "C" void *(*dlsym(void *handle, const char *symbol))();
 #include <fstream>
 #include <sstream>
 
+#include "Pythia8/SIMDString.h"
+
 // Define pi if not yet done.
 #ifndef M_PI
 #define M_PI 3.1415926535897932385
@@ -48,6 +50,7 @@ extern "C" void *(*dlsym(void *handle, const char *symbol))();
 // Alternatively you can specify exactly which std:: methods will be used.
 // Now made default so std does not spill outside namespace Pythia8.
 namespace Pythia8 {
+
 
 // Generic utilities and mathematical functions.
 using std::swap;
@@ -65,6 +68,9 @@ using std::map;
 using std::multimap;
 using std::deque;
 using std::set;
+
+// using cstring = const char*;
+// using string = SIMDString<64>;
 
 // Input/output streams.
 using std::cin;
