@@ -964,7 +964,7 @@ bool LHAupLHEF::setNewEventLHEF() {
   x2InSave  = (eBeamB() > 0.) ? particlesSave[2].ePart / eBeamB() : 0.;
 
   // Parse event comments and look for optional info on the way.
-  std::string line, tag;
+  string line, tag;
   std::stringstream ss(reader.eventComments);
   getPDFSave = false;
   getScale   = false;

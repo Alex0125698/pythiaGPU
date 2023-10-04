@@ -363,20 +363,23 @@ FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
 #define __FJCORE_ERROR_HH__
 #include<iostream>
 #include<string>
+
+using std::string; // !!!!
+
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 class Error {
 public:
   Error() {}
-  Error(const std::string & message);
+  Error(const string & message);
   virtual ~Error() {}
-  std::string message() const {return _message;}
+  string message() const {return _message;}
   static void set_print_errors(bool print_errors) {_print_errors = print_errors;}
   static void set_print_backtrace(bool enabled) {_print_backtrace = enabled;}
   static void set_default_stream(std::ostream * ostr) {
     _default_ostr = ostr;
   }
 private:
-  std::string _message;                ///< error message
+  string _message;                ///< error message
   static bool _print_errors;           ///< do we print anything?
   static bool _print_backtrace;        ///< do we print the backtrace?
   static std::ostream * _default_ostr; ///< the output stream (cerr if not set)
@@ -388,25 +391,28 @@ FJCORE_END_NAMESPACE
 #include <iostream>
 #include <string>
 #include <list>
+
+using std::string; // !!!!
+
 FJCORE_BEGIN_NAMESPACE
 class LimitedWarning {
 public:
   LimitedWarning() : _max_warn(_max_warn_default), _n_warn_so_far(0), _this_warning_summary(0) {}
   LimitedWarning(int max_warn) : _max_warn(max_warn), _n_warn_so_far(0), _this_warning_summary(0) {}
-  void warn(const std::string & warning);
-  void warn(const std::string & warning, std::ostream * ostr);
+  void warn(const string & warning);
+  void warn(const string & warning, std::ostream * ostr);
   static void set_default_stream(std::ostream * ostr) {
     _default_ostr = ostr;
   }
   static void set_default_max_warn(int max_warn) {
     _max_warn_default = max_warn;
   }
-  static std::string summary();
+  static string summary();
 private:
   int _max_warn, _n_warn_so_far;
   static int _max_warn_default;
   static std::ostream * _default_ostr;
-  typedef std::pair<std::string, unsigned int> Summary;
+  typedef std::pair<string, unsigned int> Summary;
   static std::list< Summary > _global_warnings_summary;
   Summary * _this_warning_summary;
 };
@@ -416,6 +422,9 @@ FJCORE_END_NAMESPACE
 #define __FJCORE_PSEUDOJET_STRUCTURE_BASE_HH__
 #include <vector>
 #include <string>
+
+using std::string; // !!!!
+
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 class PseudoJet;
 class ClusterSequence;
@@ -423,7 +432,7 @@ class PseudoJetStructureBase{
 public:
   PseudoJetStructureBase(){};
   virtual ~PseudoJetStructureBase(){};
-  virtual std::string description() const{ return "PseudoJet with an unknown structure"; }
+  virtual string description() const{ return "PseudoJet with an unknown structure"; }
   virtual bool has_associated_cluster_sequence() const { return false;}
   virtual const ClusterSequence* associated_cluster_sequence() const;
   virtual bool has_valid_cluster_sequence() const {return false;}
@@ -580,7 +589,7 @@ class PseudoJet {
   SharedPtr<UserInfoBase> & user_info_shared_ptr(){
     return _user_info;
   }
-  std::string description() const;
+  string description() const;
   bool has_associated_cluster_sequence() const;
   bool has_associated_cs() const {return has_associated_cluster_sequence();}
   bool has_valid_cluster_sequence() const;
@@ -741,7 +750,7 @@ public:
   FunctionOfPseudoJet(){}
   FunctionOfPseudoJet(const TOut &constant_value);
   virtual ~FunctionOfPseudoJet(){}
-  virtual std::string description() const{ return "";}
+  virtual string description() const{ return "";}
   virtual TOut result(const PseudoJet &pj) const = 0;
   TOut operator()(const PseudoJet &pj) const { return result(pj);}
   std::vector<TOut> operator()(const std::vector<PseudoJet> &pjs) const {
@@ -769,7 +778,7 @@ public:
     }
   }
   virtual bool applies_jet_by_jet() const {return true;}
-  virtual std::string description() const {return "missing description";}
+  virtual string description() const {return "missing description";}
   virtual bool takes_reference() const { return false;}
   virtual void set_reference(const PseudoJet & /*reference*/){
     throw Error("set_reference(...) cannot be used for a selector worker that does not take a reference");
@@ -816,7 +825,7 @@ public:
   void get_rapidity_extent(double &rapmin, double &rapmax) const {
     return validated_worker()->get_rapidity_extent(rapmin, rapmax);
   }
-  std::string description() const {
+  string description() const {
     return validated_worker()->description();
   }
   bool is_geometric() const{
@@ -905,8 +914,11 @@ FJCORE_END_NAMESPACE      // defined in fastjet/internal/base.hh
 #include<cassert>
 #include<string>
 #include<memory>
+
+using std::string; // !!!!
+
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
-std::string fastjet_version_string();
+string fastjet_version_string();
 enum Strategy {
   N2MinHeapTiled   = -4,
   N2Tiled     = -3,
@@ -1032,11 +1044,11 @@ public:
   const Recombiner * recombiner() const {
     return _recombiner == 0 ? & _default_recombiner : _recombiner;}
   bool has_same_recombiner(const JetDefinition &other_jd) const;
-  std::string description() const;
+  string description() const;
 public:
   class Recombiner {
   public:
-    virtual std::string description() const = 0;
+    virtual string description() const = 0;
     virtual void recombine(const PseudoJet & pa, const PseudoJet & pb,
                            PseudoJet & pab) const = 0;
     virtual void preprocess(PseudoJet & ) const {};
@@ -1051,7 +1063,7 @@ public:
   public:
     DefaultRecombiner(RecombinationScheme recomb_scheme = E_scheme) :
       _recomb_scheme(recomb_scheme) {}
-    virtual std::string description() const;
+    virtual string description() const;
     virtual void recombine(const PseudoJet & pa, const PseudoJet & pb,
                            PseudoJet & pab) const;
     virtual void preprocess(PseudoJet & p) const;
@@ -1061,7 +1073,7 @@ public:
   };
   class Plugin{
   public:
-    virtual std::string description() const = 0;
+    virtual string description() const = 0;
     virtual void run_clustering(ClusterSequence &) const = 0;
     virtual double R() const = 0;
     virtual bool supports_ghosted_passive_areas() const {return false;}
@@ -1103,7 +1115,7 @@ public:
   virtual ~CompositeJetStructure(){
     if (_area_4vector_ptr) delete _area_4vector_ptr;
   };
-  virtual std::string description() const;
+  virtual string description() const;
   virtual bool has_constituents() const;
   virtual std::vector<PseudoJet> constituents(const PseudoJet &jet) const;
   virtual bool has_pieces(const PseudoJet & /*jet*/) const {return true;}
@@ -1204,7 +1216,7 @@ public:
     set_associated_cs(cs);
   };
   virtual ~ClusterSequenceStructure();
-  virtual std::string description() const{ return "PseudoJet with an associated ClusterSequence"; }
+  virtual string description() const{ return "PseudoJet with an associated ClusterSequence"; }
   virtual bool has_associated_cluster_sequence() const{ return true;}
   virtual const ClusterSequence* associated_cluster_sequence() const;
   virtual bool has_valid_cluster_sequence() const;
@@ -1241,6 +1253,9 @@ FJCORE_END_NAMESPACE
 #include<string>
 #include<set>
 #include<cmath> // needed to get double std::abs(double)
+
+using std::string; // !!!!
+
 FJCORE_BEGIN_NAMESPACE      // defined in fastjet/internal/base.hh
 class ClusterSequenceStructure;
 class DynamicNearestNeighbours;
@@ -1291,13 +1306,13 @@ class ClusterSequence {
   void print_jets_for_root(const std::vector<PseudoJet> & jets,
                            std::ostream & ostr = std::cout) const;
   void print_jets_for_root(const std::vector<PseudoJet> & jets,
-                           const std::string & filename,
-			   const std::string & comment = "") const;
+                           const string & filename,
+			   const string & comment = "") const;
   void add_constituents (const PseudoJet & jet,
 			 std::vector<PseudoJet> & subjet_vector) const;
   inline Strategy strategy_used () const {return _strategy;}
-  std::string strategy_string () const {return strategy_string(_strategy);}
-  std::string strategy_string (Strategy strategy_in) const;
+  string strategy_string () const {return strategy_string(_strategy);}
+  string strategy_string (Strategy strategy_in) const;
   const JetDefinition & jet_def() const {return _jet_def;}
   void delete_self_when_unused();
   bool will_delete_self_when_unused() const {return _deletes_self_when_unused;}
@@ -1318,7 +1333,7 @@ class ClusterSequence {
   class Extras {
   public:
     virtual ~Extras() {}
-    virtual std::string description() const {return "This is a dummy extras class that contains no extra information! Derive from it if you want to use it to provide extra information from a plugin jet finder";}
+    virtual string description() const {return "This is a dummy extras class that contains no extra information! Derive from it if you want to use it to provide extra information from a plugin jet finder";}
   };
   inline void plugin_associate_extras(std::auto_ptr<Extras> extras_in) {
     _extras.reset(extras_in.release());

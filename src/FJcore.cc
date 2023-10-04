@@ -176,11 +176,11 @@ public:
 class DnnError {
 public:
   DnnError() {;};
-  DnnError(const std::string & message_in) {
+  DnnError(const string & message_in) {
     _message = message_in; std::cerr << message_in << std::endl;};
-  std::string message() const {return _message;};
+  string message() const {return _message;};
 private:
-  std::string _message;
+  string _message;
 };
 class DynamicNearestNeighbours {
 public:
@@ -1627,8 +1627,8 @@ void ClusterSequence::print_jets_for_root(const std::vector<PseudoJet> & jets_in
   }
 }
 void ClusterSequence::print_jets_for_root(const std::vector<PseudoJet> & jets_in,
-					  const std::string & filename,
-					  const std::string & comment ) const {
+					  const string & filename,
+					  const string & comment ) const {
   std::ofstream ostr(filename.c_str());
   if (comment != "") ostr << "# " << comment << endl;
   print_jets_for_root(jets_in, ostr);
@@ -2826,7 +2826,7 @@ CompositeJetStructure::CompositeJetStructure(const std::vector<PseudoJet> & init
   if (recombiner){};  // ugly trick to prevent a gcc warning
   _area_4vector_ptr = 0;
 }
-std::string CompositeJetStructure::description() const{
+string CompositeJetStructure::description() const{
   string str = "Composite PseudoJet";
   return str;
 }
@@ -2859,7 +2859,7 @@ using namespace std;
 bool Error::_print_errors = true;
 bool Error::_print_backtrace = false;
 ostream * Error::_default_ostr = & cerr;
-Error::Error(const std::string & message_in) {
+Error::Error(const string & message_in) {
   _message = message_in;
   if (_print_errors && _default_ostr){
     ostringstream oss;
@@ -3140,10 +3140,10 @@ FJCORE_BEGIN_NAMESPACE
 ostream * LimitedWarning::_default_ostr = &cerr;
 std::list< LimitedWarning::Summary > LimitedWarning::_global_warnings_summary;
 int LimitedWarning::_max_warn_default = 5;
-void LimitedWarning::warn(const std::string & warning) {
+void LimitedWarning::warn(const string & warning) {
   warn(warning, _default_ostr);
 }
-void LimitedWarning::warn(const std::string & warning, std::ostream * ostr) {
+void LimitedWarning::warn(const string & warning, std::ostream * ostr) {
   if (_this_warning_summary == 0) {
     _global_warnings_summary.push_back(Summary(warning, 0));
     _this_warning_summary = & (_global_warnings_summary.back());
