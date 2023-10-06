@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "vector": "cpp",
+    "charconv": "cpp",
+    "ios": "cpp",
+    "istream": "cpp",
+    "ostream": "cpp",
+    "xstring": "cpp",
+    "xutility": "cpp",
+    "array": "cpp",
+    "ranges": "cpp",
+    "span": "cpp"
+  }
+}
