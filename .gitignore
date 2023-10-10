@@ -1,2 +1,9 @@
-tmp/*
-lib/*
+bin/**
+lib/**
+tmp/**
+share/Pythia8/AUTHORS
+share/Pythia8/COPYING
+share/Pythia8/GUIDELINES
+share/Pythia8/README
+examples/Makefile.inc
+Makefile.inc
