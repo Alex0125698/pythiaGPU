@@ -4,7 +4,7 @@
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file to allow user access to program at different stages.
-// UserHooks: almost empty base class, with user to write the rela code.
+// UserHooks: almost empty base class, with user to write the relavent code.
 // MyUserHooks: derived class, only intended as an example.
 
 #ifndef Pythia8_UserHooks_H

@@ -43,6 +43,13 @@
 #include "Pythia8/TimeShower.h"
 #include "Pythia8/UserHooks.h"
 
+
+// looks like this gets defined by the Makefile somehow
+// add here to supress linter errors
+#ifndef XMLDIR
+#define XMLDIR ""
+#endif
+
 namespace Pythia8 {
 
 //==========================================================================
@@ -53,14 +60,21 @@ class Pythia {
 
 public:
 
+  // looks like the xml file is used to define the input settings
+
   // Constructor. (See Pythia.cc file.)
+  // @@@ MAIN
   Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
 
+  // looks like a wrapper of settings, but may store stuff elsewhere too
+
   // Read in one update for a setting or particle data from a single line.
   bool readString(string, bool warn = true);
+
+  // why do we need another function for this?
 
   // Read in updates for settings or particle data from user-defined file.
   bool readFile(string fileName, bool warn = true,
@@ -118,10 +132,14 @@ public:
     { timesDecPtr = timesDecPtrIn; timesPtr = timesPtrIn;
     spacePtr = spacePtrIn; return true;}
 
+  // why doesn't it happen in the constructor ??
+
   // Initialize.
+  // @@@ MAIN
   bool init();
 
   // Generate the next event.
+  // @@@ MAIN
   bool next();
 
   // Generate only a single timelike shower as in a decay.
@@ -149,11 +167,15 @@ public:
   // Main routine to provide final statistics on generation.
   void stat();
 
+  // these wrappers should be removed
+
   // Read in settings values: shorthand, not new functionality.
   bool   flag(string key) {return settings.flag(key);}
   int    mode(string key) {return settings.mode(key);}
   double parm(string key) {return settings.parm(key);}
   string word(string key) {return settings.word(key);}
+
+  // @@@ DATA
 
   // Auxiliary to set parton densities among list of possibilities.
   PDF* getPDFPtr(int idIn, int sequence = 1, string beam = "");

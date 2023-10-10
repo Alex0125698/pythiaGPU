@@ -24,9 +24,11 @@
 #include <list>
 
 // Stdlib header file for dynamic library loading.
+#ifndef _MSC_VER
 #define dlsym __
 #include <dlfcn.h>
 #undef dlsym
+#endif
 
 // Redefine dlsym to suppress compiler warnings.
 extern "C" void *(*dlsym(void *handle, const char *symbol))();
