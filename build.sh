@@ -1,4 +1,4 @@
-./configure --cxx-common="-std=c++20 --enable-debug -Wno-misleading-indentation -Wno-deprecated-declarations"
+./configure --enable-debug --cxx-common="-std=c++20 -Wno-misleading-indentation -Wno-deprecated-declarations"
 make clean
 make -j16
 
