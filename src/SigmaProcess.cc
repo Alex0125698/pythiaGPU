@@ -400,6 +400,8 @@ double SigmaProcess::sigmaPDF() {
 
   Benchmark_loopStop(sigmaPDF_loopOverIncomingChannels);
 
+  Benchmark_start(sigmaPDF_dummy);
+
   // Done.
   return sigmaSumSave;
 

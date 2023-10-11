@@ -505,6 +505,9 @@ void PhaseSpace::setup3Body() {
 
 bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
+  Benchmark_start(PhaseSpace0setupSampling123);
+  Benchmark_start(PhaseSpace0setupSampling123_resetCoeffs);
+
   // Optional printout.
   if (showSearch) os <<  "\n PYTHIA Optimization printout for "
     << sigmaProcessPtr->name() << "\n \n" << scientific << setprecision(3);
@@ -538,6 +541,9 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   nTau = (hasTwoPointLeptons) ? 1 : 2;
   nY   = (hasOnePointLepton || hasTwoPointLeptons) ? 1 : 5;
   nZ   = (is2) ? 5 : 1;
+
+  Benchmark_stop(PhaseSpace0setupSampling123_resetCoeffs);
+  Benchmark_start(PhaseSpace0setupSampling123_identifyResonances);
 
   // Identify if any resonances contribute in s-channel.
   idResA = sigmaProcessPtr->resonanceA();
@@ -592,8 +598,11 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   yCoef[2]   = 0.5;
   zCoef[0]   = 1.;
 
+  Benchmark_stop(PhaseSpace0setupSampling123_identifyResonances);
+
   // Step through grid in tau. Set limits on y and z generation.
-  for (int iTau = 0; iTau < nTau; ++iTau) {
+  for (int iTau = 0; iTau < nTau; ++iTau) 
+  {
     double posTau = 0.5;
     if (sameResMass && iTau > 1 && iTau < 6) posTau = (iTau < 4) ? 0.4 : 0.6;
     selectTau( iTau, posTau, is2);
@@ -601,9 +610,11 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
     if (is2 && !limitZ()) continue;
 
     // Step through grids in y and z.
-    for (int iY = 0; iY < nY; ++iY) {
+    for (int iY = 0; iY < nY; ++iY) 
+    {
       selectY( iY, 0.5);
-      for (int iZ = 0; iZ < nZ; ++iZ) {
+      for (int iZ = 0; iZ < nZ; ++iZ) 
+      {
         if (is2) selectZ( iZ, 0.5);
         double sigmaTmp = 0.;
 

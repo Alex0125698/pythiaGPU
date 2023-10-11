@@ -233,6 +233,9 @@ private:
   int    nErrList;
   double epTolErr, epTolWarn, mTolErr, mTolWarn;
 
+  // these decoded settings should be removed.
+  // there should only be 1 copy of each setting (found in Settings class)
+
   // Initialization data, extracted from init(...) call.
   bool   isConstructed, isInit, isUnresolvedA, isUnresolvedB, showSaV,
          showMaD, doReconnect, forceHadronLevelCR;

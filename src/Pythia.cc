@@ -42,6 +42,10 @@ const int Pythia::SUBRUNDEFAULT = -999;
 
 Pythia::Pythia(string xmlDir, bool printBanner) {
 
+  // Benchmark::init();
+  Benchmark_start(PythiaP);
+  Benchmark_start(PythiaP_clearData); // trivial
+
   // Initial values for pointers to PDF's.
   useNewPdfA      = false;
   useNewPdfB      = false;
@@ -87,6 +91,9 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
   timesPtr        = 0;
   spacePtr        = 0;
 
+  Benchmark_stop(PythiaP_clearData);
+  Benchmark_start(PythiaP_loadXmlSettings); // trivial
+
   // Find path to data files, i.e. xmldoc directory location.
   // Environment variable takes precedence, then constructor input,
   // and finally the pre-processor constant XMLDIR.
@@ -108,11 +115,14 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
   // Read in files with all flags, modes, parms and words.
   settings.initPtr( &info);
   string initFile = xmlPath + "Index.xml";
-  isConstructed = settings.init( initFile);
+  isConstructed = settings.init( initFile); // !!!
   if (!isConstructed) {
     info.errorMsg("Abort from Pythia::Pythia: settings unavailable");
     return;
   }
+
+  Benchmark_stop(PythiaP_loadXmlSettings);
+  Benchmark_start(PythiaP_checkXmlSettings); // trivial
 
   // Check that XML version number matches code version number.
   double versionNumberXML = parm("Pythia:versionNumber");
@@ -137,6 +147,9 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     return;
   }
 
+  Benchmark_stop(PythiaP_checkXmlSettings);
+  Benchmark_start(PythiaP_loadXmlParticleData); // trivial
+
   // Read in files with all particle data.
   particleData.initPtr( &info, &settings, &rndm, couplingsPtr);
   string dataFile = xmlPath + "ParticleData.xml";
@@ -145,6 +158,9 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     info.errorMsg("Abort from Pythia::Pythia: particle data unavailable");
     return;
   }
+
+  Benchmark_stop(PythiaP_loadXmlParticleData);
+  Benchmark_start(PythiaP_printBanner); // trivial
 
   // Write the Pythia banner to output.
   if (printBanner) banner();
@@ -340,6 +356,9 @@ bool Pythia::setPDFPtr( PDF* pdfAPtrIn, PDF* pdfBPtrIn, PDF* pdfHardAPtrIn,
 
 bool Pythia::init() {
 
+  Benchmark_start(Pythia0init);
+  Benchmark_start(Pythia0init_readBeamSettings); // trivial
+
   // Check that constructor worked.
   isInit = false;
   if (!isConstructed) {
@@ -404,7 +423,7 @@ bool Pythia::init() {
         const char* cstring2 = (lhefHeader == "void")
           ? NULL : lhefHeader.c_str();
         lhaUpPtr   = new LHAupLHEF(&info, cstring1, cstring2,
-          readHeaders, setScales);
+          readHeaders, setScales); // !!!
         useNewLHA  = true;
       }
 
@@ -517,6 +536,9 @@ bool Pythia::init() {
     if (nSkipAtInit > 0) lhaUpPtr->skipEvent(nSkipAtInit);
   }
 
+  Benchmark_stop(Pythia0init_readBeamSettings);
+  Benchmark_start(Pythia0init_readGenSettings); // trivial
+
   // Set up values related to user hooks.
   hasUserHooks     = (userHooksPtr != 0);
   doVetoProcess    = false;
@@ -569,13 +591,19 @@ bool Pythia::init() {
 
   // Initialize the random number generator.
   if ( settings.flag("Random:setSeed") )
-    rndm.init( settings.mode("Random:seed") );
+    rndm.init( settings.mode("Random:seed") ); // !!!
 
   // Check that combinations of settings are allowed; change if not.
   checkSettings();
 
+  Benchmark_stop(Pythia0init_readGenSettings);
+  Benchmark_start(Pythia0init_initSMgaugeCoup); // trivial
+
   // Initialize the SM couplings (needed to initialize resonances).
   couplingsPtr->init( settings, &rndm );
+
+  Benchmark_stop(Pythia0init_initSMgaugeCoup);
+  Benchmark_start(Pythia0init_initSUSYCoup);
 
   // Initialize SLHA interface (including SLHA/BSM couplings).
   bool useSLHAcouplings = false;
@@ -584,14 +612,19 @@ bool Pythia::init() {
   slhaInterface.init( settings, &rndm, couplingsPtr, &particleData,
     useSLHAcouplings, particleDataBuffer );
   if (useSLHAcouplings) couplingsPtr = slhaInterface.couplingsPtr;
+  
+  Benchmark_stop(Pythia0init_initSUSYCoup);
+  Benchmark_start(Pythia0init_initResonanceWidths);
 
   // Reset couplingsPtr to the correct memory address.
+  // (in case we are using SUSY coup rather than SM coup)
   particleData.initPtr( &info, &settings, &rndm, couplingsPtr);
   if (hasUserHooks) userHooksPtr->initPtr( &info, &settings, &particleData,
     &rndm, &beamA, &beamB, &beamPomA, &beamPomB, couplingsPtr,
     &partonSystems, &sigmaTot);
 
   // Set headers to distinguish the two event listing kinds.
+  // (nothing major here; just setting the Event headers)
   int startColTag = settings.mode("Event:startColTag");
   process.init("(hard process)", &particleData, startColTag);
   event.init("(complete event)", &particleData, startColTag);
@@ -599,10 +632,18 @@ bool Pythia::init() {
   // Final setup stage of particle data, notably resonance widths.
   particleData.initWidths( resonancePtrs);
 
+  Benchmark_stop(Pythia0init_initResonanceWidths);
+  Benchmark_start(Pythia0init_setupRhadrons); // trivial
+
   // Set up R-hadrons particle data, where relevant.
   rHadrons.init( &info, settings, &particleData, &rndm);
 
+  Benchmark_stop(Pythia0init_setupRhadrons);
+  Benchmark_start(Pythia0init_initShowers); // trivial
+
   // Set up objects for timelike and spacelike showers.
+  // Note: second timeShower for decays only (in case we want a different algorithm for this)
+  // Note: the user can set there own Time/Space shower prior to this point
   if (timesDecPtr == 0 || timesPtr == 0) {
     TimeShower* timesNow = new TimeShower();
     if (timesDecPtr == 0) {
@@ -627,7 +668,11 @@ bool Pythia::init() {
   spacePtr->initPtr( &info, &settings, &particleData, &rndm, couplingsPtr,
     &partonSystems, userHooksPtr, mergingHooksPtr);
 
+  Benchmark_stop(Pythia0init_initShowers);
+  Benchmark_start(Pythia0init_initBeamShape); // trivial
+
   // Set up values related to beam shape.
+  // (nothing major here; just copying settings)
   if (beamShapePtr == 0) {
     beamShapePtr    = new BeamShape();
     useNewBeamShape = true;
@@ -641,11 +686,17 @@ bool Pythia::init() {
     return false;
   }
 
+  Benchmark_stop(Pythia0init_initBeamShape);
+  Benchmark_start(Pythia0init_initBeams); // trivial
+
+  // (again this is just copying settings for each beam)
+
   // Do not set up beam kinematics when no process level.
   if (!doProcessLevel) boostType = 1;
   else {
 
     // Set up beam kinematics.
+    // (calcs the beam CM energy etc.) !!
     if (!initKinematics()) {
       info.errorMsg("Abort from Pythia::init: "
         "kinematics initialization failed");
@@ -653,12 +704,15 @@ bool Pythia::init() {
     }
 
     // Set up pointers to PDFs.
+    // gets the PDF derived class for each beam
     if (!initPDFs()) {
       info.errorMsg("Abort from Pythia::init: PDF initialization failed");
       return false;
     }
 
     // Set up the two beams and the common remnant system.
+    // Note: StringFlav class is used to select parton/hadron flavours
+    // it belongs to hadronLevel, so need to extract it here
     StringFlav* flavSelPtr = hadronLevel.getStringFlavPtr();
     beamA.init( idA, pzAcm, eA, mA, &info, settings, &particleData, &rndm,
       pdfAPtr, pdfHardAPtr, isUnresolvedA, flavSelPtr);
@@ -674,6 +728,10 @@ bool Pythia::init() {
     }
   }
 
+  Benchmark_stop(Pythia0init_initBeams);
+  Benchmark_start(Pythia0init_initProcessLevel);
+
+  // !!!
   // Send info/pointers to process level for initialization.
   if ( doProcessLevel && !processLevel.init( &info, settings, &particleData,
     &rndm, &beamA, &beamB, couplingsPtr, &sigmaTot, doLHA, &slhaInterface,
@@ -687,9 +745,13 @@ bool Pythia::init() {
   // The pointers to the beams are needed by some external plugin showers.
   timesDecPtr->init( &beamA, &beamB);
 
+  // (note: above processLevel.init will do this)
   // Alternatively only initialize resonance decays.
   if ( !doProcessLevel) processLevel.initDecays( &info, &particleData,
     &rndm, lhaUpPtr);
+
+  Benchmark_stop(Pythia0init_initProcessLevel);
+  Benchmark_start(Pythia0init_initPartonLevel);
 
   // Send info/pointers to parton level for initialization.
   if ( doPartonLevel && doProcessLevel && !partonLevel.init( &info, settings,
@@ -700,6 +762,9 @@ bool Pythia::init() {
       "partonLevel initialization failed" );
     return false;
   }
+
+  Benchmark_stop(Pythia0init_initPartonLevel);
+  Benchmark_start(Pythia0init_initTrialPartonLevel);
 
   // Make pointer to shower available for merging machinery.
   if ( doMerging && (hasMergingHooks || hasOwnMergingHooks) )
@@ -720,10 +785,14 @@ bool Pythia::init() {
     return false;
   }
 
+  Benchmark_stop(Pythia0init_initTrialPartonLevel);
+  Benchmark_start(Pythia0init_initHadronLevel);
+
   // Initialise the merging wrapper class.
   if (doMerging ) merging.init( &settings, &info, &particleData, &rndm,
     &beamA, &beamB, mergingHooksPtr, &trialPartonLevel );
 
+  // !!!
   // Send info/pointers to hadron level for initialization.
   // Note: forceHadronLevel() can come, so we must always initialize.
   if ( !hadronLevel.init( &info, settings, &particleData, &rndm,
@@ -733,6 +802,9 @@ bool Pythia::init() {
       "hadronLevel initialization failed");
     return false;
   }
+
+  Benchmark_stop(Pythia0init_initHadronLevel);
+  Benchmark_start(Pythia0init_getMoreOptions);
 
   // Optionally check particle data table for inconsistencies.
   if ( settings.flag("Check:particleData") )
@@ -761,9 +833,16 @@ bool Pythia::init() {
   showSaV      = settings.flag("Next:showScaleAndVertex");
   showMaD      = settings.flag("Next:showMothersAndDaughters");
 
+  Benchmark_stop(Pythia0init_getMoreOptions);
+  Benchmark_start(Pythia0init_initCOlorReconnection);
+
   // Init colour reconnection and junction splitting.
   colourReconnection.init( &info, settings, &rndm, &particleData,
     &beamA, &beamB, &partonSystems);
+
+  Benchmark_stop(Pythia0init_initCOlorReconnection);
+  Benchmark_start(Pythia0init_initCOlorJunctionSplitting);
+  
   junctionSplitting.init(&info, settings, &rndm, &particleData);
 
   // Flags for colour reconnection.
@@ -968,8 +1047,11 @@ bool Pythia::initPDFs() {
     pdfPomBPtr    = 0;
   }
 
+  // Note: there are PDFs for both hard + non-hard 
+
   // Set up the PDF's, if not already done.
   if (pdfAPtr == 0) {
+    // (this function returns the appropriate PDF base class)
     pdfAPtr     = getPDFPtr(idA);
     if (pdfAPtr == 0 || !pdfAPtr->isSetup()) {
       info.errorMsg("Error in Pythia::init: "
@@ -1026,8 +1108,6 @@ bool Pythia::next() {
   nEvents++;
 
   {
-
-  Benchmark::init();
 
   Benchmark_start(Pythia0next);
   Benchmark_start(Pythia0next_setup);
@@ -1392,11 +1472,11 @@ bool Pythia::next() {
 
   }
 
-  Benchmark::recordLoopMinMaxAverage();
+  
 
-  if (nEvents == 500)
+  if (nEvents == 100)
   {
-    Benchmark::printTimings();
+    
   }
 
   // --------------------------------------

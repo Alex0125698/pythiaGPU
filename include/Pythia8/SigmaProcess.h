@@ -527,6 +527,8 @@ public:
       Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2chigluino);
       Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2chargluino);
       Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2sleptonantislepton);
+      Benchmark_placeholder(sigmaHat_QCD_Sigma2qq2qq);
+      Benchmark_placeholder(sigmaHat_EW_Sigma2qg2qgamma);
     }
 
     id1 = id1in; id2 = id2in; double sigmaTmp = sigmaHat();

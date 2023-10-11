@@ -49,6 +49,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   vector<SigmaProcess*>& sigmaPtrs, vector<PhaseSpace*>& phaseSpacePtrs,
   ostream& os) {
 
+  Benchmark_start(ProcessLevel0init);
+  Benchmark_start(ProcessLevel0init_setupPointers);
+
   // Store input pointers for future use.
   infoPtr          = infoPtrIn;
   particleDataPtr  = particleDataPtrIn;
@@ -62,12 +65,17 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
   // Send on some input pointers.
   resonanceDecays.init( infoPtr, particleDataPtr, rndmPtr);
-
+  
   // Set up SigmaTotal. Store sigma_nondiffractive for future use.
   sigmaTotPtr->init( infoPtr, settings, particleDataPtr);
   int    idA = infoPtr->idA();
   int    idB = infoPtr->idB();
   double eCM = infoPtr->eCM();
+
+  Benchmark_stop(ProcessLevel0init_setupPointers);
+  Benchmark_start(ProcessLevel0init_setupSigmaTotal);
+  
+  // TODO: what does this actually do?
   sigmaTotPtr->calc( idA, idB, eCM);
   sigmaND = sigmaTotPtr->sigmaND();
 
@@ -84,6 +92,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
       "cannot combine second interaction with biased phase space");
     return false;
   }
+
+  Benchmark_stop(ProcessLevel0init_setupSigmaTotal);
+  Benchmark_start(ProcessLevel0init_getCuts);
 
   // Mass and pT cuts for two hard processes.
   mHatMin1      = settings.parm("PhaseSpace:mHatMin");
@@ -111,6 +122,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
                        < min( pTHatMax1, pTHatMax2));
     if (mHatOverlap && pTHatOverlap) cutsOverlap = true;
   }
+
+  Benchmark_stop(ProcessLevel0init_getCuts);
+  Benchmark_start(ProcessLevel0init_setupProcessCont);
 
   // Set up containers for all the internal hard processes.
   SetupContainers setupContainers;
@@ -140,6 +154,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
       "no process switched on");
     return false;
   }
+
+  Benchmark_stop(ProcessLevel0init_setupProcessCont);
+  Benchmark_start(ProcessLevel0init_addMissingSLHAblocks);
 
   // Check whether pT-based weighting in 2 -> 2 is requested.
   if (settings.flag("PhaseSpace:bias2Selection")) {
@@ -173,6 +190,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
   // Fill SLHA blocks SMINPUTS and MASS from PYTHIA SM parameter values.
   slhaInterfacePtr->pythia2slha(particleDataPtr);
+  
+  Benchmark_stop(ProcessLevel0init_addMissingSLHAblocks);
+  Benchmark_start(ProcessLevel0init_initProcesses);
 
   // Initialize each process.
   int numberOn = 0;
@@ -185,6 +205,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   sigmaMaxSum = 0.;
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     sigmaMaxSum += containerPtrs[i]->sigmaMax();
+
+  Benchmark_stop(ProcessLevel0init_initProcesses);
+  Benchmark_start(ProcessLevel0init_repeatForSecondHard);
 
   // Option to pick a second hard interaction: repeat as above.
   int number2On = 0;
@@ -203,6 +226,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       sigma2MaxSum += container2Ptrs[i2]->sigmaMax();
   }
+
+  Benchmark_stop(ProcessLevel0init_repeatForSecondHard);
+  Benchmark_start(ProcessLevel0init_finalChecks);
 
   // Printout during initialization is optional.
   if (settings.flag("Init:showProcesses")) {

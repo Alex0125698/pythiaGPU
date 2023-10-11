@@ -58,7 +58,6 @@ namespace Pythia8
     void recordLoopMinMaxAverage();
 
   }
-
 }
 
 #define Benchmark_placeholder(name)             \
@@ -78,7 +77,7 @@ if (Benchmark::started())                       \
   sw_##name.start();                            \
 }
 
-#define Benchmark_stop(name) \
+#define Benchmark_stop(name)                    \
 sw_##name.stop();
 
 #define Benchmark_loopStart(name)               \
@@ -89,8 +88,11 @@ if (Benchmark::started())                       \
   lc_##name.setUniqueIndex(ind,#name);          \
 }
 
-#define Benchmark_loopCount(name) \
-lc_##name.count();
+#define Benchmark_loopCount(name)               \
+if (Benchmark::started())                       \
+{                                               \
+  lc_##name.count();                            \
+}
 
 #define Benchmark_loopStop(name)                \
 if (Benchmark::started())                       \

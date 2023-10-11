@@ -49,6 +49,9 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   SigmaTotal* sigmaTotPtr, ResonanceDecays* resDecaysPtrIn,
   SLHAinterface* slhaInterfacePtr, UserHooks* userHooksPtrIn) {
 
+  Benchmark_start(ProcessContainer0init);
+  Benchmark_start(ProcessContainer0init_setup);
+
   // Extract info about current process from SigmaProcess object.
   isLHA       = sigmaProcessPtr->isLHA();
   isNonDiff   = sigmaProcessPtr->isNonDiff();
@@ -94,11 +97,22 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
     sigmaProcessPtr->setLHAPtr(lhaUpPtr);
     phaseSpacePtr->setLHAPtr(lhaUpPtr);
   }
+
+  Benchmark_stop(ProcessContainer0init_setup);
+  Benchmark_start(ProcessContainer0init_sigmaProcess);
+
   sigmaProcessPtr->init(infoPtr, &settings, particleDataPtr, rndmPtr,
     beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr, slhaInterfacePtr);
+  
+  Benchmark_stop(ProcessContainer0init_sigmaProcess);
+  Benchmark_start(ProcessContainer0init_phaseSpace);
+  
   phaseSpacePtr->init( isFirst, sigmaProcessPtr, infoPtr, &settings,
     particleDataPtr, rndmPtr, beamAPtr,  beamBPtr, couplingsPtr, sigmaTotPtr,
     userHooksPtr);
+  
+  Benchmark_stop(ProcessContainer0init_phaseSpace);
+  Benchmark_start(ProcessContainer0init_initProcess);
 
   // Reset cross section statistics.
   nTry      = 0;
@@ -115,30 +129,63 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   wtAccSum  = 0.;
 
   // Initialize process and allowed incoming partons.
-  sigmaProcessPtr->initProc();
+  sigmaProcessPtr->initProc(); // TODO: look at the actual function (this is virtual)
+
+  Benchmark_stop(ProcessContainer0init_initProcess);
+  Benchmark_start(ProcessContainer0init_setupIncomingPartonFlux);
+
   if (!sigmaProcessPtr->initFlux()) return false;
+  
+  Benchmark_stop(ProcessContainer0init_setupIncomingPartonFlux);
+  Benchmark_start(ProcessContainer0init_setupPhaseSpaceSampling);
 
   // Find maximum of differential cross section * phasespace.
   bool physical       = phaseSpacePtr->setupSampling();
+  
+  
   sigmaMx             = phaseSpacePtr->sigmaMax();
   double sigmaHalfWay = sigmaMx;
 
   // Separate signed maximum needed for LHA with negative weight.
   sigmaSgn            = phaseSpacePtr->sigmaSumSigned();
 
+  Benchmark_stop(ProcessContainer0init_setupPhaseSpaceSampling);
+
   // Check maximum by a few events, and extrapolate a further increase.
-  if (physical & !isLHA) {
+  if (physical & !isLHA) 
+  {
+    Benchmark_loopStart(ProcessContainer0init_loopOverSamples);
+
     int nSample = (nFin < 3) ? N12SAMPLE : N3SAMPLE;
-    for (int iSample = 0; iSample < nSample; ++iSample) {
+
+    for (int iSample = 0; iSample < nSample; ++iSample) 
+    {
+      Benchmark_loopCount(ProcessContainer0init_loopOverSamples);
+      Benchmark_loopStart(ProcessContainer0init_trialKin);
+
       bool test = false;
-      while (!test) test = phaseSpacePtr->trialKin(false);
+      while (!test)
+      {
+        Benchmark_loopCount(ProcessContainer0init_trialKin);
+        Benchmark_start(ProcessContainer0init_phasetrialKin);
+        test = phaseSpacePtr->trialKin(false);
+      }
+
+      Benchmark_loopStop(ProcessContainer0init_trialKin);
+
       if (iSample == nSample/2) sigmaHalfWay = phaseSpacePtr->sigmaMax();
     }
+
+    Benchmark_loopStop(ProcessContainer0init_loopOverSamples);
+
     double sigmaFullWay = phaseSpacePtr->sigmaMax();
     sigmaMx = (sigmaHalfWay > 0.) ? pow2(sigmaFullWay) / sigmaHalfWay
                                   : sigmaFullWay;
+
     phaseSpacePtr->setSigmaMax(sigmaMx);
   }
+
+  Benchmark_start(ProcessContainer0init_moreSettings);
 
   // Allow Pythia to overwrite incoming beams or parts of Les Houches input.
   idRenameBeams = settings.mode("LesHouches:idRenameBeams");
