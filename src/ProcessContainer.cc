@@ -50,7 +50,7 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   SLHAinterface* slhaInterfacePtr, UserHooks* userHooksPtrIn) {
 
   Benchmark_start(ProcessContainer0init);
-  Benchmark_start(ProcessContainer0init_setup);
+  Benchmark_start(ProcessContainer0init_setup); // trivial
 
   // Extract info about current process from SigmaProcess object.
   isLHA       = sigmaProcessPtr->isLHA();
@@ -69,6 +69,8 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
 
   // Flag for maximum violation handling.
   increaseMaximum = settings.flag("PhaseSpace:increaseMaximum");
+
+  // Note: the phase space pointer setup here
 
   // Pick and create phase space generator. Send pointers where required.
   if (phaseSpacePtr != 0) ;
@@ -99,20 +101,23 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   }
 
   Benchmark_stop(ProcessContainer0init_setup);
-  Benchmark_start(ProcessContainer0init_sigmaProcess);
+  Benchmark_start(ProcessContainer0init_sigmaProcess); // todo
+
+  // SigmaProcesses are initialized here
+  // I think this is where the strings get created
 
   sigmaProcessPtr->init(infoPtr, &settings, particleDataPtr, rndmPtr,
     beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr, slhaInterfacePtr);
   
   Benchmark_stop(ProcessContainer0init_sigmaProcess);
-  Benchmark_start(ProcessContainer0init_phaseSpace);
+  Benchmark_start(ProcessContainer0init_phaseSpace); // trivial
   
   phaseSpacePtr->init( isFirst, sigmaProcessPtr, infoPtr, &settings,
     particleDataPtr, rndmPtr, beamAPtr,  beamBPtr, couplingsPtr, sigmaTotPtr,
     userHooksPtr);
   
   Benchmark_stop(ProcessContainer0init_phaseSpace);
-  Benchmark_start(ProcessContainer0init_initProcess);
+  Benchmark_start(ProcessContainer0init_initProcess); // todo
 
   // Reset cross section statistics.
   nTry      = 0;
@@ -132,15 +137,17 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   sigmaProcessPtr->initProc(); // TODO: look at the actual function (this is virtual)
 
   Benchmark_stop(ProcessContainer0init_initProcess);
-  Benchmark_start(ProcessContainer0init_setupIncomingPartonFlux);
+  Benchmark_start(ProcessContainer0init_setupIncomingPartonFlux); // trivial
+
+  // TODO: what is it for?
 
   if (!sigmaProcessPtr->initFlux()) return false;
   
   Benchmark_stop(ProcessContainer0init_setupIncomingPartonFlux);
-  Benchmark_start(ProcessContainer0init_setupPhaseSpaceSampling);
+  Benchmark_start(ProcessContainer0init_setupPhaseSpaceSampling); // todo
 
   // Find maximum of differential cross section * phasespace.
-  bool physical       = phaseSpacePtr->setupSampling();
+  bool physical       = phaseSpacePtr->setupSampling(); // this is virtual
   
   
   sigmaMx             = phaseSpacePtr->sigmaMax();
@@ -167,8 +174,8 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
       while (!test)
       {
         Benchmark_loopCount(ProcessContainer0init_trialKin);
-        Benchmark_start(ProcessContainer0init_phasetrialKin);
-        test = phaseSpacePtr->trialKin(false);
+        Benchmark_start(ProcessContainer0init_phasetrialKin); // todo
+        test = phaseSpacePtr->trialKin(false); // this is virtual
       }
 
       Benchmark_loopStop(ProcessContainer0init_trialKin);

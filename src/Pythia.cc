@@ -40,6 +40,7 @@ const int Pythia::SUBRUNDEFAULT = -999;
 
 // Constructor.
 
+// done
 Pythia::Pythia(string xmlDir, bool printBanner) {
 
   // Benchmark::init();
@@ -175,6 +176,7 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
 
 // Destructor.
 
+// done
 Pythia::~Pythia() {
 
   // Delete the PDF's created with new.
@@ -205,6 +207,7 @@ Pythia::~Pythia() {
 
 // Read in one update for a setting or particle data from a single line.
 
+// done
 bool Pythia::readString(string line, bool warn) {
 
   // Check that constructor worked.
@@ -233,6 +236,7 @@ bool Pythia::readString(string line, bool warn) {
 
 // Read in updates for settings or particle data from user-defined file.
 
+// done
 bool Pythia::readFile(string fileName, bool warn, int subrun) {
 
   // Check that constructor worked.
@@ -256,6 +260,7 @@ bool Pythia::readFile(string fileName, bool warn, int subrun) {
 // Read in updates for settings or particle data
 // from user-defined stream (or file).
 
+// done
 bool Pythia::readFile(istream& is, bool warn, int subrun) {
 
   // Check that constructor worked.
@@ -294,6 +299,7 @@ bool Pythia::readFile(istream& is, bool warn, int subrun) {
 
 // Routine to pass in pointers to PDF's. Usage optional.
 
+// done
 bool Pythia::setPDFPtr( PDF* pdfAPtrIn, PDF* pdfBPtrIn, PDF* pdfHardAPtrIn,
   PDF* pdfHardBPtrIn, PDF* pdfPomAPtrIn, PDF* pdfPomBPtrIn) {
 
@@ -354,6 +360,7 @@ bool Pythia::setPDFPtr( PDF* pdfAPtrIn, PDF* pdfBPtrIn, PDF* pdfHardAPtrIn,
 
 // Routine to initialize with the variable values of the Beams kind.
 
+// done
 bool Pythia::init() {
 
   Benchmark_start(Pythia0init);
@@ -603,7 +610,7 @@ bool Pythia::init() {
   couplingsPtr->init( settings, &rndm );
 
   Benchmark_stop(Pythia0init_initSMgaugeCoup);
-  Benchmark_start(Pythia0init_initSUSYCoup);
+  Benchmark_start(Pythia0init_initSUSYCoup); // trivial
 
   // Initialize SLHA interface (including SLHA/BSM couplings).
   bool useSLHAcouplings = false;
@@ -630,6 +637,7 @@ bool Pythia::init() {
   event.init("(complete event)", &particleData, startColTag);
 
   // Final setup stage of particle data, notably resonance widths.
+  // (just creates a list of pointers to all the Resonance base classes)
   particleData.initWidths( resonancePtrs);
 
   Benchmark_stop(Pythia0init_initResonanceWidths);
@@ -729,7 +737,7 @@ bool Pythia::init() {
   }
 
   Benchmark_stop(Pythia0init_initBeams);
-  Benchmark_start(Pythia0init_initProcessLevel);
+  Benchmark_start(Pythia0init_initProcessLevel); // done
 
   // !!!
   // Send info/pointers to process level for initialization.
@@ -743,6 +751,7 @@ bool Pythia::init() {
 
   // Initialize timelike showers already here, since needed in decays.
   // The pointers to the beams are needed by some external plugin showers.
+  // (not much here; just copying settings)
   timesDecPtr->init( &beamA, &beamB);
 
   // (note: above processLevel.init will do this)
@@ -751,7 +760,7 @@ bool Pythia::init() {
     &rndm, lhaUpPtr);
 
   Benchmark_stop(Pythia0init_initProcessLevel);
-  Benchmark_start(Pythia0init_initPartonLevel);
+  Benchmark_start(Pythia0init_initPartonLevel); // do next...
 
   // Send info/pointers to parton level for initialization.
   if ( doPartonLevel && doProcessLevel && !partonLevel.init( &info, settings,
@@ -862,6 +871,7 @@ bool Pythia::init() {
 
 // Check that combinations of settings are allowed; change if not.
 
+// done
 void Pythia::checkSettings() {
 
   // Double rescattering not allowed if ISR or FSR.
@@ -878,6 +888,7 @@ void Pythia::checkSettings() {
 
 // Check that beams and beam combination can be handled. Set up unresolved.
 
+// done
 bool Pythia::checkBeams() {
 
   // Absolute flavours. If not to do process level then no check needed.
@@ -937,6 +948,7 @@ bool Pythia::checkBeams() {
 
 // Calculate kinematics at initialization. Store beam four-momenta.
 
+// done
 bool Pythia::initKinematics() {
 
   // Find masses. Initial guess that we are in CM frame.
@@ -1012,6 +1024,7 @@ bool Pythia::initKinematics() {
 
 // Set up pointers to PDFs.
 
+// done
 bool Pythia::initPDFs() {
 
   // Delete any PDF's created in a previous init call.
@@ -1101,6 +1114,7 @@ bool Pythia::initPDFs() {
 //--------------------------------------------------------------------------
 
 // Main routine to generate the next event, using internal machinery.
+
 
 bool Pythia::next() {
 
@@ -1641,6 +1655,7 @@ void Pythia::nextKinematics() {
 
 // Boost from CM frame to lab frame, or inverse. Set production vertex.
 
+// done
 void Pythia::boostAndVertex( bool toLab, bool setVertex) {
 
   // Boost process from CM frame to lab frame.
@@ -1733,6 +1748,7 @@ void Pythia::stat() {
 
 // Write the Pythia banner, with symbol and version information.
 
+// done
 void Pythia::banner(ostream& os) {
 
   // Read in version number and last date of change.
@@ -1927,6 +1943,7 @@ int Pythia::readSubrun(string line, bool warn, ostream& os) {
 // Check for lines in file that mark the beginning or end of commented section.
 // Return +1 for beginning, -1 for end, 0 else.
 
+// done
 int Pythia::readCommented(string line) {
 
   // If less than two nontrivial characters on line then done.
@@ -1948,6 +1965,7 @@ int Pythia::readCommented(string line) {
 // Check that the final event makes sense: no unknown id codes;
 // charge and energy-momentum conserved.
 
+// done
 bool Pythia::check(ostream& os) {
 
   Benchmark_start(Pythia0check);
@@ -2273,6 +2291,7 @@ bool Pythia::check(ostream& os) {
 
 // Routine to set up a PDF pointer.
 
+// done
 PDF* Pythia::getPDFPtr(int idIn, int sequence, string beam) {
 
   // Temporary pointer to be returned.

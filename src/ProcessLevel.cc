@@ -50,7 +50,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   ostream& os) {
 
   Benchmark_start(ProcessLevel0init);
-  Benchmark_start(ProcessLevel0init_setupPointers);
+  Benchmark_start(ProcessLevel0init_setupPointers); // trivial
 
   // Store input pointers for future use.
   infoPtr          = infoPtrIn;
@@ -73,7 +73,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   double eCM = infoPtr->eCM();
 
   Benchmark_stop(ProcessLevel0init_setupPointers);
-  Benchmark_start(ProcessLevel0init_setupSigmaTotal);
+  Benchmark_start(ProcessLevel0init_setupSigmaTotal); // trivial
   
   // TODO: what does this actually do?
   sigmaTotPtr->calc( idA, idB, eCM);
@@ -94,7 +94,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   Benchmark_stop(ProcessLevel0init_setupSigmaTotal);
-  Benchmark_start(ProcessLevel0init_getCuts);
+  Benchmark_start(ProcessLevel0init_getCuts); // trivial
 
   // Mass and pT cuts for two hard processes.
   mHatMin1      = settings.parm("PhaseSpace:mHatMin");
@@ -128,6 +128,9 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
   // Set up containers for all the internal hard processes.
   SetupContainers setupContainers;
+
+  // this creates a list of pointers to all the SigmaProcess derived classes
+  // TODO: how many are actually added each time??
   setupContainers.init(containerPtrs, infoPtr, settings, particleDataPtr,
                        couplingsPtr);
 
@@ -156,7 +159,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   Benchmark_stop(ProcessLevel0init_setupProcessCont);
-  Benchmark_start(ProcessLevel0init_addMissingSLHAblocks);
+  Benchmark_start(ProcessLevel0init_addMissingSLHAblocks); // trivial
 
   // Check whether pT-based weighting in 2 -> 2 is requested.
   if (settings.flag("PhaseSpace:bias2Selection")) {
@@ -207,7 +210,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
     sigmaMaxSum += containerPtrs[i]->sigmaMax();
 
   Benchmark_stop(ProcessLevel0init_initProcesses);
-  Benchmark_start(ProcessLevel0init_repeatForSecondHard);
+  Benchmark_start(ProcessLevel0init_repeatForSecondHard); // ignore
 
   // Option to pick a second hard interaction: repeat as above.
   int number2On = 0;
@@ -228,7 +231,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   Benchmark_stop(ProcessLevel0init_repeatForSecondHard);
-  Benchmark_start(ProcessLevel0init_finalChecks);
+  Benchmark_start(ProcessLevel0init_finalChecks); // trivial
 
   // Printout during initialization is optional.
   if (settings.flag("Init:showProcesses")) {
