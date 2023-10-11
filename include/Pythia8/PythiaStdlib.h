@@ -10,6 +10,9 @@
 #ifndef Pythia8_PythiaStdlib_H
 #define Pythia8_PythiaStdlib_H
 
+// make timings avaliable everywhere
+#include "Pythia8/timings.h"
+
 // Stdlib header files for mathematics.
 #include <cmath>
 #include <cstdlib>

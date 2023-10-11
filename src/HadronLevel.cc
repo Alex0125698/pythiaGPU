@@ -101,14 +101,22 @@ bool HadronLevel::init(Info* infoPtrIn, Settings& settings,
 
 bool HadronLevel::next( Event& event) {
 
+  // timings[40].start();
+
   // Store current event size to mark Parton Level content.
   event.savePartonLevelSize();
 
   // Do Hidden-Valley fragmentation, if necessary.
   if (useHiddenValley) hiddenvalleyFrag.fragment(event);
 
+  // timings[40].stop();
+  // timings[41].start();
+
   // Colour-octet onia states must be decayed to singlet + gluon.
   if (!decayOctetOnia(event)) return false;
+  
+  // timings[41].stop();
+  // timings[42].start();
 
   // remove junction structures.
   if (!junctionSplitting.checkColours(event)) {
@@ -116,6 +124,7 @@ bool HadronLevel::next( Event& event) {
         "failed colour/junction check");
     return false;
   }
+  // timings[42].stop();
 
   // Possibility of hadronization inside decay, but then no BE second time.
   // Hadron scattering, first pass only --rjc
@@ -127,22 +136,36 @@ bool HadronLevel::next( Event& event) {
     // First part: string fragmentation.
     if (doHadronize) {
 
+      // timings[43].start();
+
       // Find the complete colour singlet configuration of the event.
       if (!findSinglets( event)) return false;
+
+      // timings[43].stop();
+      // timings[44].start();
 
       // Fragment off R-hadrons, if necessary.
       if (allowRH && !rHadronsPtr->produce( colConfig, event))
         return false;
+      // timings[44].stop();
 
       // Process all colour singlet (sub)systems.
       for (int iSub = 0; iSub < colConfig.size(); ++iSub) {
 
+        // timings[45].start();
+
         // Collect sequentially all partons in a colour singlet subsystem.
         colConfig.collect(iSub, event);
+
+        // timings[45].stop();
+
+        // timings[46].start();
 
         // String fragmentation of each colour singlet (sub)system.
         if ( colConfig[iSub].massExcess > mStringMin ) {
           if (!stringFrag.fragment( iSub, colConfig, event)) return false;
+
+        // timings[46].stop();
 
         // Low-mass string treated separately. Tell if diffractive system.
         } else {
@@ -153,9 +176,14 @@ bool HadronLevel::next( Event& event) {
       }
     }
 
+    // timings[48].start();
+
     // Hadron scattering --rjc
     if (doHadronScatter && !hsAfterDecay && firstPass)
       hadronScatter.scatter(event);
+    
+    // timings[48].stop();
+    // timings[47].start();
 
     // Second part: sequential decays of short-lived particles (incl. K0).
     if (doDecay) {
@@ -172,15 +200,23 @@ bool HadronLevel::next( Event& event) {
       } while (++iDec < event.size());
     }
 
+    // timings[47].stop();
+
+    // timings[48].start();
+
     // Hadron scattering --rjc
     if (doHadronScatter && hsAfterDecay && firstPass)
       hadronScatter.scatter(event);
+
+    // timings[48].stop();
 
     // Third part: include Bose-Einstein effects among current particles.
     if (doBoseEinsteinNow) {
       if (!boseEinstein.shiftEvent(event)) return false;
       doBoseEinsteinNow = false;
     }
+
+    // timings[47].start();
 
     // Fourth part: sequential decays also of long-lived particles.
     if (doDecay) {
@@ -195,6 +231,8 @@ bool HadronLevel::next( Event& event) {
         }
       } while (++iDec < event.size());
     }
+
+    // timings[47].stop();
 
   // Normally done first time around, but sometimes not (e.g. Upsilon).
   } while (moreToDo);

@@ -501,7 +501,36 @@ public:
   // (b) convert from GeV^-2 to mb where required, and
   // (c) convert from |M|^2 to d(sigmaHat)/d(tHat) where required.
   virtual double sigmaHatWrap(int id1in = 0, int id2in = 0) {
+
+    Benchmark_start(sigmaHat);
+
+    static bool init = false;
+
+    if (!init && Benchmark::started())
+    {
+      init = true;
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2gg2gluinogluino);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2gg2squarkantisquark);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2chichi);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2charchi);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2charchar);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qg2chisquark);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qg2charsquark);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qq2squarksquark);
+      // Benchmark_placeholder(sigmaHat_SUSY_Sigma2qq2squarksquark_setup);
+      // Benchmark_placeholder(sigmaHat_SUSY_Sigma2qq2squarksquark_caseA);
+      // Benchmark_placeholder(sigmaHat_SUSY_Sigma2qq2squarksquark_caseB);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2squarkantisquark);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qg2squarkgluino);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2gluinogluino);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma1qq2antisquark);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2chigluino);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2chargluino);
+      Benchmark_placeholder(sigmaHat_SUSY_Sigma2qqbar2sleptonantislepton);
+    }
+
     id1 = id1in; id2 = id2in; double sigmaTmp = sigmaHat();
+    Benchmark_start(sigmaHat_convert);
     if (convertM2())  sigmaTmp /= 16. * M_PI * sH2;
     if (convert2mb()) sigmaTmp *= CONVERT2MB; return sigmaTmp;}
 

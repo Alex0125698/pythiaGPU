@@ -47,6 +47,8 @@ const double ResonanceDecays::WTCORRECTION[11] = { 1., 1., 1.,
 
 bool ResonanceDecays::next( Event& process, int iDecNow) {
 
+  Benchmark_start(ResonanceDecays0next);
+
   // Loop over all entries to find resonances that should decay.
   // (Except for iDecNow > 0, where only it will be handled.)
   int iDec = iDecNow;
@@ -54,6 +56,8 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
     Particle& decayer = process[iDec];
     if (decayer.isFinal() && decayer.canDecay() && decayer.mayDecay()
     && decayer.isResonance() ) {
+
+      Benchmark_start(ResonanceDecays0next_setup);
 
       // Fill the decaying particle in slot 0 of arrays.
       id0    = decayer.id();
@@ -66,6 +70,9 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
       // Mother flavour - relevant for gamma*/Z0 mixing. (Not always??)
       int idIn = process[decayer.mother1()].id();
 
+      Benchmark_stop(ResonanceDecays0next_setup);
+      Benchmark_start(ResonanceDecays0next_preparePick);
+
       // Prepare decay selection.
       if (!decayer.particleDataEntry().preparePick(id0, m0, idIn)) {
         ostringstream osWarn;
@@ -74,14 +81,21 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
           " no open decay channel", osWarn.str());
         return false;
       }
+      
+      Benchmark_stop(ResonanceDecays0next_preparePick);
 
       // Pick a decay channel; allow up to ten tries.
       bool foundChannel = false;
       for (int iTryChannel = 0; iTryChannel < NTRYCHANNEL; ++iTryChannel) {
 
+        Benchmark_start(ResonanceDecays0next_pickChannel);
+
         // Pick decay channel. Find multiplicity.
         DecayChannel& channel = decayer.particleDataEntry().pickChannel();
         mult = channel.multiplicity();
+
+        Benchmark_stop(ResonanceDecays0next_pickChannel);
+        Benchmark_start(ResonanceDecays0next_readFlavours);
 
         // Read out flavours.
         idProd.resize(1);
@@ -91,6 +105,13 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
           if (id0 < 0 && particleDataPtr->hasAnti(idNow)) idNow = -idNow;
           idProd.push_back( idNow);
         }
+
+
+        // GAMBIT fix for Pythia bug. (To be fixed in Pythia versions > 8.212)
+        mProd.resize(1);
+
+        Benchmark_stop(ResonanceDecays0next_readFlavours);
+        Benchmark_start(ResonanceDecays0next_pickMasses);
 
         // Pick masses. Pick new channel if fail.
         if (!pickMasses()) continue;
@@ -107,13 +128,21 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
         return false;
       }
 
+      Benchmark_start(ResonanceDecays0next_pickColours);
+
       // Select colours in decay.
       if (!pickColours(iDec, process)) return false;
+
+      Benchmark_stop(ResonanceDecays0next_pickColours);
+      Benchmark_start(ResonanceDecays0next_pickKinematics);
 
       // Select four-momenta in decay, boosted to lab frame.
       pProd.resize(0);
       pProd.push_back( decayer.p() );
       if (!pickKinematics()) return false;
+
+      Benchmark_stop(ResonanceDecays0next_pickKinematics);
+      Benchmark_start(ResonanceDecays0next_appendDecayProducts);
 
       // Append decay products to the process event record. Set lifetimes.
       int iFirst = process.size();
@@ -123,15 +152,23 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
         }
       int iLast = process.size() - 1;
 
+      Benchmark_stop(ResonanceDecays0next_appendDecayProducts);
+      Benchmark_start(ResonanceDecays0next_setDecayVertex);
+
       // Set decay vertex when this is displaced.
       if (process[iDec].hasVertex() || process[iDec].tau() > 0.) {
         Vec4 vDec = process[iDec].vDec();
         for (int i = iFirst; i <= iLast; ++i) process[i].vProd( vDec );
       }
+      Benchmark_stop(ResonanceDecays0next_setDecayVertex);
+      Benchmark_start(ResonanceDecays0next_setLifetimeDaughters);
 
       // Set lifetime of daughters.
       for (int i = iFirst; i <= iLast; ++i)
         process[i].tau( process[i].tau0() * rndmPtr->exp() );
+
+      Benchmark_stop(ResonanceDecays0next_setLifetimeDaughters);
+      Benchmark_start(ResonanceDecays0next_setStatusAndDaughters);
 
       // Modify mother status and daughters.
       decayer.status(-22);
@@ -152,6 +189,19 @@ bool ResonanceDecays::next( Event& process, int iDecNow) {
 
 bool ResonanceDecays::pickMasses() {
 
+  Benchmark_start(pickMasses);
+
+  {
+    Benchmark_placeholder(pickMasses_setup);
+    Benchmark_placeholder(pickMasses_nominalMass);
+    Benchmark_placeholder(pickMasses_numBreitWigners);
+    Benchmark_placeholder(pickMasses_orderBreitWigners);
+    Benchmark_placeholder(pickMasses_doBreitWigners);
+    Benchmark_placeholder(pickMasses_rest);
+  }
+
+  Benchmark_start(pickMasses_setup);
+
   // Arrays with properties of particles. Fill with dummy values for mother.
   vector<bool>   useBW;
   vector<double> m0BW, mMinBW, mMaxBW, widthBW;
@@ -163,10 +213,18 @@ bool ResonanceDecays::pickMasses() {
   mMaxBW.push_back( mMother );
   widthBW.push_back( 0. );
 
+  Benchmark_stop(pickMasses_setup);
+  Benchmark_start(pickMasses_nominalMass);
+
+  Benchmark_loopStart(pickMasses_nominalMass);
+  
+
   // Loop throught products for masses and widths. Set nominal mass.
   bool   useBWNow;
   double m0Now, mMinNow, mMaxNow, widthNow;
   for (int i = 1; i <= mult; ++i) {
+    Benchmark_loopCount(pickMasses_nominalMass);
+
     useBWNow  = particleDataPtr->useBreitWigner( idProd[i] );
     m0Now     = particleDataPtr->m0( idProd[i] );
     mMinNow   = particleDataPtr->m0Min( idProd[i] );
@@ -180,6 +238,11 @@ bool ResonanceDecays::pickMasses() {
     widthBW.push_back( widthNow );
     mProd.push_back( m0Now );
   }
+
+  Benchmark_loopStop(pickMasses_nominalMass);
+
+  Benchmark_stop(pickMasses_nominalMass);
+  Benchmark_start(pickMasses_numBreitWigners);
 
   // Find number of Breit-Wigners and summed (minimal) masses.
   int    nBW     = 0;
@@ -215,8 +278,11 @@ bool ResonanceDecays::pickMasses() {
     return true;
   }
 
+  Benchmark_stop(pickMasses_numBreitWigners);
+
   // From now on some particles will have to be forced off shell.
 
+  Benchmark_start(pickMasses_orderBreitWigners);
   // Order Breit-Wigners in decreasing widths. Sum of other masses.
   vector<int> iBW;
   double mSum0 = 0.;
@@ -230,6 +296,9 @@ bool ResonanceDecays::pickMasses() {
       else break;
     }
   }
+
+  Benchmark_stop(pickMasses_orderBreitWigners);
+  Benchmark_start(pickMasses_doBreitWigners);
 
   // Do all but broadest two in increasing-width order. Includes only one.
   if (nBW != 2) {
@@ -275,6 +344,10 @@ bool ResonanceDecays::pickMasses() {
     }
     if (nBW == 1) return true;
   }
+
+  Benchmark_stop(pickMasses_doBreitWigners);
+
+  Benchmark_start(pickMasses_rest);
 
   // Left to do two broadest Breit-Wigners correlated, i.e. more realistic.
   int iBW1        = iBW[0];

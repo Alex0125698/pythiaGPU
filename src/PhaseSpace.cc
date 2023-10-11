@@ -988,6 +988,10 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
 bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
 
+  Benchmark_start(trialKin123);
+
+  Benchmark_start(trialKin123_doEnergySpread);
+
   // Allow for possibility that energy varies from event to event.
   if (doEnergySpread) {
     eCM       = infoPtr->eCM();
@@ -1004,6 +1008,8 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
     }
   }
 
+  Benchmark_stop(trialKin123_doEnergySpread);
+
   // Choose tau according to h1(tau)/tau, where
   // h1(tau) = c0/I0 + (c1/I1) * 1/tau
   // + (c2/I2) / (tau + tauResA)
@@ -1011,72 +1017,112 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   // + (c4/I4) / (tau + tauResB)
   // + (c5/I5) * tau / ((tau - tauResB)^2 + widResB^2)
   // + (c6/I6) * tau / (1 - tau).
+  Benchmark_start(trialKin123_AlimitTau);
   if (!limitTau(is2, is3)) return false;
+  Benchmark_stop(trialKin123_AlimitTau);
+
+  Benchmark_start(trialKin123_AddlimitTau);
   int iTau = 0;
   if (!hasTwoPointLeptons) {
     double rTau = rndmPtr->flat();
     while (rTau > tauCoefSum[iTau]) ++iTau;
   }
+  Benchmark_stop(trialKin123_AddlimitTau);
+
+  Benchmark_start(trialKin123_BselectTau);
   selectTau( iTau, rndmPtr->flat(), is2);
+  Benchmark_stop(trialKin123_BselectTau);
 
   // Choose y according to h2(y), where
   // h2(y) = (c0/I0) * 1/cosh(y)
   // + (c1/I1) * (y-ymin) + (c2/I2) * (ymax-y)
   // + (c3/I3) * exp(y) + (c4/i4) * exp(-y) (for hadron; for lepton instead)
   // + (c5/I5) * 1 / (1 - exp(y-ymax)) + (c6/I6) * 1 / (1 - exp(ymin-y)).
+  Benchmark_start(trialKin123_ClimitY);
   if (!limitY()) return false;
+  Benchmark_stop(trialKin123_ClimitY);
+
+  Benchmark_start(trialKin123_AddlimitY);
   int iY = 0;
   if (!hasOnePointLepton && !hasTwoPointLeptons) {
     double rY = rndmPtr->flat();
     while (rY > yCoefSum[iY]) ++iY;
   }
+  Benchmark_stop(trialKin123_AddlimitY);
+
+  Benchmark_start(trialKin123_DselectY);
   selectY( iY, rndmPtr->flat());
+  Benchmark_stop(trialKin123_DselectY);
 
   // Choose z = cos(thetaHat) according to h3(z), where
   // h3(z) = c0/I0 + (c1/I1) * 1/(A - z) + (c2/I2) * 1/(A + z)
   // + (c3/I3) * 1/(A - z)^2 + (c4/I4) * 1/(A + z)^2,
   // where A = 1 + 2*(m3*m4/sH)^2 (= 1 for massless products).
   if (is2) {
+    Benchmark_start(trialKin123_ElimitZ);
     if (!limitZ()) return false;
+    Benchmark_stop(trialKin123_ElimitZ);
+    Benchmark_start(trialKin123_AddlimitZ);
     int iZ = 0;
     double rZ = rndmPtr->flat();
     while (rZ > zCoefSum[iZ]) ++iZ;
+    Benchmark_stop(trialKin123_AddlimitZ);
+    Benchmark_start(trialKin123_FselectZ);
     selectZ( iZ, rndmPtr->flat());
+    Benchmark_stop(trialKin123_FselectZ);
   }
 
   // 2 -> 1: calculate cross section, weighted by phase-space volume.
   if (!is2 && !is3) {
+    Benchmark_start(trialKin123_Gset1Kin);
     sigmaProcessPtr->set1Kin( x1H, x2H, sH);
+    Benchmark_stop(trialKin123_Gset1Kin);
+    Benchmark_start(trialKin123_HsigmaPDF);
     sigmaNw  = sigmaProcessPtr->sigmaPDF();
     sigmaNw *= wtTau * wtY;
+    Benchmark_stop(trialKin123_HsigmaPDF);
 
   // 2 -> 2: calculate cross section, weighted by phase-space volume
   // and Breit-Wigners for masses
   } else if (is2) {
+    Benchmark_start(trialKin123_Iset2Kin);
     sigmaProcessPtr->set2Kin( x1H, x2H, sH, tH, m3, m4, runBW3H, runBW4H);
+    Benchmark_stop(trialKin123_Iset2Kin);
+    Benchmark_start(trialKin123_HsigmaPDF);
     sigmaNw  = sigmaProcessPtr->sigmaPDF();
     sigmaNw *= wtTau * wtY * wtZ * wtBW;
+    Benchmark_stop(trialKin123_HsigmaPDF);
 
   // 2 -> 3: also sample internal 3-body phase, weighted by
   // 2 -> 1 phase-space volume and Breit-Wigners for masses
   } else if (is3) {
-    if (!select3Body()) sigmaNw = 0.;
+     Benchmark_start(trialKin123_select3Body);
+    bool tmp = !select3Body();
+    Benchmark_stop(trialKin123_select3Body);
+    if (tmp) sigmaNw = 0.;
     else {
+      Benchmark_start(trialKin123_Jset3Kin);
       sigmaProcessPtr->set3Kin( x1H, x2H, sH, p3cm, p4cm, p5cm,
          m3, m4, m5, runBW3H, runBW4H, runBW5H);
+      Benchmark_stop(trialKin123_Jset3Kin);
+      Benchmark_start(trialKin123_HsigmaPDF);
       sigmaNw  = sigmaProcessPtr->sigmaPDF();
       sigmaNw *= wtTau * wtY * wt3Body * wtBW;
+      Benchmark_stop(trialKin123_HsigmaPDF);
     }
   }
 
   // Allow possibility for user to modify cross section.
+  Benchmark_start(trialKin123_KuserModifications);
   if (canModifySigma) sigmaNw
     *= userHooksPtr->multiplySigmaBy( sigmaProcessPtr, this, inEvent);
   if (canBiasSelection) sigmaNw
     *= userHooksPtr->biasSelectionBy( sigmaProcessPtr, this, inEvent);
   if (canBias2Sel) sigmaNw *= pow( pTH / bias2SelRef, bias2SelPow);
+  Benchmark_stop(trialKin123_KuserModifications);
 
   // Check if maximum violated.
+  Benchmark_start(trialKin123_LcheckMaxViolated);
   newSigmaMx = false;
   if (sigmaNw > sigmaMx) {
     infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin: "
@@ -1105,8 +1151,10 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
       sigmaPos = sigmaNw;
     }
   }
+  Benchmark_stop(trialKin123_LcheckMaxViolated);
 
   // Check if negative cross section.
+  Benchmark_start(trialKin123_McheckNegativeXsec);
   if (sigmaNw < sigmaNeg) {
     infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin:"
       " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
@@ -1119,9 +1167,13 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   }
   if (sigmaNw < 0.) sigmaNw = 0.;
 
+  Benchmark_stop(trialKin123_McheckNegativeXsec);
+
   // Set event weight, where relevant.
+  Benchmark_start(trialKin123_NcheckEventWeight);
   biasWt = (canBiasSelection) ? userHooksPtr->biasedSelectionWeight() : 1.;
   if (canBias2Sel) biasWt /= pow( pTH / bias2SelRef, bias2SelPow);
+  Benchmark_stop(trialKin123_NcheckEventWeight);
 
   // Done.
   return true;

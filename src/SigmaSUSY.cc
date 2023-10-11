@@ -162,6 +162,8 @@ void Sigma2qqbar2chi0chi0::sigmaKin() {
 
 double Sigma2qqbar2chi0chi0::sigmaHat() {
 
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2chichi);
+
   // Only allow quark-antiquark incoming states
   if (id1*id2 >= 0) {
     return 0.0;
@@ -366,6 +368,8 @@ void Sigma2qqbar2charchi0::sigmaKin() {
 
 double Sigma2qqbar2charchi0::sigmaHat() {
 
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2charchi);
+
   // Only allow particle-antiparticle incoming states
   if (id1*id2 >= 0) {
     return 0.0;
@@ -524,6 +528,8 @@ void Sigma2qqbar2charchar::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2charchar::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2charchar);
 
   // Only allow quark-antiquark incoming states
   if (id1*id2 >= 0) return 0.0;
@@ -726,6 +732,8 @@ void Sigma2qg2chi0squark::sigmaKin() {
 
 double Sigma2qg2chi0squark::sigmaHat() {
 
+  Benchmark_start(sigmaHat_SUSY_Sigma2qg2chisquark);
+
   // Antiquark -> antisquark
   int idq = id1;
   if (id1 == 21 || id1 == 22) idq = id2;
@@ -855,6 +863,8 @@ void Sigma2qg2charsquark::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qg2charsquark::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qg2charsquark);
 
   // Antiquark -> antisquark
   int idq = (id1 == 21) ? id2 : id1;
@@ -1022,6 +1032,11 @@ void Sigma2qq2squarksquark::sigmaKin() {
 
 double Sigma2qq2squarksquark::sigmaHat() {
 
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qq2squarksquark);
+
+  // Benchmark_start(sigmaHat_SUSY_Sigma2qq2squarksquark_setup);
+
   // In-pair must be same-sign
   if (id1 * id2 < 0) return 0.0;
 
@@ -1063,8 +1078,12 @@ double Sigma2qq2squarksquark::sigmaHat() {
   // Common factor for LR and RL contributions
   double facTU =  uH*tH-s3*s4;
 
+  // Benchmark_stop(sigmaHat_SUSY_Sigma2qq2squarksquark_setup);
+
   // Case A) Opposite-isospin: qq' -> ~d~u
   if ( isUD ) {
+
+    // Benchmark_start(sigmaHat_SUSY_Sigma2qq2squarksquark_caseA);
 
     // t-channel Charginos
     for (int k=1;k<=2;k++) {
@@ -1240,6 +1259,8 @@ double Sigma2qq2squarksquark::sigmaHat() {
 
   // Case B) Same-isospin: qq' -> ~d~d , ~u~u
   else {
+
+    // Benchmark_start(sigmaHat_SUSY_Sigma2qq2squarksquark_caseB);
 
     // t-channel + u-channel Neutralinos + t/u interference
     // Skip if only including gluinos
@@ -1583,6 +1604,9 @@ void Sigma2qqbar2squarkantisquark::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2squarkantisquark::sigmaHat() {
+
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2squarkantisquark);
 
   // In-pair must be opposite-sign
   if (id1 * id2 > 0) return 0.0;
@@ -1963,6 +1987,8 @@ void Sigma2qg2squarkgluino::sigmaKin() {
 
 double Sigma2qg2squarkgluino::sigmaHat() {
 
+  Benchmark_start(sigmaHat_SUSY_Sigma2qg2squarkgluino);
+
   // Check whether right incoming flavor
   int idQA = (id1 == 21) ? id2 : id1;
   int idSq = (abs(id3) == 10000021) ? id4 : id3;
@@ -2131,6 +2157,8 @@ void Sigma2qqbar2gluinogluino::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2gluinogluino::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2gluinogluino);
 
   // Only allow quark-antiquark incoming states
   if (id1 * id2 > 0) return 0.0;
@@ -2321,6 +2349,8 @@ void Sigma1qq2antisquark::sigmaKin() {
 
 double Sigma1qq2antisquark::sigmaHat() {
 
+  Benchmark_start(sigmaHat_SUSY_Sigma1qq2antisquark);
+
   // Only allow (anti)quark-(anti)quark incoming states
   if (id1*id2 <= 0) return 0.0;
 
@@ -2430,6 +2460,8 @@ void Sigma2qqbar2chi0gluino::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2chi0gluino::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2chigluino);
 
   // Only allow quark-antiquark incoming states
   if (id1*id2 >= 0) return 0.0;
@@ -2610,6 +2642,8 @@ void Sigma2qqbar2chargluino::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2chargluino::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2chargluino);
 
   // Only allow particle-antiparticle incoming states
   if (id1*id2 >= 0) return 0.0;
@@ -2802,6 +2836,8 @@ void Sigma2qqbar2sleptonantislepton::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qqbar2sleptonantislepton::sigmaHat() {
+
+  Benchmark_start(sigmaHat_SUSY_Sigma2qqbar2sleptonantislepton);
 
   // In-pair must be opposite-sign
   if (id1 * id2 > 0) return 0.0;

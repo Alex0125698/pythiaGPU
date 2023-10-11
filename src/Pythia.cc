@@ -1022,6 +1022,16 @@ bool Pythia::initPDFs() {
 
 bool Pythia::next() {
 
+  static int nEvents = 0;
+  nEvents++;
+
+  {
+
+  Benchmark::init();
+
+  Benchmark_start(Pythia0next);
+  Benchmark_start(Pythia0next_setup);
+
   // Check that constructor worked.
   if (!isConstructed) return false;
 
@@ -1072,6 +1082,9 @@ bool Pythia::next() {
   beamPomA.clear();
   beamPomB.clear();
 
+  Benchmark_stop(Pythia0next_setup);
+  Benchmark_start(Pythia0next_pickValenceFlavours);
+
   // Pick current beam valence flavours (for pi0, K0S, K0L, Pomeron).
   beamA.newValenceContent();
   beamB.newValenceContent();
@@ -1093,8 +1106,16 @@ bool Pythia::next() {
   // Recalculate kinematics when beam momentum spread.
   if (doMomentumSpread) nextKinematics();
 
+  Benchmark_stop(Pythia0next_pickValenceFlavours);
+
+  Benchmark_loopStart(Pythia0next_loopVetoHardProcess);
+  bool quitLoop = false;
+
   // Outer loop over hard processes; only relevant for user-set vetoes.
   for ( ; ; ) {
+
+    Benchmark_loopCount(Pythia0next_loopVetoHardProcess);
+    Benchmark_start(Pythia0next_setLHEF3EventInfo);
 
     info.addCounter(10);
     bool hasVetoed = false;
@@ -1108,13 +1129,19 @@ bool Pythia::next() {
     info.setLHEF3EventInfo();
     process.clear();
 
+    Benchmark_stop(Pythia0next_setLHEF3EventInfo);
+    Benchmark_start(Pythia0next_processLevel);
+
     if ( !processLevel.next( process) ) {
       if (doLHA && info.atEndOfFile()) info.errorMsg("Abort from "
         "Pythia::next: reached end of Les Houches Events File");
       else info.errorMsg("Abort from Pythia::next: "
         "processLevel failed; giving up");
-      return false;
+      {quitLoop = true; break;};
     }
+
+    Benchmark_stop(Pythia0next_processLevel);
+    Benchmark_start(Pythia0next_copyProcess);
 
     info.addCounter(11);
 
@@ -1122,7 +1149,7 @@ bool Pythia::next() {
     if (doVetoProcess) {
       hasVetoed = userHooksPtr->doVetoProcessLevel( process);
       if (hasVetoed) {
-        if (abortIfVeto) return false;
+        if (abortIfVeto) {quitLoop = true; break;};
         continue;
       }
     }
@@ -1133,7 +1160,7 @@ bool Pythia::next() {
       // Apply possible merging scale cut.
       if (veto == -1) {
         hasVetoed = true;
-        if (abortIfVeto) return false;
+        if (abortIfVeto) {quitLoop = true; break;};
         continue;
       // Exit because of vanishing no-emission probability.
       } else if (veto == 0) {
@@ -1163,9 +1190,16 @@ bool Pythia::next() {
     info.addCounter(12);
     for (int i = 14; i < 19; ++i) info.setCounter(i);
 
+    Benchmark_stop(Pythia0next_copyProcess);
+
+    Benchmark_loopStart(Pythia0next_loopTrialPartonHadron);
+
     // Allow up to ten tries for parton- and hadron-level processing.
     bool physical   = true;
     for (int iTry = 0; iTry < NTRY; ++iTry) {
+      
+      Benchmark_loopCount(Pythia0next_loopTrialPartonHadron);
+      Benchmark_start(Pythia0next_restoreProcess);
 
       info.addCounter(14);
       physical  = true;
@@ -1183,11 +1217,15 @@ bool Pythia::next() {
       beamPomB.clear();
       partonSystems.clear();
 
+      Benchmark_stop(Pythia0next_restoreProcess);
+
+      Benchmark_start(Pythia0next_partonLevel);
+
       // Parton-level evolution: ISR, FSR, MPI.
       if ( !partonLevel.next( process, event) ) {
 
         // Abort event generation if parton level is set to abort.
-        if (info.getAbortPartonLevel()) return false;
+        if (info.getAbortPartonLevel()) {quitLoop = true; break;};
 
         // Skip to next hard process for failure owing to deliberate veto,
         // or alternatively retry for the same hard process.
@@ -1197,7 +1235,7 @@ bool Pythia::next() {
             --iTry;
             continue;
           }
-          if (abortIfVeto) return false;
+          if (abortIfVeto) {quitLoop = true; break;};
           break;
         }
 
@@ -1216,6 +1254,10 @@ bool Pythia::next() {
         continue;
       }
       info.addCounter(15);
+
+      Benchmark_stop(Pythia0next_partonLevel);
+
+      Benchmark_start(Pythia0next_boostAndVertex);
 
       // Possibility for a user veto of the parton-level event.
       if (doVetoPartons) {
@@ -1237,7 +1279,7 @@ bool Pythia::next() {
         if (checkEvent && !check()) {
           info.errorMsg("Abort from Pythia::next: "
             "check of event revealed problems");
-          return false;
+          {quitLoop = true; break;}
         }
         info.addCounter(4);
         if (doLHA && nPrevious < nShowLHA) lhaUpPtr->listEvent();
@@ -1246,6 +1288,10 @@ bool Pythia::next() {
         if (nPrevious < nShowEvt)  event.list(showSaV, showMaD);
         return true;
       }
+
+      Benchmark_stop(Pythia0next_boostAndVertex);
+
+      Benchmark_start(Pythia0next_hadronLevel);
 
       // Hadron-level: hadronization, decays.
       info.addCounter(16);
@@ -1256,6 +1302,10 @@ bool Pythia::next() {
         continue;
       }
 
+      Benchmark_stop(Pythia0next_hadronLevel);
+
+      Benchmark_start(Pythia0next_doRHadronDecays);
+
       // If R-hadrons have been formed, then (optionally) let them decay.
       if (decayRHadrons && rHadrons.exist() && !doRHadronDecays()) {
         info.errorMsg("Error in Pythia::next: "
@@ -1264,6 +1314,10 @@ bool Pythia::next() {
         continue;
       }
       info.addCounter(17);
+
+      Benchmark_stop(Pythia0next_doRHadronDecays);
+
+      Benchmark_start(Pythia0next_checkForProblems);
 
       // Optionally check final event for problems.
       if (checkEvent && !check()) {
@@ -1275,12 +1329,19 @@ bool Pythia::next() {
 
       // Stop parton- and hadron-level looping if you got this far.
       info.addCounter(18);
+
+      Benchmark_stop(Pythia0next_checkForProblems);
+
       break;
     }
 
+    if (quitLoop) break;
+
+    Benchmark_loopStop(Pythia0next_loopTrialPartonHadron);
+
     // If event vetoed then to make a new try.
     if (hasVetoed || hasVetoedDiff)  {
-      if (abortIfVeto) return false;
+      if (abortIfVeto) {quitLoop = true; break;}
       continue;
     }
 
@@ -1288,18 +1349,32 @@ bool Pythia::next() {
     if (!physical) {
       info.errorMsg("Abort from Pythia::next: "
         "parton+hadronLevel failed; giving up");
-      return false;
+      {quitLoop = true; break;}
     }
 
+
     // Process- and parton-level statistics. Event scale.
+    Benchmark_start(Pythia0next_accumulateProcess);
     processLevel.accumulate();
+    Benchmark_stop(Pythia0next_accumulateProcess);
+    Benchmark_start(Pythia0next_accumulateParton);
     partonLevel.accumulate();
+    Benchmark_stop(Pythia0next_accumulateParton);
+    Benchmark_start(Pythia0next_scale);
     event.scale( process.scale() );
+    Benchmark_stop(Pythia0next_scale);
+
 
     // End of outer loop over hard processes. Done with normal option.
     info.addCounter(13);
     break;
   }
+
+  Benchmark_loopStop(Pythia0next_loopVetoHardProcess);
+
+  if (quitLoop) return false;
+
+  Benchmark_start(Pythia0next_listEvents);
 
   // List events.
   if (doLHA && nPrevious < nShowLHA) lhaUpPtr->listEvent();
@@ -1309,6 +1384,23 @@ bool Pythia::next() {
 
   // Done.
   info.addCounter(4);
+
+  Benchmark_stop(Pythia0next_listEvents);
+  Benchmark_stop(Pythia0next);
+
+  // ---------------------------------------
+
+  }
+
+  Benchmark::recordLoopMinMaxAverage();
+
+  if (nEvents == 500)
+  {
+    Benchmark::printTimings();
+  }
+
+  // --------------------------------------
+
   return true;
 
 }
@@ -1778,6 +1870,9 @@ int Pythia::readCommented(string line) {
 
 bool Pythia::check(ostream& os) {
 
+  Benchmark_start(Pythia0check);
+  Benchmark_start(Pythia0check_reset);
+
   // Reset.
   bool physical     = true;
   bool listVertices = false;
@@ -1791,6 +1886,9 @@ bool Pythia::check(ostream& os) {
   iErrNanVtx.resize(0);
   Vec4 pSum;
   double chargeSum  = 0.;
+
+  Benchmark_stop(Pythia0check_reset);
+  Benchmark_start(Pythia0check_charge_and_psum);
 
   // Incoming beams counted with negative momentum and charge.
   if (doProcessLevel) {
@@ -1812,8 +1910,14 @@ bool Pythia::check(ostream& os) {
   }
   double eLab = abs(pSum.e());
 
+  Benchmark_stop(Pythia0check_charge_and_psum);
+  Benchmark_loopStart(Pythia0check_loopAllParticles);
+
   // Loop over particles in the event.
   for (int i = 0; i < event.size(); ++i) {
+
+    Benchmark_loopCount(Pythia0check_loopAllParticles);
+    Benchmark_start(Pythia0check_find_unrecognized);
 
     // Look for any unrecognized particle codes.
     int id = event[i].id();
@@ -1844,6 +1948,9 @@ bool Pythia::check(ostream& os) {
       }
     }
 
+    Benchmark_stop(Pythia0check_find_unrecognized);
+    Benchmark_start(Pythia0check_check_momentum);
+
     // Look for particles with mismatched or not-a-number energy/momentum/mass.
     if (abs(event[i].px()) >= 0. && abs(event[i].py()) >= 0.
       && abs(event[i].pz()) >= 0.  && abs(event[i].e()) >= 0.
@@ -1866,6 +1973,9 @@ bool Pythia::check(ostream& os) {
       iErrNan.push_back(i);
     }
 
+    Benchmark_stop(Pythia0check_check_momentum);
+    Benchmark_start(Pythia0check_check_nans);
+
     // Look for particles with not-a-number vertex/lifetime.
     if (abs(event[i].xProd()) >= 0. && abs(event[i].yProd()) >= 0.
       && abs(event[i].zProd()) >= 0.  && abs(event[i].tProd()) >= 0.
@@ -1878,6 +1988,9 @@ bool Pythia::check(ostream& os) {
       iErrNanVtx.push_back(i);
     }
 
+    Benchmark_stop(Pythia0check_check_nans);
+    Benchmark_start(Pythia0check_check_charge_total);
+
     // Add final-state four-momentum and charge.
     if (event[i].isFinal()) {
       pSum      += event[i].p();
@@ -1886,6 +1999,9 @@ bool Pythia::check(ostream& os) {
 
   // End of particle loop.
   }
+
+  Benchmark_loopStop(Pythia0check_loopAllParticles);
+  Benchmark_start(Pythia0check_check_momentum_charge_conservation);
 
   // Check energy-momentum/charge conservation.
   double epDev = abs(pSum.e()) + abs(pSum.px()) + abs(pSum.py())
@@ -1901,6 +2017,9 @@ bool Pythia::check(ostream& os) {
     info.errorMsg("Error in Pythia::check: charge not conserved");
     physical = false;
   }
+
+  Benchmark_stop(Pythia0check_check_momentum_charge_conservation);
+  Benchmark_start(Pythia0check_check_records);
 
   // Check that beams and event records agree on incoming partons.
   // Only meaningful for resolved beams.
@@ -1918,6 +2037,9 @@ bool Pythia::check(ostream& os) {
       listBeams   = true;
     }
   }
+
+  Benchmark_stop(Pythia0check_check_records);
+  Benchmark_start(Pythia0check_check_mothers_and_daughters_match);
 
   // Check that mother and daughter information match for each particle.
   vector<int> noMot;

@@ -77,6 +77,8 @@ void Sigma1ffbar2H::sigmaKin() {
 
 double Sigma1ffbar2H::sigmaHat() {
 
+  Benchmark_start(sigmaHat_higgs_Sigma1ffbar2H);
+
   // Calculate mass-dependent incoming width, including colour factor.
   int idAbs      = abs(id1);
   double widthIn = HResPtr->resWidthChan( mH, idAbs, -idAbs);
@@ -399,6 +401,8 @@ void Sigma2ffbar2HZ::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2ffbar2HZ::sigmaHat() {
+
+  Benchmark_start(sigmaHat_higgs_Sigma2ffbar2HZ);
 
   // Coupling a_f^2 + v_f^2 to s-channel Z0 and colour factor.
   int idAbs    = abs(id1);

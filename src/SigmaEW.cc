@@ -35,6 +35,8 @@ void Sigma2qg2qgamma::sigmaKin() {
 
 double Sigma2qg2qgamma::sigmaHat() {
 
+  Benchmark_start(sigmaHat_EW_Sigma2qg2qgamma);
+
   // Incoming flavour gives charge factor.
   int idNow    = (id2 == 21) ? id1 : id2;
   double eNow  = couplingsPtr->ef( abs(idNow) );

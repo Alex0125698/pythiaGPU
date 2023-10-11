@@ -404,17 +404,21 @@ void ParticleDataEntry::rescaleBR(double newSumBR) {
 
 bool ParticleDataEntry::preparePick(int idSgn, double mHat, int idInFlav) {
 
+  Benchmark_start(preparePick);
+
   // Reset sum of allowed widths/branching ratios.
   currentBRSum = 0.;
 
   // For resonances the widths are calculated dynamically.
   if (isResonanceSave && resonancePtr != 0) {
+  Benchmark_start(preparePick_calculated);
     resonancePtr->widthStore(idSgn, mHat, idInFlav);
     for (int i = 0; i < int(channels.size()); ++i)
       currentBRSum += channels[i].currentBR();
 
   // Else use normal fixed branching ratios.
   } else {
+  Benchmark_start(preparePick_fixed);
     int onMode;
     double currentBRNow;
     for (int i = 0; i < int(channels.size()); ++i) {

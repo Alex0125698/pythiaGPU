@@ -259,6 +259,9 @@ bool ResonanceWidths::init(Info* infoPtrIn, Settings* settingsPtrIn,
 double ResonanceWidths::width(int idSgn, double mHatIn, int idInFlavIn,
   bool openOnly, bool setBR, int idOutFlav1, int idOutFlav2) {
 
+  // Benchmark_start(ResonanceWidths0width);
+  // TODO: looks like more virtual classes below...
+
   // Calculate various prefactors for the current mass.
   mHat          = mHatIn;
   idInFlav      = idInFlavIn;

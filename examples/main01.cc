@@ -17,7 +17,7 @@ int main() {
   pythia.init();
   Hist mult("charged multiplicity", 100, -0.5, 799.5);
   // Begin event loop. Generate event. Skip if error. List first one.
-  for (int iEvent = 0; iEvent < 100; ++iEvent) {
+  for (int iEvent = 0; iEvent < 500; ++iEvent) {
     if (!pythia.next()) continue;
     // Find number of all final charged particles and fill histogram.
     int nCharged = 0;

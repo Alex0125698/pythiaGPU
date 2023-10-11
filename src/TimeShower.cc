@@ -1757,6 +1757,9 @@ void TimeShower::setupHVdip( int iSys, int i, Event& event,
 double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
   bool isFirstTrial, bool doTrialIn) {
 
+  Benchmark_start(TimeShower0pTnext);
+  Benchmark_start(TimeShower0pTnext_setup);
+
   // Begin loop over all possible radiating dipole ends.
   dipSel  = 0;
   iDipSel = -1;
@@ -1773,31 +1776,62 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
   enhanceFactors.clear();
   if (hasUserHooks) userHooksPtr->setEnhancedTrial(0., 1.);
 
+  Benchmark_stop(TimeShower0pTnext_setup);
+
+  Benchmark_loopStart(TimeShower0pTnext_loopOverDipoles);
+
   for (int iDip = 0; iDip < int(dipEnd.size()); ++iDip) {
     TimeDipoleEnd& dip = dipEnd[iDip];
 
+    Benchmark_loopCount(TimeShower0pTnext_loopOverDipoles);
+    Benchmark_start(TimeShower0pTnext_partHardScatter);
+
     // Check if this system is part of the hard scattering
     // (including resonance decay products).
+
     bool hardSystem = true;
     bool isQCD = event[dip.iRadiator].colType() != 0;
+
+    Benchmark_loopStart(TimeShower0pTnext_loopOverPartonPairs);
+
+    // TODO: can we switch these loops?
+
     for (int i = 0; i < partonSystemsPtr->sizeOut(dip.system); ++i) {
+
+      Benchmark_loopCount(TimeShower0pTnext_loopOverPartonPairs);
+      // Benchmark_loopStart(TimeShower0pTnext_loopOverHardPartons);
+
       int ii = partonSystemsPtr->getOut( dip.system, i);
       bool hasHardAncestor = event[ii].statusAbs() < 23;
+
       for (int iHard = 0; iHard < int(hardPartons.size()); ++iHard){
-        if ( event[ii].isAncestor(hardPartons[iHard])
+
+        // Benchmark_loopCount(TimeShower0pTnext_loopOverHardPartons);
+
+        if ( event[ii].isAncestor(hardPartons[iHard]) // <- likely bottleneck
           || ii == hardPartons[iHard]
           || (event[ii].status() == 23 && event[ii].colType() == 0) )
           hasHardAncestor = true;
       }
+
+      // Benchmark_loopStop(TimeShower0pTnext_loopOverHardPartons);
+
       if (!hasHardAncestor) hardSystem = false;
     }
+
+    Benchmark_loopStop(TimeShower0pTnext_loopOverPartonPairs);
 
     // Check if global recoil should be used.
     useLocalRecoilNow = !(globalRecoil && hardSystem
       && partonSystemsPtr->sizeOut(dip.system) <= nMaxGlobalRecoil);
 
+    Benchmark_stop(TimeShower0pTnext_partHardScatter);
+
     // Do not use global recoil if the radiator line has already branched.
     if (globalRecoilMode == 1 && isQCD) {
+
+      Benchmark_start(TimeShower0pTnext_globalRecoilMode1);
+
       if (globalRecoil && hardSystem) useLocalRecoilNow = true;
       for (int iHard = 0; iHard < int(hardPartons.size()); ++iHard)
         if ( event[dip.iRadiator].isAncestor(hardPartons[iHard]) )
@@ -1805,8 +1839,12 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
       // Check if global recoil should be used.
       if ( !globalRecoil || nGlobal >= nMaxGlobalBranch )
         useLocalRecoilNow = true;
+
     // Switch off global recoil after first trial emission.
     } else if (globalRecoilMode == 2 && isQCD) {
+
+      Benchmark_start(TimeShower0pTnext_globalRecoilMode2);
+
       useLocalRecoilNow = !(globalRecoil && hardSystem
         && nProposed.find(dip.system) != nProposed.end()
         && nProposed[dip.system] == 0);
@@ -1826,11 +1864,17 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
     // Dipole properties; normal local recoil.
     dip.mRad   = event[dip.iRadiator].m();
     if (useLocalRecoilNow) {
+
+      Benchmark_start(TimeShower0pTnext_useLocalRecoilNow);
+
       dip.mRec = event[dip.iRecoiler].m();
       dip.mDip = m( event[dip.iRadiator], event[dip.iRecoiler] );
 
     // Dipole properties, alternative global recoil. Squares.
     } else {
+
+      Benchmark_start(TimeShower0pTnext_useGlobalRecoil);
+
       Vec4 pSumGlobal;
       // Include all particles in all hard systems (hard production system,
       // systems of resonance decay products) in the global recoil momentum.
@@ -1851,6 +1895,9 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
       dip.mRec = pSumGlobal.mCalc();
       dip.mDip = m( event[dip.iRadiator].p(), pSumGlobal);
     }
+
+    Benchmark_start(TimeShower0pTnext_evolutionScale);
+
     dip.m2Rad  = pow2(dip.mRad);
     dip.m2Rec  = pow2(dip.mRec);
     dip.m2Dip  = pow2(dip.mDip);
@@ -1859,14 +1906,23 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
     dip.m2DipCorr    = pow2(dip.mDip - dip.mRec) - dip.m2Rad;
     double pTbegDip = min( pTbegAll, dip.pTmax );
     double pT2begDip = min( pow2(pTbegDip), 0.25 * dip.m2DipCorr);
+    
+    Benchmark_stop(TimeShower0pTnext_evolutionScale);
 
     // For global recoil, always set the starting scale for first emission.
+
+    Benchmark_start(TimeShower0pTnext_isFirstWimpy);
+
     bool isFirstWimpy = !useLocalRecoilNow && (pTmaxMatch == 1)
                       && nProposed.find(dip.system) != nProposed.end()
                       && (nProposed[dip.system] == 0 || isFirstTrial);
+
     double muQ        = (infoPtr->scalup() > 0.) ? infoPtr->scalup()
                       : infoPtr->QFac();
+
     if (isFirstWimpy && !limitMUQ) pT2begDip = pow2(muQ);
+    
+
     else if (isFirstWimpy && limitMUQ) {
       // Find mass of colour dipole.
       double mS   = event[dip.iRecoiler].m();
@@ -1884,16 +1940,34 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
       continue;
     }
 
+    Benchmark_stop(TimeShower0pTnext_isFirstWimpy);
+
     // Do QCD, QED, weak or HV evolution if it makes sense.
+
+
     if (pT2begDip > pT2sel) {
       if      (dip.colType != 0)
+      {
+        Benchmark_start(TimeShower0pTnext_pT2nextQCD);
         pT2nextQCD(pT2begDip, pT2sel, dip, event);
+      }
       else if (dip.chgType != 0 || dip.gamType != 0)
+      {
+        Benchmark_start(TimeShower0pTnext_pT2nextQED);
         pT2nextQED(pT2begDip, pT2sel, dip, event);
+      }
       else if (dip.weakType != 0)
+      {
+        Benchmark_start(TimeShower0pTnext_pT2nextWeak);
         pT2nextWeak(pT2begDip, pT2sel, dip, event);
+      }
       else if (dip.colvType != 0)
+      {
+        Benchmark_start(TimeShower0pTnext_pT2nextHV);
         pT2nextHV(pT2begDip, pT2sel, dip, event);
+      }
+
+      Benchmark_start(TimeShower0pTnext_pT2begDip);
 
       // Update if found larger pT than current maximum.
       if (dip.pT2 > pT2sel) {
@@ -1904,6 +1978,10 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
       }
     }
   }
+
+  Benchmark_loopStop(TimeShower0pTnext_loopOverDipoles);
+
+  Benchmark_start(TimeShower0pTnext_rest);
 
   // Update the number of proposed timelike emissions.
   if (dipSel != 0 && nProposed.find(dipSel->system) != nProposed.end())
@@ -1920,6 +1998,10 @@ double TimeShower::pTnext( Event& event, double pTbegAll, double pTendAll,
 
 void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
   TimeDipoleEnd& dip, Event& event) {
+
+  Benchmark_start(TimeShower0pT2nextQCD);
+
+  Benchmark_start(TimeShower0pT2nextQCD_setup);
 
   // Lower cut for evolution. Return if no evolution range.
   double pT2endDip = max( pT2sel, pT2colCut );
@@ -1958,13 +2040,23 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
   double enhanceNow = 1.;
   string nameNow = "";
 
+  Benchmark_stop(TimeShower0pT2nextQCD_setup);
+
+  Benchmark_loopStart(TimeShower0pT2nextQCD_evolve_pT);
+
+  bool quitLoop = false;
+
   // Begin evolution loop towards smaller pT values.
   do {
+
+    Benchmark_loopCount(TimeShower0pT2nextQCD_evolve_pT);
 
     // Default values for current tentative emission.
     isEnhancedQ2QG = isEnhancedG2QQ = isEnhancedG2GG = false;
     enhanceNow = 1.;
     nameNow = "";
+
+    Benchmark_start(TimeShower0pT2nextQCD_initEvolution);
 
     // Initialize evolution coefficients at the beginning and
     // reinitialize when crossing c and b flavour thresholds.
@@ -1993,7 +2085,7 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
       // Calculate allowed z range; fail if it is too tiny.
       zMinAbs = 0.5 - sqrtpos( 0.25 - pT2min / dip.m2DipCorr );
       if (zMinAbs < SIMPLIFYROOT) zMinAbs = pT2min / dip.m2DipCorr;
-      if (zMinAbs > 0.499) { dip.pT2 = 0.; return; }
+      if (zMinAbs > 0.499) { dip.pT2 = 0.; {quitLoop = true; break;} }
 
       // Find emission coefficients for X -> X g and g -> q qbar.
       emitCoefGlue = wtPSglue * colFac * log(1. / zMinAbs - 1.);
@@ -2016,6 +2108,9 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
       mustFindRange = false;
     }
 
+    Benchmark_stop(TimeShower0pT2nextQCD_initEvolution);
+    Benchmark_start(TimeShower0pT2nextQCD_pickpT2);
+
     // Pick pT2 (in overestimated z range) for fixed alpha_strong.
     if (alphaSorder == 0) {
       dip.pT2 = dip.pT2 * pow( rndmPtr->flat(),
@@ -2035,6 +2130,9 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
     }
     wt = 0.;
 
+    Benchmark_stop(TimeShower0pT2nextQCD_pickpT2);
+    Benchmark_start(TimeShower0pT2nextQCD_crossedThreasholds);
+
     // If crossed c or b thresholds: continue evolution from threshold.
     if (nFlavour == 5 && dip.pT2 < m2b) {
       mustFindRange = true;
@@ -2045,7 +2143,7 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
 
     // Abort evolution if below cutoff scale, or below another branching.
     } else {
-      if ( dip.pT2 < pT2endDip) { dip.pT2 = 0.; return; }
+      if ( dip.pT2 < pT2endDip) { dip.pT2 = 0.; {quitLoop = true; break;} }
 
       // Pick kind of branching: X -> X g or g -> q qbar.
       dip.flavour  = 21;
@@ -2155,7 +2253,7 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
           if (xMaxAbs < 0.) {
             infoPtr->errorMsg("Warning in TimeShower::pT2nextQCD: "
             "xMaxAbs negative");
-            return;
+            {quitLoop = true; break;}
           }
 
           // New: Ensure that no x-value larger than unity is picked. Only
@@ -2188,8 +2286,14 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
       }
     }
 
+    Benchmark_stop(TimeShower0pT2nextQCD_crossedThreasholds);
+
   // Iterate until acceptable pT (or have fallen below pTmin).
   } while (wt < rndmPtr->flat());
+
+  Benchmark_loopStop(TimeShower0pT2nextQCD_evolve_pT);
+  if (quitLoop) return;
+
 
   // Store outcome of enhanced branching rate analysis.
   splittingNameNow = nameNow;

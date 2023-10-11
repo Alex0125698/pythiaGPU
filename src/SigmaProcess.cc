@@ -356,21 +356,31 @@ bool SigmaProcess::initFlux() {
 
 double SigmaProcess::sigmaPDF() {
 
+  Benchmark_start(sigmaPDF);
+
   // Evaluate and store the required parton densities.
+  Benchmark_start(sigmaPDF_xfHard);
   for (int j = 0; j < sizeBeamA(); ++j)
     inBeamA[j].pdf = beamAPtr->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
   for (int j = 0; j < sizeBeamB(); ++j)
     inBeamB[j].pdf = beamBPtr->xfHard( inBeamB[j].id, x2Save, Q2FacSave);
+  Benchmark_stop(sigmaPDF_xfHard);
 
   // Loop over allowed incoming channels.
+  Benchmark_loopStart(sigmaPDF_loopOverIncomingChannels);
   sigmaSumSave = 0.;
   for (int i = 0; i < sizePair(); ++i) {
 
+    Benchmark_loopCount(sigmaPDF_loopOverIncomingChannels);
+
     // Evaluate hard-scattering cross section. Include K factor.
+    Benchmark_start(sigmaPDF_sigmaHatWrap);
     inPair[i].pdfSigma = Kfactor
                        * sigmaHatWrap(inPair[i].idA, inPair[i].idB);
+    Benchmark_stop(sigmaPDF_sigmaHatWrap);
 
     // Multiply by respective parton densities.
+    Benchmark_start(sigmaPDF_multPartonDensity);
     for (int j = 0; j < sizeBeamA(); ++j)
     if (inPair[i].idA == inBeamA[j].id) {
       inPair[i].pdfA      = inBeamA[j].pdf;
@@ -387,6 +397,8 @@ double SigmaProcess::sigmaPDF() {
     // Sum for all channels.
     sigmaSumSave += inPair[i].pdfSigma;
   }
+
+  Benchmark_loopStop(sigmaPDF_loopOverIncomingChannels);
 
   // Done.
   return sigmaSumSave;

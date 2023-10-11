@@ -472,7 +472,7 @@ public:
   virtual void sigmaKin();
 
   // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
+  virtual double sigmaHat() { Benchmark_start(sigmaHat_SUSY_Sigma2gg2squarkantisquark); return sigma;}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -571,7 +571,7 @@ public:
   virtual void sigmaKin();
 
   // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() {return sigma;}
+  virtual double sigmaHat() {Benchmark_start(sigmaHat_SUSY_Sigma2gg2gluinogluino); return sigma;}
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();

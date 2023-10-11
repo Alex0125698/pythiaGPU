@@ -160,14 +160,28 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
 
 bool ProcessContainer::trialProcess() {
 
+  Benchmark_start(trialProcess);
+  Benchmark_placeholder(trialProcess_dummyA)
+  Benchmark_loopStart(trialProcess_loopTrialProcess);
+
+  bool quitLoop = false;
+
   // Loop over tries only occurs for Les Houches strategy = +-2.
   for (int iTry = 0;  ; ++iTry) {
 
+    Benchmark_loopCount(trialProcess_loopTrialProcess);
+
     // Generate a trial phase space point, if meaningful.
-    if (sigmaMx == 0.) return false;
+    if (sigmaMx == 0.) { quitLoop = true; break;}
     infoPtr->setEndOfFile(false);
     bool repeatSame = (iTry > 0);
+    
+    Benchmark_start(trialProcess_trialKin);
+
     bool physical = phaseSpacePtr->trialKin(true, repeatSame);
+
+    Benchmark_stop(trialProcess_trialKin);
+    Benchmark_start(trialProcess_rest);
 
     // Note if at end of Les Houches file, else do statistics.
     if (isLHA && !physical) infoPtr->setEndOfFile(true);
@@ -200,7 +214,7 @@ bool ProcessContainer::trialProcess() {
     }
 
     // Possibly fail, else cross section.
-    if (!physical) return false;
+    if (!physical) { quitLoop = true; break;}
     double sigmaNow = phaseSpacePtr->sigmaNow();
 
     // Tell if this event comes with weight from cross section.
@@ -249,10 +263,16 @@ bool ProcessContainer::trialProcess() {
         if (iFill >= 0) ++nSelLHA[iFill];
       }
     }
-    if (select || lhaStratAbs != 2) return select;
+    if (select || lhaStratAbs != 2) {quitLoop = !select; break;}
 
   }
 
+  Benchmark_loopStop(trialProcess_loopTrialProcess);
+  Benchmark_placeholder(trialProcess_dummyB)
+  // seems to be weird un-indent here...
+  if (quitLoop) return false;
+
+  return true; // !!!!!
 }
 
 //--------------------------------------------------------------------------
@@ -821,6 +841,9 @@ bool ProcessContainer::constructDecays( Event& process) {
 
 bool ProcessContainer::decayResonances( Event& process) {
 
+  Benchmark_start(decayResonances);
+  Benchmark_start(decayResonances_setup);
+
   // Save current event-record size and status codes.
   process.saveSize();
   vector<int> statusSave( process.size());
@@ -830,31 +853,46 @@ bool ProcessContainer::decayResonances( Event& process) {
   bool newChain    = false;
   bool newFlavours = false;
 
+  Benchmark_stop(decayResonances_setup);
+
   // Do loop over user veto.
   do {
 
     // Do sequential chain of uncorrelated isotropic decays.
     do {
+      Benchmark_start(decayResonances_next);
       physical = resDecaysPtr->next( process);
+      Benchmark_stop(decayResonances_next);
+      
       if (!physical) return false;
 
+      Benchmark_start(decayResonances_weightDecayFlav);
       // Check whether flavours should be correlated.
       // (Currently only relevant for f fbar -> gamma*/Z0 gamma*/Z0.)
       newFlavours = ( sigmaProcessPtr->weightDecayFlav( process)
                     < rndmPtr->flat() );
+      Benchmark_stop(decayResonances_weightDecayFlav);
 
+      Benchmark_start(decayResonances_resetForVeto);
       // Reset the decay chains if have to redo.
       if (newFlavours) {
         process.restoreSize();
         for (int i = 0; i < process.size(); ++i)
           process[i].status( statusSave[i]);
       }
+      Benchmark_stop(decayResonances_resetForVeto);
 
     // Loop back where required to generate new decays with new flavours.
     } while (newFlavours);
 
+    Benchmark_start(decayResonances_decayKinematics);
+
     // Correct to nonisotropic decays.
     phaseSpacePtr->decayKinematics( process);
+
+    Benchmark_stop(decayResonances_decayKinematics);
+
+    Benchmark_start(decayResonances_rest);
 
     // Optionally user hooks check/veto on decay chain.
     if (canVetoResDecay)

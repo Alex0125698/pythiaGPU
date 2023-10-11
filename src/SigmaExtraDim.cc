@@ -953,6 +953,8 @@ void Sigma2ffbar2TEVffbar::sigmaKin() {
 
 double Sigma2ffbar2TEVffbar::sigmaHat() {
 
+  Benchmark_start(sigmaHat_dim_Sigma2ffbar2TEVffbar);
+
   // Fail if below threshold.
   if (!isPhysical) return 0.;
 

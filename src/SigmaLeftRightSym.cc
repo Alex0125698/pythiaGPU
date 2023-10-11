@@ -461,6 +461,8 @@ void Sigma2lgm2Hchgchgl::initProc() {
 
 double Sigma2lgm2Hchgchgl::sigmaHat() {
 
+  Benchmark_start(sigmaHat_LR_Sigma2lgm2Hchgchgl);
+
   // Initial state must consist of a lepton and a photon.
   int idIn     = (id2 == 22) ? id1 : id2;
   int idInAbs  = abs(idIn);

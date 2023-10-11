@@ -306,6 +306,8 @@ void Sigma2qq2qStarq::sigmaKin() {
 
 double Sigma2qq2qStarq::sigmaHat() {
 
+  Benchmark_start(sigmaHat_Composite_Sigma2qq2qStarq);
+
   // Identify different allowed incoming flavour combinations.
   int id1Abs   = abs(id1);
   int id2Abs   = abs(id2);

@@ -233,6 +233,9 @@ void PartonLevel::resetTrial() {
 
 bool PartonLevel::next( Event& process, Event& event) {
 
+  Benchmark_start(PartonLevel0next);
+  Benchmark_start(PartonLevel0next_setup);
+
   // Current event classification.
   isResolved        = infoPtr->isResolved();
   isResolvedA       = isResolved;
@@ -331,607 +334,783 @@ bool PartonLevel::next( Event& process, Event& event) {
   // Reset event weight coming from enhanced branchings.
   if (userHooksPtr != 0) userHooksPtr->setEnhancedEventWeight(1.);
 
+  Benchmark_stop(PartonLevel0next_setup);
+
+  Benchmark_loopStart(PartonLevel0next_MPIveto);
+  bool loopQuit = false;
+
   // Loop to set up diffractive system if run with MPI veto.
   for (int iHardDiffLoop = 1; iHardDiffLoop <= nHardDiffLoop;
-    ++iHardDiffLoop) {
+    ++iHardDiffLoop) 
+  {
 
-  // Big outer loop to handle up to two systems (in double diffraction),
-  // but normally one. (Not indented in following, but end clearly marked.)
-  for (int iHardLoop = 1; iHardLoop <= nHardLoop; ++iHardLoop) {
-    infoPtr->setCounter(20, iHardLoop);
-    infoPtr->setCounter(21);
+    Benchmark_loopCount(PartonLevel0next_MPIveto);
+    Benchmark_loopStart(PartonLevel0next_loopForDoubleDiffraction);
 
-  // Classification of diffractive system: 1 = A, 2 = B, 3 = central.
-  iDS = 0;
-  if (isDiffA || isDiffB) iDS = (iHardLoop == 2 || !isResolvedA) ? 2 : 1;
-  if (isDiffC) iDS = 3;
+    // Big outer loop to handle up to two systems (in double diffraction),
+    // but normally one. (Not indented in following, but end clearly marked.)
+    for (int iHardLoop = 1; iHardLoop <= nHardLoop; ++iHardLoop) 
+    {
+      infoPtr->setCounter(20, iHardLoop);
+      infoPtr->setCounter(21);
 
-  // Process and event records can be out of step for diffraction.
-  if (iHardLoop == 2) {
-    sizeProcess = process.size();
-    sizeEvent   = event.size();
-    partonSystemsPtr->clear();
-    if (event.lastColTag() > process.lastColTag())
-      process.initColTag(event.lastColTag());
-  }
+      Benchmark_loopCount(PartonLevel0next_loopForDoubleDiffraction);
 
-  // If you need to restore then do not throw existing diffractive system.
-  if (isDiff) {
-    event.saveSize();
-    event.saveJunctionSize();
+      // Classification of diffractive system: 1 = A, 2 = B, 3 = central.
+      iDS = 0;
+      if (isDiffA || isDiffB) iDS = (iHardLoop == 2 || !isResolvedA) ? 2 : 1;
+      if (isDiffC) iDS = 3;
 
-    // Allow special treatment of diffractive systems.
-    setupResolvedDiff( process);
-  }
-
-  // Prepare to do multiparton interactions; at new mass for diffraction.
-  if (doMPIinit) multiPtr->reset();
-
-  // Special case if nondiffractive: do hardest interaction.
-  if (isNonDiff || isDiff) {
-    multiPtr->pTfirst();
-    multiPtr->setupFirstSys( process);
-  }
-
-  // Allow up to ten tries; failure possible for beam remnants.
-  // Main cause: inconsistent colour flow at the end of the day.
-  bool physical = true;
-  int  nRad     = 0;
-  for (int iTry = 0; iTry < NTRY; ++ iTry) {
-    infoPtr->addCounter(21);
-    for (int i = 22; i < 32; ++i) infoPtr->setCounter(i);
-
-    // Reset flag, counters and max scales.
-    physical   = true;
-    nMPI       = (doSecondHard) ? 2 : 1;
-    nISR       = 0;
-    nFSRinProc = 0;
-    nFSRinRes  = 0;
-    nISRhard   = 0;
-    nFSRhard   = 0;
-    pTsaveMPI  = 0.;
-    pTsaveISR  = 0.;
-    pTsaveFSR  = 0.;
-
-    // Identify hard interaction system for showers.
-    setupHardSys( process, event);
-
-    // Optionally check for a veto after the hardest interaction.
-    if (canVetoMPIStep) {
-      doVeto = userHooksPtr->doVetoMPIStep( 1, event);
-      // Abort event if vetoed.
-      if (doVeto) {
-        if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-        return false;
+      // Process and event records can be out of step for diffraction.
+      if (iHardLoop == 2) {
+        sizeProcess = process.size();
+        sizeEvent   = event.size();
+        partonSystemsPtr->clear();
+        if (event.lastColTag() > process.lastColTag())
+          process.initColTag(event.lastColTag());
       }
-    }
 
-    // Check matching of process scale to maximum ISR/FSR/MPI scales.
-    double Q2Fac       = infoPtr->Q2Fac();
-    double Q2Ren       = infoPtr->Q2Ren();
-    bool limitPTmaxISR = (doISR)
-      ? spacePtr->limitPTmax( event, Q2Fac, Q2Ren) : false;
-    bool limitPTmaxFSR = (doFSRduringProcess)
-      ? timesPtr->limitPTmax( event, Q2Fac, Q2Ren) : false;
-    bool limitPTmaxMPI = (doMPI)  ? multiPtr->limitPTmax( event) : false;
+      // If you need to restore then do not throw existing diffractive system.
+      if (isDiff) {
+        event.saveSize();
+        event.saveJunctionSize();
 
-    // Global recoil: reset counters and store locations of outgoing partons.
-    timesPtr->prepareGlobal( event);
-    bool isFirstTrial = true;
+        // Allow special treatment of diffractive systems.
+        setupResolvedDiff( process);
+      }
 
-    // Set hard scale, maximum for showers and multiparton interactions.
-    double pTscaleRad  = process.scale();
-    double pTscaleMPI  = (doMPI && pTmaxMatchMPI == 3)
-                       ? multiPtr->scaleLimitPT() : pTscaleRad;
-    if (doSecondHard) {
-      pTscaleRad       = max( pTscaleRad, process.scaleSecond() );
-      pTscaleMPI       = min( pTscaleMPI, process.scaleSecond() );
-    }
-    double pTmaxMPI = (limitPTmaxMPI) ? pTscaleMPI : infoPtr->eCM();
-    double pTmaxISR = (limitPTmaxISR) ? spacePtr->enhancePTmax() * pTscaleRad
-                                      : infoPtr->eCM();
-    double pTmaxFSR = (limitPTmaxFSR) ? timesPtr->enhancePTmax() * pTscaleRad
-                                      : infoPtr->eCM();
+      // Prepare to do multiparton interactions; at new mass for diffraction.
+      if (doMPIinit) multiPtr->reset();
 
-    // Potentially reset up starting scales for matrix element merging.
-    if ( hasMergingHooks && (doTrial || canRemoveEvent || canRemoveEmission) )
-      mergingHooksPtr->setShowerStartingScales( doTrial,
-        (canRemoveEvent || canRemoveEmission), pTscaleRad, process, pTmaxFSR,
-        limitPTmaxFSR, pTmaxISR, limitPTmaxISR, pTmaxMPI, limitPTmaxMPI );
-    double pTmax    = max( pTmaxMPI, max( pTmaxISR, pTmaxFSR) );
-    pTsaveMPI       = pTmaxMPI;
-    pTsaveISR       = pTmaxISR;
-    pTsaveFSR       = pTmaxFSR;
+      // Special case if nondiffractive: do hardest interaction.
+      if (isNonDiff || isDiff) {
+        multiPtr->pTfirst();
+        multiPtr->setupFirstSys( process);
+      }
+      
+      Benchmark_loopStart(PartonLevel0next_trialParton);
 
-    // Prepare the classes to begin the generation.
-    if (doMPI) multiPtr->prepare( event, pTmaxMPI);
-    if (doISR) spacePtr->prepare( 0, event, limitPTmaxISR);
-    if (doFSRduringProcess) timesPtr->prepare( 0, event, limitPTmaxFSR);
-    if (doSecondHard && doISR) spacePtr->prepare( 1, event, limitPTmaxISR);
-    if (doSecondHard && doFSRduringProcess) timesPtr->prepare( 1, event,
-       limitPTmaxFSR);
+      // Allow up to ten tries; failure possible for beam remnants.
+      // Main cause: inconsistent colour flow at the end of the day.
+      bool physical = true;
+      int  nRad     = 0;
 
-    // Impact parameter has now been chosen, except for diffraction.
-    if (!isDiff) infoPtr->setImpact( multiPtr->bMPI(),
-      multiPtr->enhanceMPI(), true);
-    // Set up initial veto scale.
-    doVeto        = false;
-    double pTveto = pTvetoPT;
-    typeLatest    = 0;
+      for (int iTry = 0; iTry < NTRY; ++ iTry) 
+      {
+        infoPtr->addCounter(21);
+        for (int i = 22; i < 32; ++i) infoPtr->setCounter(i);
 
-    // Begin evolution down in pT from hard pT scale.
-    do {
-      infoPtr->addCounter(22);
-      typeVetoStep = 0;
-      nRad         =  nISR + nFSRinProc;
+        Benchmark_loopCount(PartonLevel0next_trialParton);
 
-      // Find next pT value for FSR, MPI and ISR.
-      // Order calls to minimize time expenditure.
-      double pTgen = 0.;
-      double pTtimes = (doFSRduringProcess)
-        ? timesPtr->pTnext( event, pTmaxFSR, pTgen, isFirstTrial, doTrial)
-        : -1.;
-      pTgen = max( pTgen, pTtimes);
-      double pTmulti = (doMPI)
-        ? multiPtr->pTnext( pTmaxMPI, pTgen, event) : -1.;
-      pTgen = max( pTgen, pTmulti);
-      double pTspace = (doISR)
-        ? spacePtr->pTnext( event, pTmaxISR, pTgen, nRad, doTrial) : -1.;
-      double pTnow = max( pTtimes, max( pTmulti, pTspace));
+        // Reset flag, counters and max scales.
+        physical   = true;
+        nMPI       = (doSecondHard) ? 2 : 1;
+        nISR       = 0;
+        nFSRinProc = 0;
+        nFSRinRes  = 0;
+        nISRhard   = 0;
+        nFSRhard   = 0;
+        pTsaveMPI  = 0.;
+        pTsaveISR  = 0.;
+        pTsaveFSR  = 0.;
 
-      // Update information.
-      infoPtr->setPTnow( pTnow);
-      isFirstTrial = false;
+        Benchmark_start(PartonLevel0next_setupHardSys);
 
-      // Allow a user veto. Only do it once, so remember to change pTveto.
-      if (pTveto > 0. && pTveto > pTnow) {
-        pTveto = -1.;
-        doVeto = userHooksPtr->doVetoPT( typeLatest, event);
-        // Abort event if vetoed.
-        if (doVeto) {
-          if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-          return false;
+        // Identify hard interaction system for showers.
+        setupHardSys( process, event);
+
+        Benchmark_stop(PartonLevel0next_setupHardSys);
+        Benchmark_start(PartonLevel0next_limitPTmax);
+
+        // Optionally check for a veto after the hardest interaction.
+        if (canVetoMPIStep) {
+          doVeto = userHooksPtr->doVetoMPIStep( 1, event);
+          // Abort event if vetoed.
+          if (doVeto) {
+            if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+            loopQuit = true;
+            break;
+          }
         }
-      }
 
-      // Do a multiparton interaction (if allowed).
-      if (pTmulti > 0. && pTmulti > pTspace && pTmulti > pTtimes) {
-        infoPtr->addCounter(23);
-        if (multiPtr->scatter( event)) {
-          typeLatest = 1;
-          ++nMPI;
-          if (canVetoMPIStep && nMPI <= nVetoMPIStep) typeVetoStep = 1;
+        // Check matching of process scale to maximum ISR/FSR/MPI scales.
+        double Q2Fac       = infoPtr->Q2Fac();
+        double Q2Ren       = infoPtr->Q2Ren();
+        bool limitPTmaxISR = (doISR)
+          ? spacePtr->limitPTmax( event, Q2Fac, Q2Ren) : false;
+        bool limitPTmaxFSR = (doFSRduringProcess)
+          ? timesPtr->limitPTmax( event, Q2Fac, Q2Ren) : false;
+        bool limitPTmaxMPI = (doMPI)  ? multiPtr->limitPTmax( event) : false;
 
-          // Break for hard diffraction with MPI veto.
-          if (isHardDiff && sampleTypeDiff == 4 && iHardDiffLoop == 1) {
-            infoPtr->setHardDiff( false, false, false, false, 0., 0., 0., 0.);
-            doDiffVeto = true;
-            return false;
+        Benchmark_stop(PartonLevel0next_limitPTmax);
+        Benchmark_start(PartonLevel0next_prepareGlobalRecoil);
+
+        // Global recoil: reset counters and store locations of outgoing partons.
+        timesPtr->prepareGlobal( event);
+        bool isFirstTrial = true;
+
+        // Set hard scale, maximum for showers and multiparton interactions.
+        double pTscaleRad  = process.scale();
+        double pTscaleMPI  = (doMPI && pTmaxMatchMPI == 3)
+                          ? multiPtr->scaleLimitPT() : pTscaleRad;
+        if (doSecondHard) {
+          pTscaleRad       = max( pTscaleRad, process.scaleSecond() );
+          pTscaleMPI       = min( pTscaleMPI, process.scaleSecond() );
+        }
+        double pTmaxMPI = (limitPTmaxMPI) ? pTscaleMPI : infoPtr->eCM();
+        double pTmaxISR = (limitPTmaxISR) ? spacePtr->enhancePTmax() * pTscaleRad
+                                          : infoPtr->eCM();
+        double pTmaxFSR = (limitPTmaxFSR) ? timesPtr->enhancePTmax() * pTscaleRad
+                                          : infoPtr->eCM();
+
+        // Potentially reset up starting scales for matrix element merging.
+        if ( hasMergingHooks && (doTrial || canRemoveEvent || canRemoveEmission) )
+          mergingHooksPtr->setShowerStartingScales( doTrial,
+            (canRemoveEvent || canRemoveEmission), pTscaleRad, process, pTmaxFSR,
+            limitPTmaxFSR, pTmaxISR, limitPTmaxISR, pTmaxMPI, limitPTmaxMPI );
+        double pTmax    = max( pTmaxMPI, max( pTmaxISR, pTmaxFSR) );
+        pTsaveMPI       = pTmaxMPI;
+        pTsaveISR       = pTmaxISR;
+        pTsaveFSR       = pTmaxFSR;
+
+        Benchmark_stop(PartonLevel0next_prepareGlobalRecoil);
+        Benchmark_start(PartonLevel0next_MultipartonInteractions0prepare);
+
+        // Prepare the classes to begin the generation.
+        if (doMPI) multiPtr->prepare( event, pTmaxMPI);
+
+        Benchmark_stop(PartonLevel0next_MultipartonInteractions0prepare);
+        Benchmark_start(PartonLevel0next_Showerprepare);
+
+        if (doISR) spacePtr->prepare( 0, event, limitPTmaxISR);
+        if (doFSRduringProcess) timesPtr->prepare( 0, event, limitPTmaxFSR);
+        if (doSecondHard && doISR) spacePtr->prepare( 1, event, limitPTmaxISR);
+        if (doSecondHard && doFSRduringProcess) timesPtr->prepare( 1, event,
+          limitPTmaxFSR);
+
+        Benchmark_stop(PartonLevel0next_Showerprepare);
+        Benchmark_start(PartonLevel0next_DiffractionImpactParam);
+
+        // Impact parameter has now been chosen, except for diffraction.
+        if (!isDiff) infoPtr->setImpact( multiPtr->bMPI(),
+          multiPtr->enhanceMPI(), true);
+        // Set up initial veto scale.
+        doVeto        = false;
+        double pTveto = pTvetoPT;
+        typeLatest    = 0;
+
+        Benchmark_stop(PartonLevel0next_DiffractionImpactParam);
+
+        Benchmark_loopStart(PartonLevel0next_evolvePt);
+
+        // Begin evolution down in pT from hard pT scale.
+        do 
+        {
+          Benchmark_loopCount(PartonLevel0next_evolvePt);
+
+          infoPtr->addCounter(22);
+          typeVetoStep = 0;
+          nRad         =  nISR + nFSRinProc;
+
+          Benchmark_start(PartonLevel0next_pTnext_TimeShower);
+          // Find next pT value for FSR, MPI and ISR.
+          // Order calls to minimize time expenditure.
+          double pTgen = 0.;
+          double pTtimes = (doFSRduringProcess)
+            ? timesPtr->pTnext( event, pTmaxFSR, pTgen, isFirstTrial, doTrial)
+            : -1.;
+
+          Benchmark_stop(PartonLevel0next_pTnext_TimeShower);
+          Benchmark_start(PartonLevel0next_pTnext_MPI);
+          
+          pTgen = max( pTgen, pTtimes);
+          double pTmulti = (doMPI)
+            ? multiPtr->pTnext( pTmaxMPI, pTgen, event) : -1.;
+
+          Benchmark_stop(PartonLevel0next_pTnext_MPI);
+          Benchmark_start(PartonLevel0next_pTnext_SpaceShower);
+          
+          pTgen = max( pTgen, pTmulti);
+          double pTspace = (doISR)
+            ? spacePtr->pTnext( event, pTmaxISR, pTgen, nRad, doTrial) : -1.;
+          double pTnow = max( pTtimes, max( pTmulti, pTspace));
+
+          // Update information.
+          infoPtr->setPTnow( pTnow);
+          isFirstTrial = false;
+
+          Benchmark_stop(PartonLevel0next_pTnext_SpaceShower);
+          Benchmark_start(PartonLevel0next_pTveto);
+
+          // Allow a user veto. Only do it once, so remember to change pTveto.
+          if (pTveto > 0. && pTveto > pTnow) {
+            pTveto = -1.;
+            doVeto = userHooksPtr->doVetoPT( typeLatest, event);
+            // Abort event if vetoed.
+            if (doVeto) {
+              if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+              loopQuit = true;
+              break;
+            }
           }
 
-          // Update ISR and FSR dipoles.
-          if (doISR)              spacePtr->prepare( nMPI - 1, event);
-          if (doFSRduringProcess) timesPtr->prepare( nMPI - 1, event);
+          Benchmark_stop(PartonLevel0next_pTveto);
+
+          // Do a multiparton interaction (if allowed).
+          if (pTmulti > 0. && pTmulti > pTspace && pTmulti > pTtimes) {
+            
+            Benchmark_start(PartonLevel0next_MPIscatter);
+            
+            infoPtr->addCounter(23);
+            if (multiPtr->scatter( event)) {
+              typeLatest = 1;
+              ++nMPI;
+              if (canVetoMPIStep && nMPI <= nVetoMPIStep) typeVetoStep = 1;
+
+              // Break for hard diffraction with MPI veto.
+              if (isHardDiff && sampleTypeDiff == 4 && iHardDiffLoop == 1) {
+                infoPtr->setHardDiff( false, false, false, false, 0., 0., 0., 0.);
+                doDiffVeto = true;
+                loopQuit = true;
+                break;
+              }
+
+              // Update ISR and FSR dipoles.
+              if (doISR)              spacePtr->prepare( nMPI - 1, event);
+              if (doFSRduringProcess) timesPtr->prepare( nMPI - 1, event);
+            }
+
+            // Set maximal scales for next pT to pick.
+            pTmaxMPI = pTmulti;
+            pTmaxISR = min(pTmulti, pTmaxISR);
+            pTmaxFSR = min(pTmulti, pTmaxFSR);
+            pTmax    = pTmulti;
+            nBranch++;
+            pTLastBranch = pTmulti;
+            typeLastBranch = 1;
+
+            Benchmark_stop(PartonLevel0next_MPIscatter);
+          }
+
+
+          // Do an initial-state emission (if allowed).
+          else if (pTspace > 0. && pTspace > pTtimes) {
+
+            Benchmark_start(PartonLevel0next_initialStateEmission);
+
+            infoPtr->addCounter(24);
+            if (spacePtr->branch( event)) {
+              typeLatest = 2;
+              iSysNow = spacePtr->system();
+              ++nISR;
+              if (iSysNow == 0) ++nISRhard;
+              if (canVetoStep && iSysNow == 0 && nISRhard <= nVetoStep)
+                typeVetoStep = 2;
+
+              // Update FSR dipoles.
+              if (doFSRduringProcess) timesPtr->update( iSysNow, event,
+                spacePtr->getHasWeaklyRadiated());
+              nBranch++;
+              pTLastBranch = pTspace;
+              typeLastBranch = 2;
+
+            // Rescatter: it is possible for kinematics to fail, in which
+            //            case we need to restart the parton level processing.
+            } else if (spacePtr->doRestart()) {
+              physical = false;
+              break;
+            }
+
+            // Set maximal scales for next pT to pick.
+            pTmaxMPI = min( min(pTspace,pTmaxISR), pTmaxMPI);
+            pTmaxISR = min(pTspace,pTmaxISR);
+            pTmaxFSR = min( min(pTspace,pTmaxISR), pTmaxFSR);
+            pTmax    = pTspace;
+
+            Benchmark_stop(PartonLevel0next_initialStateEmission);
+
+          }
+
+          // Do a final-state emission (if allowed).
+          else if (pTtimes > 0.) {
+
+            Benchmark_start(PartonLevel0next_finalStateEmission);
+
+            infoPtr->addCounter(25);
+            if (timesPtr->branch( event, true)) {
+              typeLatest = 3;
+              iSysNow = timesPtr->system();
+              ++nFSRinProc;
+              if (iSysNow == 0) ++nFSRhard;
+              if (canVetoStep && iSysNow == 0 && nFSRhard <= nVetoStep)
+                typeVetoStep = 3;
+
+              // Update ISR dipoles.
+              if (doISR) spacePtr->update( iSysNow, event,
+                timesPtr->getHasWeaklyRadiated());
+              nBranch++;
+              pTLastBranch = pTtimes;
+              typeLastBranch = 3;
+
+            }
+
+            // Set maximal scales for next pT to pick.
+            pTmaxMPI = min( min(pTtimes,pTmaxFSR), pTmaxMPI);
+            pTmaxISR = min( min(pTtimes,pTmaxFSR), pTmaxISR);
+            pTmaxFSR = min(pTtimes, pTmaxFSR);
+            pTmax    = pTtimes;
+            
+            Benchmark_stop(PartonLevel0next_finalStateEmission);
+          }
+
+          // If no pT scales above zero then nothing to be done.
+          else pTmax = 0.;
+
+          Benchmark_start(PartonLevel0next_someChecks);
+
+          // Check for double counting for Drell-Yan weak production.
+          // Only look at the second emission.
+          if ( (infoPtr->code() == 221 || infoPtr->code() == 222) &&
+                nISRhard + nFSRhard == 2 && vetoWeakJets) {
+            int id1 = event[partonSystemsPtr->getOut(0,0)].id();
+            int id2 = event[partonSystemsPtr->getOut(0,1)].id();
+            int id3 = event[partonSystemsPtr->getOut(0,2)].id();
+            Vec4 p1 = event[partonSystemsPtr->getOut(0,0)].p();
+            Vec4 p2 = event[partonSystemsPtr->getOut(0,1)].p();
+            Vec4 p3 = event[partonSystemsPtr->getOut(0,2)].p();
+
+            // Make sure id1 is weak boson, and check that there
+            // only is a single weak boson and no photons.
+            bool doubleCountEvent = true;
+            if (abs(id1) == 24 || abs(id1) == 23) {
+              if (abs(id2) > 21 || abs(id3) > 21)
+                doubleCountEvent = false;
+            } else if (abs(id2) == 24 || abs(id2) == 23) {
+              swap(id1,id2);
+              swap(p1,p2);
+              if (abs(id3) > 21)
+                doubleCountEvent = false;
+            } else if ( abs(id3) == 24 || abs(id3) == 23) {
+              swap(id1,id3);
+              swap(p1,p3);
+            }
+
+            if (doubleCountEvent) {
+              double d = p1.pT2();
+              bool cut = true;
+              if (p2.pT2() < d) {d = p2.pT2(); cut = false;}
+              if (p3.pT2() < d) {d = p3.pT2(); cut = false;}
+
+              // Check for angle between weak boson and quarks.
+              // (require final state particle to be a fermion)
+              if (abs(id2) < 20) {
+                double dij = min(p1.pT2(),p2.pT2())
+                  * pow2(RRapPhi(p1,p2)) / vetoWeakDeltaR2;
+                if (dij < d) {
+                  d = dij;
+                  cut = true;
+                }
+              }
+
+              if (abs(id3) < 20) {
+                double dij = min(p1.pT2(),p3.pT2())
+                  * pow2(RRapPhi(p1,p3)) / vetoWeakDeltaR2;
+                if (dij < d) {
+                  d = dij;
+                  cut = true;
+                }
+              }
+
+              // Check for angle between recoiler and radiator,
+              // if it is a quark anti-quark pair
+              // or if the recoiler is a gluon.
+              if (abs(id2) == 21 || abs(id3) == 21 || id2 == - id3) {
+                double dij = min(p2.pT2(),p3.pT2())
+                  * pow2(RRapPhi(p2,p3)) / vetoWeakDeltaR2;
+                if (dij < d) {
+                  d = dij;
+                  cut = false;
+                }
+              }
+
+              // Veto event if it does not belong to Drell-Yan production.
+              if (cut)
+              {
+                loopQuit = true;
+                break;
+              }
+            }
+          }
+
+          // Optionally check for a veto after the first few interactions,
+          // or after the first few emissions, ISR or FSR, in the hardest system.
+          if (typeVetoStep == 1) {
+            doVeto = userHooksPtr->doVetoMPIStep( nMPI, event);
+          } else if (typeVetoStep > 1) {
+            doVeto = userHooksPtr->doVetoStep( typeVetoStep, nISRhard,
+              nFSRhard, event);
+          }
+
+          // Abort event if vetoed.
+          if (doVeto) {
+            if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+            loopQuit = true;
+            break;
+          }
+
+          // Keep on evolving until nothing is left to be done.
+          if (typeLatest > 0 && typeLatest < 4)
+            infoPtr->addCounter(25 + typeLatest);
+          if (!isDiff) infoPtr->setPartEvolved( nMPI, nISR);
+
+          // Handle potential merging veto.
+          if ( canRemoveEvent && nISRhard + nFSRhard == 1 ){
+            // Simply check, and possibly reset weights.
+            mergingHooksPtr->doVetoStep( process, event );
+          }
+
+          Benchmark_stop(PartonLevel0next_someChecks);
+
+        // End loop evolution down in pT from hard pT scale.
+        } while (pTmax > 0.  && (nBranchMax <= 0 || nBranch < nBranchMax) );
+
+        Benchmark_loopStop(PartonLevel0next_evolvePt);
+
+        Benchmark_start(PartonLevel0next_moreFinalStateEmission);
+
+        // Do all final-state emissions if not already considered above.
+        if (doFSRafterProcess && (nBranchMax <= 0 || nBranch < nBranchMax) ) {
+
+          // Find largest scale for final partons.
+          pTmax = 0.;
+          for (int i = 0; i < event.size(); ++i)
+            if (event[i].isFinal() && event[i].scale() > pTmax)
+              pTmax = event[i].scale();
+          pTsaveFSR = pTmax;
+
+          // Prepare all subsystems for evolution.
+          for (int iSys = 0; iSys < partonSystemsPtr->sizeSys(); ++iSys)
+            timesPtr->prepare( iSys, event);
+
+          // Set up initial veto scale.
+          doVeto = false;
+          pTveto = pTvetoPT;
+
+          // Begin evolution down in pT from hard pT scale.
+          do {
+            infoPtr->addCounter(29);
+            typeVetoStep = 0;
+            double pTtimes = timesPtr->pTnext( event, pTmax, 0.);
+            infoPtr->setPTnow( pTtimes);
+
+            // Allow a user veto. Only do it once, so remember to change pTveto.
+            if (pTveto > 0. && pTveto > pTtimes) {
+              pTveto = -1.;
+              doVeto = userHooksPtr->doVetoPT( 4, event);
+              // Abort event if vetoed.
+              if (doVeto) {
+                if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+                loopQuit = true;
+                break;
+              }
+            }
+
+            // Do a final-state emission (if allowed).
+            if (pTtimes > 0.) {
+              infoPtr->addCounter(30);
+              if (timesPtr->branch( event, true)) {
+                iSysNow = timesPtr->system();
+                ++nFSRinProc;
+                if (iSysNow == 0) ++nFSRhard;
+                if (canVetoStep && iSysNow == 0 && nFSRhard <= nVetoStep)
+                typeVetoStep = 4;
+
+                nBranch++;
+                pTLastBranch = pTtimes;
+                typeLastBranch = 4;
+
+              }
+              pTmax = pTtimes;
+            }
+
+            // If no pT scales above zero then nothing to be done.
+            else pTmax = 0.;
+
+            // Optionally check for a veto after the first few emissions.
+            if (typeVetoStep > 0) {
+              doVeto = userHooksPtr->doVetoStep( typeVetoStep, nISRhard,
+                nFSRhard, event);
+              // Abort event if vetoed.
+              if (doVeto) {
+                if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+                loopQuit = true;
+                break;
+              }
+            }
+
+            // Handle potential merging veto.
+            if ( canRemoveEvent && nISRhard + nFSRhard == 1 ){
+              // Simply check, and possibly reset weights.
+              mergingHooksPtr->doVetoStep( process, event );
+            }
+
+            // Keep on evolving until nothing is left to be done.
+            infoPtr->addCounter(31);
+
+          } while (pTmax > 0.  && (nBranchMax <= 0 || nBranch < nBranchMax) );
+
+          if (loopQuit) break;
         }
 
-        // Set maximal scales for next pT to pick.
-        pTmaxMPI = pTmulti;
-        pTmaxISR = min(pTmulti, pTmaxISR);
-        pTmaxFSR = min(pTmulti, pTmaxFSR);
-        pTmax    = pTmulti;
-        nBranch++;
-        pTLastBranch = pTmulti;
-        typeLastBranch = 1;
-      }
-
-      // Do an initial-state emission (if allowed).
-      else if (pTspace > 0. && pTspace > pTtimes) {
-        infoPtr->addCounter(24);
-        if (spacePtr->branch( event)) {
-          typeLatest = 2;
-          iSysNow = spacePtr->system();
-          ++nISR;
-          if (iSysNow == 0) ++nISRhard;
-          if (canVetoStep && iSysNow == 0 && nISRhard <= nVetoStep)
-            typeVetoStep = 2;
-
-          // Update FSR dipoles.
-          if (doFSRduringProcess) timesPtr->update( iSysNow, event,
-            spacePtr->getHasWeaklyRadiated());
-          nBranch++;
-          pTLastBranch = pTspace;
-          typeLastBranch = 2;
-
-        // Rescatter: it is possible for kinematics to fail, in which
-        //            case we need to restart the parton level processing.
-        } else if (spacePtr->doRestart()) {
-          physical = false;
+        // Handle veto after ISR + FSR + MPI, but before beam remnants
+        // and resonance decays, e.g. for MLM matching.
+        if (canVetoEarly && userHooksPtr->doVetoPartonLevelEarly( event)) {
+          doVeto = true;
+          if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
+          loopQuit = true;
           break;
         }
 
-        // Set maximal scales for next pT to pick.
-        pTmaxMPI = min( min(pTspace,pTmaxISR), pTmaxMPI);
-        pTmaxISR = min(pTspace,pTmaxISR);
-        pTmaxFSR = min( min(pTspace,pTmaxISR), pTmaxFSR);
-        pTmax    = pTspace;
-      }
+        Benchmark_stop(PartonLevel0next_moreFinalStateEmission);
+        Benchmark_start(PartonLevel0next_parformShowers);
 
-      // Do a final-state emission (if allowed).
-      else if (pTtimes > 0.) {
-        infoPtr->addCounter(25);
-        if (timesPtr->branch( event, true)) {
-          typeLatest = 3;
-          iSysNow = timesPtr->system();
-          ++nFSRinProc;
-          if (iSysNow == 0) ++nFSRhard;
-          if (canVetoStep && iSysNow == 0 && nFSRhard <= nVetoStep)
-            typeVetoStep = 3;
-
-          // Update ISR dipoles.
-          if (doISR) spacePtr->update( iSysNow, event,
-            timesPtr->getHasWeaklyRadiated());
-          nBranch++;
-          pTLastBranch = pTtimes;
-          typeLastBranch = 3;
-
-        }
-
-        // Set maximal scales for next pT to pick.
-        pTmaxMPI = min( min(pTtimes,pTmaxFSR), pTmaxMPI);
-        pTmaxISR = min( min(pTtimes,pTmaxFSR), pTmaxISR);
-        pTmaxFSR = min(pTtimes, pTmaxFSR);
-        pTmax    = pTtimes;
-      }
-
-      // If no pT scales above zero then nothing to be done.
-      else pTmax = 0.;
-
-      // Check for double counting for Drell-Yan weak production.
-      // Only look at the second emission.
-      if ( (infoPtr->code() == 221 || infoPtr->code() == 222) &&
-            nISRhard + nFSRhard == 2 && vetoWeakJets) {
-        int id1 = event[partonSystemsPtr->getOut(0,0)].id();
-        int id2 = event[partonSystemsPtr->getOut(0,1)].id();
-        int id3 = event[partonSystemsPtr->getOut(0,2)].id();
-        Vec4 p1 = event[partonSystemsPtr->getOut(0,0)].p();
-        Vec4 p2 = event[partonSystemsPtr->getOut(0,1)].p();
-        Vec4 p3 = event[partonSystemsPtr->getOut(0,2)].p();
-
-        // Make sure id1 is weak boson, and check that there
-        // only is a single weak boson and no photons.
-        bool doubleCountEvent = true;
-        if (abs(id1) == 24 || abs(id1) == 23) {
-          if (abs(id2) > 21 || abs(id3) > 21)
-            doubleCountEvent = false;
-        } else if (abs(id2) == 24 || abs(id2) == 23) {
-          swap(id1,id2);
-          swap(p1,p2);
-          if (abs(id3) > 21)
-            doubleCountEvent = false;
-        } else if ( abs(id3) == 24 || abs(id3) == 23) {
-          swap(id1,id3);
-          swap(p1,p3);
-        }
-
-        if (doubleCountEvent) {
-          double d = p1.pT2();
-          bool cut = true;
-          if (p2.pT2() < d) {d = p2.pT2(); cut = false;}
-          if (p3.pT2() < d) {d = p3.pT2(); cut = false;}
-
-          // Check for angle between weak boson and quarks.
-          // (require final state particle to be a fermion)
-          if (abs(id2) < 20) {
-            double dij = min(p1.pT2(),p2.pT2())
-              * pow2(RRapPhi(p1,p2)) / vetoWeakDeltaR2;
-            if (dij < d) {
-              d = dij;
-              cut = true;
-            }
-          }
-
-          if (abs(id3) < 20) {
-            double dij = min(p1.pT2(),p3.pT2())
-              * pow2(RRapPhi(p1,p3)) / vetoWeakDeltaR2;
-            if (dij < d) {
-              d = dij;
-              cut = true;
-            }
-          }
-
-          // Check for angle between recoiler and radiator,
-          // if it is a quark anti-quark pair
-          // or if the recoiler is a gluon.
-          if (abs(id2) == 21 || abs(id3) == 21 || id2 == - id3) {
-            double dij = min(p2.pT2(),p3.pT2())
-              * pow2(RRapPhi(p2,p3)) / vetoWeakDeltaR2;
-            if (dij < d) {
-              d = dij;
-              cut = false;
-            }
-          }
-
-          // Veto event if it does not belong to Drell-Yan production.
-          if (cut) return false;
-        }
-      }
-
-      // Optionally check for a veto after the first few interactions,
-      // or after the first few emissions, ISR or FSR, in the hardest system.
-      if (typeVetoStep == 1) {
-        doVeto = userHooksPtr->doVetoMPIStep( nMPI, event);
-      } else if (typeVetoStep > 1) {
-        doVeto = userHooksPtr->doVetoStep( typeVetoStep, nISRhard,
-          nFSRhard, event);
-      }
-
-      // Abort event if vetoed.
-      if (doVeto) {
-        if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-        return false;
-      }
-
-      // Keep on evolving until nothing is left to be done.
-      if (typeLatest > 0 && typeLatest < 4)
-        infoPtr->addCounter(25 + typeLatest);
-      if (!isDiff) infoPtr->setPartEvolved( nMPI, nISR);
-
-      // Handle potential merging veto.
-      if ( canRemoveEvent && nISRhard + nFSRhard == 1 ){
-        // Simply check, and possibly reset weights.
-        mergingHooksPtr->doVetoStep( process, event );
-      }
-
-    // End loop evolution down in pT from hard pT scale.
-    } while (pTmax > 0.  && (nBranchMax <= 0 || nBranch < nBranchMax) );
-
-    // Do all final-state emissions if not already considered above.
-    if (doFSRafterProcess && (nBranchMax <= 0 || nBranch < nBranchMax) ) {
-
-      // Find largest scale for final partons.
-      pTmax = 0.;
-      for (int i = 0; i < event.size(); ++i)
-        if (event[i].isFinal() && event[i].scale() > pTmax)
-          pTmax = event[i].scale();
-      pTsaveFSR = pTmax;
-
-      // Prepare all subsystems for evolution.
-      for (int iSys = 0; iSys < partonSystemsPtr->sizeSys(); ++iSys)
-        timesPtr->prepare( iSys, event);
-
-      // Set up initial veto scale.
-      doVeto = false;
-      pTveto = pTvetoPT;
-
-      // Begin evolution down in pT from hard pT scale.
-      do {
-        infoPtr->addCounter(29);
-        typeVetoStep = 0;
-        double pTtimes = timesPtr->pTnext( event, pTmax, 0.);
-        infoPtr->setPTnow( pTtimes);
-
-        // Allow a user veto. Only do it once, so remember to change pTveto.
-        if (pTveto > 0. && pTveto > pTtimes) {
-          pTveto = -1.;
-          doVeto = userHooksPtr->doVetoPT( 4, event);
+        // Perform showers in resonance decay chains before beams & reconnection.
+        if (earlyResDec) {
+          int oldSizeEvt = event.size();
+          int oldSizeSys = partonSystemsPtr->sizeSys();
+          if (nBranchMax <= 0 || nBranch < nBranchMax)
+            doVeto = !resonanceShowers( process, event, true);
           // Abort event if vetoed.
-          if (doVeto) {
-            if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-            return false;
+          if (doVeto)
+          {
+            loopQuit = true;
+            break;
+          }
+
+          // Reassign new decay products to original system.
+          for (int iSys = oldSizeSys; iSys < partonSystemsPtr->sizeSys(); ++iSys)
+            for (int iOut = 0; iOut < partonSystemsPtr->sizeOut(iSys); ++iOut)
+              partonSystemsPtr->addOut(0, partonSystemsPtr->getOut( iSys, iOut) );
+          partonSystemsPtr->setSizeSys( oldSizeSys);
+
+          // Perform decays and showers of W and Z emitted in shower.
+          // To do:check if W/Z emission is on in ISR or FSR??
+          if (!wzDecayShowers( event))
+          {
+            loopQuit = true;
+            break;
+          }
+
+          // User hook to reconnect colours specifically in resonance decays.
+          if (canReconResSys && !userHooksPtr->doReconnectResonanceSystems(
+            oldSizeEvt, event))
+          {
+            loopQuit = true;
+            break;
           }
         }
 
-        // Do a final-state emission (if allowed).
-        if (pTtimes > 0.) {
-          infoPtr->addCounter(30);
-          if (timesPtr->branch( event, true)) {
-            iSysNow = timesPtr->system();
-            ++nFSRinProc;
-            if (iSysNow == 0) ++nFSRhard;
-            if (canVetoStep && iSysNow == 0 && nFSRhard <= nVetoStep)
-            typeVetoStep = 4;
-
-            nBranch++;
-            pTLastBranch = pTtimes;
-            typeLastBranch = 4;
-
-          }
-          pTmax = pTtimes;
+        // Find the first particle in the current diffractive system.
+        int  iFirst = 0;
+        if (isDiff) {
+          doDiffCR = isDiff;
+          iFirst   = (iHardLoop == 1) ? 5 + sizeEvent - sizeProcess : sizeEvent;
+          if (isDiffC) iFirst = 6 + sizeEvent - sizeProcess;
         }
 
-        // If no pT scales above zero then nothing to be done.
-        else pTmax = 0.;
-
-        // Optionally check for a veto after the first few emissions.
-        if (typeVetoStep > 0) {
-          doVeto = userHooksPtr->doVetoStep( typeVetoStep, nISRhard,
-            nFSRhard, event);
-          // Abort event if vetoed.
-          if (doVeto) {
-            if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-            return false;
-          }
+        // Change the first particle for hard diffraction.
+        if (infoPtr->hasPomPsystem()) {
+          doDiffCR = true;
+          iFirst   = 5;
         }
 
-        // Handle potential merging veto.
-        if ( canRemoveEvent && nISRhard + nFSRhard == 1 ){
-          // Simply check, and possibly reset weights.
-          mergingHooksPtr->doVetoStep( process, event );
+        Benchmark_stop(PartonLevel0next_parformShowers);
+        Benchmark_start(PartonLevel0next_addBeamRemnants);
+
+        // Add beam remnants, including primordial kT kick and colour tracing.
+        if (!doTrial && physical && doRemnants
+          && !remnants.add( event, iFirst, doDiffCR)) physical = false;
+
+        Benchmark_stop(PartonLevel0next_addBeamRemnants);
+        Benchmark_start(PartonLevel0next_restoreAndLoop);
+
+        // If no problems then done.
+        if (physical) break;
+
+        // Else restore and loop, but do not throw existing diffractive system.
+        if (!isDiff) event.clear();
+        else {
+          event.restoreSize();
+          event.restoreJunctionSize();
         }
+        beamAPtr->clear();
+        beamBPtr->clear();
+        partonSystemsPtr->clear();
 
-        // Keep on evolving until nothing is left to be done.
-        infoPtr->addCounter(31);
+      // End loop over ten tries. Restore from diffraction. Hopefully it worked.
+      }
 
-      } while (pTmax > 0.  && (nBranchMax <= 0 || nBranch < nBranchMax) );
-    }
+      if (loopQuit) break;
 
-    // Handle veto after ISR + FSR + MPI, but before beam remnants
-    // and resonance decays, e.g. for MLM matching.
-    if (canVetoEarly && userHooksPtr->doVetoPartonLevelEarly( event)) {
-      doVeto = true;
+      Benchmark_loopStop(PartonLevel0next_trialParton);
+
+      Benchmark_start(PartonLevel0next_leaveResolvedDiff);
+
       if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-      return false;
+
+      Benchmark_stop(PartonLevel0next_leaveResolvedDiff);
+      Benchmark_start(PartonLevel0next_hasPomPsystem);
+
+      if (!physical) {
+        // Leave hard diffractive system properly if beam remnant failed.
+        if (infoPtr->hasPomPsystem()) leaveHardDiff( process, event);
+        loopQuit = true;
+        break;
+      }
+
+      // End big outer loop to handle two systems in double diffraction.
+      Benchmark_stop(PartonLevel0next_hasPomPsystem);
     }
 
-    // Perform showers in resonance decay chains before beams & reconnection.
-    if (earlyResDec) {
-      int oldSizeEvt = event.size();
-      int oldSizeSys = partonSystemsPtr->sizeSys();
+    if (loopQuit) break;
+
+    Benchmark_loopStop(PartonLevel0next_loopForDoubleDiffraction)
+    Benchmark_start(PartonLevel0next_setUpDiffractive);
+
+    // If no additional MPI has been found then set up the diffractive
+    // system the first time around.
+    if (isHardDiff && sampleTypeDiff%2 == 0 && iHardDiffLoop == 1 && nMPI == 1){
+      event.clear();
+      beamAPtr->clear();
+      beamBPtr->clear();
+      partonSystemsPtr->clear();
+      setupHardDiff( process);
+      continue;
+    }
+
+    Benchmark_stop(PartonLevel0next_setUpDiffractive);
+    Benchmark_start(PartonLevel0next_colorReconnection);
+
+    // Do colour reconnection for non-diffractive events before resonance decays.
+    if (doReconnect && !doDiffCR && reconnectMode > 0) {
+      Event eventSave = event;
+      bool colCorrect = false;
+      for (int i = 0; i < 10; ++i) {
+        colourReconnection.next(event, 0);
+        if (junctionSplitting.checkColours(event)) {
+          colCorrect = true;
+          break;
+        }
+        else event = eventSave;
+      }
+      if (!colCorrect) {
+        infoPtr->errorMsg("Error in PartonLevel::next: "
+          "Colour reconnection failed.");
+        loopQuit = true;
+        break;
+      }
+    }
+
+    Benchmark_stop(PartonLevel0next_colorReconnection);
+    // Benchmark_start(PartonLevel0next_performShowersAgain);
+
+    // Perform showers in resonance decay chains after beams & reconnection.
+    int oldSizeEvt = event.size();
+    if (!earlyResDec) {
+      Benchmark_start(PartonLevel0next_resonanceShowers);
+      Benchmark_placeholder(PartonLevel0next_wzDecayShowers);
+      Benchmark_placeholder(PartonLevel0next_doReconnectResonanceSystems);
       if (nBranchMax <= 0 || nBranch < nBranchMax)
         doVeto = !resonanceShowers( process, event, true);
       // Abort event if vetoed.
-      if (doVeto) return false;
-
-      // Reassign new decay products to original system.
-      for (int iSys = oldSizeSys; iSys < partonSystemsPtr->sizeSys(); ++iSys)
-        for (int iOut = 0; iOut < partonSystemsPtr->sizeOut(iSys); ++iOut)
-          partonSystemsPtr->addOut(0, partonSystemsPtr->getOut( iSys, iOut) );
-      partonSystemsPtr->setSizeSys( oldSizeSys);
+      if (doVeto)
+      {
+        loopQuit = true;
+        break;
+      }
+      Benchmark_stop(PartonLevel0next_resonanceShowers);
+      Benchmark_start(PartonLevel0next_wzDecayShowers);
 
       // Perform decays and showers of W and Z emitted in shower.
       // To do:check if W/Z emission is on in ISR or FSR??
-      if (!wzDecayShowers( event)) return false;
+      if (!wzDecayShowers( event))
+      {
+        loopQuit = true;
+        break;
+      }
+
+      Benchmark_stop(PartonLevel0next_wzDecayShowers);
+      Benchmark_start(PartonLevel0next_doReconnectResonanceSystems);
 
       // User hook to reconnect colours specifically in resonance decays.
       if (canReconResSys && !userHooksPtr->doReconnectResonanceSystems(
-        oldSizeEvt, event)) return false;
+        oldSizeEvt, event))
+        {
+          loopQuit = true;
+          break;
+        }
     }
 
-    // Find the first particle in the current diffractive system.
-    int  iFirst = 0;
+    Benchmark_start(PartonLevel0next_setEvolution);
+
+    // Store event properties. Not available for diffraction.
+    if (!isDiff) infoPtr->setEvolution( pTsaveMPI, pTsaveISR, pTsaveFSR,
+      nMPI, nISR, nFSRinProc, nFSRinRes);
+
+    Benchmark_stop(PartonLevel0next_setEvolution);
+    Benchmark_start(PartonLevel0next_setImpact);
+
     if (isDiff) {
-      doDiffCR = isDiff;
-      iFirst   = (iHardLoop == 1) ? 5 + sizeEvent - sizeProcess : sizeEvent;
-      if (isDiffC) iFirst = 6 + sizeEvent - sizeProcess;
+      multiPtr->setEmpty();
+      infoPtr->setImpact( multiPtr->bMPI(), multiPtr->enhanceMPI(), false);
     }
 
-    // Change the first particle for hard diffraction.
-    if (infoPtr->hasPomPsystem()) {
-      doDiffCR = true;
-      iFirst   = 5;
-    }
+    Benchmark_stop(PartonLevel0next_setImpact);
+    // Benchmark_stop(PartonLevel0next_performShowersAgain);
+    Benchmark_start(PartonLevel0next_colorReconnectionAgain);
 
-    // Add beam remnants, including primordial kT kick and colour tracing.
-    if (!doTrial && physical && doRemnants
-      && !remnants.add( event, iFirst, doDiffCR)) physical = false;
-
-    // If no problems then done.
-    if (physical) break;
-
-    // Else restore and loop, but do not throw existing diffractive system.
-    if (!isDiff) event.clear();
-    else {
-      event.restoreSize();
-      event.restoreJunctionSize();
-    }
-    beamAPtr->clear();
-    beamBPtr->clear();
-    partonSystemsPtr->clear();
-
-  // End loop over ten tries. Restore from diffraction. Hopefully it worked.
-  }
-  if (isDiff) leaveResolvedDiff( iHardLoop, process, event);
-  if (!physical) {
-    // Leave hard diffractive system properly if beam remnant failed.
-    if (infoPtr->hasPomPsystem()) leaveHardDiff( process, event);
-    return false;
-  }
-
-  // End big outer loop to handle two systems in double diffraction.
-  }
-
-  // If no additional MPI has been found then set up the diffractive
-  // system the first time around.
-  if (isHardDiff && sampleTypeDiff%2 == 0 && iHardDiffLoop == 1 && nMPI == 1){
-    event.clear();
-    beamAPtr->clear();
-    beamBPtr->clear();
-    partonSystemsPtr->clear();
-    setupHardDiff( process);
-    continue;
-  }
-
-  // Do colour reconnection for non-diffractive events before resonance decays.
-  if (doReconnect && !doDiffCR && reconnectMode > 0) {
-    Event eventSave = event;
-    bool colCorrect = false;
-    for (int i = 0; i < 10; ++i) {
-      colourReconnection.next(event, 0);
-      if (junctionSplitting.checkColours(event)) {
-        colCorrect = true;
+    // Do colour reconnection for resonance decays.
+    if (!earlyResDec && forceResonanceCR && doReconnect &&
+        !doDiffCR && reconnectMode != 0) {
+      Event eventSave = event;
+      bool colCorrect = false;
+      for (int i = 0; i < 10; ++i) {
+        colourReconnection.next(event, oldSizeEvt);
+        if (junctionSplitting.checkColours(event)) {
+          colCorrect = true;
+          break;
+        }
+        else event = eventSave;
+      }
+      if (!colCorrect) {
+        infoPtr->errorMsg("Error in PartonLevel::next: "
+          "Colour reconnection failed.");
+        loopQuit = true;
         break;
       }
-      else event = eventSave;
     }
-    if (!colCorrect) {
-      infoPtr->errorMsg("Error in PartonLevel::next: "
-        "Colour reconnection failed.");
-      return false;
-    }
-  }
 
-  // Perform showers in resonance decay chains after beams & reconnection.
-  int oldSizeEvt = event.size();
-  if (!earlyResDec) {
-    if (nBranchMax <= 0 || nBranch < nBranchMax)
-      doVeto = !resonanceShowers( process, event, true);
-    // Abort event if vetoed.
-    if (doVeto) return false;
+    // Leave diffractive events.
+    if (isHardDiff) {
 
-    // Perform decays and showers of W and Z emitted in shower.
-    // To do:check if W/Z emission is on in ISR or FSR??
-    if (!wzDecayShowers( event)) return false;
-
-    // User hook to reconnect colours specifically in resonance decays.
-    if (canReconResSys && !userHooksPtr->doReconnectResonanceSystems(
-      oldSizeEvt, event)) return false;
-  }
-
-  // Store event properties. Not available for diffraction.
-  if (!isDiff) infoPtr->setEvolution( pTsaveMPI, pTsaveISR, pTsaveFSR,
-    nMPI, nISR, nFSRinProc, nFSRinRes);
-  if (isDiff) {
-    multiPtr->setEmpty();
-    infoPtr->setImpact( multiPtr->bMPI(), multiPtr->enhanceMPI(), false);
-  }
-
-
-  // Do colour reconnection for resonance decays.
-  if (!earlyResDec && forceResonanceCR && doReconnect &&
-      !doDiffCR && reconnectMode != 0) {
-    Event eventSave = event;
-    bool colCorrect = false;
-    for (int i = 0; i < 10; ++i) {
-      colourReconnection.next(event, oldSizeEvt);
-      if (junctionSplitting.checkColours(event)) {
-        colCorrect = true;
+      // If inclusive sample wanted for MPI veto and nMPI > 1
+      // then event is non-diffractive and we can break the loop.
+      if (sampleTypeDiff == 2 && iHardDiffLoop == 1 && nMPI > 1) {
+        infoPtr->setHardDiff( false, false, false, false, 0., 0., 0., 0.);
         break;
       }
-      else event = eventSave;
-    }
-    if (!colCorrect) {
-      infoPtr->errorMsg("Error in PartonLevel::next: "
-        "Colour reconnection failed.");
-      return false;
-    }
-  }
 
-  // Leave diffractive events.
-  if (isHardDiff) {
-
-    // If inclusive sample wanted for MPI veto and nMPI > 1
-    // then event is non-diffractive and we can break the loop.
-    if (sampleTypeDiff == 2 && iHardDiffLoop == 1 && nMPI > 1) {
-      infoPtr->setHardDiff( false, false, false, false, 0., 0., 0., 0.);
-      break;
+      // Leave diffractive system properly.
+      if (infoPtr->hasPomPsystem()) leaveHardDiff( process, event);
     }
 
-    // Leave diffractive system properly.
-    if (infoPtr->hasPomPsystem()) leaveHardDiff( process, event);
-  }
+    Benchmark_stop(PartonLevel0next_colorReconnectionAgain);
 
   // End big outer loop to handle the setup of the diffractive system.
   }
+
+  Benchmark_loopStop(PartonLevel0next_MPIveto);
+  if (loopQuit) return false;
 
   // Done.
   return true;
@@ -1704,6 +1883,9 @@ void PartonLevel::leaveHardDiff( Event& process, Event& event) {
 bool PartonLevel::resonanceShowers( Event& process, Event& event,
   bool skipForR) {
 
+    Benchmark_start(PartonLevel0resShowers);
+    Benchmark_start(PartonLevel0resShowers_setup);
+
   // Prepare to start over from beginning for R-hadron decays.
   if (allowRH) {
     if (skipForR) {
@@ -1722,9 +1904,18 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
   // Vector to tell which junctions have already been copied
   vector<int> iJunCopied;
 
+  Benchmark_stop(PartonLevel0resShowers_setup);
+  Benchmark_loopStart(PartonLevel0resShowers_loopOverHardProcesses);
+
+  bool loopQuit = false;
+
   while (nHardDone < process.size()) {
     ++nRes;
     int iBegin = nHardDone;
+
+    Benchmark_loopCount(PartonLevel0resShowers_loopOverHardProcesses);
+
+    Benchmark_start(PartonLevel0resShowers_setupProcess);
 
     // In first call (skipForR = true) skip over resonances
     // that should form R-hadrons, and their daughters.
@@ -1775,6 +1966,10 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
     RotBstMatrix M;
     M.bst( hardMother.p(), aftMother.p());
 
+    Benchmark_stop(PartonLevel0resShowers_setupProcess);
+
+    Benchmark_start(PartonLevel0resShowers_colorReconnection);
+
     // New colour reconnection can not handle late resonance decay
     // of coloured particles so abort event.
     if ( (colBef != 0 || acolBef != 0) && doReconnect && reconnectMode == 1
@@ -1782,8 +1977,11 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
       infoPtr->errorMsg("Abort in PartonLevel::resonanceShower: "
         "new CR can't handle separate CR for coloured resonance decays");
       infoPtr->setAbortPartonLevel(true);
-      return false;
+      loopQuit = true; break;
     }
+
+    Benchmark_stop(PartonLevel0resShowers_colorReconnection);
+    Benchmark_start(PartonLevel0resShowers_extractPartons);
 
     // Extract next partons from hard event into normal event record.
     vector<bool> doCopyJun;
@@ -1832,6 +2030,9 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
     }
     int iEnd = nHardDone - 1;
 
+    Benchmark_stop(PartonLevel0resShowers_extractPartons);
+    Benchmark_start(PartonLevel0resShowers_copyJunction);
+
     // Copy down junctions from hard event into normal event record.
     for (int iJun = 0; iJun < int(doCopyJun.size()); ++iJun) {
       // Check if this junction was already copied
@@ -1863,8 +2064,13 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
     for (int i = iPosBefShow[iBegin]; i <= iPosBefShow[iEnd]; ++i)
     if (event[i].isFinal()) partonSystemsPtr->addOut( iSys, i);
 
+    Benchmark_stop(PartonLevel0resShowers_copyJunction);
+    
+
     // Do parton showers inside subsystem: maximum scale by mother mass.
     if (doFSRinResonances) {
+      Benchmark_start(PartonLevel0resShowers_showerSubsystem);
+
       double pTmax = 0.5 * hardMother.m();
       if (canSetScale) pTmax
         = userHooksPtr->scaleResonance( iAftMother, event);
@@ -1883,17 +2089,27 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
       doVeto        = false;
       double pTveto = pTvetoPT;
 
+      Benchmark_stop(PartonLevel0resShowers_showerSubsystem);
+      Benchmark_loopStart(PartonLevel0resShowers_loopEvolvepT);
+
       // Begin evolution down in pT from hard pT scale.
       do {
+        
+        Benchmark_loopCount(PartonLevel0resShowers_loopEvolvepT);
+        Benchmark_start(PartonLevel0resShowers_Timeshowerptnext);
+
         typeVetoStep = 0;
         double pTtimes = timesDecPtr->pTnext( event, pTmax, 0.);
+
+        Benchmark_stop(PartonLevel0resShowers_Timeshowerptnext);
+        Benchmark_start(PartonLevel0resShowers_restLoop);
 
         // Allow a user veto. Only do it once, so remember to change pTveto.
         if (pTveto > 0. && pTveto > pTtimes) {
           pTveto = -1.;
           doVeto = userHooksPtr->doVetoPT( 5, event);
           // Abort event if vetoed.
-          if (doVeto) return false;
+          if (doVeto) {loopQuit = true; break;}
         }
 
         // Do a final-state emission (if allowed).
@@ -1919,7 +2135,7 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
           doVeto = userHooksPtr->doVetoStep( typeVetoStep, 0, nFSRhard,
             event);
           // Abort event if vetoed.
-          if (doVeto) return false;
+          if (doVeto) {loopQuit = true; break;}
         }
 
         // Handle potential merging veto.
@@ -1930,12 +2146,21 @@ bool PartonLevel::resonanceShowers( Event& process, Event& event,
 
       // Keep on evolving until nothing is left to be done.
       } while (pTmax > 0.  && (nBranchMax <= 0 || nBranch < nBranchMax) );
+      
+      if (loopQuit) break;
+
+      Benchmark_loopStop(PartonLevel0resShowers_loopEvolvepT);
 
     }
 
   // No more systems to be processed. Set total number of emissions.
   }
+  Benchmark_loopStop(PartonLevel0resShowers_loopOverHardProcesses);
+  if (loopQuit) return false;
+
   if (skipForR) nFSRinRes = nFSRres;
+  
+
   return true;
 
 }

@@ -270,6 +270,8 @@ void Sigma2qq2qq::sigmaKin() {
 
 double Sigma2qq2qq::sigmaHat() {
 
+  Benchmark_start(sigmaHat_QCD_Sigma2qq2qq);
+
   // Combine cross section terms; factor 1/2 when identical quarks.
   if      (id2 ==  id1) sigSum = 0.5 * (sigT + sigU + sigTU);
   else if (id2 == -id1) sigSum = sigT + sigST;

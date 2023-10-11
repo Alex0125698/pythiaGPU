@@ -344,8 +344,14 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
 bool ProcessLevel::next( Event& process) {
 
+  Benchmark_start(ProcessLevel);
+  Benchmark_start(ProcessLevel_next);
+
   // Generate the next event with two or one hard interactions.
   bool physical = (doSecondHard) ? nextTwo( process) : nextOne( process);
+  
+  Benchmark_stop(ProcessLevel_next);
+  Benchmark_start(ProcessLevel_checkColours);
 
   // Check that colour assignments make sense.
   if (physical) physical = checkColours( process);
@@ -380,10 +386,15 @@ bool ProcessLevel::nextLHAdec( Event& process) {
 
 void ProcessLevel::accumulate() {
 
+  Benchmark_start(ProcessLevel0accumulate);
+
   // Increase number of accepted events.
+  Benchmark_start(ProcessLevel0accumulate_A);
   containerPtrs[iContainer]->accumulate();
+  Benchmark_stop(ProcessLevel0accumulate_A);
 
   // Provide current generated cross section estimate.
+  Benchmark_start(ProcessLevel0accumulate_B);
   long   nTrySum    = 0;
   long   nSelSum    = 0;
   long   nAccSum    = 0;
@@ -394,9 +405,15 @@ void ProcessLevel::accumulate() {
   int    codeNow;
   long   nTryNow, nSelNow, nAccNow;
   double sigmaNow, deltaNow, sigSelNow, weightNow;
+  Benchmark_stop(ProcessLevel0accumulate_B);
+
+  Benchmark_loopStart(ProcessLevel0accumulate_loopOverProcessContainers);
   map<int, bool> duplicate;
   for (int i = 0; i < int(containerPtrs.size()); ++i)
+  {
+    Benchmark_loopCount(ProcessLevel0accumulate_loopOverProcessContainers);
   if (containerPtrs[i]->sigmaMax() != 0.) {
+    Benchmark_start(ProcessLevel0accumulate_setup);
     codeNow         = containerPtrs[i]->code();
     nTryNow         = containerPtrs[i]->nTried();
     nSelNow         = containerPtrs[i]->nSelected();
@@ -412,16 +429,39 @@ void ProcessLevel::accumulate() {
     delta2Sum      += pow2(deltaNow);
     sigSelSum      += sigSelNow;
     weightSum      += weightNow;
-    if (!doSecondHard) {
+
+      Benchmark_stop(ProcessLevel0accumulate_setup);
+      if (!doSecondHard) 
+      {
+        Benchmark_start(ProcessLevel0accumulate_map1);
+        bool tmp = false;
       if (!duplicate[codeNow])
+        {
+          tmp = true;
+        }
+        Benchmark_stop(ProcessLevel0accumulate_map1);
+
+        if (tmp)
+        {
+        Benchmark_start(ProcessLevel0accumulate_setSigma);
         infoPtr->setSigma( codeNow, containerPtrs[i]->name(),
           nTryNow, nSelNow, nAccNow, sigmaNow, deltaNow, weightNow);
+        }
       else
+        {
+        Benchmark_start(ProcessLevel0accumulate_addSigma);
         infoPtr->addSigma( codeNow, nTryNow, nSelNow, nAccNow, sigmaNow,
           deltaNow);
+        }
+        Benchmark_start(ProcessLevel0accumulate_map2);
       duplicate[codeNow] = true;
     }
   }
+
+  }
+
+  Benchmark_loopStop(ProcessLevel0accumulate_loopOverProcessContainers);
+  Benchmark_start(ProcessLevel0accumulate_C);
 
   // Normally only one hard interaction. Then store info and done.
   if (!doSecondHard) {
@@ -431,13 +471,22 @@ void ProcessLevel::accumulate() {
     return;
   }
 
+  Benchmark_stop(ProcessLevel0accumulate_C);
+  Benchmark_start(ProcessLevel0accumulate_D);
+
   // Increase counter for a second hard interaction.
   container2Ptrs[i2Container]->accumulate();
+  
+  Benchmark_stop(ProcessLevel0accumulate_D);
+  Benchmark_start(ProcessLevel0accumulate_E);
 
   // Update statistics on average impact factor.
   ++nImpact;
   sumImpactFac     += infoPtr->enhanceMPI();
   sum2ImpactFac    += pow2(infoPtr->enhanceMPI());
+
+  Benchmark_stop(ProcessLevel0accumulate_E);
+  Benchmark_start(ProcessLevel0accumulate_F);
 
   // Cross section estimate for second hard process.
   double sigma2Sum  = 0.;
@@ -449,10 +498,16 @@ void ProcessLevel::accumulate() {
     sig2SelSum     += container2Ptrs[i2]->sigmaSelMC();
   }
 
+  Benchmark_stop(ProcessLevel0accumulate_F);
+  Benchmark_start(ProcessLevel0accumulate_G);
+
   // Average impact-parameter factor and error.
   double invN       = 1. / max(1, nImpact);
   double impactFac  = max( 1., sumImpactFac * invN);
   double impactErr2 = ( sum2ImpactFac * invN / pow2(impactFac) - 1.) * invN;
+
+  Benchmark_stop(ProcessLevel0accumulate_G);
+  Benchmark_start(ProcessLevel0accumulate_H);
 
   // Cross section estimate for combination of first and second process.
   // Combine two possible ways and take average.
@@ -460,6 +515,9 @@ void ProcessLevel::accumulate() {
   sigmaComb        *= impactFac / sigmaND;
   if (allHardSame) sigmaComb *= 0.5;
   double deltaComb  = sqrtpos(2. / nAccSum + impactErr2) * sigmaComb;
+
+  Benchmark_stop(ProcessLevel0accumulate_H);
+  Benchmark_start(ProcessLevel0accumulate_I);
 
   // Store info and done.
   infoPtr->setSigma( 0, "sum", nTrySum, nSelSum, nAccSum, sigmaComb, deltaComb,
@@ -603,19 +661,33 @@ void ProcessLevel::resetStatistics() {
 
 bool ProcessLevel::nextOne( Event& process) {
 
+  Benchmark_start(nextOne);
+  Benchmark_start(nextOne_newECM);
+
   // Update CM energy for phase space selection.
   double eCM = infoPtr->eCM();
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     containerPtrs[i]->newECM(eCM);
+  
+  Benchmark_stop(nextOne_newECM);
+  Benchmark_loopStart(nextOne_loopRareFailures);
+
+  bool quitLoop = false;
 
   // Outer loop in case of rare failures.
   bool physical = true;
   for (int loop = 0; loop < MAXLOOP; ++loop) {
+    
+    Benchmark_loopCount(nextOne_loopRareFailures);
+    Benchmark_loopStart(nextOne_loopTrialSubprocess);
+    
     if (!physical) process.clear();
     physical = true;
 
     // Loop over tries until trial event succeeds.
     for ( ; ; ) {
+      Benchmark_loopCount(nextOne_loopTrialSubprocess);
+      Benchmark_start(nextOne_pickSubprocess);
 
       // Pick one of the subprocesses.
       double sigmaMaxNow = sigmaMaxSum * rndmPtr->flat();
@@ -623,13 +695,22 @@ bool ProcessLevel::nextOne( Event& process) {
       iContainer = -1;
       do sigmaMaxNow -= containerPtrs[++iContainer]->sigmaMax();
       while (sigmaMaxNow > 0. && iContainer < iMax);
+      
+      Benchmark_stop(nextOne_pickSubprocess);
+      Benchmark_start(nextOne_trialProcess);
 
       // Do a trial event of this subprocess; accept or not.
       if (containerPtrs[iContainer]->trialProcess()) break;
 
       // Check for end-of-file condition for Les Houches events.
-      if (infoPtr->atEndOfFile()) return false;
+      if (infoPtr->atEndOfFile()) {quitLoop = true; break;}
     }
+
+    if (quitLoop) break;
+
+    Benchmark_loopStop(nextOne_loopTrialSubprocess);
+
+    Benchmark_start(nextOne_updateSumOfMaxima);
 
     // Update sum of maxima if current maximum violated.
     if (containerPtrs[iContainer]->newSigmaMax()) {
@@ -638,15 +719,28 @@ bool ProcessLevel::nextOne( Event& process) {
         sigmaMaxSum += containerPtrs[i]->sigmaMax();
     }
 
+    Benchmark_stop(nextOne_updateSumOfMaxima);
+    Benchmark_start(nextOne_constructState);
+
     // Construct kinematics of acceptable process.
     containerPtrs[iContainer]->constructState();
+
+    Benchmark_stop(nextOne_constructState);
+    Benchmark_start(nextOne_constructProcess);
+
     if ( !containerPtrs[iContainer]->constructProcess( process) )
       physical = false;
+
+    Benchmark_stop(nextOne_constructProcess);
+    Benchmark_start(nextOne_decayResonances);
 
     // Do all resonance decays.
     if ( physical && doResDecays
       && !containerPtrs[iContainer]->decayResonances( process) )
       physical = false;
+
+    Benchmark_stop(nextOne_decayResonances);
+    Benchmark_start(nextOne_retryUnphysical);
 
     // Retry process for unphysical states.
     for (int i =1; i < process.size(); ++i)
@@ -656,12 +750,18 @@ bool ProcessLevel::nextOne( Event& process) {
         physical = false;
       }
 
+    Benchmark_stop(nextOne_retryUnphysical);
+    Benchmark_start(nextOne_findJunctions);
+
     // Add any junctions to the process event record list.
     if (physical) findJunctions( process);
 
     // Outer loop should normally work first time around.
     if (physical) break;
   }
+
+  Benchmark_loopStop(nextOne_loopRareFailures);
+  if (quitLoop) return false;
 
   // Done.
   return physical;
