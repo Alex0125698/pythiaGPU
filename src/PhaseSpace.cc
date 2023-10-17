@@ -599,6 +599,7 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   zCoef[0]   = 1.;
 
   Benchmark_stop(PhaseSpace0setupSampling123_identifyResonances);
+  Benchmark_start(PhaseSpace0setupSampling123_todo);
 
   // Step through grid in tau. Set limits on y and z generation.
   for (int iTau = 0; iTau < nTau; ++iTau) 
@@ -986,6 +987,9 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
   // Optional printout.
   if (showSearch) os << "\n Final maximum = "  << setw(11) << sigmaMx << endl;
+
+  Benchmark_stop(PhaseSpace0setupSampling123_todo);
+  Benchmark_start(PhaseSpace0setupSampling123_todo2);
 
   // Done.
   return true;

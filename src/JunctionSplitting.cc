@@ -67,6 +67,9 @@ void JunctionSplitting::init( Info* infoPtrIn, Settings& settings,
 
 bool JunctionSplitting::checkColours( Event& event) {
 
+  Benchmark_start(JunctionSplitting0checkColours);
+  Benchmark_start(JunctionSplitting0checkColours_checkColors);
+
   // Not really a colour check, but a check all numbers are valid.
   for (int i = 0; i < event.size(); ++i)
     if (abs(event[i].px()) >= 0. && abs(event[i].py()) >= 0.
@@ -78,6 +81,9 @@ bool JunctionSplitting::checkColours( Event& event) {
        return false;
     }
 
+  Benchmark_stop(JunctionSplitting0checkColours_checkColors);
+  Benchmark_start(JunctionSplitting0checkColours_checkSingletGluons);
+
   // Check if any singlet gluons were made, and if so return false.
   for (int i  = 0; i < event.size(); ++i) {
     if (event[i].isFinal() && event[i].col() != 0 &&
@@ -88,11 +94,17 @@ bool JunctionSplitting::checkColours( Event& event) {
     }
   }
 
+  Benchmark_stop(JunctionSplitting0checkColours_checkSingletGluons);
+  Benchmark_start(JunctionSplitting0checkColours_getLists);
+
   // Need to try and split junction structures.
   colTrace.setupColList(event);
   vector<int> iParton;
   vector<vector <int > > iPartonJun, iPartonAntiJun;
   getPartonLists(event, iPartonJun, iPartonAntiJun);
+
+  Benchmark_stop(JunctionSplitting0checkColours_getLists);
+  Benchmark_start(JunctionSplitting0checkColours_splitJunGluons);
 
   // Try to split up the junction chains by splitting gluons
   if (!splitJunGluons(event, iPartonJun, iPartonAntiJun) ) {
@@ -101,12 +113,18 @@ bool JunctionSplitting::checkColours( Event& event) {
     return false;
   }
 
+  Benchmark_stop(JunctionSplitting0checkColours_splitJunGluons);
+  Benchmark_start(JunctionSplitting0checkColours_splitJunChains);
+
   // Remove junctions if more than 2 are connected.
   if (!splitJunChains(event) ) {
     infoPtr->errorMsg("Warning in JunctionSplitting::CheckColours: "
       "Not possible to split junctions; making new colours");
     return false;
   }
+
+  Benchmark_stop(JunctionSplitting0checkColours_splitJunChains);
+  Benchmark_start(JunctionSplitting0checkColours_splitJunPairs);
 
   // Split up junction pairs.
   getPartonLists(event, iPartonJun, iPartonAntiJun);

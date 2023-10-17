@@ -1,0 +1,304 @@
+Everything                              : 1, 100.0%, 
+  Everything/constructor                  : 1, 1.1%, 1.1%
+  PythiaP                                 : 1, 1.1%, 
+    PythiaP/clearData                       : 1, 0.0%, 0.0%
+    PythiaP/loadXmlSettings                 : 1, 0.6%, 56.0%
+    PythiaP/checkXmlSettings                : 1, 0.0%, 0.0%
+    PythiaP/loadXmlParticleData             : 1, 0.5%, 43.5%
+    PythiaP/printBanner                     : 1, 0.0%, 0.5%
+    PythiaP/missing                         : 0, 0.0%, 0.0%
+  Everything/init                         : 1, 28.6%, 28.6%
+  Pythia::init                            : 1, 28.6%, 
+    Pythia::init/readBeamSettings           : 1, 0.0%, 0.0%
+    Pythia::init/readGenSettings            : 1, 0.0%, 0.0%
+    Pythia::init/initSMgaugeCoup            : 1, 0.0%, 0.0%
+    Pythia::init/initSUSYCoup               : 1, 0.0%, 0.0%
+    Pythia::init/initResonanceWidths        : 1, 4.1%, 14.2%
+    Pythia::init/setupRhadrons              : 1, 0.0%, 0.0%
+    Pythia::init/initShowers                : 1, 0.0%, 0.0%
+    Pythia::init/initBeamShape              : 1, 0.0%, 0.0%
+    Pythia::init/initBeams                  : 1, 1.1%, 3.8%
+    Pythia::init/initProcessLevel           : 1, 1.1%, 3.8%
+    ProcessLevel::init                      : 1, 1.1%, 
+      ProcessLevel::init/setupPointers        : 1, 0.0%, 0.1%
+      ProcessLevel::init/setupSigmaTotal      : 1, 0.0%, 0.0%
+      ProcessLevel::init/getCuts              : 1, 0.0%, 0.0%
+      ProcessLevel::init/setupProcessCont     : 1, 0.0%, 0.8%
+      ProcessLevel::init/addMissingSLHAblocks : 1, 0.0%, 1.4%
+      ProcessLevel::init/initProcesses        : 1, 1.1%, 97.6%
+      ProcessContainer::init                  : 10, 1.1%, 
+        ProcessContainer::init/setup            : 10, 0.0%, 0.1%
+        ProcessContainer::init/sigmaProcess     : 10, 0.0%, 0.4%
+        ProcessContainer::init/phaseSpace       : 10, 0.0%, 0.2%
+        ProcessContainer::init/initProcess      : 10, 0.0%, 0.0%
+        ProcessContainer::init/setupIncomingPartonFlux: 10, 0.0%, 0.1%
+        ProcessContainer::init/setupPhaseSpaceSampling: 10, 0.6%, 61.1%
+        PhaseSpace::setupSampling123            : 10, 0.6%, 
+          PhaseSpace::setupSampling123/resetCoeffs: 10, 0.0%, 0.0%
+          PhaseSpace::setupSampling123/identifyResonances: 10, 0.0%, 0.0%
+          PhaseSpace::setupSampling123/todo       : 10, 0.6%, 100.0%
+          sigmaPDF                                : 3570, 1.2%, 
+            sigmaPDF/xfHard                         : 3570, 0.5%, 42.3%
+            ~~sigmaPDF/loopOverIncomingChannels       : 11.95 [1, 60] iterations
+              sigmaPDF/sigmaHatWrap                   : 56452, 0.4%, 36.6%
+              sigmaHat                                : 1301734, 4.8%, 
+                sigmaHat/SUSY_Sigma2gg2gluinogluino     : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2gg2squarkantisquark : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2chichi        : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2charchi       : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2charchar      : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qg2chisquark        : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qg2charsquark       : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qq2squarksquark     : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2squarkantisquark: 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qg2squarkgluino     : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2gluinogluino  : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma1qq2antisquark       : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2chigluino     : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2chargluino    : 0, 0.0%, 0.0%
+                sigmaHat/SUSY_Sigma2qqbar2sleptonantislepton: 0, 0.0%, 0.0%
+                sigmaHat/QCD_Sigma2qq2qq                : 49966, 0.1%, 1.1%
+                sigmaHat/EW_Sigma2qg2qgamma             : 20174, 0.0%, 0.5%
+                sigmaHat/convert                        : 1301734, 1.4%, 28.7%
+                sigmaHat/missing                        : 0, 3.4%, 69.7%
+              sigmaPDF/multPartonDensity              : 56452, 0.1%, 5.8%
+            sigmaPDF/dummy                          : 3570, 0.0%, 0.3%
+            sigmaPDF/missing                        : 0, 0.2%, 15.0%
+          PhaseSpace::setupSampling123/todo2      : 10, 0.0%, 0.0%
+          PhaseSpace0setupSampling123/missing     : 0, 0.0%, 0.0%
+        ~~ProcessContainer::init/loopOverSamples  : 100.00 [100, 100] iterations
+          ~~ProcessContainer::init/trialKin         : 1.00 [1, 1] iterations
+            ProcessContainer::init/phasetrialKin    : 1000, 0.4%, 37.7%
+            trialKin123                             : 1590, 0.6%, 
+              trialKin123/doEnergySpread              : 1590, 0.0%, 0.3%
+              trialKin123/AlimitTau                   : 1590, 0.0%, 0.4%
+              trialKin123/AddlimitTau                 : 1590, 0.0%, 0.8%
+              trialKin123/BselectTau                  : 1590, 0.0%, 0.9%
+              trialKin123/ClimitY                     : 1590, 0.0%, 0.4%
+              trialKin123/AddlimitY                   : 1590, 0.0%, 0.5%
+              trialKin123/DselectY                    : 1590, 0.0%, 1.6%
+              trialKin123/ElimitZ                     : 1590, 0.0%, 0.3%
+              trialKin123/AddlimitZ                   : 1590, 0.0%, 0.5%
+              trialKin123/FselectZ                    : 1590, 0.0%, 1.1%
+              trialKin123/Iset2Kin                    : 1590, 0.0%, 0.9%
+              trialKin123/HsigmaPDF                   : 1590, 0.5%, 84.9%
+              trialKin123/KuserModifications          : 1590, 0.0%, 0.3%
+              trialKin123/LcheckMaxViolated           : 1590, 0.0%, 0.3%
+              trialKin123/McheckNegativeXsec          : 1590, 0.0%, 0.3%
+              trialKin123/NcheckEventWeight           : 1590, 0.0%, 0.3%
+          trialKin123/missing                     : 0, 0.0%, 6.2%
+        ProcessContainer::init/moreSettings     : 10, 0.0%, 0.1%
+        ProcessContainer0init/missing           : 0, 0.0%, 0.2%
+      ProcessLevel::init/repeatForSecondHard  : 1, 0.0%, 0.0%
+      ProcessLevel::init/finalChecks          : 1, 0.0%, 0.1%
+      ProcessLevel0init/missing               : 0, 0.0%, 0.0%
+    Pythia::init/initPartonLevel            : 1, 22.4%, 78.2%
+    Pythia::init/initTrialPartonLevel       : 1, 0.0%, 0.0%
+    Pythia::init/initHadronLevel            : 1, 0.0%, 0.0%
+    Pythia::init/getMoreOptions             : 1, 0.0%, 0.0%
+    Pythia::init/initCOlorReconnection      : 1, 0.0%, 0.0%
+    Pythia::init/initCOlorJunctionSplitting : 1, 0.0%, 0.0%
+    Pythia0init/missing                     : 0, 0.0%, 0.0%
+  Everything/eventLoop                    : 1, 70.3%, 70.3%
+  Pythia::next                            : 100, 70.3%, 
+    Pythia::next/setup                      : 100, 0.0%, 0.0%
+    Pythia::next/pickValenceFlavours        : 100, 0.0%, 0.0%
+    ~~Pythia::next/loopVetoHardProcess        : 1.00 [1, 1] iterations
+      Pythia::next/setLHEF3EventInfo          : 100, 0.0%, 0.0%
+      Pythia::next/processLevel               : 100, 0.3%, 0.4%
+      ProcessLevel                            : 100, 0.3%, 
+        ProcessLevel/next                       : 100, 0.3%, 98.8%
+        nextOne                                 : 100, 0.2%, 
+          nextOne/newECM                          : 100, 0.0%, 0.1%
+          ~~nextOne/loopRareFailures                : 1.00 [1, 1] iterations
+            ~~nextOne/loopTrialSubprocess             : 5.90 [1, 41] iterations
+              nextOne/pickSubprocess                  : 590, 0.0%, 0.5%
+              nextOne/trialProcess                    : 590, 0.2%, 90.8%
+              trialProcess                            : 590, 0.2%, 
+                trialProcess/dummyA                     : 0, 0.0%, 0.0%
+                ~~trialProcess/loopTrialProcess           : 1.00 [1, 1] iterations
+                  trialProcess/trialKin                   : 590, 0.2%, 98.0%
+                  trialProcess/rest                       : 590, 0.0%, 0.6%
+                trialProcess/dummyB                     : 0, 0.0%, 0.0%
+              trialProcess/missing                    : 0, 0.0%, 1.3%
+            nextOne/updateSumOfMaxima               : 100, 0.0%, 0.0%
+            nextOne/constructState                  : 100, 0.0%, 0.3%
+            nextOne/constructProcess                : 100, 0.0%, 2.9%
+            nextOne/decayResonances                 : 100, 0.0%, 1.6%
+            decayResonances                         : 100, 0.0%, 
+              decayResonances/setup                   : 100, 0.0%, 13.7%
+              decayResonances/next                    : 100, 0.0%, 25.7%
+              ResonanceDecays::next                   : 100, 0.0%, 
+                ResonanceDecays0next/missing            : 0, 0.0%, 100.0%
+              decayResonances/weightDecayFlav         : 100, 0.0%, 7.2%
+              decayResonances/resetForVeto            : 100, 0.0%, 3.0%
+              decayResonances/decayKinematics         : 100, 0.0%, 9.1%
+              decayResonances/rest                    : 100, 0.0%, 3.7%
+              decayResonances/missing                 : 0, 0.0%, 37.6%
+            nextOne/retryUnphysical                 : 100, 0.0%, 0.1%
+            nextOne/findJunctions                   : 100, 0.0%, 2.1%
+          nextOne/missing                         : 0, 0.0%, 1.5%
+        ProcessLevel/checkColours               : 100, 0.0%, 1.0%
+        ProcessLevel/missing                    : 0, 0.0%, 0.2%
+      Pythia::next/copyProcess                : 100, 0.0%, 0.0%
+      ~~Pythia::next/loopTrialPartonHadron      : 1.00 [1, 1] iterations
+        Pythia::next/restoreProcess             : 100, 0.0%, 0.0%
+        Pythia::next/partonLevel                : 100, 65.8%, 93.6%
+        PartonLevel::next                       : 100, 65.8%, 
+          PartonLevel::next/setup                 : 100, 0.0%, 0.0%
+          ~~PartonLevel::next/MPIveto               : 1.00 [1, 1] iterations
+            ~~PartonLevel::next/loopForDoubleDiffraction: 1.00 [1, 1] iterations
+              ~~PartonLevel::next/trialParton           : 1.00 [1, 1] iterations
+                PartonLevel::next/setupHardSys          : 100, 0.0%, 0.0%
+                PartonLevel::next/limitPTmax            : 100, 0.0%, 0.0%
+                PartonLevel::next/prepareGlobalRecoil   : 100, 0.0%, 0.0%
+                PartonLevel::next/MultipartonInteractions::prepare: 100, 0.0%, 0.0%
+                PartonLevel::next/Showerprepare         : 100, 0.0%, 0.0%
+                PartonLevel::next/DiffractionImpactParam: 100, 0.0%, 0.0%
+                ~~PartonLevel::next/evolvePt              : 90.49 [15, 232] iterations
+                  PartonLevel::next/pTnext_TimeShower     : 9049, 40.6%, 61.7%
+                  TimeShower::pTnext                      : 9049, 40.6%, 
+                    TimeShower::pTnext/setup                : 9049, 0.0%, 0.0%
+                    ~~TimeShower::pTnext/loopOverDipoles      : 100.95 [16.6667, 260.087] iterations
+                      TimeShower::pTnext/partHardScatter      : 1182050, 4.7%, 11.5%
+                      ~~TimeShower::pTnext/loopOverPartonPairs  : 16.31 [8.27071, 41.6377] iterations
+                      TimeShower::pTnext/useLocalRecoilNow    : 1182050, 1.6%, 3.8%
+                      TimeShower::pTnext/evolutionScale       : 1182050, 1.3%, 3.1%
+                      TimeShower::pTnext/isFirstWimpy         : 1182050, 1.3%, 3.2%
+                      TimeShower::pTnext/pT2nextQCD           : 934172, 20.9%, 51.6%
+                      TimeShower::pT2nextQCD                  : 934172, 18.6%, 
+                        TimeShower::pT2nextQCD/setup            : 934172, 1.0%, 5.6%
+                        ~~TimeShower::pT2nextQCD/evolve_pT        : 1.28 [1.13568, 2.31138] iterations
+                          TimeShower::pT2nextQCD/initEvolution    : 1076848, 2.3%, 12.4%
+                          TimeShower::pT2nextQCD/pickpT2          : 1076845, 3.3%, 17.8%
+                          TimeShower::pT2nextQCD/crossedThreasholds: 1076845, 4.8%, 25.9%
+                        TimeShower0pT2nextQCD/missing           : 0, 7.1%, 38.3%
+                      TimeShower::pTnext/pT2begDip            : 1004509, 1.1%, 2.6%
+                      TimeShower::pTnext/pT2nextQED           : 70336, 0.3%, 0.7%
+                    TimeShower::pTnext/rest                 : 9049, 0.0%, 0.0%
+                    TimeShower0pTnext/missing               : 0, 9.5%, 23.4%
+                  PartonLevel::next/pTnext_MPI            : 9049, 4.7%, 7.1%
+                  PartonLevel::next/pTnext_SpaceShower    : 9049, 19.0%, 28.9%
+                  PartonLevel::next/pTveto                : 9049, 0.0%, 0.0%
+                  PartonLevel::next/initialStateEmission  : 1549, 0.2%, 0.3%
+                  PartonLevel::next/someChecks            : 9049, 0.0%, 0.0%
+                  PartonLevel::next/MPIscatter            : 630, 0.1%, 0.2%
+                  PartonLevel::next/finalStateEmission    : 6770, 0.6%, 0.8%
+                PartonLevel::next/moreFinalStateEmission: 100, 0.0%, 0.0%
+                PartonLevel::next/parformShowers        : 100, 0.0%, 0.0%
+                PartonLevel::next/addBeamRemnants       : 100, 0.4%, 0.7%
+                JunctionSplitting::checkColours         : 200, 0.0%, 
+                  JunctionSplitting::checkColours/checkColors: 200, 0.0%, 14.0%
+                  JunctionSplitting::checkColours/checkSingletGluons: 200, 0.0%, 10.0%
+                  JunctionSplitting::checkColours/getLists: 200, 0.0%, 40.5%
+                  JunctionSplitting::checkColours/splitJunGluons: 200, 0.0%, 0.9%
+                  JunctionSplitting::checkColours/splitJunChains: 200, 0.0%, 3.9%
+                  JunctionSplitting::checkColours/splitJunPairs: 200, 0.0%, 24.7%
+                  JunctionSplitting0checkColours/missing  : 0, 0.0%, 5.8%
+                PartonLevel::next/restoreAndLoop        : 100, 0.0%, 0.0%
+              PartonLevel::next/leaveResolvedDiff     : 100, 0.0%, 0.0%
+              PartonLevel::next/hasPomPsystem         : 100, 0.0%, 0.0%
+            PartonLevel::next/setUpDiffractive      : 100, 0.0%, 0.0%
+            PartonLevel::next/colorReconnection     : 100, 0.0%, 0.0%
+            PartonLevel::next/resonanceShowers      : 100, 0.0%, 0.0%
+            PartonLevel::next/wzDecayShowers        : 100, 0.0%, 0.0%
+            PartonLevel::next/doReconnectResonanceSystems: 100, 0.0%, 0.0%
+            PartonLevel::resShowers                 : 100, 0.0%, 
+              PartonLevel::resShowers/setup           : 100, 0.0%, 16.3%
+              PartonLevel::resShowers/loopOverHardProcesses: 0, 0.0%, 0.0%
+            PartonLevel0resShowers/missing          : 0, 0.0%, 83.7%
+          PartonLevel::next/setEvolution          : 100, 0.0%, 0.0%
+          PartonLevel::next/setImpact             : 100, 0.0%, 0.0%
+          PartonLevel::next/colorReconnectionAgain: 100, 0.0%, 0.0%
+        PartonLevel0next/missing                : 0, 0.1%, 0.1%
+      Pythia::next/boostAndVertex             : 100, 0.0%, 0.0%
+      Pythia::next/hadronLevel                : 100, 2.3%, 3.3%
+      HadronLevel::next                       : 100, 2.3%, 
+        HadronLevel::next/hiddenValleyFrag      : 100, 0.0%, 0.0%
+        HadronLevel::next/oniaDecay             : 100, 0.1%, 5.2%
+        HadronLevel::decayOctetOnia             : 100, 0.1%, 
+          HadronLevel::decayOctetOnia/decay       : 45901, 0.1%, 45.8%
+        HadronLevel0decayOctetOnia/missing      : 0, 0.1%, 54.2%
+      HadronLevel::next/cleanJunctions        : 100, 0.0%, 0.8%
+      ~~HadronLevel::next/loopMultiHadr         : 1.00 [1, 1] iterations
+        HadronLevel::next/fragFindSinglets      : 100, 0.0%, 2.1%
+        HadronLevel::findSinglets               : 100, 0.0%, 
+          HadronLevel::findSinglets/setupColList  : 100, 0.0%, 5.8%
+          HadronLevel::findSinglets/arrange       : 100, 0.0%, 15.4%
+          HadronLevel::findSinglets/openStrings   : 100, 0.0%, 74.7%
+          HadronLevel::findSinglets/closedStrings : 100, 0.0%, 0.6%
+          HadronLevel0findSinglets/missing        : 0, 0.0%, 3.5%
+        HadronLevel::next/fragRHadrons          : 100, 0.0%, 0.0%
+        ~~HadronLevel::next/loopColorSinglets     : 8.98 [2, 22] iterations
+          HadronLevel::next/fragCollectPartons    : 898, 0.0%, 0.3%
+          HadronLevel::next/fragStringFrag        : 864, 1.2%, 51.0%
+          HadronLevel::next/fragMiniStringFrag    : 34, 0.0%, 0.1%
+          HadronLevel::next/fixBug                : 0, 0.0%, 0.0%
+          StringFragmentation::fragment           : 864, 1.2%, 
+            StringFragmentation::fragment/setup     : 864, 0.0%, 0.2%
+            StringFragmentation::fragment/findFirstRegion: 864, 0.0%, 0.1%
+            StringFragmentation::fragment/fragmentToJunction: 864, 0.0%, 3.7%
+            StringFragmentation::fragment/setupKin  : 864, 0.0%, 2.4%
+            ~~StringFragmentation::fragment/joinMiddle: 1.53 [1, 2.83333] iterations
+              StringFragmentation::fragment/extraJoin : 1291, 0.0%, 0.1%
+              StringFragmentation::fragment/setStartEnds: 1291, 0.0%, 2.4%
+              ~~StringFragmentation::fragment/loopUntilNoEnergy: 19.45 [9.28571, 53.75] iterations
+                StringFragmentation::fragment/getTrialHadron: 23437, 0.3%, 26.6%
+                StringFragmentation::fragment/checkEnergyUsed: 23437, 0.1%, 10.9%
+                StringFragmentation::fragment/getHadronKin: 22154, 0.3%, 24.3%
+                StringFragmentation::fragment/changeStatusCode: 22154, 0.0%, 2.1%
+                StringFragmentation::fragment/append    : 22154, 0.1%, 6.0%
+            StringFragmentation::fragment/rest      : 864, 0.1%, 4.8%
+          StringFragmentation0fragment/missing    : 0, 0.2%, 16.6%
+        HadronLevel::next/fragHadronScatter     : 100, 0.0%, 0.0%
+        HadronLevel::next/sequentialDecayShort  : 100, 0.3%, 13.4%
+        ParticleDecays::decay                   : 18089, 0.9%, 
+          ParticleDecays::decay/checkAllowed      : 18089, 0.0%, 2.2%
+          ParticleDecays::decay/checkIfResonance  : 18089, 0.0%, 2.1%
+          ParticleDecays::decay/checkOscillations : 18089, 0.0%, 2.3%
+          ParticleDecays::decay/doTauDecay        : 18089, 0.0%, 4.8%
+          ParticleDecays::decay/pickMC            : 18088, 0.1%, 12.8%
+          preparePick                             : 18089, 0.1%, 
+            preparePick/fixed                       : 18089, 0.0%, 36.1%
+            preparePick/missing                     : 0, 0.0%, 63.9%
+          ~~ParticleDecays::decay/NTRYDECAY         : 1.00 [1, 1.00823] iterations
+            ParticleDecays::decay/readChannel       : 18090, 0.0%, 3.7%
+            ~~ParticleDecays::decay/loopTryChannel    : 1.00 [1, 1.0898] iterations
+              ParticleDecays::decay/storeProducts     : 18135, 0.1%, 7.1%
+              ParticleDecays::decay/pickHadrons       : 18135, 0.0%, 2.4%
+              ParticleDecays::decay/setColours        : 18135, 0.0%, 2.5%
+            ParticleDecays::decay/storeDecay        : 18088, 0.1%, 8.7%
+            ParticleDecays::decay/dalitzDecays      : 18088, 0.1%, 12.8%
+          ParticleDecays0decay/missing            : 0, 0.3%, 38.7%
+        HadronLevel::next/hadronScatter2        : 100, 0.0%, 0.0%
+        HadronLevel::next/boseEinsteinEffects   : 100, 0.0%, 0.0%
+        HadronLevel::next/sequentialDecayAll    : 100, 0.6%, 26.8%
+      HadronLevel0next/missing                : 0, 0.0%, 0.2%
+    Pythia::next/doRHadronDecays            : 100, 0.0%, 0.0%
+    Pythia::next/checkForProblems           : 100, 1.7%, 2.4%
+    Pythia::check                           : 100, 1.7%, 
+      Pythia::check/reset                     : 100, 0.0%, 0.0%
+      Pythia::check/charge_and_psum           : 100, 0.0%, 0.0%
+      ~~Pythia::check/loopAllParticles          : 1092.03 [323, 2577] iterations
+        Pythia::check/find_unrecognized         : 109203, 0.2%, 9.3%
+        Pythia::check/check_momentum            : 109203, 0.2%, 9.8%
+        Pythia::check/check_nans                : 109203, 0.1%, 7.0%
+        Pythia::check/check_charge_total        : 109203, 0.1%, 6.9%
+      Pythia::check/check_momentum_charge_conservation: 100, 0.0%, 0.0%
+      Pythia::check/check_records             : 100, 0.0%, 0.0%
+      Pythia::check/check_mothers_and_daughters_match: 100, 0.5%, 31.3%
+    Pythia0check/missing                    : 0, 0.6%, 35.7%
+  Pythia::next/accumulateProcess          : 100, 0.0%, 0.0%
+  ProcessLevel::accumulate                : 100, 0.0%, 
+    ProcessLevel::accumulate/A              : 100, 0.0%, 1.1%
+    ProcessLevel::accumulate/B              : 100, 0.0%, 0.4%
+    ~~ProcessLevel::accumulate/loopOverProcessContainers: 10.00 [10, 10] iterations
+      ProcessLevel::accumulate/setup          : 1000, 0.0%, 11.0%
+      ProcessLevel::accumulate/map1           : 1000, 0.0%, 16.1%
+      ProcessLevel::accumulate/setSigma       : 1000, 0.0%, 35.6%
+      ProcessLevel::accumulate/map2           : 1000, 0.0%, 5.2%
+    ProcessLevel::accumulate/C              : 100, 0.0%, 0.7%
+    ProcessLevel0accumulate/missing         : 0, 0.0%, 29.9%
+  Pythia::next/accumulateParton           : 100, 0.0%, 0.0%
+  Pythia::next/scale                      : 100, 0.0%, 0.0%
+Pythia::next/listEvents                 : 100, 0.1%, 0.2%

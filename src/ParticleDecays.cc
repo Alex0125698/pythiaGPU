@@ -123,11 +123,17 @@ void ParticleDecays::init(Info* infoPtrIn, Settings& settings,
 
 bool ParticleDecays::decay( int iDec, Event& event) {
 
+  Benchmark_start(ParticleDecays0decay);
+  Benchmark_start(ParticleDecays0decay_checkAllowed);
+
   // Check whether a decay is allowed, given the upcoming decay vertex.
   Particle& decayer = event[iDec];
   hasPartons  = false;
   keepPartons = false;
   if (limitDecay && !checkVertex(decayer)) return true;
+  
+  Benchmark_stop(ParticleDecays0decay_checkAllowed);
+  Benchmark_start(ParticleDecays0decay_checkIfResonance);
 
   // Do not allow resonance decays (beyond handling capability).
   if (decayer.isResonance()) {
@@ -135,6 +141,9 @@ bool ParticleDecays::decay( int iDec, Event& event) {
       "resonance left undecayed");
     return true;
   }
+
+  Benchmark_stop(ParticleDecays0decay_checkIfResonance);
+  Benchmark_start(ParticleDecays0decay_checkOscillations);
 
   // Fill the decaying particle in slot 0 of arrays.
   idDec = decayer.id();
@@ -149,6 +158,9 @@ bool ParticleDecays::decay( int iDec, Event& event) {
   bool hasOscillated = (abs(idDec) == 511 || abs(idDec) == 531)
     ? oscillateB(decayer) : false;
   if (hasOscillated) {idDec = - idDec; idProd[0] = idDec;}
+  
+  Benchmark_stop(ParticleDecays0decay_checkOscillations);
+  Benchmark_start(ParticleDecays0decay_doTauDecay);
 
   // Particle data for decaying particle.
   decDataPtr = &decayer.particleDataEntry();
@@ -183,14 +195,26 @@ bool ParticleDecays::decay( int iDec, Event& event) {
     if (doneExternally) return true;
   }
 
+  Benchmark_stop(ParticleDecays0decay_doTauDecay);
+
   // Now begin normal internal decay treatment.
-  if (!doneExternally) {
+  if (!doneExternally) 
+  {
 
     // Allow up to ten tries to pick a channel.
+    Benchmark_start(ParticleDecays0decay_pickMC);
     if (!decDataPtr->preparePick(idDec, decayer.m())) return false;
+    Benchmark_stop(ParticleDecays0decay_pickMC);
+
+    Benchmark_loopStart(ParticleDecays0decay_NTRYDECAY);
+    
     bool foundChannel = false;
     bool hasStored    = false;
-    for (int iTryChannel = 0; iTryChannel < NTRYDECAY; ++iTryChannel) {
+    for (int iTryChannel = 0; iTryChannel < NTRYDECAY; ++iTryChannel) 
+    {
+      Benchmark_loopCount(ParticleDecays0decay_NTRYDECAY);
+
+      Benchmark_start(ParticleDecays0decay_readChannel);
 
       // Remove previous failed channel.
       if (hasStored) event.popBack(mult);
@@ -202,14 +226,21 @@ bool ParticleDecays::decay( int iDec, Event& event) {
       keepPartons = (meMode > 90 && meMode <= 100);
       mult = channel.multiplicity();
 
+      Benchmark_stop(ParticleDecays0decay_readChannel);
+      Benchmark_loopStart(ParticleDecays0decay_loopTryChannel);
+
       // Allow up to ten tries for each channel (e.g with different masses).
       bool foundMode = false;
-      for (int iTryMode = 0; iTryMode < NTRYDECAY; ++iTryMode) {
+      for (int iTryMode = 0; iTryMode < NTRYDECAY; ++iTryMode) 
+      {
+        Benchmark_loopCount(ParticleDecays0decay_loopTryChannel);
+
         idProd.resize(1);
         mProd.resize(1);
         scale = 0.;
 
         // Extract and store the decay products in local arrays.
+        Benchmark_start(ParticleDecays0decay_storeProducts);
         hasPartons = false;
         for (int i = 0; i < mult; ++i) {
           int idNow = channel.product(i);
@@ -223,8 +254,14 @@ bool ParticleDecays::decay( int iDec, Event& event) {
           mProd.push_back( mNow);
         }
 
+        Benchmark_stop(ParticleDecays0decay_storeProducts);
+        Benchmark_start(ParticleDecays0decay_pickHadrons);
+
         // Decays into partons usually translate into hadrons.
         if (hasPartons && !keepPartons && !pickHadrons()) continue;
+
+        Benchmark_stop(ParticleDecays0decay_pickHadrons);
+        Benchmark_start(ParticleDecays0decay_setColours);
 
         // Need to set colour flow if explicit decay to partons.
         cols.resize(0);
@@ -246,7 +283,12 @@ bool ParticleDecays::decay( int iDec, Event& event) {
         foundMode = true;
         break;
       }
+
+      Benchmark_loopStop(ParticleDecays0decay_loopTryChannel);
+
       if (!foundMode) continue;
+
+      Benchmark_start(ParticleDecays0decay_storeDecay);
 
       // Store decay products in the event record.
       int status = (hasOscillated) ? 92 : 91;
@@ -256,6 +298,9 @@ bool ParticleDecays::decay( int iDec, Event& event) {
         iProd.push_back( iPos);
       }
       hasStored = true;
+
+      Benchmark_stop(ParticleDecays0decay_storeDecay);
+      Benchmark_start(ParticleDecays0decay_dalitzDecays);
 
       // Pick mass of Dalitz decay. Temporarily change multiplicity.
       if ( (meMode == 11 || meMode == 12 || meMode == 13)
@@ -277,6 +322,8 @@ bool ParticleDecays::decay( int iDec, Event& event) {
       foundChannel = true;
       break;
     }
+
+    Benchmark_loopStop(ParticleDecays0decay_NTRYDECAY);
 
     // If the decay worked, then mark mother decayed and store daughters.
     if (foundChannel) {

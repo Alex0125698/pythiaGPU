@@ -362,6 +362,9 @@ void StringFragmentation::init(Info* infoPtrIn, Settings& settings,
 bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
   Event& event) {
 
+  Benchmark_start(StringFragmentation0fragment);
+  Benchmark_start(StringFragmentation0fragment_setup);
+
   // Find partons and their total four-momentum.
   iParton            = colConfig[iSub].iParton;
   iPos               = iParton[0];
@@ -374,9 +377,15 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
   // Reset the local event record.
   hadrons.clear();
 
+  Benchmark_stop(StringFragmentation0fragment_setup);
+  Benchmark_start(StringFragmentation0fragment_findFirstRegion);
+
   // For closed gluon string: pick first breakup region.
   isClosed = colConfig[iSub].isClosed;
   if (isClosed) iParton = findFirstRegion(iParton, event);
+
+  Benchmark_stop(StringFragmentation0fragment_findFirstRegion);
+  Benchmark_start(StringFragmentation0fragment_fragmentToJunction);
 
   // For junction topology: fragment off two of the string legs.
   // Then iParton overwritten to remaining leg + leftover diquark.
@@ -390,13 +399,24 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
     pSum  -= pJunctionHadrons;
   }
 
+  Benchmark_stop(StringFragmentation0fragment_fragmentToJunction);
+  Benchmark_start(StringFragmentation0fragment_setupKin);
+
   // Set up kinematics of string evolution ( = motion).
   system.setUp(iParton, event);
   stopMassNow = stopMass;
   int nExtraJoin = 0;
 
+  Benchmark_stop(StringFragmentation0fragment_setupKin);
+  Benchmark_loopStart(StringFragmentation0fragment_joinMiddle);
+
   // Fallback loop, when joining in the middle fails.  Bailout if stuck.
-  for ( int iTry = 0; ; ++iTry) {
+  for ( int iTry = 0; ; ++iTry) 
+  {
+    Benchmark_loopCount(StringFragmentation0fragment_joinMiddle);
+
+    Benchmark_start(StringFragmentation0fragment_extraJoin);
+
     if (iTry > NTRYJOIN) {
       infoPtr->errorMsg("Error in StringFragmentation::fragment: "
         "stuck in joining");
@@ -412,6 +432,9 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
     // After several failed tries gradually allow larger stop mass.
     if (iTry > NTRYJOIN - NSTOPMASS) stopMassNow *= FACSTOPMASS;
 
+    Benchmark_stop(StringFragmentation0fragment_extraJoin);
+    Benchmark_start(StringFragmentation0fragment_setStartEnds);
+
     // Set up flavours of two string ends, and reset other info.
     setStartEnds(idPos, idNeg, system);
     pRem = pSum;
@@ -425,7 +448,15 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
     // Keep track of the momentum of hadrons taken from left and right.
     Vec4 hadMomPos, hadMomNeg;
 
-    for ( ; ; ) {
+    Benchmark_stop(StringFragmentation0fragment_setStartEnds);
+
+    Benchmark_loopStart(StringFragmentation0fragment_loopUntilNoEnergy);
+
+    for ( ; ; ) 
+    {
+      Benchmark_loopCount(StringFragmentation0fragment_loopUntilNoEnergy);
+
+      Benchmark_start(StringFragmentation0fragment_getTrialHadron);
 
       // Take a step either from the positive or the negative end.
       fromPos           = (rndmPtr->flat() < 0.5);
@@ -434,8 +465,9 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
       // Construct trial hadron and check that energy remains.
       nowEnd.newHadron();
 
-    // Possibility for a user to change the fragmentation parameters.
-     if ( (userHooksPtr != 0) && userHooksPtr->canChangeFragPar() ) {
+      // Possibility for a user to change the fragmentation parameters.
+      if ( (userHooksPtr != 0) && userHooksPtr->canChangeFragPar() ) 
+      {
        if ( !userHooksPtr->doChangeFragPar( flavSelPtr, zSelPtr, pTSelPtr,
          (fromPos ? idPos : idNeg),
          (fromPos ? hadMomPos.m2Calc() : hadMomNeg.m2Calc()), iParton) )
@@ -443,11 +475,20 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
            "failed to change hadronisation parameters.");
       }
 
+      Benchmark_stop(StringFragmentation0fragment_getTrialHadron);
+      Benchmark_start(StringFragmentation0fragment_checkEnergyUsed);
+
       if ( energyUsedUp(fromPos) ) break;
+
+      Benchmark_stop(StringFragmentation0fragment_checkEnergyUsed);
+      Benchmark_start(StringFragmentation0fragment_getHadronKin);
 
       // Construct kinematics of the new hadron and store it.
       Vec4 pHad = nowEnd.kinematicsHadron(system);
       int statusHad = (fromPos) ? 83 : 84;
+
+      Benchmark_stop(StringFragmentation0fragment_getHadronKin);
+      Benchmark_start(StringFragmentation0fragment_changeStatusCode);
 
       // Change status code if hadron from junction.
       if (abs(nowEnd.idHad) > 1000 && abs(nowEnd.idHad) < 10000) {
@@ -464,6 +505,9 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
           usedNegJun = true;
         }
       }
+
+      Benchmark_stop(StringFragmentation0fragment_changeStatusCode);
+      Benchmark_start(StringFragmentation0fragment_append);
 
       // Possibility for a user to veto the hadron production.
       if ( (userHooksPtr != 0) && userHooksPtr->canChangeFragPar() ) {
@@ -484,8 +528,9 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
       nowEnd.update();
       pRem -= pHad;
 
-    // End of fragmentation loop.
     }
+
+    Benchmark_loopStop(StringFragmentation0fragment_loopUntilNoEnergy);
 
     // When done, join in the middle. If this works, then really done.
     if ( finalTwo(fromPos, event, usedPosJun, usedNegJun) ) break;
@@ -496,6 +541,8 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
     hadrons.popBack(newHadrons);
   }
 
+  Benchmark_loopStop(StringFragmentation0fragment_joinMiddle);
+  Benchmark_start(StringFragmentation0fragment_rest);
 
   // Junctions & extra joins: remove fictitious end, restore original partons.
   if (hasJunction) ++nExtraJoin;

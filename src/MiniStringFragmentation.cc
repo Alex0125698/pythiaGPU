@@ -59,6 +59,13 @@ void MiniStringFragmentation::init(Info* infoPtrIn, Settings& settings,
 bool MiniStringFragmentation::fragment(int iSub, ColConfig& colConfig,
   Event& event, bool isDiff) {
 
+  // Benchmark_start(MiniStringFragmentation0fragment);
+  // Benchmark_start(MiniStringFragmentation0fragment_setup);
+
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_ministring2two);
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_ministring2one);
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_ministring2two2);
+
   // Junction topologies not yet considered - is very rare.
   iParton  = colConfig[iSub].iParton;
   if (iParton.front() < 0) {
@@ -77,15 +84,29 @@ bool MiniStringFragmentation::fragment(int iSub, ColConfig& colConfig,
 
   // Do not want diffractive systems to easily collapse to one particle.
   int nTryFirst = (isDiff) ? NTRYDIFFRACTIVE : nTryMass;
+  
+  // Benchmark_stop(MiniStringFragmentation0fragment_setup);
+  // Benchmark_start(MiniStringFragmentation0fragment_ministring2two);
 
   // First try to produce two particles from the system.
   if (ministring2two( nTryFirst, event)) return true;
 
+  // Benchmark_stop(MiniStringFragmentation0fragment_ministring2two);
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_fixBugA);
+  // Benchmark_start(MiniStringFragmentation0fragment_ministring2one);
+
   // If this fails, then form one hadron and shuffle momentum.
   if (ministring2one( iSub, colConfig, event)) return true;
 
+  // Benchmark_stop(MiniStringFragmentation0fragment_ministring2one);
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_fixBugB);
+  // Benchmark_start(MiniStringFragmentation0fragment_ministring2two2);
+
   // If also this fails, then try harder to produce two particles.
   if (ministring2two( NTRYLASTRESORT, event)) return true;
+
+
+  // Benchmark_placeholder(MiniStringFragmentation0fragment_fixBugC);
 
   // Else complete failure.
   infoPtr->errorMsg("Error in MiniStringFragmentation::fragment: "

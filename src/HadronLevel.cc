@@ -101,22 +101,24 @@ bool HadronLevel::init(Info* infoPtrIn, Settings& settings,
 
 bool HadronLevel::next( Event& event) {
 
-  // timings[40].start();
+  Benchmark_start(HadronLevel0next);
 
   // Store current event size to mark Parton Level content.
   event.savePartonLevelSize();
 
+  Benchmark_start(HadronLevel0next_hiddenValleyFrag);
+
   // Do Hidden-Valley fragmentation, if necessary.
   if (useHiddenValley) hiddenvalleyFrag.fragment(event);
-
-  // timings[40].stop();
-  // timings[41].start();
+  
+  Benchmark_stop(HadronLevel0next_hiddenValleyFrag);
+  Benchmark_start(HadronLevel0next_oniaDecay);
 
   // Colour-octet onia states must be decayed to singlet + gluon.
   if (!decayOctetOnia(event)) return false;
   
-  // timings[41].stop();
-  // timings[42].start();
+  Benchmark_stop(HadronLevel0next_oniaDecay);
+  Benchmark_start(HadronLevel0next_cleanJunctions);
 
   // remove junction structures.
   if (!junctionSplitting.checkColours(event)) {
@@ -124,99 +126,121 @@ bool HadronLevel::next( Event& event) {
         "failed colour/junction check");
     return false;
   }
-  // timings[42].stop();
+
+  Benchmark_stop(HadronLevel0next_cleanJunctions);
+  Benchmark_loopStart(HadronLevel0next_loopMultiHadr);
+  bool failed = false;
 
   // Possibility of hadronization inside decay, but then no BE second time.
   // Hadron scattering, first pass only --rjc
   bool moreToDo, firstPass = true;
   bool doBoseEinsteinNow = doBoseEinstein;
-  do {
+  do 
+  {
     moreToDo = false;
 
-    // First part: string fragmentation.
-    if (doHadronize) {
+    Benchmark_loopCount(HadronLevel0next_loopMultiHadr);
 
-      // timings[43].start();
+    // First part: string fragmentation.
+    if (doHadronize) 
+    {
+      Benchmark_start(HadronLevel0next_fragFindSinglets);
 
       // Find the complete colour singlet configuration of the event.
-      if (!findSinglets( event)) return false;
+      if (!findSinglets( event)) { failed=true; break; };
 
-      // timings[43].stop();
-      // timings[44].start();
+      Benchmark_stop(HadronLevel0next_fragFindSinglets);
+      Benchmark_start(HadronLevel0next_fragRHadrons);
 
       // Fragment off R-hadrons, if necessary.
       if (allowRH && !rHadronsPtr->produce( colConfig, event))
-        return false;
-      // timings[44].stop();
+        { failed=true; break; };
+
+      Benchmark_stop(HadronLevel0next_fragRHadrons);
+      Benchmark_loopStart(HadronLevel0next_loopColorSinglets);
 
       // Process all colour singlet (sub)systems.
       for (int iSub = 0; iSub < colConfig.size(); ++iSub) {
 
-        // timings[45].start();
+        Benchmark_loopCount(HadronLevel0next_loopColorSinglets);
+        Benchmark_start(HadronLevel0next_fragCollectPartons);
 
         // Collect sequentially all partons in a colour singlet subsystem.
         colConfig.collect(iSub, event);
 
-        // timings[45].stop();
-
-        // timings[46].start();
+        Benchmark_stop(HadronLevel0next_fragCollectPartons);
+        Benchmark_placeholder(HadronLevel0next_fragStringFrag);
+        Benchmark_placeholder(HadronLevel0next_fragMiniStringFrag);
 
         // String fragmentation of each colour singlet (sub)system.
-        if ( colConfig[iSub].massExcess > mStringMin ) {
-          if (!stringFrag.fragment( iSub, colConfig, event)) return false;
+        if ( colConfig[iSub].massExcess > mStringMin ) 
+        {
+          Benchmark_start(HadronLevel0next_fragStringFrag);
+          if (!stringFrag.fragment( iSub, colConfig, event)) { failed=true; break; };
+          Benchmark_stop(HadronLevel0next_fragStringFrag);
 
-        // timings[46].stop();
+        }
+
 
         // Low-mass string treated separately. Tell if diffractive system.
-        } else {
+        else 
+        {
+          Benchmark_placeholder(HadronLevel0next_fixBug);
+          Benchmark_start(HadronLevel0next_fragMiniStringFrag);
           bool isDiff = infoPtr->isDiffractiveA() || infoPtr->isDiffractiveB();
           if (!ministringFrag.fragment( iSub, colConfig, event, isDiff))
-            return false;
+            { failed=true; break; };
+          Benchmark_stop(HadronLevel0next_fragMiniStringFrag);
         }
       }
+
+      Benchmark_loopStop(HadronLevel0next_loopColorSinglets);
     }
 
-    // timings[48].start();
+    Benchmark_start(HadronLevel0next_fragHadronScatter);
 
     // Hadron scattering --rjc
     if (doHadronScatter && !hsAfterDecay && firstPass)
       hadronScatter.scatter(event);
     
-    // timings[48].stop();
-    // timings[47].start();
+    Benchmark_stop(HadronLevel0next_fragHadronScatter);
+    Benchmark_start(HadronLevel0next_sequentialDecayShort);
 
     // Second part: sequential decays of short-lived particles (incl. K0).
     if (doDecay) {
 
       // Loop through all entries to find those that should decay.
       int iDec = 0;
-      do {
+      do 
+      {
         Particle& decayer = event[iDec];
         if ( decayer.isFinal() && decayer.canDecay() && decayer.mayDecay()
-          && (decayer.mWidth() > widthSepBE || decayer.idAbs() == 311) ) {
+             && (decayer.mWidth() > widthSepBE || decayer.idAbs() == 311) ) 
+        {
           decays.decay( iDec, event);
           if (decays.moreToDo()) moreToDo = true;
         }
       } while (++iDec < event.size());
     }
 
-    // timings[47].stop();
-
-    // timings[48].start();
+    Benchmark_stop(HadronLevel0next_sequentialDecayShort);
+    Benchmark_start(HadronLevel0next_hadronScatter2);
 
     // Hadron scattering --rjc
     if (doHadronScatter && hsAfterDecay && firstPass)
       hadronScatter.scatter(event);
 
-    // timings[48].stop();
+    Benchmark_stop(HadronLevel0next_hadronScatter2);
+    Benchmark_start(HadronLevel0next_boseEinsteinEffects);
 
     // Third part: include Bose-Einstein effects among current particles.
     if (doBoseEinsteinNow) {
-      if (!boseEinstein.shiftEvent(event)) return false;
+      if (!boseEinstein.shiftEvent(event)) { failed=true; break; };
       doBoseEinsteinNow = false;
     }
 
-    // timings[47].start();
+    Benchmark_stop(HadronLevel0next_boseEinsteinEffects);
+    Benchmark_start(HadronLevel0next_sequentialDecayAll);
 
     // Fourth part: sequential decays also of long-lived particles.
     if (doDecay) {
@@ -232,13 +256,15 @@ bool HadronLevel::next( Event& event) {
       } while (++iDec < event.size());
     }
 
-    // timings[47].stop();
+    Benchmark_stop(HadronLevel0next_sequentialDecayAll);
 
   // Normally done first time around, but sometimes not (e.g. Upsilon).
   } while (moreToDo);
 
+  Benchmark_loopStop(HadronLevel0next_loopMultiHadr);
+
   // Done.
-  return true;
+  return !failed;
 
 }
 
@@ -270,16 +296,28 @@ bool HadronLevel::moreDecays( Event& event) {
 
 bool HadronLevel::decayOctetOnia(Event& event) {
 
+  Benchmark_start(HadronLevel0decayOctetOnia);
+  Benchmark_loopStart(HadronLevel0decayOctetOnia);
+
   // Loop over particles and decay any onia encountered.
   for (int iDec = 0; iDec < event.size(); ++iDec)
-  if (event[iDec].isFinal()
-    && particleDataPtr->isOctetHadron(event[iDec].id())) {
-    if (!decays.decay( iDec, event)) return false;
+  {
+    Benchmark_loopCount(HadronLevel0decayOctetOnia);
 
-    // Set colour flow by hand: gluon inherits octet-onium state.
-    int iGlu = event.size() - 1;
-    event[iGlu].cols( event[iDec].col(), event[iDec].acol() );
+    Benchmark_start(HadronLevel0decayOctetOnia_decay);
+    
+    if (event[iDec].isFinal()
+      && particleDataPtr->isOctetHadron(event[iDec].id())) 
+    {
+      if (!decays.decay( iDec, event)) return false;
+
+      // Set colour flow by hand: gluon inherits octet-onium state.
+      int iGlu = event.size() - 1;
+      event[iGlu].cols( event[iDec].col(), event[iDec].acol() );
+    }
   }
+
+  Benchmark_loopStop(HadronLevel0decayOctetOnia);
 
   // Done.
   return true;
@@ -292,11 +330,21 @@ bool HadronLevel::decayOctetOnia(Event& event) {
 
 bool HadronLevel::findSinglets(Event& event) {
 
+  Benchmark_start(HadronLevel0findSinglets);
+
   // Clear up storage.
   colConfig.clear();
 
+  Benchmark_start(HadronLevel0findSinglets_setupColList);
+  Benchmark_placeholder(HadronLevel0findSinglets_arrange);
+  Benchmark_placeholder(HadronLevel0findSinglets_openStrings);
+  Benchmark_placeholder(HadronLevel0findSinglets_closedStrings);
+
   // Find a list of final partons and of all colour ends and gluons.
   if (colTrace.setupColList(event)) return true;
+
+  Benchmark_stop(HadronLevel0findSinglets_setupColList);
+  Benchmark_start(HadronLevel0findSinglets_arrange);
 
   // Begin arrange the partons into separate colour singlets.
 
@@ -325,6 +373,9 @@ bool HadronLevel::findSinglets(Event& event) {
     if (event.sizeJunction() < nJunOld) --iJun;
   }
 
+  Benchmark_stop(HadronLevel0findSinglets_arrange);
+  Benchmark_start(HadronLevel0findSinglets_openStrings);
+
   // Open strings: pick up each colour end and trace to its anticolor end.
   while (!colTrace.colFinished()) {
     iParton.resize(0);
@@ -333,6 +384,9 @@ bool HadronLevel::findSinglets(Event& event) {
     // Store found open string system. Analyze its properties.
     if (!colConfig.insert(iParton, event)) return false;
   }
+
+  Benchmark_stop(HadronLevel0findSinglets_openStrings);
+  Benchmark_start(HadronLevel0findSinglets_closedStrings);
 
   // Closed strings : begin at any gluon and trace until back at it.
   while (!colTrace.finished()) {
