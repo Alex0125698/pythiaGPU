@@ -1,0 +1,84 @@
+function hierarchy
+------------------
+
+> main
+  > Pythia::Pythia
+    > (set all global class pointers to null)
+    > (pick the xml path)
+    > Settings::init
+      > (load all settings from xml files)
+    > ParticeData::init
+      > ParticleData::initCommon
+        > (just copies a few things from Settings)
+      > ParticleData::readXML
+        > (copies data from xml files for particle database)
+
+  > (custom settings added here)
+        
+  > Pythia::init
+    > (check settings/particle database is ok, return false if not)
+    > (save beam settings)
+    > (save doPartonLevel, doHadronLevel settings)
+    > Rndm::init
+      > (init rng seed using setting)
+    > CoupSM::init
+      > AlphaStrong::init
+        > (setup reference value from settings)
+      > AlphaEM::init
+        > (setup reference value from settings)
+      > (copy Weinberg angle and CKM matrix from settings)
+    > SLHAinterface::init
+      > (this gets the SUSY couplings)
+    > (update the couplingsPtr from SM to SUSY if required)
+    > Event::init
+      > (just copies in the header string; do for both events)
+    > ParticleData::initWidths
+      > (creates objects for all classes derived from ResonanceWidths)
+      > (such as ResonanceGmZ, ResonanceW, ResonanceTop)
+      > (also allows custom ResonanceWidths to be passed in)
+      > ParticleData::setResonancePtr
+        > ParticleDataEntry::setResonancePtr
+          > (this copies in the ResonanceWidths pointer; takes ownership)
+      > ParticleDataEntry::initBWmass
+        > (Prep Breit-Wigner mass selection; frequently-used expressions)
+    > RHadrons::init
+    > (alloc TimeShower and SpaceShower objects)
+    > BeamShape::init
+      > (copies some parameters from Settings)
+    > Pythia::initKinematics
+      > (calc beam 4-momenta, based on Options)
+    > Pythia::initPDFs
+      > Pythia::getPDFPtr
+        > (alloc PDF derived class, based on Options)
+    > BeamParticle::init
+      > (copies beam info from Settings; takes ownership of PDF)
+      > (stores the beam valence content)
+    > ProcessLevel::init
+      > SigmaTotal::init
+        > (copies some stuff from Settings)
+      > SigmaTotal::calc
+        > (calc total cross section, MBR model)
+      > (copy stuff from Settings, get pT cuts)
+      > SetupContainers::init
+        > (for each requested process, we alloc a derived SigmaProcess)
+        > (we also alloc a ProcessContainer that owns the SigmaProcess)
+        > (the ProcessContainers are added to a vector)
+      > ProcessContainer::init (for each)
+        > (copies some stuff from the SigmaProcess derived class)
+        > (allocates a phasSpace derived class, based on SigmaProcess)
+        > SigmaProcess::init
+          > (copies the beam properties, and some Settings)
+          > (could be more stuff depending on derived class)
+        > PhaseSpace::init
+          > (copies the beam properties, and some Settings)
+          > (could be more stuff depending on derived class)
+        > SigmaProcess::initProc
+          > (precalcs; depends on derived class)
+        > SigmaProcess::initFlux
+
+
+
+
+
+
+  > Pythia::next
