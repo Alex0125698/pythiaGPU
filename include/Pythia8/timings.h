@@ -60,6 +60,10 @@ namespace Pythia8
   }
 }
 
+// #define ENABLE_BENCHMARKS
+
+#ifdef ENABLE_BENCHMARKS
+
 #define Benchmark_placeholder(name)             \
 Benchmark::PlaceHolder pl_##name;               \
 if (Benchmark::started())                       \
@@ -100,5 +104,17 @@ if (Benchmark::started())                       \
   static int ind = Benchmark::getUniqueIndex(); \
   lc_##name.finish(ind);                        \
 }
+
+#else
+
+#define Benchmark_placeholder(name) ;
+#define Benchmark_start(name) ;
+#define Benchmark_stop(name) ;
+#define Benchmark_loopStart(name) ;
+#define Benchmark_loopCount(name) ;
+#define Benchmark_loopStop(name) ;
+
+#endif
+
 
 #endif // TIMINGS_H

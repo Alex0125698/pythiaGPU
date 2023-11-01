@@ -18,23 +18,39 @@ int main()
     Benchmark_start(Everything);
     Benchmark_start(Everything_constructor);
 
+    Benchmark::Stopwatch t1;
+    t1.start();
+
     // Settings (Beam CM energy, turn on all QCD processes, set phaseSpace pT min)
     Pythia pythia;
     pythia.readString("Beams:eCM = 8000.");
     pythia.readString("HardQCD:all = on");
     pythia.readString("PhaseSpace:pTHatMin = 20.");
+
+    t1.stop();
+    std::cerr << "constructor " << t1.totalDuration << std::endl;
     
     Benchmark_stop(Everything_constructor);
     Benchmark_start(Everything_init);
     
+    Benchmark::Stopwatch t2;
+    t2.start();
+
     // initialization
     pythia.init();
+    
+    t2.stop();
+    std::cerr << "init " << t2.totalDuration << std::endl;
+    
     
     Benchmark_stop(Everything_init);
     Benchmark_start(Everything_eventLoop);
 
     Hist mult("Number of charged particles", 100, -0.5, 799.5);
     
+    Benchmark::Stopwatch t3;
+    t3.start();
+
     // Begin event loop
     for (int iEvent = 0; iEvent < 100; ++iEvent) 
     {
@@ -57,6 +73,10 @@ int main()
       Benchmark::recordLoopMinMaxAverage();
     }
     
+    t3.stop();
+    std::cerr << "loop " << t3.totalDuration << std::endl;
+    
+
     // Statistics. What is it?
     pythia.stat();
 
