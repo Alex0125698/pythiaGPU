@@ -78,8 +78,8 @@ public:
   int pick(const vector<double>& prob) ;
 
   // Save or read current state to or from a binary file.
-  bool dumpState(string fileName);
-  bool readState(string fileName);
+  bool dumpState(stringref fileName);
+  bool readState(stringref fileName);
 
 private:
 
@@ -143,6 +143,12 @@ public:
     else if (i == 3) return zz;
     else             return tt;
   }
+  const double& operator[](int i) const {
+    if      (i == 1) return xx;
+    else if (i == 2) return yy;
+    else if (i == 3) return zz;
+    else             return tt;
+  }
   double mCalc() const {double temp = tt*tt - xx*xx - yy*yy - zz*zz;
     return (temp >= 0.) ? sqrt(temp) : -sqrt(-temp);}
   double m2Calc() const {return tt*tt - xx*xx - yy*yy - zz*zz;}
@@ -180,7 +186,7 @@ public:
   void rotbst(const RotBstMatrix& M);
 
   // Operator overloading with member functions
-  Vec4 operator-() {Vec4 tmp; tmp.xx = -xx; tmp.yy = -yy; tmp.zz = -zz;
+  Vec4 operator-() const {Vec4 tmp; tmp.xx = -xx; tmp.yy = -yy; tmp.zz = -zz;
     tmp.tt = -tt; return tmp;}
   Vec4& operator+=(const Vec4& v) {xx += v.xx; yy += v.yy; zz += v.zz;
     tt += v.tt; return *this;}
@@ -357,14 +363,14 @@ public:
 
   // Constructors, including copy constructors.
   Hist() {;}
-  Hist(string titleIn, int nBinIn = 100, double xMinIn = 0.,
+  Hist(stringref titleIn, int nBinIn = 100, double xMinIn = 0.,
     double xMaxIn = 1.) {
     book(titleIn, nBinIn, xMinIn, xMaxIn);}
   Hist(const Hist& h)
     : title(h.title), nBin(h.nBin), nFill(h.nFill), xMin(h.xMin),
     xMax(h.xMax), dx(h.dx), under(h.under), inside(h.inside),
     over(h.over), res(h.res) { }
-  Hist(string titleIn, const Hist& h)
+  Hist(stringref titleIn, const Hist& h)
     : title(titleIn), nBin(h.nBin), nFill(h.nFill), xMin(h.xMin),
     xMax(h.xMax), dx(h.dx), under(h.under), inside(h.inside),
     over(h.over), res(h.res) { }
@@ -374,11 +380,11 @@ public:
     res = h.res; } return *this; }
 
   // Book a histogram.
-  void book(string titleIn = "  ", int nBinIn = 100, double xMinIn = 0.,
+  void book(stringref titleIn = "  ", int nBinIn = 100, double xMinIn = 0.,
     double xMaxIn = 1.) ;
 
   // Set title of a histogram.
-  void name(string titleIn = "  ") {title = titleIn; }
+  void name(stringref titleIn = "  ") {title = titleIn; }
 
   // Reset bin contents.
   void null() ;
@@ -392,14 +398,14 @@ public:
   // Print histogram contents as a table (e.g. for Gnuplot).
   void table(ostream& os = cout, bool printOverUnder = false,
     bool xMidBin = true) const ;
-  void table(string fileName, bool printOverUnder = false,
-    bool xMidBin = true) const { ofstream streamName(fileName.c_str());
+  void table(stringref fileName, bool printOverUnder = false,
+    bool xMidBin = true) const { ofstream streamName(fileName);
     table(streamName, printOverUnder, xMidBin);}
 
   // Print a table out of two histograms with same x axis.
   friend void table(const Hist& h1, const Hist& h2, ostream& os,
     bool printOverUnder, bool xMidBin) ;
-  friend void table(const Hist& h1, const Hist& h2, string fileName,
+  friend void table(const Hist& h1, const Hist& h2, stringref fileName,
     bool printOverUnder, bool xMidBin) ;
 
   // Return content of specific bin: 0 gives underflow and nBin+1 overflow.
@@ -449,7 +455,7 @@ private:
   static const char   NUMBER[];
 
   // Properties and contents of a histogram.
-  string title;
+  stringbuf title;
   int    nBin, nFill;
   double xMin, xMax, dx, under, inside, over;
   vector<double> res;
@@ -466,7 +472,7 @@ ostream& operator<<(ostream& os, const Hist& h) ;
 // Print a table out of two histograms with same x axis.
 void table(const Hist& h1, const Hist& h2, ostream& os = cout,
   bool printOverUnder = false, bool xMidBin = true) ;
-void table(const Hist& h1, const Hist& h2, string fileName,
+void table(const Hist& h1, const Hist& h2, stringref fileName,
   bool printOverUnder = false, bool xMidBin = true) ;
 
 // Operator overloading with friends

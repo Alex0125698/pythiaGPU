@@ -54,7 +54,7 @@ public:
   bool   tooLowPTmin()        const {return lowPTmin;}
 
   // Process name and code, and the number of final-state particles.
-  string name()               const {return nameSave;}
+  cstring name()               const {return nameSave;}
   int    code()               const {return codeSave;}
   int    nFinal()             const {return nFinalSave;}
 
@@ -73,7 +73,7 @@ public:
 
   // For nondiffractive and Les Houches Accord identify hardest subprocess.
   bool   hasSub(int i = 0)    const {return hasSubSave[i];}
-  string nameSub(int i = 0)   const {return nameSubSave[i];}
+  cstring nameSub(int i = 0)   const {return nameSubSave[i];}
   int    codeSub(int i = 0)   const {return codeSubSave[i];}
   int    nFinalSub(int i = 0) const {return nFinalSubSave[i];}
 
@@ -151,7 +151,7 @@ public:
 
   // Cross section estimate, optionally process by process.
   vector<int> codesHard();
-  string nameProc(int i = 0)  {return (i == 0) ? "sum"
+  cstring nameProc(int i = 0)  {return (i == 0) ? "sum"
     : ( (procNameM[i] == "") ? "unknown process" : procNameM[i] );}
   long   nTried(int i = 0)    {return (i == 0) ? nTry : nTryM[i];}
   long   nSelected(int i = 0) {return (i == 0) ? nSel : nSelM[i];}
@@ -170,7 +170,7 @@ public:
   void   errorReset() {messages.clear();}
 
   // Print a message the first few times. Insert in database.
-  void   errorMsg(string messageIn, string extraIn = " ",
+  void   errorMsg(stringref messageIn, stringref extraIn = " ",
     bool showAlways = false, ostream& os = cout);
 
   // Provide total number of errors/aborts/warnings experienced to date.
@@ -211,7 +211,7 @@ public:
   void setWeightFIRST( double weightIn) { weightFIRSTSave = weightIn;}
 
   // Return an LHEF header
-  string header(const string &key) {
+  cstring header(const string& key) {
     if (headers.find(key) == headers.end()) return "";
     else return headers[key];
   }
@@ -275,7 +275,7 @@ public:
     LHArwgt *rwgtIn );
 
   // Retrieve events tag information.
-  string getEventAttribute(string key, bool doRemoveWhitespace = false);
+  cstring getEventAttribute(stringref key, bool doRemoveWhitespace = false);
 
   // Retrieve LHEF version
   int LHEFversion();
@@ -285,28 +285,28 @@ public:
 
   // Retrieve generator tag information.
   unsigned int getGeneratorSize();
-  string getGeneratorValue(unsigned int n = 0);
-  string getGeneratorAttribute( unsigned int n, string key,
+  cstring getGeneratorValue(unsigned int n = 0);
+  cstring getGeneratorAttribute( unsigned int n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve rwgt tag information.
   unsigned int getWeightsDetailedSize();
-  double getWeightsDetailedValue(string n);
-  string getWeightsDetailedAttribute(string n, string key,
+  double getWeightsDetailedValue(stringref n);
+  cstring getWeightsDetailedAttribute(stringref n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve weights tag information.
   unsigned int getWeightsCompressedSize();
   double getWeightsCompressedValue(unsigned int n);
-  string getWeightsCompressedAttribute(string key,
+  cstring getWeightsCompressedAttribute(stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve scales tag information.
-  string getScalesValue(bool doRemoveWhitespace = false);
-  double getScalesAttribute(string key);
+  cstring getScalesValue(bool doRemoveWhitespace = false);
+  double getScalesAttribute(stringref key);
 
   // Set LHEF headers
-  void setHeader(const string &key, const string &val)
+  void setHeader(const string& key, const string& val)
     { headers[key] = val; }
 
   // Set abort in parton level.
@@ -364,7 +364,7 @@ private:
          m4H[4], thetaH[4], phiH[4], weightSave, bMPISave, enhanceMPISave,
          pTmaxMPISave, pTmaxISRSave, pTmaxFSRSave, pTnowSave,
          zNowISRSave, pT2NowISRSave, xPomA, xPomB, tPomA, tPomB;
-  string nameSave, nameSubSave[4];
+  stringbuf nameSave, nameSubSave[4];
   vector<int>    codeMPISave, iAMPISave, iBMPISave;
   vector<double> pTMPISave, eMPISave;
 
@@ -429,7 +429,7 @@ private:
 
   // Set info on the (sub)process: from ProcessLevel, ProcessContainer or
   // MultipartonInteractions classes.
-  void setType( string nameIn, int codeIn, int nFinalIn,
+  void setType( stringref nameIn, int codeIn, int nFinalIn,
     bool isNonDiffIn = false, bool isResolvedIn = true,
     bool isDiffractiveAin = false, bool isDiffractiveBin = false,
     bool isDiffractiveCin = false, bool isLHAin = false) {
@@ -439,7 +439,7 @@ private:
     nTotal = 2 + nFinalSave; bIsSet = false; hasSubSave[0] = false;
     nameSubSave[0] = " "; codeSubSave[0] = 0; nFinalSubSave[0] = 0;
     evolIsSet = false;}
-  void setSubType( int iDS, string nameSubIn, int codeSubIn,
+  void setSubType( int iDS, stringref nameSubIn, int codeSubIn,
     int nFinalSubIn) { hasSubSave[iDS] = true; nameSubSave[iDS] = nameSubIn;
     codeSubSave[iDS] = codeSubIn; nFinalSubSave[iDS] = nFinalSubIn;}
   void setPDFalpha( int iDS, int id1pdfIn, int id2pdfIn, double x1pdfIn,
@@ -467,7 +467,7 @@ private:
   void sigmaReset() { nTry = nSel = nAcc = 0; sigGen = sigErr = wtAccSum = 0.;
     procNameM.clear(); nTryM.clear(); nSelM.clear(); nAccM.clear();
     sigGenM.clear(); sigErrM.clear();}
-  void setSigma( int i, string procNameIn, long nTryIn, long nSelIn,
+  void setSigma( int i, stringref procNameIn, long nTryIn, long nSelIn,
     long nAccIn, double sigGenIn, double sigErrIn, double wtAccSumIn) {
     if (i == 0) {nTry = nTryIn; nSel = nSelIn; nAcc = nAccIn;
       sigGen = sigGenIn; sigErr = sigErrIn; wtAccSum = wtAccSumIn;}

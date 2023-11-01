@@ -129,7 +129,7 @@ class SingleClusterJet {
 public:
 
   // Constructors.
-  SingleClusterJet(Vec4 pJetIn = 0., int motherIn = 0) :
+  SingleClusterJet(const Vec4& pJetIn = 0., int motherIn = 0) :
     pJet(pJetIn), mother(motherIn), daughter(0), multiplicity(1),
     isAssigned(false) {pAbs = max( PABSMIN, pJet.pAbs());}
   SingleClusterJet& operator=(const SingleClusterJet& j) { if (this != &j)
@@ -176,7 +176,7 @@ class ClusterJet {
 public:
 
   // Constructor.
-  ClusterJet(string measureIn = "Lund", int selectIn = 2, int massSetIn = 2,
+  ClusterJet(const string& measureIn = "Lund", int selectIn = 2, int massSetIn = 2,
     bool preclusterIn = false, bool reassignIn = false) : measure(1),
     select(selectIn), massSet(massSetIn), doPrecluster(preclusterIn),
     doReassign(reassignIn), nFew(0) {
@@ -278,9 +278,9 @@ public:
 
   // Constructor.
   SingleCellJet(double eTjetIn = 0., double etaCenterIn = 0.,
-    double phiCenterIn = 0., double etaWeightedIn = 0.,
-    double phiWeightedIn = 0., int multiplicityIn = 0,
-    Vec4 pMassiveIn = 0.) : eTjet(eTjetIn), etaCenter(etaCenterIn),
+     double phiCenterIn = 0., double etaWeightedIn = 0.,
+     double phiWeightedIn = 0., int multiplicityIn = 0,
+    const Vec4& pMassiveIn = 0.) : eTjet(eTjetIn), etaCenter(etaCenterIn),
     phiCenter(phiCenterIn), etaWeighted(etaWeightedIn),
     phiWeighted(phiWeightedIn), multiplicity(multiplicityIn),
     pMassive(pMassiveIn) {}
@@ -374,7 +374,7 @@ public:
   // If you wish you can also modify the four-momentum and mass that will
   //  be used in the analysis, without affecting the event record itself,
   // by changing pSel and mSel. Remember to respect E^2 - p^2 = m^2.
-  virtual bool include(int iSel, const Event& event, Vec4& pSel,
+  virtual bool include(int iSel, const Event& event, const Vec4& pSel,
     double& mSel) = 0;
 
 };
@@ -389,7 +389,7 @@ class SingleSlowJet {
 public:
 
   // Constructors.
-  SingleSlowJet( Vec4 pIn = 0., double pT2In = 0., double yIn = 0.,
+  SingleSlowJet(const Vec4& pIn = 0., double pT2In = 0., double yIn = 0.,
       double phiIn = 0., int idxIn = 0) : p(pIn), pT2(pT2In), y(yIn),
       phi(phiIn), mult(1) { idx.insert(idxIn); }
   SingleSlowJet(const SingleSlowJet& ssj) : p(ssj.p), pT2(ssj.pT2),

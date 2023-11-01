@@ -574,7 +574,7 @@ void ParticleData::initCommon() {
 // of normal hadrons and the ResonanceWidths of resonances. For the latter
 // the order of initialization is essential to get secondary widths right.
 
-void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
+void ParticleData::initWidths(const vector<ResonanceWidths*>& resonancePtrs) {
 
   // Initialize some common data.
   initCommon();
@@ -778,7 +778,7 @@ void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
 
 // Read in database from specific XML file (which may refer to others).
 
-bool ParticleData::readXML(string inFile, bool reset) {
+bool ParticleData::readXML(stringref inFile, bool reset) {
 
   // Normally reset whole database before beginning.
   if (reset) {pdt.clear(); isInit = false;}
@@ -904,7 +904,7 @@ bool ParticleData::readXML(string inFile, bool reset) {
 
 // Print out complete database in numerical order as an XML file.
 
-void ParticleData::listXML(string outFile) {
+void ParticleData::listXML(stringref outFile) {
 
   // Convert file name to ofstream.
     const char* cstring = outFile.c_str();
@@ -952,7 +952,7 @@ void ParticleData::listXML(string outFile) {
         os << " products=\"";
         for (int j = 0; j < mult; ++j) {
           os << channel.product(j);
-          if (j < mult - 1) os << " ";
+          if (j < mult - 1) os << ' ';
         }
 
         // Finish off line and loop over allowed decay channels.
@@ -971,7 +971,7 @@ void ParticleData::listXML(string outFile) {
 
 // Read in database from specific free format file.
 
-bool ParticleData::readFF(string inFile, bool reset) {
+bool ParticleData::readFF(stringref inFile, bool reset) {
 
   // Normally reset whole database before beginning.
   if (reset) {pdt.clear(); isInit = false;}
@@ -1076,7 +1076,7 @@ bool ParticleData::readFF(string inFile, bool reset) {
 
 // Print out complete database in numerical order as a free format file.
 
-void ParticleData::listFF(string outFile) {
+void ParticleData::listFF(stringref outFile) {
 
   // Convert file name to ofstream.
     const char* cstring = outFile.c_str();
@@ -1095,15 +1095,15 @@ void ParticleData::listFF(string outFile) {
 
     // Print particle properties.
     os << "\n" << setw(8) << particlePtr->id() << "  "
-       << left << setw(16) << particlePtr->name() << " "
+       << left << setw(16) << particlePtr->name() << ' '
        << setw(16) << particlePtr->name(-1) << "  "
        << right << setw(2) << particlePtr->spinType() << "  "
        << setw(2) << particlePtr->chargeType() << "  "
-       << setw(2) << particlePtr->colType() << " "
-       << setw(10) << particlePtr->m0() << " "
-       << setw(10) << particlePtr->mWidth() << " "
-       << setw(10) << particlePtr->mMin() << " "
-       << setw(10) << particlePtr->mMax() << " "
+       << setw(2) << particlePtr->colType() << ' '
+       << setw(10) << particlePtr->m0() << ' '
+       << setw(10) << particlePtr->mWidth() << ' '
+       << setw(10) << particlePtr->mMin() << ' '
+       << setw(10) << particlePtr->mMax() << ' '
        << scientific << setprecision(5)
        << setw(12) << particlePtr->tau0() << "\n";
 
@@ -1114,9 +1114,9 @@ void ParticleData::listFF(string outFile) {
         os << "               " << setw(6) << channel.onMode()
            << "  " << fixed << setprecision(7) << setw(10)
            << channel.bRatio() << "  "
-           << setw(3) << channel.meMode() << " ";
+           << setw(3) << channel.meMode() << ' ';
         for (int j = 0; j < channel.multiplicity(); ++j)
-          os << setw(8) << channel.product(j) << " ";
+          os << setw(8) << channel.product(j) << ' ';
         os << "\n";
       }
     }
@@ -1130,7 +1130,7 @@ void ParticleData::listFF(string outFile) {
 // Read in updates from a character string, like a line of a file.
 // Is used by readString (and readFile) in Pythia.
 
-  bool ParticleData::readString(string lineIn, bool warn, ostream& os) {
+  bool ParticleData::readString(stringref lineIn, bool warn, ostream& os) {
 
   // If empty line then done.
   if (lineIn.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
@@ -1510,15 +1510,15 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
       os << "\n" << setw(8) << particlePtr->id() << "  " << left;
       if (particlePtr->name(-1) == "void")
         os << setw(33) << particlePtr->name() << "  ";
-      else os << setw(16) << particlePtr->name() << " "
+      else os << setw(16) << particlePtr->name() << ' '
          << setw(16) << particlePtr->name(-1) << "  ";
       os << right << setw(2) << particlePtr->spinType() << "  "
          << setw(2) << particlePtr->chargeType() << "  "
-         << setw(2) << particlePtr->colType() << " "
-         << setw(10) << particlePtr->m0() << " "
-         << setw(10) << particlePtr->mWidth() << " "
-         << setw(10) << particlePtr->mMin() << " "
-         << setw(10) << particlePtr->mMax() << " "
+         << setw(2) << particlePtr->colType() << ' '
+         << setw(10) << particlePtr->m0() << ' '
+         << setw(10) << particlePtr->mWidth() << ' '
+         << setw(10) << particlePtr->mMin() << ' '
+         << setw(10) << particlePtr->mMax() << ' '
          << scientific << setprecision(5)
          << setw(12) << particlePtr->tau0() << "  " << setw(2)
          << particlePtr->isResonance() << "  " << setw(2)
@@ -1535,9 +1535,9 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
              << setw(5) << i
              << setw(6) << channel.onMode()
              << fixed<< setw(12) << channel.bRatio()
-             << setw(5) << channel.meMode() << " ";
+             << setw(5) << channel.meMode() << ' ';
           for (int j = 0; j < channel.multiplicity(); ++j)
-            os << setw(8) << channel.product(j) << " ";
+            os << setw(8) << channel.product(j) << ' ';
           os << "\n";
         }
       }
@@ -1558,7 +1558,7 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
 
 // Print out partial table of database in input order.
 
-void ParticleData::list(vector<int> idList, ostream& os) {
+void ParticleData::list(const vector<int>& idList, ostream& os) {
 
   // Table header; output for bool as off/on.
   os << "\n --------  PYTHIA Particle Data Table (partial)  ---------"
@@ -1582,15 +1582,15 @@ void ParticleData::list(vector<int> idList, ostream& os) {
     os << "\n" << setw(8) << particlePtr->id() << "  " << left;
     if (particlePtr->name(-1) == "void")
       os << setw(33) << particlePtr->name() << "  ";
-    else os << setw(16) << particlePtr->name() << " "
+    else os << setw(16) << particlePtr->name() << ' '
        << setw(16) << particlePtr->name(-1) << "  ";
     os << right << setw(2) << particlePtr->spinType() << "  "
        << setw(2) << particlePtr->chargeType() << "  "
-       << setw(2) << particlePtr->colType() << " "
-       << setw(10) << particlePtr->m0() << " "
-       << setw(10) << particlePtr->mWidth() << " "
-       << setw(10) << particlePtr->mMin() << " "
-       << setw(10) << particlePtr->mMax() << " "
+       << setw(2) << particlePtr->colType() << ' '
+       << setw(10) << particlePtr->m0() << ' '
+       << setw(10) << particlePtr->mWidth() << ' '
+       << setw(10) << particlePtr->mMin() << ' '
+       << setw(10) << particlePtr->mMax() << ' '
        << scientific << setprecision(5)
        << setw(12) << particlePtr->tau0() << "  " << setw(2)
        << particlePtr->isResonance() << "  " << setw(2)
@@ -1607,9 +1607,9 @@ void ParticleData::list(vector<int> idList, ostream& os) {
            << setw(5) << j
            << setw(6) << channel.onMode()
            << fixed<< setw(12) << channel.bRatio()
-           << setw(5) << channel.meMode() << " ";
+           << setw(5) << channel.meMode() << ' ';
         for (int k = 0; k < channel.multiplicity(); ++k)
-          os << setw(8) << channel.product(k) << " ";
+          os << setw(8) << channel.product(k) << ' ';
         os << "\n";
       }
     }
@@ -1787,7 +1787,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if (mult == 0 || mult != nLast) {
           os << " Error: corrupted decay product list for "
              <<  particlePtr->id() << " -> ";
-          for (int j = 0; j < 8; ++j) os << prod[j] << " ";
+          for (int j = 0; j < 8; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1814,7 +1814,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if (chargeTypeSum != 0 && canHandle) {
           os << " Error: 3*charge changed by " << chargeTypeSum
              << " in " << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1823,7 +1823,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if ( baryonTypeSum != 0 && canHandle && particlePtr->isHadron() ) {
           os << " Error: 3*baryon number changed by " << baryonTypeSum
              << " in " << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1934,7 +1934,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if ( !correctME ) {
           os << " Warning: meMode " << meMode << " used for "
              << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1947,7 +1947,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
             os << " Error: decay never possible for ";
           else  os << " Warning: decay sometimes not possible for ";
           os << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -2050,7 +2050,7 @@ double ParticleData::resOpenFrac(int id1In, int id2In, int id3In) {
 
 // Extract XML value string following XML attribute.
 
-string ParticleData::attributeValue(string line, string attribute) {
+string ParticleData::attributeValue(stringref line, stringref attribute) {
 
   if (line.find(attribute) == string::npos) return "";
   int iBegAttri = line.find(attribute);
@@ -2064,7 +2064,7 @@ string ParticleData::attributeValue(string line, string attribute) {
 
 // Extract XML bool value following XML attribute.
 
-bool ParticleData::boolAttributeValue(string line, string attribute) {
+bool ParticleData::boolAttributeValue(stringref line, stringref attribute) {
 
   string valString = attributeValue(line, attribute);
   if (valString == "") return false;
@@ -2076,7 +2076,7 @@ bool ParticleData::boolAttributeValue(string line, string attribute) {
 
 // Extract XML int value following XML attribute.
 
-int ParticleData::intAttributeValue(string line, string attribute) {
+int ParticleData::intAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0;
   istringstream valStream(valString);
@@ -2090,7 +2090,7 @@ int ParticleData::intAttributeValue(string line, string attribute) {
 
 // Extract XML double value following XML attribute.
 
-double ParticleData::doubleAttributeValue(string line, string attribute) {
+double ParticleData::doubleAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0.;
   istringstream valStream(valString);

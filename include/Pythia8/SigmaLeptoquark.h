@@ -38,9 +38,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return "q l -> LQ (leptoquark)";}
+  virtual cstring name()       const {return "q l -> LQ (leptoquark)";}
   virtual int    code()       const {return 3201;}
-  virtual string inFlux()     const {return "ff";}
+  virtual cstring inFlux()     const {return "ff";}
   virtual int    resonanceA() const {return 42;}
 
 private:
@@ -78,9 +78,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return "q g -> LQ l (leptoquark)";}
+  virtual cstring name()    const {return "q g -> LQ l (leptoquark)";}
   virtual int    code()    const {return 3202;}
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return 42;}
 
 private:
@@ -116,9 +116,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return "g g -> LQ LQbar (leptoquark)";}
+  virtual cstring name()    const {return "g g -> LQ LQbar (leptoquark)";}
   virtual int    code()    const {return 3203;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return 42;}
   virtual int    id4Mass() const {return 42;}
 
@@ -154,9 +154,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return "q qbar -> LQ LQbar (leptoquark)";}
+  virtual cstring name()    const {return "q qbar -> LQ LQbar (leptoquark)";}
   virtual int    code()    const {return 3204;}
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
   virtual int    id3Mass() const {return 42;}
   virtual int    id4Mass() const {return 42;}
 

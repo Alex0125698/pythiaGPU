@@ -17,7 +17,7 @@ namespace Pythia8 {
 
 // Main routine to read in SLHA and LHEF+SLHA files
 
-int SusyLesHouches::readFile(string slhaFileIn, int verboseIn,
+int SusyLesHouches::readFile(stringref slhaFileIn, int verboseIn,
   bool useDecayIn) {
 
   slhaFile = slhaFileIn;
@@ -78,7 +78,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
 
     //Rewrite string in lowercase, removing initial and tralining blanks
     //as well as garbage characters
-    toLower(line);
+    toLowerInPlace(line);
 
     //Detect whether read-in is from a Les Houches Event File (LHEF).
     if (line.find("<leshouches") != string::npos
@@ -1838,7 +1838,7 @@ int SusyLesHouches::checkSpectrum() {
 
 // Simple utility to print messages, warnings, and errors
 
-void SusyLesHouches::message(int level, string place,string themessage,
+void SusyLesHouches::message(int level, stringref place,stringref themessage,
   int line) {
   if (verboseSav == 0) return;
   // By default all output to cout, but lines below allow finer control.
@@ -1865,23 +1865,6 @@ void SusyLesHouches::message(int level, string place,string themessage,
 // (eg removes DOS line break characters and similar)
 // Adapted from PYTHIA 8 Settings::toLower() method.
 
-void SusyLesHouches::toLower(string& name) {
-
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
-    name = "";
-    return;
-  }
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
-
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  // Copy to input string and return
-  name=temp;
-
-}
 
 //==========================================================================
 

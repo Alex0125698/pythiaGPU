@@ -85,33 +85,33 @@ public:
   }
 
   // Constructor with path to LHE file
-  HardProcess( string LHEfile, ParticleData* particleData) {
+  HardProcess( stringref LHEfile, ParticleData* particleData) {
     state = Event();
     state.init("(hard process)", particleData);
     translateLHEFString(LHEfile);
   }
 
   // Constructor with core process input
-  void initOnProcess( string process, ParticleData* particleData);
+  void initOnProcess( stringref process, ParticleData* particleData);
 
   // Constructor with path to LHE file input
-  void initOnLHEF( string LHEfile, ParticleData* particleData);
+  void initOnLHEF( stringref LHEfile, ParticleData* particleData);
 
   // Function to access the LHE file and read relevant information
-  void translateLHEFString( string LHEpath);
+  void translateLHEFString( stringref LHEpath);
 
   // Function to translate the process string (in MG/ME notation)
-  void translateProcessString( string process);
+  void translateProcessString( stringref process);
 
   // Function to clear hard process information
   void clear();
 
   // Function to check whether the sets of candidates Pos1, Pos2, together
   // with the proposed candidate iPos give an allowed hard process state
-  bool allowCandidates(int iPos, vector<int> Pos1, vector<int> Pos2,
+  bool allowCandidates(int iPos, const vector<int>& Pos1, const vector<int>& Pos2,
     const Event& event);
   // Function to identify the hard subprocess in the current event
-  void storeCandidates( const Event& event, string process);
+  void storeCandidates( const Event& event, stringref process);
   // Function to check if the particle event[iPos] matches any of
   // the stored outgoing particles of the hard subprocess
   bool matchesAnyOutgoing(int iPos, const Event& event);
@@ -120,8 +120,8 @@ public:
   // is already stored as part of the hard process.
   bool findOtherCandidates(int iPos, const Event& event, bool doReplace);
   // Function to exchange a stored hard process candidate with another choice.
-  bool exchangeCandidates( vector<int> candidates1, vector<int> candidates2,
-    map<int,int> further1, map<int,int> further2);
+  bool exchangeCandidates( const vector<int>& candidates1, const vector<int>& candidates2,
+    const map<int,int>& further1, const map<int,int>& further2);
 
   // Function to get the number of coloured final state partons in the
   // hard process
@@ -541,7 +541,7 @@ protected:
   // This is done so that the HarsProcess class can access both the +0 and +1
   // LHE files to find both the merging scale and the core process string
   // Store.
-  void setLHEInputFile( string lheFile) {
+  void setLHEInputFile( stringref lheFile) {
     lheInputFile = lheFile.substr(0,lheFile.size()-6); }
 
   //----------------------------------------------------------------------//
@@ -650,14 +650,14 @@ protected:
   double muR() { return (muRSave > 0.) ? muRSave : infoPtr->QRen();}
   // Store / get factorisation scale used in matrix element calculation.
   double muFinME() {
-    string mus = infoPtr->getEventAttribute("muf2",true);
+    auto mus = infoPtr->getEventAttribute("muf2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("muf");
     return (mu > 0.) ? mu : (muFinMESave > 0.) ? muFinMESave : infoPtr->QFac();
   }
   double muRinME() {
-    string mus = infoPtr->getEventAttribute("mur2",true);
+    auto mus = infoPtr->getEventAttribute("mur2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("mur");
@@ -707,7 +707,7 @@ protected:
   int findColour(int col, int iExclude1, int iExclude2,
     const Event& event, int type, bool isHardIn);
   // Function to compute Delta R separation from 4-vector input
-  double deltaRij(Vec4 jet1, Vec4 jet2);
+  double deltaRij(const Vec4& jet1, const Vec4& jet2);
 
   //----------------------------------------------------------------------//
   // Functions for weight management

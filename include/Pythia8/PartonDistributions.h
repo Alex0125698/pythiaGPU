@@ -157,7 +157,7 @@ public:
 
   // Constructor.
   MSTWpdf(int idBeamIn = 2212, int iFitIn = 1,
-    string xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
+    stringref xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
     : PDF(idBeamIn) {init( iFitIn,  xmlPath, infoPtr);}
 
 private:
@@ -172,7 +172,7 @@ private:
          xx[65], qq[49], c[13][64][48][5][5];
 
   // Initialization of data array.
-  void init( int iFitIn, string xmlPath, Info* infoPtr);
+  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int , double x, double Q2);
@@ -210,7 +210,7 @@ public:
 
   // Constructor.
   CTEQ6pdf(int idBeamIn = 2212, int iFitIn = 1,
-    string xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
+    stringref xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
     : PDF(idBeamIn) {init( iFitIn, xmlPath, infoPtr);}
 
 private:
@@ -226,7 +226,7 @@ private:
          tConst[9], xConst[9], xLast, qLast;
 
   // Initialization of data array.
-  void init( int iFitIn, string xmlPath, Info* infoPtr);
+  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double Q2);
@@ -333,7 +333,7 @@ public:
 
   // Constructor.
  PomH1FitAB(int idBeamIn = 990, int iFit = 1, double rescaleIn = 1.,
-   string xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
+   stringref xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
    : PDF(idBeamIn) {rescale = rescaleIn; init( iFit, xmlPath, infoPtr);}
 
 private:
@@ -345,7 +345,7 @@ private:
   double quarkGrid[100][30];
 
   // Initialization of data array.
-  void init( int iFit, string xmlPath, Info* infoPtr);
+  void init( int iFit, stringref xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int , double x, double );
@@ -365,7 +365,7 @@ public:
 
   // Constructor.
   PomH1Jets(int idBeamIn = 990,  double rescaleIn = 1.,
-   string xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
+   stringref xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
    : PDF(idBeamIn) {rescale = rescaleIn; init( xmlPath, infoPtr);}
 
 private:
@@ -379,7 +379,7 @@ private:
   double charmGrid[100][88];
 
   // Initialization of data array.
-  void init( string xmlPath, Info* infoPtr);
+  void init( stringref xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double );
@@ -465,7 +465,7 @@ public:
 
   // Constructor.
   NNPDF(int idBeamIn = 2212, int iFitIn = 1,
-    string xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
+    stringref xmlPath = "../share/Pythia8/xmldoc/", Info* infoPtr = 0)
     : PDF(idBeamIn), fPDFGrid(NULL), fXGrid(NULL), fLogXGrid(NULL),
     fQ2Grid(NULL), fLogQ2Grid(NULL), fRes(NULL) {
     init( iFitIn, xmlPath, infoPtr); };
@@ -507,7 +507,7 @@ private:
   double *fRes;
 
   // Initialization of data array.
-  void init( int iFitIn, string xmlPath, Info* infoPtr);
+  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double Q2);
@@ -532,7 +532,7 @@ class LHAPDF : public PDF {
 public:
 
   // Constructor and destructor.
-  LHAPDF(int idIn, string pSet, Info* infoPtrIn);
+  LHAPDF(int idIn, stringref pSet, Info* infoPtrIn);
   ~LHAPDF();
 
   // Confirm that PDF has been set up.
@@ -578,12 +578,12 @@ private:
     if (pdfPtr) pdfPtr->xfUpdate(id, x, Q2);}
 
   // Typedefs of the hooks used to access the plugin.
-  typedef PDF* NewLHAPDF(int, string, int, Info*);
+  typedef PDF* NewLHAPDF(int, stringref, int, Info*);
   typedef void DeleteLHAPDF(PDF*);
   typedef void (*Symbol)();
 
   // Acccess a plugin library symbol.
-  Symbol symbol(string symName);
+  Symbol symbol(stringref symName);
 
   // The loaded LHAPDF object, info pointer, and plugin library name.
   PDF   *pdfPtr;

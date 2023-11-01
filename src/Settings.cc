@@ -21,7 +21,7 @@ namespace Pythia8 {
 
 // Read in database from specific file.
 
-bool Settings::init(string startFile, bool append, ostream& os) {
+bool Settings::init(stringref startFile, bool append, ostream& os) {
 
   // Don't initialize if it has already been done and not in append mode.
   if (isInit && !append) return true;
@@ -183,7 +183,7 @@ bool Settings::init(string startFile, bool append, ostream& os) {
 
 // Overwrite existing database by reading from specific file.
 
-bool Settings::reInit(string startFile, ostream& os) {
+bool Settings::reInit(stringref startFile, ostream& os) {
 
   // Reset maps to empty.
   flags.clear();
@@ -205,7 +205,7 @@ bool Settings::reInit(string startFile, ostream& os) {
 // Read in updates from a character string, like a line of a file.
 // Is used by readString (and readFile) in Pythia.
 
-bool Settings::readString(string line, bool warn, ostream& os) {
+bool Settings::readString(stringref line, bool warn, ostream& os) {
 
   // If empty line then done.
   if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
@@ -378,7 +378,7 @@ bool Settings::readString(string line, bool warn, ostream& os) {
 
 // Write updates or everything to user-defined file.
 
-bool Settings::writeFile(string toFile, bool writeAll) {
+bool Settings::writeFile(stringref toFile, bool writeAll) {
 
   // Open file for writing.
   const char* cstring = toFile.c_str();
@@ -496,7 +496,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
       if ( writeAll || valNow != valDefault ) {
         os  << fvecEntry->second.name << " = ";
         for (vector<bool>::iterator val = valNow.begin();
-             val != --valNow.end(); ++val) os << state[*val] << ",";
+             val != --valNow.end(); ++val) os << state[*val] << ',';
         os << *(--valNow.end()) << "\n";
       }
       ++fvecEntry;
@@ -510,7 +510,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
       if ( writeAll || valNow != valDefault ) {
         os  << mvecEntry->second.name << " = ";
         for (vector<int>::iterator val = valNow.begin();
-             val != --valNow.end(); ++val) os << *val << ",";
+             val != --valNow.end(); ++val) os << *val << ',';
         os << *(--valNow.end()) << "\n";
       }
       ++mvecEntry;
@@ -529,7 +529,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
           else if ( abs(*val) < 1000. ) os << fixed << setprecision(5);
           else if ( abs(*val) < 1000000. ) os << fixed << setprecision(3);
           else os << scientific << setprecision(4);
-          os << *val << ",";
+          os << *val << ',';
         } os << *(--valNow.end()) << "\n";
       }
       ++pvecEntry;
@@ -544,8 +544,11 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
 
 // Print out table of database in lexigraphical order.
 
-void Settings::list(bool doListAll,  bool doListString, string match,
+void Settings::list(bool doListAll,  bool doListString, stringref match_,
   ostream& os) {
+
+  // @fixme
+  thread_local string match; match=match_;
 
   // Table header; output for bool as off/on.
   if (doListAll)
@@ -703,7 +706,7 @@ void Settings::list(bool doListAll,  bool doListString, string match,
             os << " | " << setw(45) << left
                << fvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];
@@ -734,7 +737,7 @@ void Settings::list(bool doListAll,  bool doListString, string match,
             os << " | " << setw(45) << left
                << mvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];
@@ -767,7 +770,7 @@ void Settings::list(bool doListAll,  bool doListString, string match,
             os << " | " << setw(45) << left
                << pvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];
@@ -813,7 +816,7 @@ void Settings::list(bool doListAll,  bool doListString, string match,
 
 // Give back current value(s) as a string, whatever the type.
 
-string Settings::output(string keyIn, bool fullLine) {
+string Settings::output(stringref keyIn, bool fullLine) {
 
   // Default string echoes input key =.
   string outVal = (fullLine) ? " " + keyIn + " = " : "";
@@ -924,43 +927,43 @@ void Settings::resetAll() {
 
 // Give back current value, with check that key exists.
 
-bool Settings::flag(string keyIn) {
+bool Settings::flag(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::flag: unknown key", keyIn);
   return false;
 }
 
-int Settings::mode(string keyIn) {
+int Settings::mode(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mode: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parm(string keyIn) {
+double Settings::parm(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::parm: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::word(string keyIn) {
+string Settings::word(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::word: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvec(string keyIn) {
+vector<bool> Settings::fvec(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::fvec: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvec(string keyIn) {
+vector<int> Settings::mvec(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mvec: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvec(string keyIn) {
+vector<double> Settings::pvec(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::pvec: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -970,43 +973,43 @@ vector<double> Settings::pvec(string keyIn) {
 
 // Give back default value, with check that key exists.
 
-bool Settings::flagDefault(string keyIn) {
+bool Settings::flagDefault(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::flagDefault: unknown key", keyIn);
   return false;
 }
 
-int Settings::modeDefault(string keyIn) {
+int Settings::modeDefault(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::modeDefault: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parmDefault(string keyIn) {
+double Settings::parmDefault(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::parmDefault: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::wordDefault(string keyIn) {
+string Settings::wordDefault(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::wordDefault: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvecDefault(string keyIn) {
+vector<bool> Settings::fvecDefault(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::fvecDefault: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvecDefault(string keyIn) {
+vector<int> Settings::mvecDefault(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::mvecDefault: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvecDefault(string keyIn) {
+vector<double> Settings::pvecDefault(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::pvecDefault: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -1016,7 +1019,10 @@ vector<double> Settings::pvecDefault(string keyIn) {
 
 // Get a map of entries whose names contain the string "match".
 
-map<string, Flag> Settings::getFlagMap(string match) {
+map<string, Flag> Settings::getFlagMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, Flag> flagMap;
@@ -1028,7 +1034,10 @@ map<string, Flag> Settings::getFlagMap(string match) {
   return flagMap;
 }
 
-map<string, Mode> Settings::getModeMap(string match) {
+map<string, Mode> Settings::getModeMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, Mode> modeMap;
@@ -1040,7 +1049,10 @@ map<string, Mode> Settings::getModeMap(string match) {
   return modeMap;
 }
 
-map<string, Parm> Settings::getParmMap(string match) {
+map<string, Parm> Settings::getParmMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, Parm> parmMap;
@@ -1052,7 +1064,10 @@ map<string, Parm> Settings::getParmMap(string match) {
   return parmMap;
 }
 
-map<string, Word> Settings::getWordMap(string match) {
+map<string, Word> Settings::getWordMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, Word> wordMap;
@@ -1064,7 +1079,10 @@ map<string, Word> Settings::getWordMap(string match) {
   return wordMap;
 }
 
-map<string, FVec> Settings::getFVecMap(string match) {
+map<string, FVec> Settings::getFVecMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, FVec> fvecMap;
@@ -1076,7 +1094,10 @@ map<string, FVec> Settings::getFVecMap(string match) {
   return fvecMap;
 }
 
-map<string, MVec> Settings::getMVecMap(string match) {
+map<string, MVec> Settings::getMVecMap(stringref match_) {
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, MVec> mvecMap;
@@ -1088,7 +1109,11 @@ map<string, MVec> Settings::getMVecMap(string match) {
   return mvecMap;
 }
 
-map<string, PVec> Settings::getPVecMap(string match) {
+map<string, PVec> Settings::getPVecMap(stringref match_) 
+{
+
+  // @fixme
+  thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
   map<string, PVec> pvecMap;
@@ -1104,14 +1129,14 @@ map<string, PVec> Settings::getPVecMap(string match) {
 
 // Change current value, respecting limits.
 
-void Settings::flag(string keyIn, bool nowIn) {
+void Settings::flag(stringref keyIn, bool nowIn) {
   string keyLower = toLower(keyIn);
   if (isFlag(keyIn)) flags[keyLower].valNow = nowIn;
   // Print:quiet  triggers a whole set of changes.
   if (keyLower == "print:quiet") printQuiet( nowIn);
 }
 
-bool Settings:: mode(string keyIn, int nowIn) {
+bool Settings:: mode(stringref keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow = modes[keyLower];
@@ -1131,7 +1156,7 @@ bool Settings:: mode(string keyIn, int nowIn) {
 
 }
 
-void Settings::parm(string keyIn, double nowIn) {
+void Settings::parm(stringref keyIn, double nowIn) {
   if (isParm(keyIn)) {
     Parm& parmNow = parms[toLower(keyIn)];
     if (parmNow.hasMin && nowIn < parmNow.valMin)
@@ -1142,25 +1167,25 @@ void Settings::parm(string keyIn, double nowIn) {
   }
 }
 
-void Settings::word(string keyIn, string nowIn) {
+void Settings::word(stringref keyIn, stringref nowIn) {
     if (isWord(keyIn)) words[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::fvec(string keyIn, vector<bool> nowIn) {
+void Settings::fvec(stringref keyIn, const vector<bool>& nowIn) {
   if (isFVec(keyIn)) {
     FVec& fvecNow = fvecs[toLower(keyIn)];
     fvecNow.valNow.clear();
-    for(vector<bool>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++)
       fvecNow.valNow.push_back(*now);
   }
 }
 
-void Settings::mvec(string keyIn, vector<int> nowIn) {
+void Settings::mvec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) {
     MVec& mvecNow = mvecs[toLower(keyIn)];
     mvecNow.valNow.clear();
-    for(vector<int>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (mvecNow.hasMin && *now < mvecNow.valMin)
         mvecNow.valNow.push_back(mvecNow.valMin);
@@ -1171,11 +1196,11 @@ void Settings::mvec(string keyIn, vector<int> nowIn) {
   }
 }
 
-void Settings::pvec(string keyIn, vector<double> nowIn) {
+void Settings::pvec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) {
     PVec& pvecNow = pvecs[toLower(keyIn)];
     pvecNow.valNow.clear();
-    for(vector<double>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (pvecNow.hasMin && *now < pvecNow.valMin)
         pvecNow.valNow.push_back(pvecNow.valMin);
@@ -1190,7 +1215,7 @@ void Settings::pvec(string keyIn, vector<double> nowIn) {
 
 // Change current value, disregarding limits.
 
-void Settings::forceMode(string keyIn, int nowIn) {
+void Settings::forceMode(stringref keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow   = modes[keyLower];
@@ -1201,15 +1226,15 @@ void Settings::forceMode(string keyIn, int nowIn) {
   }
 }
 
-void Settings::forceParm(string keyIn, double nowIn) {
+void Settings::forceParm(stringref keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forceMVec(string keyIn, vector<int> nowIn) {
+void Settings::forceMVec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) mvecs[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forcePVec(string keyIn, vector<double> nowIn) {
+void Settings::forcePVec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) pvecs[toLower(keyIn)].valNow = nowIn;
 }
 
@@ -1217,12 +1242,12 @@ void Settings::forcePVec(string keyIn, vector<double> nowIn) {
 
 // Restore current value to default.
 
-void Settings::resetFlag(string keyIn) {
+void Settings::resetFlag(stringref keyIn) {
   if (isFlag(keyIn)) flags[toLower(keyIn)].valNow
     = flags[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetMode(string keyIn) {
+void Settings::resetMode(stringref keyIn) {
   string keyLower = toLower(keyIn);
   if (isMode(keyIn)) modes[keyLower].valNow
     = modes[toLower(keyIn)].valDefault ;
@@ -1231,27 +1256,27 @@ void Settings::resetMode(string keyIn) {
   if (keyLower == "tune:pp") resetTunePP();
 }
 
-void Settings::resetParm(string keyIn) {
+void Settings::resetParm(stringref keyIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow
     = parms[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetWord(string keyIn) {
+void Settings::resetWord(stringref keyIn) {
   if (isWord(keyIn)) words[toLower(keyIn)].valNow
     = words[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetFVec(string keyIn) {
+void Settings::resetFVec(stringref keyIn) {
   if (isFVec(keyIn)) fvecs[toLower(keyIn)].valNow
     = fvecs[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetMVec(string keyIn) {
+void Settings::resetMVec(stringref keyIn) {
   if (isMVec(keyIn)) mvecs[toLower(keyIn)].valNow
     = mvecs[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetPVec(string keyIn) {
+void Settings::resetPVec(stringref keyIn) {
   if (isPVec(keyIn)) pvecs[toLower(keyIn)].valNow
     = pvecs[toLower(keyIn)].valDefault ;
 }
@@ -2387,25 +2412,25 @@ void Settings::initTunePP( int ppTune) {
 // Convert string to lowercase for case-insensitive comparisons.
 // Also remove initial and trailing blanks, if any.
 
-string Settings::toLower(const string& name) {
+// string Settings::toLower(const string& name) {
 
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+//   // Copy string without initial and trailing blanks.
+//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
+//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  return temp;
+//   // Convert to lowercase letter by letter.
+//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+//   return temp;
 
-}
+// }
 
 //--------------------------------------------------------------------------
 
 // Allow several alternative inputs for true/false.
 
-bool Settings::boolString(string tag) {
+bool Settings::boolString(stringref tag) {
 
   string tagLow = toLower(tag);
   return ( tagLow == "true" || tagLow == "1" || tagLow == "on"
@@ -2417,7 +2442,7 @@ bool Settings::boolString(string tag) {
 
 // Extract XML value string following XML attribute.
 
-string Settings::attributeValue(string line, string attribute) {
+string Settings::attributeValue(stringref line, stringref attribute) {
 
   if (line.find(attribute) == string::npos) return "";
   int iBegAttri = line.find(attribute);
@@ -2431,7 +2456,7 @@ string Settings::attributeValue(string line, string attribute) {
 
 // Extract XML bool value following XML attribute.
 
-bool Settings::boolAttributeValue(string line, string attribute) {
+bool Settings::boolAttributeValue(stringref line, stringref attribute) {
 
   string valString = attributeValue(line, attribute);
   if (valString == "") return false;
@@ -2443,7 +2468,7 @@ bool Settings::boolAttributeValue(string line, string attribute) {
 
 // Extract XML int value following XML attribute.
 
-int Settings::intAttributeValue(string line, string attribute) {
+int Settings::intAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0;
   istringstream valStream(valString);
@@ -2457,7 +2482,7 @@ int Settings::intAttributeValue(string line, string attribute) {
 
 // Extract XML double value following XML attribute.
 
-double Settings::doubleAttributeValue(string line, string attribute) {
+double Settings::doubleAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0.;
   istringstream valStream(valString);
@@ -2471,8 +2496,8 @@ double Settings::doubleAttributeValue(string line, string attribute) {
 
 // Extract XML bool vector value following XML attribute.
 
-vector<bool> Settings::boolVectorAttributeValue(string line,
-  string attribute) {
+vector<bool> Settings::boolVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<bool>(1, false);
   vector<bool> vectorVal;
@@ -2491,8 +2516,8 @@ vector<bool> Settings::boolVectorAttributeValue(string line,
 
 // Extract XML int vector value following XML attribute.
 
-vector<int> Settings::intVectorAttributeValue(string line,
-  string attribute) {
+vector<int> Settings::intVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<int>(1, 0);
   int         intVal;
@@ -2513,8 +2538,8 @@ vector<int> Settings::intVectorAttributeValue(string line,
 
 // Extract XML double vector value following XML attribute.
 
-vector<double> Settings::doubleVectorAttributeValue(string line,
-  string attribute) {
+vector<double> Settings::doubleVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<double>(1, 0.);
   double         doubleVal;

@@ -69,8 +69,8 @@ double WeakShowerMEs::getTchanneluuuuME(double sHat, double tHat,
 // p1 = incoming quark, p2 = incoming gluon, p3 = outgoing gluon,
 // p4 = outgoing Z, p5 = outgoing quark.
 
-double WeakShowerMEs::getTchanneluGuGZME(Vec4 p1, Vec4 p2, Vec4 p3,
-  Vec4 p4, Vec4 p5) {
+double WeakShowerMEs::getTchanneluGuGZME(const Vec4& p1, const Vec4& p2, const Vec4& p3,
+  const Vec4& p4, const Vec4& p5) {
 
   double p12  = p1*p2;
   double p13  = p1*p3;
@@ -314,8 +314,8 @@ double WeakShowerMEs::getTchanneluGuGZME(Vec4 p1, Vec4 p2, Vec4 p3,
 // p1 = incoming u, p2 = incoming d, p3 = outgoing Z,
 // p4 = outgoing d, p5 = outgoing u.
 
-double WeakShowerMEs::getTchannelududZME(Vec4 p1,Vec4 p2,Vec4 p3,
-  Vec4 p4,Vec4 p5) {
+double WeakShowerMEs::getTchannelududZME(const Vec4& p1,const Vec4& p2,const Vec4& p3,
+  const Vec4& p4,const Vec4& p5) {
 
   double p12  = p1*p2;
   double p13  = p1*p3;

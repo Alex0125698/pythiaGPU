@@ -41,9 +41,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual int    resonanceA() const {return idRes;}
 
 private:
@@ -53,7 +53,7 @@ private:
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigBW, widthOut;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -83,9 +83,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave ;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "gg";}
+  virtual cstring inFlux()     const {return "gg";}
   virtual int    resonanceA() const {return idRes;}
 
 private:
@@ -95,7 +95,7 @@ private:
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigma;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -125,9 +125,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "gmgm";}
+  virtual cstring inFlux()     const {return "gmgm";}
   virtual int    resonanceA() const {return idRes;}
 
 private:
@@ -137,7 +137,7 @@ private:
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigma;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -167,9 +167,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual bool   isSChannel() const {return true;}
   virtual int    id3Mass()    const {return idRes;}
   virtual int    id4Mass()    const {return 23;}
@@ -181,7 +181,7 @@ private:
   // Store Z0 mass and width.
   double mZ, widZ, mZS, mwZS, thetaWRat, sigma0, openFracPair, coup2Z;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -212,9 +212,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarChg";}
+  virtual cstring inFlux()     const {return "ffbarChg";}
   virtual bool   isSChannel() const {return true;}
   virtual int    id3Mass()    const {return idRes;}
   virtual int    id4Mass()    const {return 24;}
@@ -226,7 +226,7 @@ private:
   double mW, widW, mWS, mwWS, thetaWRat, sigma0, openFracPairPos,
          openFracPairNeg, coup2W;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -257,9 +257,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
+  virtual cstring inFlux()  const {return "ff";}
   virtual int    id3Mass() const {return idRes;}
 
   // Instructions for 3-body phase space with t-channel propagators.
@@ -274,7 +274,7 @@ private:
   // Store standard factors.
   double mZS, prefac, sigma1, sigma2, openFrac, coup2Z;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -305,9 +305,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
+  virtual cstring inFlux()  const {return "ff";}
   virtual int    id3Mass() const {return idRes;}
 
   // Instructions for 3-body phase space with t-channel propagators.
@@ -322,7 +322,7 @@ private:
   // Store standard prefactor.
   double mWS, prefac, sigma0, openFrac, coup2W;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -354,9 +354,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idRes;}
   virtual int    id4Mass() const {return idNew;}
   virtual int    id5Mass() const {return idNew;}
@@ -373,7 +373,7 @@ private:
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
   int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 
 };
 
@@ -406,9 +406,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
   virtual int    id3Mass() const {return idRes;}
   virtual int    id4Mass() const {return idNew;}
   virtual int    id5Mass() const {return idNew;}
@@ -425,7 +425,7 @@ private:
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
   int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 
 };
 
@@ -458,9 +458,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return idRes;}
   virtual int    id4Mass() const {return idNew;}
 
@@ -469,7 +469,7 @@ private:
   // Store flavour-specific process information and standard prefactor.
   double m2W, thetaWRat, sigma, openFrac;
   int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 
 };
 
@@ -501,9 +501,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idRes;}
 
 private:
@@ -511,7 +511,7 @@ private:
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -542,9 +542,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return idRes;}
 
 private:
@@ -552,7 +552,7 @@ private:
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -583,9 +583,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
   virtual int    id3Mass() const {return idRes;}
 
 private:
@@ -593,7 +593,7 @@ private:
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
   int    higgsType, codeSave, idRes;
-  string nameSave;
+  stringbuf nameSave;
 };
 
 //==========================================================================
@@ -623,9 +623,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return "f fbar' -> H+-";}
+  virtual cstring name()       const {return "f fbar' -> H+-";}
   virtual int    code()       const {return 1061;}
-  virtual string inFlux()     const {return "ffbarChg";}
+  virtual cstring inFlux()     const {return "ffbarChg";}
   virtual int    resonanceA() const {return 37;}
 
 private:
@@ -646,7 +646,7 @@ class Sigma2qg2Hchgq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2Hchgq(int idIn, int codeIn, string nameIn) : idNew(idIn),
+  Sigma2qg2Hchgq(int idIn, int codeIn, stringref nameIn) : idNew(idIn),
     codeSave(codeIn), nameSave(nameIn) {}
 
   // Initialize process.
@@ -665,9 +665,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return 37;}
   virtual int    id4Mass() const {return idNew;}
 
@@ -675,7 +675,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   int    idNew, codeSave, idOld, idUp, idDn;
-  string nameSave;
+  stringbuf nameSave;
   double m2W, thetaWRat, tan2Beta, sigma, openFracPos, openFracNeg;
 
 };
@@ -707,9 +707,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ffbarSame";}
+  virtual cstring inFlux()  const {return "ffbarSame";}
   virtual int    id3Mass() const {return 36;}
   virtual int    id4Mass() const {return higgs12;}
 
@@ -717,7 +717,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   int    higgsType, higgs12, codeSave;
-  string nameSave;
+  stringbuf nameSave;
   double coupZA3H12, m2Z, mGammaZ, thetaWRat, openFrac, sigma0;
 
 };
@@ -749,9 +749,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ffbarChg";}
+  virtual cstring inFlux()  const {return "ffbarChg";}
   virtual int    id3Mass() const {return 37;}
   virtual int    id4Mass() const {return higgs12;}
 
@@ -759,7 +759,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   int    higgsType, higgs12, codeSave;
-  string nameSave;
+  stringbuf nameSave;
   double coupWHchgH12, m2W, mGammaW, thetaWRat, openFracPos, openFracNeg,
          sigma0;
 
@@ -792,9 +792,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return "f fbar -> H+ H-";}
+  virtual cstring name()    const {return "f fbar -> H+ H-";}
   virtual int    code()    const {return 1085;}
-  virtual string inFlux()  const {return "ffbarSame";}
+  virtual cstring inFlux()  const {return "ffbarSame";}
   virtual int    id3Mass() const {return 37;}
   virtual int    id4Mass() const {return 37;}
 

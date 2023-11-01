@@ -116,7 +116,7 @@ private:
   pair<int,int> fromIdWithGluino( int idRHad);
 
   // Construct modified four-vectors to match modified masses.
-  bool newKin( Vec4 pOld1, Vec4 pOld2, double mNew1, double mNew2,
+  bool newKin( const Vec4& pOld1, const Vec4& pOld2, double mNew1, double mNew2,
     Vec4& pNew1, Vec4& pNew2, bool checkMargin = true);
 
 };

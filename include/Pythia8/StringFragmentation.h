@@ -99,7 +99,7 @@ public:
   bool fragment( int iSub, ColConfig& colConfig, Event& event);
 
   // Find the boost matrix to the rest frame of a junction.
-  RotBstMatrix junctionRestFrame(Vec4& p0, Vec4& p1, Vec4& p2);
+  RotBstMatrix junctionRestFrame(const Vec4& p0, const Vec4& p1, const Vec4& p2);
 
 private:
 
@@ -151,10 +151,10 @@ private:
   StringEnd posEnd, negEnd;
 
   // Find region where to put first string break for closed gluon loop.
-  vector<int> findFirstRegion(vector<int>& iPartonIn, Event& event);
+  vector<int> findFirstRegion(const vector<int>& iPartonIn, Event& event);
 
   // Set flavours and momentum position for initial string endpoints.
-  void setStartEnds(int idPos, int idNeg, StringSystem systemNow);
+  void setStartEnds(int idPos, int idNeg, const StringSystem& systemNow);
 
   // Check remaining energy-momentum whether it is OK to continue.
   bool energyUsedUp(bool fromPos);

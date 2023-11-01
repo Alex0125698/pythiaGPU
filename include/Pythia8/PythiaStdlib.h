@@ -104,6 +104,54 @@ using std::setprecision;
 
 namespace Pythia8 {
 
+inline void toLowerInPlace(string& name)
+{
+  for (int i=0; i<(int)name.size(); ++i)
+  {
+    constexpr char delta = 'a' - 'A';
+    bool swap = name[i] >= 'A' && name[i] <= 'Z';
+    name[i] = swap ? name[i] + delta : name[i];
+  }
+}
+
+const string& toLower(const string& name)
+{
+  // for some reason we also trim whitespace characters
+  // will assume no non-printable characters are being used at all
+
+  int tstart = 0, tend = name.size()-1;
+  while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
+  while (name[tend] <= ' ' && tend >= 0) --tend;
+
+  // figure out where the non-lowercase begins
+  int start = tstart;
+  while ((name[start] < 'A' || name[start] > 'Z') && start <= tend) ++start;
+
+  // if no whitespace or uppercase then return original string
+  if (start >= name.size()) return name;
+
+  // prepare buffer to write new string
+  thread_local string tmp;
+  if (tmp.size() < name.size()) tmp = name;
+  tmp.resize(tend-tstart+1);
+
+  // write everything after whitespace and before first uppercase
+  for (int i=tstart; i<start; ++i)
+  {
+    tmp[i-tstart] = name[i];
+  }
+
+  // write rest up to start of trailing whitespace
+  for (int i=start; i<=tend; ++i)
+  {
+    constexpr char delta = 'a' - 'A';
+    bool swap = name[i] >= 'A' && name[i] <= 'Z';
+    tmp[i-tstart] = swap ? name[i] + delta : name[i];
+  }
+
+  return tmp;
+}
+
 // Powers of small integers - for balance speed/code clarity.
 inline double pow2(const double& x) {return x*x;}
 inline double pow3(const double& x) {return x*x*x;}
@@ -116,6 +164,15 @@ inline double sqrtpos(const double& x) {return sqrt( max( 0., x));}
 
 // The Gamma function for real argument.
 double GammaReal(double x);
+
+  using cstring = string;
+  // using cstring = std::string_view;
+  // using cstring = const char*;
+  // using stringref = const std::string_view;
+  using stringref = const std::string&;
+  using stringref2 = const std::string&;
+  using stringbuf = std::string;
+  // using stringbuf = std::string;
 
 } // end namespace Pythia8
 

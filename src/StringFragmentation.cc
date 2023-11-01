@@ -76,7 +76,7 @@ void StringEnd::newHadron() {
 // Fragment off one hadron from the string system, in momentum space,
 // by taking steps from positive end.
 
-Vec4 StringEnd::kinematicsHadron( StringSystem& system) {
+Vec4 StringEnd::kinematicsHadron(StringSystem& system) {
 
   // Pick fragmentation step z and calculate new Gamma.
   zHad = zSelPtr->zFrag( flavOld.id, flavNew.id, mT2Had);
@@ -104,7 +104,7 @@ Vec4 StringEnd::kinematicsHadron( StringSystem& system) {
   for (int iStep = 0; ; ++iStep) {
 
     // Referance to current string region.
-    StringRegion& region = system.region( iPosNew, iNegNew);
+    auto& region = system.region( iPosNew, iNegNew);
 
     // Now begin special section for rapid processing of low region.
     if (iStep == 0 && iPosOld + iNegOld == iMax) {
@@ -563,7 +563,7 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
 
 // Find region where to put first string break for closed gluon loop.
 
-vector<int> StringFragmentation::findFirstRegion(vector<int>& iPartonIn,
+vector<int> StringFragmentation::findFirstRegion(const vector<int>& iPartonIn,
   Event& event) {
 
   // Evaluate mass-squared for all adjacent gluon pairs.
@@ -598,7 +598,7 @@ vector<int> StringFragmentation::findFirstRegion(vector<int>& iPartonIn,
 // Set flavours and momentum position for initial string endpoints.
 
 void StringFragmentation::setStartEnds( int idPos, int idNeg,
-  StringSystem systemNow) {
+  const StringSystem& systemNow) {
 
   // Variables characterizing string endpoints: defaults for open string.
   double px          = 0.;
@@ -1281,8 +1281,8 @@ bool StringFragmentation::fragmentToJunction(Event& event) {
 // Find the boost matrix to the rest frame of a junction,
 // given the three respective endpoint four-momenta.
 
-RotBstMatrix StringFragmentation::junctionRestFrame(Vec4& p0, Vec4& p1,
-  Vec4& p2) {
+RotBstMatrix StringFragmentation::junctionRestFrame(const Vec4& p0, const Vec4& p1,
+  const Vec4& p2) {
 
   // Calculate masses and other invariants.
   Vec4 pSumJun  = p0 + p1 + p2;

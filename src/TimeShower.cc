@@ -554,7 +554,7 @@ void TimeShower::prepareGlobal( Event& event) {
   }
 
   // Reset nFinalBorn on an event-by-event basis.
-  string nNow = infoPtr->getEventAttribute("npNLO",true);
+  auto nNow = infoPtr->getEventAttribute("npNLO",true);
   if (nNow != "" && nFinalBorn == -1){
     nFinalBorn = max(0, atoi((char*)nNow.c_str()));
     // Add number of heavy colored objects in lowest multiplicity state.
@@ -3705,7 +3705,7 @@ inline vectorPairInt findParentSystems(const int sys,
 //  from the radiator system and the recoiler system and find where they
 //  intersect.
 
-bool TimeShower::rescatterPropagateRecoil( Event& event, Vec4& pNew) {
+bool TimeShower::rescatterPropagateRecoil( Event& event, const Vec4& pNew) {
 
   // Some useful variables for later
   int  iRadBef    = dipSel->iRadiator;
@@ -4270,8 +4270,8 @@ double TimeShower::gammaZmix( Event& event, int iRes, int iDau1, int iDau2) {
 // Set up to calculate QCD ME correction with calcMEcorr.
 // Normally for primary particles, but also from g/gamma -> f fbar.
 
-double TimeShower::findMEcorr(TimeDipoleEnd* dip, Particle& rad,
-  Particle& partner, Particle& emt, bool cutEdge) {
+double TimeShower::findMEcorr(TimeDipoleEnd* dip, const Particle& rad,
+  const Particle& partner, const Particle& emt, bool cutEdge) {
 
   // Initial values and matrix element kind.
   double wtME    = 1.;

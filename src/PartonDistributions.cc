@@ -572,7 +572,10 @@ const double MSTWpdf::qqInit[49] = {0., 1.0, 1.25, 1.5, 0., 0., 2.5, 3.2,
 
 // Initialize PDF: read in data grid from file and set up interpolation.
 
-void MSTWpdf::init(int iFitIn, string xmlPath, Info* infoPtr) {
+void MSTWpdf::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
+
+  // @fixme
+  thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities. Counters and temporary variables.
   iFit = iFitIn;
@@ -1185,7 +1188,9 @@ const double CTEQ6pdf::XPOWER = 0.3;
 
 // Initialize PDF: read in data grid from file.
 
-void CTEQ6pdf::init(int iFitIn, string xmlPath, Info* infoPtr) {
+void CTEQ6pdf::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
+
+  thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities.
   iFit = iFitIn;
@@ -1770,7 +1775,9 @@ void PomFix::xfUpdate(int , double x, double) {
 
 //--------------------------------------------------------------------------
 
-void PomH1FitAB::init( int iFit, string xmlPath, Info* infoPtr) {
+void PomH1FitAB::init( int iFit, stringref xmlPath_, Info* infoPtr) {
+
+  thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Open files from which grids should be read in.
   if (xmlPath[ xmlPath.length() - 1 ] != '/') xmlPath += "/";
@@ -1878,7 +1885,9 @@ void PomH1FitAB::xfUpdate(int , double x, double Q2) {
 
 //--------------------------------------------------------------------------
 
-void PomH1Jets::init( string xmlPath, Info* infoPtr) {
+void PomH1Jets::init( stringref xmlPath_, Info* infoPtr) {
+
+  thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Open files from which grids should be read in.
   if (xmlPath[ xmlPath.length() - 1 ] != '/') xmlPath += "/";
@@ -2080,7 +2089,9 @@ const double NNPDF::fXMINGRID = 1e-9;
 
 // Initialize PDF: read in data grid from file.
 
-void NNPDF::init(int iFitIn, string xmlPath, Info* infoPtr) {
+void NNPDF::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
+
+  thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities.
   iFit = iFitIn;
@@ -2351,7 +2362,7 @@ void NNPDF::polin2(double x1al[], double x2al[], double yal[][fN],
 
 // Constructor.
 
-LHAPDF::LHAPDF(int idIn, string pSet, Info* infoPtrIn) :
+LHAPDF::LHAPDF(int idIn, stringref pSet, Info* infoPtrIn) :
   pdfPtr(0), infoPtr(infoPtrIn) {
   isSet = false;
   if (!infoPtr) return;
@@ -2415,7 +2426,7 @@ LHAPDF::~LHAPDF() {
 
 // Access a plugin library symbol.
 
-LHAPDF::Symbol LHAPDF::symbol(string symName) {
+LHAPDF::Symbol LHAPDF::symbol(stringref symName) {
   void  *lib(0);
   Symbol sym(0);
   const char* error(0);

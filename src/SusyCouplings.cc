@@ -676,7 +676,7 @@ void CoupSUSY::initSUSY (SusyLesHouches* slhaPtrIn, Info* infoPtrIn,
       // tmp: verbose output
       if (DBSUSY) {
         cout  <<  " Gen = " << k << " mu = " << mu << " md = " << md
-              << " yUU,DD = " << slhaPtr->yu(k,k) << ","
+              << " yUU,DD = " << slhaPtr->yu(k,k) << ','
               << slhaPtr->yd(k,k) << endl;
       }
 

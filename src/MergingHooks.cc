@@ -24,7 +24,7 @@ namespace Pythia8 {
 
 // Initialisation on the process string
 
-void HardProcess::initOnProcess( string process, ParticleData* particleData) {
+void HardProcess::initOnProcess( stringref process, ParticleData* particleData) {
   state.init("(hard process)", particleData);
   translateProcessString(process);
 }
@@ -33,7 +33,7 @@ void HardProcess::initOnProcess( string process, ParticleData* particleData) {
 
 // Initialisation on the path to LHE file
 
-void HardProcess::initOnLHEF( string LHEfile, ParticleData* particleData) {
+void HardProcess::initOnLHEF( stringref LHEfile, ParticleData* particleData) {
   state.init("(hard process)", particleData);
   translateLHEFString(LHEfile);
 }
@@ -49,7 +49,7 @@ void HardProcess::initOnLHEF( string LHEfile, ParticleData* particleData) {
 // is automatic, else the user is asked to supply the necessary
 // information.
 
-void HardProcess::translateLHEFString( string LHEpath){
+void HardProcess::translateLHEFString( stringref LHEpath){
 
   // Open path to LHEF and extract merging scale
   ifstream infile;
@@ -551,7 +551,7 @@ void HardProcess::translateLHEFString( string LHEpath){
 // internal notation
 // Currently, the input string has to be in MadEvent notation
 
-void HardProcess::translateProcessString( string process){
+void HardProcess::translateProcessString( stringref process){
 
   vector <int> incom;
   vector <int> inter;
@@ -898,8 +898,8 @@ void HardProcess::translateProcessString( string process){
 // Function to check if the candidates stored in Pos1 and Pos2, together with
 // a proposed candidate iPos are allowed.
 
-bool HardProcess::allowCandidates(int iPos, vector<int> Pos1,
-  vector<int> Pos2, const Event& event){
+bool HardProcess::allowCandidates(int iPos, const vector<int>& Pos1,
+  const vector<int>& Pos2, const Event& event){
 
   bool allowed = true;
 
@@ -969,7 +969,7 @@ bool HardProcess::allowCandidates(int iPos, vector<int> Pos1,
 
 // Function to identify the hard subprocess in the current event
 
-void HardProcess::storeCandidates( const Event& event, string process){
+void HardProcess::storeCandidates( const Event& event, stringref process){
 
   // Store the reference event
   state.clear();
@@ -1718,8 +1718,8 @@ bool HardProcess::findOtherCandidates(int iPos, const Event& event,
 
 // Function to exchange hard process candidates.
 
-bool HardProcess::exchangeCandidates( vector<int> candidates1,
-    vector<int> candidates2, map<int,int> further1, map<int,int> further2) {
+bool HardProcess::exchangeCandidates( const vector<int>& candidates1,
+    const vector<int>& candidates2, const map<int,int>& further1, const map<int,int>& further2) {
 
   int nOld1 = candidates1.size();
   int nOld2 = candidates2.size();
@@ -1942,12 +1942,12 @@ void HardProcess::list() const {
   cout << " \t " << hardIncoming1 << " + " << hardIncoming2;
   cout << " \t -----> \t ";
   for(int i =0; i < int(hardIntermediate.size());++i)
-    cout << hardIntermediate[i] << " ";
+    cout << hardIntermediate[i] << ' ';
   cout << " \t -----> \t ";
   for(int i =0; i < int(hardOutgoing1.size());++i)
-    cout << hardOutgoing1[i] << " ";
+    cout << hardOutgoing1[i] << ' ';
   for(int i =0; i < int(hardOutgoing2.size());++i)
-    cout << hardOutgoing2[i] << " ";
+    cout << hardOutgoing2[i] << ' ';
   cout << endl;
 }
 
@@ -1961,12 +1961,12 @@ void HardProcess::listCandidates() const {
   cout << " \t " << hardIncoming1 << " + " << hardIncoming2;
   cout << " \t -----> \t ";
   for(int i =0; i < int(PosIntermediate.size());++i)
-    cout << PosIntermediate[i] << " ";
+    cout << PosIntermediate[i] << ' ';
   cout << " \t -----> \t ";
   for(int i =0; i < int(PosOutgoing1.size());++i)
-    cout << PosOutgoing1[i] << " ";
+    cout << PosOutgoing1[i] << ' ';
   for(int i =0; i < int(PosOutgoing2.size());++i)
-    cout << PosOutgoing2[i] << " ";
+    cout << PosOutgoing2[i] << ' ';
   cout << endl;
 }
 
@@ -3793,7 +3793,7 @@ double MergingHooks::cutbasedms( const Event& event ){
 
 // Function to compute Delta R separation from 4-vector input.
 
-double MergingHooks::deltaRij(Vec4 jet1, Vec4 jet2){
+double MergingHooks::deltaRij(const Vec4& jet1, const Vec4& jet2){
 
   // Declare return variable
   double deltaR = 0.;

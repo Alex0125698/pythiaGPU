@@ -186,8 +186,8 @@ public:
 
   // Enhance emission rates (sec. 4 in EPJC (2013) 73).
   virtual bool canEnhanceEmission() {return false;}
-  virtual double enhanceFactor( string ) {return 1.;}
-  virtual double vetoProbability( string ) {return 0.;}
+  virtual double enhanceFactor( stringref ) {return 1.;}
+  virtual double vetoProbability( stringref ) {return 0.;}
   void setEnhancedEventWeight(double wt) { enhancedEventWeight = wt;}
   double getEnhancedEventWeight() { return enhancedEventWeight;}
 
@@ -205,10 +205,10 @@ public:
   // Do change fragmentation parameters.
   // Input: flavPtr, zPtr, pTPtr, idEnd, m2Had, iParton.
   virtual bool doChangeFragPar( StringFlav*, StringZ*, StringPT*, int,
-    double, vector<int>) { return false;}
+    double, const vector<int>&) { return false;}
 
  // Do a veto on a hadron just before it is added to the final state.
-  virtual bool doVetoFragmentation( Particle) { return false;}
+  virtual bool doVetoFragmentation( const Particle&) { return false;}
 
 protected:
 

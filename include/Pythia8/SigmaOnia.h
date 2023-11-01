@@ -34,11 +34,11 @@ public:
 private:
 
   // Intialise and check settings.
-  void initStates(string wave, const vector<int> &states,
+  void initStates(stringref wave, const vector<int> &states,
     vector<int> &jnums, bool &valid);
-  void initSettings(string wave, unsigned int size,
+  void initSettings(stringref wave, unsigned int size,
     const vector<string> &names, vector< vector<double> > &pvecs, bool &valid);
-  void initSettings(string wave, unsigned int size,
+  void initSettings(stringref wave, unsigned int size,
     const vector<string> &names, vector< vector<bool> > &fvecs, bool &valid);
 
   // Stored pointers.
@@ -59,7 +59,7 @@ private:
   bool onia, onia3S1, onia3PJ, onia3DJ, oniaFlavour;
   bool valid3S1, valid3PJ, valid3DJ;
   int flavour;
-  string cat, key;
+  stringbuf cat, key;
 
   // Stored parameters.
   double mSplit;
@@ -91,16 +91,16 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idHad;}
 
  private:
 
   // Values stored for process type and colour flow selection.
   int    idHad, codeSave;
-  string nameSave;
+  stringbuf nameSave;
   double oniumME, sigma;
 
 };
@@ -130,22 +130,22 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idHad;}
 
 protected:
 
   // Name pre-, post-, and mid-fix.
-  virtual string namePrefix()  const {return "g g";}
-  virtual string namePostfix() const {return "g";}
-  string nameMidfix() const {return (codeSave - codeSave%100)/100
+  virtual cstring namePrefix()  const {return "g g";}
+  virtual cstring namePostfix() const {return "g";}
+  cstring nameMidfix() const {return (codeSave - codeSave%100)/100
       == 4 ? "ccbar" : "bbbar";}
 
   // Values stored for process type and colour flow selection.
   int    idHad, jSave, codeSave;
-  string nameSave;
+  stringbuf nameSave;
   double oniumME, sigma;
 
 };
@@ -169,13 +169,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
 
 protected:
 
   // Name pre- and post-fix.
-  string namePrefix()  const {return "q g";}
-  string namePostfix() const {return "q";}
+  cstring namePrefix()  const {return "q g";}
+  cstring namePostfix() const {return "q";}
 
 };
 
@@ -198,13 +198,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
 
 protected:
 
   // Name pre- and post-fix.
-  string namePrefix()  const {return "q qbar";}
-  string namePostfix() const {return "g";}
+  cstring namePrefix()  const {return "q qbar";}
+  cstring namePostfix() const {return "g";}
 
 };
 
@@ -254,20 +254,20 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
+  virtual cstring name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idHad;}
 
 protected:
 
   // Name pre- and post-fix.
-  virtual string namePrefix()  const {return "g g";}
-  virtual string namePostfix() const {return "g";}
+  virtual cstring namePrefix()  const {return "g g";}
+  virtual cstring namePostfix() const {return "g";}
 
   // Values stored for process type and colour flow selection.
   int    idHad, stateSave, codeSave;
-  string nameSave;
+  stringbuf nameSave;
   double oniumME, sigma, mSplit;
 
 };
@@ -292,13 +292,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
 
 protected:
 
   // Name pre- and post-fix.
-  virtual string namePrefix()  const {return "q g";}
-  virtual string namePostfix() const {return "q";}
+  virtual cstring namePrefix()  const {return "q g";}
+  virtual cstring namePostfix() const {return "q";}
 
 };
 
@@ -323,13 +323,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
 
 protected:
 
   // Name pre- and post-fix.
-  virtual string namePrefix()  const {return "q qbar";}
-  virtual string namePostfix() const {return "g";}
+  virtual cstring namePrefix()  const {return "q qbar";}
+  virtual cstring namePostfix() const {return "g";}
 
 };
 

@@ -161,7 +161,7 @@ public:
   // Return clustering kinematics - as needed for merging.
   // Usage: clustered( const Event& event, string name, int iRad, int iEmt,
   //                   int iRec)
-  virtual Event clustered( const Event&, string, int, int, int)
+  virtual Event clustered( const Event&, stringref, int, int, int)
     { return Event();}
 
   // Return state after a branching, as needed to evaluate more complicated
@@ -169,7 +169,7 @@ public:
   // Usage: branched( const Event& event, int iRadBef, int iRecBef, int idEmt,
   //                  double pT2, double z, double RN, vector<double> aux)
   virtual Event branched( const Event&, int, int, int, double,
-    double, double, vector<double>) { return Event();}
+    double, double, const vector<double>&) { return Event();}
 
   // Return the evolution variable.
   // Usage: pT2Times( const Particle& rad, const Particle& emt,
@@ -268,7 +268,8 @@ private:
   bool doTrialNow, canEnhanceEmission, canEnhanceTrial, canEnhanceET;
   string splittingNameNow, splittingNameSel;
   map< double, pair<string,double> > enhanceFactors;
-  void storeEnhanceFactor(double pT2, string name, double enhanceFactorIn)
+
+  void storeEnhanceFactor(double pT2, stringref name, double enhanceFactorIn)
     { enhanceFactors.insert(make_pair(pT2,make_pair(name,enhanceFactorIn)));}
 
   // All dipole ends and a pointer to the selected hardest dipole end.
@@ -311,8 +312,8 @@ private:
   double gammaZmix( Event& event, int iRes, int iDau1, int iDau2);
 
   // Set up to calculate QCD ME correction with calcMEcorr.
-  double findMEcorr(TimeDipoleEnd* dip, Particle& rad, Particle& partner,
-   Particle& emt, bool cutEdge = true);
+  double findMEcorr(TimeDipoleEnd* dip, const Particle& rad, const Particle& partner,
+   const Particle& emt, bool cutEdge = true);
 
   // Set up to calculate weak ME corrections for t-channel processes.
   double findMEcorrWeak(TimeDipoleEnd* dip, Vec4 rad, Vec4 rec,
@@ -326,7 +327,7 @@ private:
   void findAsymPol( Event& event, TimeDipoleEnd* dip);
 
   // Rescatter: propagate dipole recoil to internal lines connecting systems.
-  bool rescatterPropagateRecoil( Event& event, Vec4& pNew);
+  bool rescatterPropagateRecoil( Event& event, const Vec4& pNew);
 
   // Properties stored for (some) global recoil schemes.
   // Vectors of event indices defining the hard process.

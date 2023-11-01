@@ -33,17 +33,17 @@ public:
   virtual void initPointers(ParticleData*, Couplings*, Settings* = 0);
 
   // Initialize the channel.
-  virtual HelicityMatrixElement* initChannel(vector<HelicityParticle>&);
+  virtual HelicityMatrixElement* initChannel(const vector<HelicityParticle>&);
 
   // Calculate the matrix element weight for a decay.
-  virtual double decayWeight(vector<HelicityParticle>&);
+  virtual double decayWeight(const vector<HelicityParticle>&);
 
   // Calculate the maximum matrix element decay weight.
-  virtual double decayWeightMax(vector<HelicityParticle>&)
+  virtual double decayWeightMax(const vector<HelicityParticle>&)
     {return DECAYWEIGHTMAX;}
 
   // Calculate the helicity matrix element.
-  virtual complex calculateME(vector<int>){return complex(0,0);}
+  virtual complex calculateME(const vector<int>&){return complex(0,0);}
 
   // Calculate the decay matrix for a particle.
   virtual void calculateD(vector<HelicityParticle>&);
@@ -52,7 +52,7 @@ public:
   virtual void calculateRho(unsigned int, vector<HelicityParticle>&);
 
   // Set a fermion line.
-  void setFermionLine(int, HelicityParticle&, HelicityParticle&);
+  void setFermionLine(int, const HelicityParticle&, const HelicityParticle&);
 
   // Calculate Breit-Wigner's with running widths and fixed.
   virtual complex  breitWigner(double s, double M, double G);
@@ -87,7 +87,7 @@ protected:
   virtual void initConstants() {};
 
   // Initialize the wave functions (called by decayWeight and calculateRho/D).
-  virtual void initWaves(vector<HelicityParticle>&) {};
+  virtual void initWaves(const vector<HelicityParticle>&) {};
 
   // Pointer to particle data.
   ParticleData* particleDataPtr;
@@ -109,16 +109,16 @@ private:
     unsigned int);
 
   // Recursive sub-method to calculate the matrix element weight for a decay.
-  void decayWeight(vector<HelicityParticle>&, vector<int>&, vector<int>&,
+  void decayWeight(const vector<HelicityParticle>&, vector<int>&, vector<int>&,
     complex&, unsigned int);
 
   // Calculate the product of the decay matrices for a hard process.
   complex calculateProductD(unsigned int, unsigned int,
-    vector<HelicityParticle>&, vector<int>&, vector<int>&);
+    const vector<HelicityParticle>&, const vector<int>&, const vector<int>&);
 
   // Calculate the product of the decay matrices for a decay process.
-  complex calculateProductD(vector<HelicityParticle>&,
-    vector<int>&, vector<int>&);
+  complex calculateProductD(const vector<HelicityParticle>&,
+    const vector<int>&, const vector<int>&);
 
 };
 
@@ -133,9 +133,9 @@ public:
 
   void initConstants();
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>&);
 
 private:
 
@@ -155,21 +155,21 @@ public:
 
   void initConstants();
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>);
 
 private:
 
   // Return gamma element for the helicity matrix element.
-  complex calculateGammaME(vector<int>);
+  complex calculateGammaME(const vector<int>);
 
   // Return Z/Z' element for helicity matrix element.
-  complex calculateZME(vector<int>, double, double, double, double,
+  complex calculateZME(const vector<int>, double, double, double, double,
     double, double);
 
   // Return the Z' vector or axial coupling for a fermion.
-  double zpCoupling(int id, string type);
+  double zpCoupling(int id, stringref type);
 
   // Vector and axial couplings.
   double p0CAZ, p2CAZ, p0CVZ, p2CVZ, p0CAZp, p2CAZp, p0CVZp, p2CVZp;
@@ -193,7 +193,7 @@ class HMEX2TwoFermions : public HelicityMatrixElement {
 
 public:
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
 };
 
@@ -207,7 +207,7 @@ public:
 
   void initConstants();
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>);
 
 private:
 
@@ -224,7 +224,7 @@ class HMEGamma2TwoFermions : public HMEX2TwoFermions {
 
 public:
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>);
 
 };
 
@@ -238,12 +238,12 @@ public:
 
   void initConstants();
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>&);
 
 private:
 
   // Return the Z' vector or axial coupling for a fermion.
-  double zpCoupling(int id, string type);
+  double zpCoupling(int id, stringref type);
 
   // Vector and axial couplings.
   double p2CA, p2CV;
@@ -264,9 +264,9 @@ public:
 
   void initConstants();
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>&);
 
 private:
 
@@ -283,17 +283,17 @@ class HMETauDecay : public HelicityMatrixElement {
 
 public:
 
-  virtual void initWaves(vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&);
 
-  virtual complex calculateME(vector<int>);
+  virtual complex calculateME(const vector<int>&);
 
-  virtual double decayWeightMax(vector<HelicityParticle>&);
+  virtual double decayWeightMax(const vector<HelicityParticle>&);
 
 protected:
 
-  virtual void initHadronicCurrent(vector<HelicityParticle>&) {};
+  virtual void initHadronicCurrent(const vector<HelicityParticle>&) {};
 
-  virtual void calculateResonanceWeights(vector<double>&, vector<double>&,
+  virtual void calculateResonanceWeights(const vector<double>&, const vector<double>&,
     vector<complex>&);
 
 };
@@ -322,9 +322,9 @@ public:
 
   void initConstants();
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>&);
 
 };
 
@@ -339,7 +339,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&);
 
 private:
 
@@ -360,7 +360,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&);
 
 private:
 
@@ -383,7 +383,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&);
 
 protected:
 
@@ -397,7 +397,7 @@ protected:
   virtual void initResonances() {;}
 
   // Initialize the momenta.
-  virtual void initMomenta(vector<HelicityParticle>&);
+  virtual void initMomenta(const vector<HelicityParticle>&);
 
   // Center of mass energies and momenta.
   double s1, s2, s3, s4;
@@ -418,8 +418,8 @@ protected:
 
   // Sum running p and fixed width Breit-Wigner resonances.
   complex T(double m0, double m1, double s,
-            vector<double>& M, vector<double>& G, vector<double>& W);
-  complex T(double s, vector<double>& M, vector<double>& G, vector<double>& W);
+            const vector<double>& M, const vector<double>& G, const vector<double>& W);
+  complex T(double s, const vector<double>& M, const vector<double>& G, const vector<double>& W);
 
 };
 
@@ -507,9 +507,9 @@ public:
 
   void initConstants();
 
-  void initWaves(vector<HelicityParticle>&);
+  void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(vector<int>);
+  complex calculateME(const vector<int>&);
 
 protected:
 
@@ -518,7 +518,7 @@ protected:
   double piM;
 
   // Form factor.
-  complex F(double s, vector<double> M, vector<double> G, vector<double> W);
+  complex F(double s, const vector<double>& M, const vector<double>& G, const vector<double>& W);
 
 };
 
@@ -532,7 +532,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(vector<HelicityParticle>& p);
+  void initHadronicCurrent(const vector<HelicityParticle>& p);
 
 private:
 
@@ -540,9 +540,9 @@ private:
   double G(int i, double s);
 
   // T-vector functions.
-  Wave4 t1(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
-  Wave4 t2(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
-  Wave4 t3(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
+  Wave4 t1(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
+  Wave4 t2(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
+  Wave4 t3(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
 
   // Breit-Wigner denominators for the intermediate mesons.
   complex  a1D(double s);
@@ -586,8 +586,8 @@ public:
 private:
 
   // Hadronic currents.
-  Wave4 Ja(Wave4 &q, Wave4 &q1, Wave4 &q2, Wave4 &q3, Wave4 &q4, Wave4 &q5);
-  Wave4 Jb(Wave4 &q, Wave4 &q1, Wave4 &q2, Wave4 &q3, Wave4 &q4, Wave4 &q5);
+  Wave4 Ja(const Wave4& q, const Wave4& q1, const Wave4& q2, const Wave4& q3, const Wave4& q4, const Wave4& q5);
+  Wave4 Jb(const Wave4& q, const Wave4& q1, const Wave4& q2, const Wave4& q3, const Wave4& q4, const Wave4& q5);
 
   // Simplified s-wave Breit-Wigner assuming massless products.
   complex breitWigner(double s, double M, double G);
@@ -605,17 +605,17 @@ class HMETau2PhaseSpace : public HMETauDecay {
 
 public:
 
-  void initWaves(vector<HelicityParticle>&) {};
+  void initWaves(const vector<HelicityParticle>&) {};
 
-  complex calculateME(vector<int>) {return 1;}
+  complex calculateME(const vector<int>&) {return 1;}
 
-  void calculateD(vector<HelicityParticle>&) {};
+  void calculateD(const vector<HelicityParticle>&) {};
 
-  void calculateRho(unsigned int, vector<HelicityParticle>&) {};
+  void calculateRho(unsigned int, const vector<HelicityParticle>&) {};
 
-  double decayWeight(vector<HelicityParticle>&) {return 1.0;}
+  double decayWeight(const vector<HelicityParticle>&) {return 1.0;}
 
-  double decayWeightMax(vector<HelicityParticle>&) {return 1.0;}
+  double decayWeightMax(const vector<HelicityParticle>&) {return 1.0;}
 
 };
 

@@ -261,7 +261,7 @@ void SigmaOniaSetup::setupSigma2qq(vector<SigmaProcess*> &procs, bool oniaIn) {
 
 // Initialise and check the flavour, j-number, and validity of states.
 
-void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
+void SigmaOniaSetup::initStates(stringref wave, const vector<int> &states,
   vector<int> &jnums, bool &valid) {
 
   set<int> unique;
@@ -273,9 +273,16 @@ void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
     state << states[i];
     unique.insert(states[i]);
     if (nstates + 1 != unique.size()) {
-      infoPtr->errorMsg("Error in SigmaOniaSetup::initStates: particle "
-                        + state.str() + " in mvec " + cat + ":states("
-                        + wave + ")", "has duplicates");
+      thread_local string tmp; tmp = "Error in SigmaOniaSetup::initStates: particle ";
+      tmp += state.str();
+      tmp += " in mvec ";
+      tmp += cat;
+      tmp += ":states(";
+      tmp += wave;
+      tmp += ")";
+
+
+      infoPtr->errorMsg(tmp , "has duplicates");
       valid = false;
     } else ++nstates;
 
@@ -300,30 +307,35 @@ void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
 
     // Check state validity.
     if (states[i] != 0) {
+      thread_local string tmp; tmp = "Error in SigmaOniaSetup::initStates: particle ";
+      tmp += state.str();
+      tmp += " in mvec ";
+      tmp += cat;
+      tmp += ":states(";
+      tmp += wave;
+      tmp += ")";
+
+
       if (!particleDataPtr->isParticle(states[i])) {
-        infoPtr->errorMsg("Error in SigmaOniaSetup::initStates: particle "
-                          + state.str() + " in mvec " + cat + ":states("
-                          + wave + ")", "is unknown");
+        infoPtr->errorMsg(tmp, "is unknown");
         valid = false;
       }
       if (digits[3] != 0) {
-        infoPtr->errorMsg("Error in SigmaOniaSetup::initStates: particle "
-                          + state.str() + " in mvec " + cat + ":states("
-                          + wave + ")", " is not a meson");
+        infoPtr->errorMsg(tmp, " is not a meson");
         valid = false;
       }
       if (digits[2] != digits[1] || digits[1] != flavour) {
-        infoPtr->errorMsg("Error in SigmaOniaSetup::initStates: particle "
-                          + state.str() + " in mvec " + cat + ":states("
-                          + wave + ")", "is not a " + key + " state");
+        thread_local string tmp2; tmp2 = "is not a "; tmp2 += key; tmp2 += " state";
+        infoPtr->errorMsg(tmp, tmp2);
         valid = false;
       }
       if ((wave == "3S1" && (s != 1 || l != 0 || j != 1)) ||
           (wave == "3PJ" && (s != 1 || l != 1 || j < 0 || j > 2)) ||
           (wave == "3DJ" && (s != 1 || l != 2 || j < 1 || j > 3))) {
-        infoPtr->errorMsg("Error in SigmaOniaSetup::initStates: particle "
-                          + state.str() + " in mvec " + cat + ":states("
-                          + wave + ")", "is not a " + wave + " state");
+            thread_local string tmp2; tmp2 = "is not a ";
+            tmp2 += wave;
+            tmp2 += " state";
+        infoPtr->errorMsg(tmp, tmp2);
         valid = false;
       }
     } else valid = false;
@@ -336,16 +348,25 @@ void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
 
 // Initialise and check a group of PVec settings.
 
-void SigmaOniaSetup::initSettings(string wave, unsigned int size,
+void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   const vector<string> &names, vector< vector<double> > &pvecs,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
     pvecs.push_back(settingsPtr->pvec(names[i]));
     if (pvecs.back().size() != size) {
-      infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
-                        + ":states(" + wave + ")", "is not the same size as"
-                        " pvec " + names[i]);
+
+      thread_local string tmp; tmp = "Error in SigmaOniaSetup::initSettings: mvec ";
+      tmp += cat;
+      tmp += ":states(";
+      tmp += wave;
+      tmp += ")";
+
+      thread_local string tmp2; tmp2 = "is not the same size as";
+      tmp2 += " pvec ";
+      tmp2 += names[i];
+
+      infoPtr->errorMsg(tmp, tmp2);
       valid = false;
     }
   }
@@ -356,16 +377,25 @@ void SigmaOniaSetup::initSettings(string wave, unsigned int size,
 
 // Initialise and check a group of FVec settings.
 
-void SigmaOniaSetup::initSettings(string wave, unsigned int size,
+void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   const vector<string> &names, vector< vector<bool> > &fvecs,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
     fvecs.push_back(settingsPtr->fvec(names[i]));
     if (fvecs.back().size() != size) {
-      infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
-                        + ":states(" + wave + ")", "is not the same size as"
-                        " fvec " + names[i]);
+      thread_local string tmp; tmp = "Error in SigmaOniaSetup::initSettings: mvec ";
+      tmp += cat;
+      tmp += ":states(";
+      tmp += wave;
+      tmp += ")";
+
+      thread_local string tmp2; tmp2 = "is not the same size as";
+      tmp2 += " fvec ";
+      tmp2 += names[i];
+
+
+      infoPtr->errorMsg(tmp, tmp2);
       valid = false;
     }
   }
@@ -384,9 +414,9 @@ void SigmaOniaSetup::initSettings(string wave, unsigned int size,
 void Sigma2gg2QQbar3S11g::initProc() {
 
   // Process name.
-  nameSave = "g g -> "
-    + string((codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar")
-    + "(3S1)[3S1(1)] g";
+  nameSave = "g g -> ";
+  nameSave += (codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar";
+  nameSave += "(3S1)[3S1(1)] g";
 
 }
 
@@ -436,8 +466,13 @@ void Sigma2gg2QQbar3PJ1g::initProc() {
 
   // Process name.
   if (jSave >= 0 && jSave <= 2)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3PJ)[3PJ(1)] "
-      + namePostfix();
+  {
+    nameSave = namePrefix();
+    nameSave += " -> ";
+    nameSave += nameMidfix();
+    nameSave += "(3PJ)[3PJ(1)] ";
+    nameSave += namePostfix();
+  }
   else
     nameSave = "illegal process";
 
@@ -614,8 +649,13 @@ void Sigma2gg2QQbar3DJ1g::initProc() {
 
   // Process name.
   if (jSave >= 1 && jSave <= 3)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3DJ)[3DJ(1)] "
-      + namePostfix();
+  {
+    nameSave = namePrefix();
+    nameSave += " -> ";
+    nameSave += nameMidfix();
+    nameSave += "(3DJ)[3DJ(1)] ";
+    nameSave += namePostfix();
+  }
   else
     nameSave = "illegal process";
 
@@ -812,19 +852,27 @@ void Sigma2gg2QQbarX8g::initProc() {
 
   // Set the process name.
   stringstream sName, jName;
-  string lName, stateName;
+  stringbuf lName, stateName;
   sName << 2*s + 1;
   if (l == 0) jName << j;
-  else jName << "J";
+  else jName << 'J';
   if (l == 0) lName = "S";
   else if (l == 1) lName = "P";
   else if (l == 2) lName = "D";
   if (stateSave == 0) stateName = "[3S1(8)]";
   else if (stateSave == 1) stateName = "[1S0(8)]";
   else if (stateSave == 2) stateName = "[3PJ(8)]";
-  nameSave = namePrefix() + " -> " + (digits[1] == 4 ? "ccbar" : "bbbar")
-    + "(" + sName.str() + lName + jName.str() + ")" + stateName
-    + " " + namePostfix();
+  nameSave = namePrefix(); 
+  nameSave += " -> ";
+  nameSave += (digits[1] == 4 ? "ccbar" : "bbbar");
+  nameSave += "(";
+  nameSave += sName.str();
+  nameSave += lName;
+  nameSave += jName.str();
+  nameSave += ")";
+  nameSave += stateName;
+  nameSave += " ";
+  nameSave += namePostfix();
 
   // Ensure the dummy particle for the colour-octet state is valid.
   int idOct = 9900000 + digits[1]*10000 + stateSave*1000 + digits[5]*100
@@ -832,7 +880,7 @@ void Sigma2gg2QQbarX8g::initProc() {
   double m0     = particleDataPtr->m0(idHad) + abs(mSplit);
   double mWidth = 0.0;
   if (!particleDataPtr->isParticle(idOct)) {
-    string nameOct    = particleDataPtr->name(idHad) + stateName;
+    stringbuf nameOct    = particleDataPtr->name(idHad) + stateName;
     int    spinType   = stateSave == 1 ? 1 : 3;
     int    chargeType = particleDataPtr->chargeType(idHad);
     int    colType    = 2;

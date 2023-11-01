@@ -35,11 +35,11 @@ public:
   double getTchanneluuuuME(double sHat,double tHat,double uHat);
 
   // Calculate the 2 to 3 ME uG -> uGZ, up to a known overall factor.
-  double getTchanneluGuGZME(Vec4 p1,Vec4 p2,Vec4 p3,Vec4 p4,Vec4 p5);
+  double getTchanneluGuGZME(const Vec4& p1,const Vec4& p2,const Vec4& p3,const Vec4& p4,const Vec4& p5);
 
   // Calculate the 2 to 3 ME ud -> udZ, up to a known overall factor,
   // and with the coupling between Z and d set to zero.
-  double getTchannelududZME(Vec4 p1,Vec4 p2,Vec4 p3,Vec4 p4,Vec4 p5);
+  double getTchannelududZME(const Vec4& p1,const Vec4& p2,const Vec4& p3,const Vec4& p4,const Vec4& p5);
 
 };
 

@@ -17,10 +17,10 @@ namespace Pythia8 {
 class SigmaPartialWave {
 public:
   // Initialisation
-  bool init(int, string, string, Info *, ParticleData *, Rndm *);
+  bool init(int, stringref, stringref, Info *, ParticleData *, Rndm *);
 
   // Read data file
-  bool readFile(string, string);
+  bool readFile(stringref, stringref);
 
   // Set the subprocess/incoming particles
   bool setSubprocess(int);

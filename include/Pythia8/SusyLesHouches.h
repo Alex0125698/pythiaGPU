@@ -90,7 +90,7 @@ namespace Pythia8 {
       int ibegin=first();
       i=ibegin;
       while (!finished) {
-        cout << "  "<< i << " " << entry[i] <<endl;
+        cout << "  "<< i << ' ' << entry[i] <<endl;
         i=next();
         if (i == ibegin) finished=true;
       };
@@ -185,8 +185,8 @@ namespace Pythia8 {
     // Simple print utility, to be elaborated on.
     void print() {
       for (i=1;i<=size;i++) {
-        cout << "   "<<i << " " ;
-        for (j=1;j<=size;j++) cout << entry[i][j] << " ";
+        cout << "   "<<i << ' ' ;
+        for (j=1;j<=size;j++) cout << entry[i][j] << ' ';
         cout << endl;
       };
     };
@@ -262,9 +262,9 @@ namespace Pythia8 {
     void print() {
       for (i=1;i<=size;i++) {
         for (j=1;j<=size;j++) {
-          cout << "   "<<i << " "<<j << " " ;
+          cout << "   "<<i << ' '<<j << ' ' ;
           for (k=1;k<=size;k++) {
-            cout << entry[i][j][k] << " ";
+            cout << entry[i][j][k] << ' ';
             cout << endl;
           };
         };
@@ -286,13 +286,13 @@ namespace Pythia8 {
   public:
 
     LHdecayChannel() : brat(0.0) {};
-    LHdecayChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") { setChannel(bratIn,nDaIn,idDaIn,cIn);
+    LHdecayChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") { setChannel(bratIn,nDaIn,idDaIn,cIn);
     }
 
     // Functions to set decay channel information
-    void setChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") {
+    void setChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") {
       brat    = bratIn;
       for (int i=0; i<=nDaIn; i++) {
         if (i < int(idDaIn.size())) idDa.push_back(idDaIn[i]);
@@ -300,7 +300,7 @@ namespace Pythia8 {
       }
     }
     void setBrat(double bratIn) {brat=bratIn;}
-    void setIdDa(vector<int> idDaIn) {idDa = idDaIn;}
+    void setIdDa(const vector<int>& idDaIn) {idDa = idDaIn;}
 
     // Functions to get decay channel information
     double getBrat() {return brat;}
@@ -335,8 +335,8 @@ namespace Pythia8 {
 
     // Function to add another decay channel
     void addChannel(LHdecayChannel channelIn) {table.push_back(channelIn);}
-    void addChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") {
+    void addChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") {
       LHdecayChannel newChannel(bratIn, nDaIn, idDaIn, cIn);
       table.push_back(newChannel);
     }
@@ -388,14 +388,14 @@ public:
   SusyLesHouches(int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
     slhaRead(false), lhefRead(false), lhefSlha(false), useDecay(true) {};
-  SusyLesHouches(string filename, int verboseIn=1) : verboseSav(verboseIn),
+  SusyLesHouches(stringref filename, int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
     slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true)
     {readFile(filename);};
 
   //***************************** SLHA FILE I/O *****************************//
   // Read and write SLHA files
-  int readFile(string slhaFileIn="slha.spc",int verboseIn=1,
+  int readFile(stringref slhaFileIn="slha.spc",int verboseIn=1,
     bool useDecayIn=true);
   int readFile(istream& ,int verboseIn=1,
     bool useDecayIn=true);
@@ -434,14 +434,14 @@ public:
       n=val;isIntP=true;isDoubleP=false;isStringP=false;
       return *this;
     };
-    Entry& operator=(string& val)  {
+    Entry& operator=(stringref val)  {
       s=val;isIntP=false;isDoubleP=false;isStringP=true;
       return *this;
     };
 
     // Set and Get comment
-    void setComment(string comment) {commentP=comment;}
-    void getComment(string comment) {comment=commentP;}
+    void setComment(stringref comment) {commentP=comment;}
+    void getComment(string& comment) {comment=commentP;}
 
     // Generic functions to get value
     bool get(int& val) {val=n; return isIntP;}
@@ -607,10 +607,10 @@ public:
   LHmatrixBlock<5> imnmnmix; //   Im{} (for future use)
 
   //*************************** SET BLOCK VALUE ****************************//
-  template <class T> int set(string,T);
-  template <class T> int set(string,int,T);
-  template <class T> int set(string,int,int,T);
-  template <class T> int set(string,int,int,int,T);
+  template <class T> int set(stringref,T);
+  template <class T> int set(stringref,int,T);
+  template <class T> int set(stringref,int,int,T);
+  template <class T> int set(stringref,int,int,int,T);
 
   //********************* GENERIC/USER-DEFINED BLOCKS **********************//
   // bool getEntry(name, indices, value)
@@ -618,22 +618,22 @@ public:
   //        typecast by user in call)
   //      = false otherwise
   map<string, LHgenericBlock> genericBlocks;
-  template <class T> bool getEntry(string, T&);
-  template <class T> bool getEntry(string, int, T&);
-  template <class T> bool getEntry(string, int, int, T&);
-  template <class T> bool getEntry(string, int, int, int, T&);
-  template <class T> bool getEntry(string, vector<int>, T&);
+  template <class T> bool getEntry(stringref, T&);
+  template <class T> bool getEntry(stringref, int, T&);
+  template <class T> bool getEntry(stringref, int, int, T&);
+  template <class T> bool getEntry(stringref, int, int, int, T&);
+  template <class T> bool getEntry(stringref, const vector<int>&, T&);
 
   // Access/change verbose setting
   int verbose() {return verboseSav;}
   void verbose(int verboseIn) {verboseSav = verboseIn;}
 
   // Output of messages from SLHA interface
-  void message(int, string,string ,int line=0);
+  void message(int, stringref,stringref ,int line=0);
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class
-  void toLower(string& name);
+  // void toLower(string& name);
 
   //***************************** SLHA PRIVATE *****************************//
 private:
@@ -648,7 +648,7 @@ private:
 
 // utilities to set generic blocks
 
-template <class T> int SusyLesHouches::set(string blockName, T val) {
+template <class T> int SusyLesHouches::set(stringref blockName, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
   toLower(blockName);
@@ -666,7 +666,7 @@ template <class T> int SusyLesHouches::set(string blockName, T val) {
 
 }
 
-template <class T> int SusyLesHouches::set(string blockName, int indx, T val) {
+template <class T> int SusyLesHouches::set(stringref blockName, int indx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
   toLower(blockName);
@@ -684,7 +684,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx, T val) {
 
 }
 
-template <class T> int SusyLesHouches::set(string blockName, int indx,
+template <class T> int SusyLesHouches::set(stringref blockName, int indx,
                                            int jndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
@@ -703,7 +703,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
 
 }
 
-template <class T> int SusyLesHouches::set(string blockName, int indx,
+template <class T> int SusyLesHouches::set(stringref blockName, int indx,
                                            int jndx, int kndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
@@ -724,7 +724,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
 
 // utilities to read generic blocks
 
-template <class T> bool SusyLesHouches::getEntry(string blockName, T& val) {
+template <class T> bool SusyLesHouches::getEntry(stringref blockName, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
   toLower(blockName);
@@ -759,7 +759,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, T& val) {
   return true;
 }
 
-template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
+template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
                                                  T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
@@ -797,7 +797,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
   return false;
 }
 
-template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
+template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
                                                  int jndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
@@ -835,7 +835,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
   return false;
 }
 
-template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
+template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
                                                  int jndx, int kndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)

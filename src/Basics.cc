@@ -145,7 +145,7 @@ int Rndm::pick(const vector<double>& prob) {
 
 // Save current state of the random number generator to a binary file.
 
-bool Rndm::dumpState(string fileName) {
+bool Rndm::dumpState(stringref2 fileName) {
 
   // Open file as output stream.
   const char* fn = fileName.c_str();
@@ -177,7 +177,7 @@ bool Rndm::dumpState(string fileName) {
 
 // Read in the state of the random number generator from a binary file.
 
-bool Rndm::readState(string fileName) {
+bool Rndm::readState(stringref2 fileName) {
 
   // Open file as input stream.
   const char* fn = fileName.c_str();
@@ -559,8 +559,8 @@ double REtaPhi(const Vec4& v1, const Vec4& v2) {
 // Print a four-vector: also operator overloading with friend.
 
 ostream& operator<<(ostream& os, const Vec4& v) {
-  os << fixed << setprecision(3) << " " << setw(9) << v.xx << " "
-     << setw(9) << v.yy << " " << setw(9) << v.zz << " " << setw(9)
+  os << fixed << setprecision(3) << ' ' << setw(9) << v.xx << ' '
+     << setw(9) << v.yy << ' ' << setw(9) << v.zz << ' ' << setw(9)
      << v.tt << " (" << setw(9) << v.mCalc() << ")\n";
   return os;
 }
@@ -821,7 +821,7 @@ const char NUMBER[] = {'0', '1', '2', '3', '4', '5',
 
 // Book a histogram.
 
-void Hist::book(string titleIn, int nBinIn, double xMinIn,
+void Hist::book(stringref2 titleIn, int nBinIn, double xMinIn,
   double xMaxIn) {
 
   title = titleIn;
@@ -938,7 +938,7 @@ ostream& operator<<(ostream& os, const Hist& h) {
       for (int iCol = 0; iCol < nCol ; ++iCol) {
         if (iRow == row[iCol])                  os << NUMBER[frac[iCol]];
         else if (iRow * (row[iCol] - iRow) > 0) os << NUMBER[10];
-        else                                    os << " ";
+        else                                    os << ' ';
       } os << "\n";
     } os << "\n";
 
@@ -947,8 +947,8 @@ ostream& operator<<(ostream& os, const Hist& h) {
     int iPowBin = int(floor(maxim + 0.0001));
     os << "          Contents  ";
     for (int iCol = 0; iCol < nCol ; ++iCol) {
-      if (resCol[iCol] < - pow(10., iPowBin - 4)) os << "-";
-      else os << " ";
+      if (resCol[iCol] < - pow(10., iPowBin - 4)) os << '-';
+      else os << ' ';
       row[iCol] = int(abs(resCol[iCol]) * pow(10., 3 - iPowBin) + 0.5);
     } os << "\n";
     for (int iRow = 3; iRow >= 0; iRow--) {
@@ -964,8 +964,8 @@ ostream& operator<<(ostream& os, const Hist& h) {
     int iPowExp = int(floor(maxim + 0.0001));
     os << "          Low edge  ";
     for (int iCol = 0; iCol < nCol ; ++iCol) {
-      if (h.xMin + iCol * nGroup * h.dx < - pow(10., iPowExp - 3)) os << "-";
-      else os << " ";
+      if (h.xMin + iCol * nGroup * h.dx < - pow(10., iPowExp - 3)) os << '-';
+      else os << ' ';
       row[iCol] = int(abs(h.xMin + iCol * nGroup * h.dx)
         * pow(10., 2 - iPowExp) + 0.5);
     } os << "\n";

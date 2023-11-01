@@ -34,7 +34,7 @@ void HelicityMatrixElement::initPointers(ParticleData* particleDataPtrIn,
 // Initialize the channel for the helicity matrix element.
 
 HelicityMatrixElement* HelicityMatrixElement::initChannel(
-  vector<HelicityParticle>& p) {
+  const vector<HelicityParticle>& p) {
 
   pID.clear();
   pM.clear();
@@ -160,7 +160,7 @@ void HelicityMatrixElement::calculateRho(unsigned int idx,
 
 // Calculate a decay's weight.
 
-double HelicityMatrixElement::decayWeight(vector<HelicityParticle>& p) {
+double HelicityMatrixElement::decayWeight(const vector<HelicityParticle>& p) {
 
   complex weight = complex(0,0);
 
@@ -182,7 +182,7 @@ double HelicityMatrixElement::decayWeight(vector<HelicityParticle>& p) {
 
 // Recursive sub-method for calculating a decay's weight.
 
-void HelicityMatrixElement::decayWeight(vector<HelicityParticle>& p,
+void HelicityMatrixElement::decayWeight(const vector<HelicityParticle>& p,
   vector<int>& h1, vector<int>& h2, complex& weight, unsigned int i) {
 
   if (i < p.size()) {
@@ -204,8 +204,8 @@ void HelicityMatrixElement::decayWeight(vector<HelicityParticle>& p,
 // Calculate the product of the decay matrices (hard process).
 
 complex HelicityMatrixElement::calculateProductD(unsigned int idx,
-  unsigned int start, vector<HelicityParticle>& p,
-  vector<int>& h1, vector<int>& h2) {
+  unsigned int start, const vector<HelicityParticle>& p,
+  const vector<int>& h1, const vector<int>& h2) {
 
   complex answer(1,0);
   for (unsigned int i = start; i < p.size(); i++) {
@@ -222,7 +222,7 @@ complex HelicityMatrixElement::calculateProductD(unsigned int idx,
 // Calculate the product of the decay matrices (decay process).
 
 complex HelicityMatrixElement::calculateProductD(
-  vector<HelicityParticle>& p, vector<int>& h1, vector<int>& h2) {
+  const vector<HelicityParticle>& p, const vector<int>& h1, const vector<int>& h2) {
 
   complex answer(1,0);
   for (unsigned int i = 1; i < p.size(); i++) {
@@ -237,7 +237,7 @@ complex HelicityMatrixElement::calculateProductD(
 // Initialize a fermion line.
 
 void HelicityMatrixElement::setFermionLine(int position,
-  HelicityParticle& p0, HelicityParticle& p1) {
+  const HelicityParticle& p0, const HelicityParticle& p1) {
 
   vector< Wave4 > u0, u1;
 
@@ -351,7 +351,7 @@ void HMETwoFermions2W2TwoFermions::initConstants() {
 
 // Initialize spinors for the helicity matrix element.
 
-void HMETwoFermions2W2TwoFermions::initWaves(vector<HelicityParticle>& p) {
+void HMETwoFermions2W2TwoFermions::initWaves(const vector<HelicityParticle>& p) {
 
   u.clear();
   pMap.resize(4);
@@ -364,7 +364,7 @@ void HMETwoFermions2W2TwoFermions::initWaves(vector<HelicityParticle>& p) {
 
   // Return element for the helicity matrix element.
 
-complex HMETwoFermions2W2TwoFermions::calculateME(vector<int> h) {
+complex HMETwoFermions2W2TwoFermions::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -462,7 +462,7 @@ void HMETwoFermions2GammaZ2TwoFermions::initConstants() {
 
 // Initialize wave functions for the helicity matrix element.
 
-void HMETwoFermions2GammaZ2TwoFermions::initWaves(vector<HelicityParticle>& p)
+void HMETwoFermions2GammaZ2TwoFermions::initWaves(const vector<HelicityParticle>& p)
 {
 
   vector< Wave4 > u4;
@@ -544,7 +544,7 @@ complex HMETwoFermions2GammaZ2TwoFermions::calculateZME(
 
 // Return the Z' vector or axial coupling for a fermion.
 
-double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, string type) {
+double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
@@ -579,7 +579,7 @@ double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, string type) {
 
 // Initialize wave functions for the helicity matrix element.
 
-void HMEX2TwoFermions::initWaves(vector<HelicityParticle>& p) {
+void HMEX2TwoFermions::initWaves(const vector<HelicityParticle>& p) {
 
   u.clear();
   pMap.resize(4);
@@ -691,7 +691,7 @@ void HMEZ2TwoFermions::initConstants() {
 
 // Return element for helicity matrix element.
 
-complex HMEZ2TwoFermions::calculateME(vector<int> h) {
+complex HMEZ2TwoFermions::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -706,7 +706,7 @@ complex HMEZ2TwoFermions::calculateME(vector<int> h) {
 
 // Return the Z' vector or axial coupling for a fermion.
 
-double HMEZ2TwoFermions::zpCoupling(int id, string type) {
+double HMEZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
@@ -812,7 +812,7 @@ void HMEHiggs2TwoFermions::initConstants() {
 
 // Initialize wave functions for the helicity matrix element.
 
-void HMEHiggs2TwoFermions::initWaves(vector<HelicityParticle>& p) {
+void HMEHiggs2TwoFermions::initWaves(const vector<HelicityParticle>& p) {
 
   u.clear();
   pMap.resize(4);
@@ -824,7 +824,7 @@ void HMEHiggs2TwoFermions::initWaves(vector<HelicityParticle>& p) {
 
 // Return element for the helicity matrix element.
 
-complex HMEHiggs2TwoFermions::calculateME(vector<int> h) {
+complex HMEHiggs2TwoFermions::calculateME(const vector<int>& h) {
 
   return (u[1][h[pMap[3]]] * (p2CV + p2CA * gamma[5]) * u[0][h[pMap[2]]]);
 
@@ -843,7 +843,7 @@ complex HMEHiggs2TwoFermions::calculateME(vector<int> h) {
 //--------------------------------------------------------------------------
 
 // Initialize wave functions for the helicity matrix element.
-void HMETauDecay::initWaves(vector<HelicityParticle>& p) {
+void HMETauDecay::initWaves(const vector<HelicityParticle>& p) {
 
   u.clear();
   pMap.resize(p.size());
@@ -855,7 +855,7 @@ void HMETauDecay::initWaves(vector<HelicityParticle>& p) {
 //--------------------------------------------------------------------------
 
 // Return element for the helicity matrix element.
-complex HMETauDecay::calculateME(vector<int> h) {
+complex HMETauDecay::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -871,7 +871,7 @@ complex HMETauDecay::calculateME(vector<int> h) {
 
 // Return the maximum decay weight for the helicity matrix element.
 
-double HMETauDecay::decayWeightMax(vector<HelicityParticle>& p) {
+double HMETauDecay::decayWeightMax(const vector<HelicityParticle>& p) {
 
   // Determine the maximum on-diagonal element of rho.
   double on  = real(p[0].rho[0][0]) > real(p[0].rho[1][1]) ?
@@ -886,8 +886,8 @@ double HMETauDecay::decayWeightMax(vector<HelicityParticle>& p) {
 
 // Calculate complex resonance weights given a phase and amplitude vector.
 
-void HMETauDecay::calculateResonanceWeights(vector<double>& phase,
-  vector<double>& amplitude, vector<complex>& weight) {
+void HMETauDecay::calculateResonanceWeights(const vector<double>& phase,
+  const vector<double>& amplitude, vector<complex>& weight) {
 
   for (unsigned int i = 0; i < phase.size(); i++)
     weight.push_back(amplitude[i] * (cos(phase[i]) +
@@ -947,7 +947,7 @@ void HMETau2TwoLeptons::initConstants() {
 
 // Initialize spinors for the helicity matrix element.
 
-void HMETau2TwoLeptons::initWaves(vector<HelicityParticle>& p) {
+void HMETau2TwoLeptons::initWaves(const vector<HelicityParticle>& p) {
 
   u.clear();
   pMap.resize(4);
@@ -960,7 +960,7 @@ void HMETau2TwoLeptons::initWaves(vector<HelicityParticle>& p) {
 
 // Return element for the helicity matrix element.
 
-complex HMETau2TwoLeptons::calculateME(vector<int> h) {
+complex HMETau2TwoLeptons::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -1025,7 +1025,7 @@ void HMETau2TwoMesonsViaVector::initConstants() {
 // Initialize the hadronic current for the helicity matrix element.
 
 void HMETau2TwoMesonsViaVector::initHadronicCurrent(
-  vector<HelicityParticle>& p) {
+  const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
   Wave4 u3(p[3].p() - p[2].p());
@@ -1090,7 +1090,7 @@ void HMETau2TwoMesonsViaVectorScalar::initConstants() {
 // Initialize the hadronic current for the helicity matrix element.
 
 void HMETau2TwoMesonsViaVectorScalar::initHadronicCurrent(
-  vector<HelicityParticle>& p) {
+  const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
   Wave4 u3(p[3].p() - p[2].p());
@@ -1147,7 +1147,7 @@ void HMETau2ThreeMesons::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2ThreeMesons::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2ThreeMesons::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
 
@@ -1215,7 +1215,7 @@ void HMETau2ThreeMesons::initMode() {
 
 // Initialize the momenta for the helicity matrix element.
 
-void HMETau2ThreeMesons::initMomenta(vector<HelicityParticle>& p) {
+void HMETau2ThreeMesons::initMomenta(const vector<HelicityParticle>& p) {
 
   q = Wave4(p[2].p() + p[3].p() + p[4].p());
   // pi-, pi-, pi+ decay and pi0, pi0, pi- decay.
@@ -1294,7 +1294,7 @@ complex HMETau2ThreeMesons::a1BreitWigner(double s) {
 // Return summed weighted running p Breit-Wigner resonances.
 
 complex HMETau2ThreeMesons::T(double m0, double m1, double s,
-  vector<double> &M, vector<double> &G, vector<double> &W) {
+  const vector<double> &M, const vector<double> &G, const vector<double> &W) {
 
   complex num(0, 0);
   double  den(0);
@@ -1310,8 +1310,8 @@ complex HMETau2ThreeMesons::T(double m0, double m1, double s,
 
 // Return summed weighted fixed width Breit-Wigner resonances.
 
-complex HMETau2ThreeMesons::T(double s, vector<double> &M,
-  vector<double> &G, vector<double> &W) {
+complex HMETau2ThreeMesons::T(double s, const vector<double> &M,
+  const vector<double> &G, const vector<double> &W) {
 
   complex num(0, 0);
   double  den(0);
@@ -1989,7 +1989,7 @@ void HMETau2TwoPionsGamma::initConstants() {
 //--------------------------------------------------------------------------
 
 // Initialize wave functions for the helicity matrix element.
-void HMETau2TwoPionsGamma::initWaves(vector<HelicityParticle>& p) {
+void HMETau2TwoPionsGamma::initWaves(const vector<HelicityParticle>& p) {
 
   // Calculate the hadronic current.
   u.clear();
@@ -2022,7 +2022,7 @@ void HMETau2TwoPionsGamma::initWaves(vector<HelicityParticle>& p) {
 //--------------------------------------------------------------------------
 
 // Return element for the helicity matrix element.
-complex HMETau2TwoPionsGamma::calculateME(vector<int> h) {
+complex HMETau2TwoPionsGamma::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -2037,8 +2037,8 @@ complex HMETau2TwoPionsGamma::calculateME(vector<int> h) {
 //--------------------------------------------------------------------------
 
 // Return the form factor.
-complex HMETau2TwoPionsGamma::F(double s, vector<double> M, vector<double> G,
-                                vector<double> W) {
+complex HMETau2TwoPionsGamma::F(double s, const vector<double>& M, const vector<double>& G,
+                                const vector<double>& W) {
 
   complex answer(0, 0);
   for (unsigned int i = 0; i < M.size(); i++)
@@ -2097,7 +2097,7 @@ void HMETau2FourPions::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2FourPions::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2FourPions::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
 
@@ -2135,8 +2135,8 @@ void HMETau2FourPions::initHadronicCurrent(vector<HelicityParticle>& p) {
 
 // Return the first t-vector.
 
-Wave4 HMETau2FourPions::t1(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t1(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
 
   Wave4  a1Q(q2 + q3 + q4);
   Wave4 rhoQ(q3 + q4);
@@ -2159,8 +2159,8 @@ Wave4 HMETau2FourPions::t1(Wave4 &q, Wave4 &q1, Wave4 &q2,
 
 // Return the second t-vector.
 
-Wave4 HMETau2FourPions::t2(Wave4 &q, Wave4 &/*q1*/, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t2(const Wave4& q, const Wave4& /*q1*/, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
 
   Wave4  a1Q(q2 + q3 + q4);
   Wave4 sigQ(q3 + q4);
@@ -2175,8 +2175,8 @@ Wave4 HMETau2FourPions::t2(Wave4 &q, Wave4 &/*q1*/, Wave4 &q2,
 
 // Return the third t-vector.
 
-Wave4 HMETau2FourPions::t3(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t3(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
   Wave4 omeQ(q2 + q3 + q4);
   Wave4 rhoQ(q3 + q4);
   double omeS = m2(omeQ);
@@ -2480,8 +2480,8 @@ void HMETau2FivePions::initHadronicCurrent(vector<HelicityParticle>& p) {
 
 // Return the omega-rho hadronic current.
 
-Wave4 HMETau2FivePions::Ja(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4, Wave4 &q5) {
+Wave4 HMETau2FivePions::Ja(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4, const Wave4& q5) {
 
   Wave4 j = epsilon(q1, q2, q3);
   return omegaW * (breitWigner(m2(q), a1M, a1G)
@@ -2498,8 +2498,8 @@ Wave4 HMETau2FivePions::Ja(Wave4 &q, Wave4 &q1, Wave4 &q2,
 
 // Return the a1-sigma hadronic current.
 
-Wave4 HMETau2FivePions::Jb(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4, Wave4 &q5) {
+Wave4 HMETau2FivePions::Jb(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4, const Wave4& q5) {
 
   double s = m2(q);
   Wave4  a1Q = q1 + q2 + q3;

@@ -29,7 +29,7 @@ public:
   // Constructors.
   BoseEinsteinHadron() : id(0), iPos(0), p(0.), pShift(0.), pComp(0.),
     m2(0.) {}
-  BoseEinsteinHadron(int idIn,  int iPosIn, Vec4 pIn, double mIn) :
+  BoseEinsteinHadron(int idIn,  int iPosIn, const Vec4& pIn, double mIn) :
     id(idIn), iPos(iPosIn), p(pIn), pShift(0.), pComp(0.) {m2 = mIn*mIn;}
 
   // Information on hadron - all public.

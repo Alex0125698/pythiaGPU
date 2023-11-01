@@ -182,7 +182,7 @@ vector<int> Info::codesHard() {
 
 // Print a message the first few times. Insert in database.
 
-  void Info::errorMsg(string messageIn, string extraIn, bool showAlways,
+  void Info::errorMsg(stringref2 messageIn, stringref2 extraIn, bool showAlways,
     ostream& os) {
 
   // Recover number of times message occured. Also inserts new string.
@@ -191,7 +191,7 @@ vector<int> Info::codesHard() {
 
   // Print message the first few times.
   if (times < TIMESTOPRINT || showAlways) os << " PYTHIA "
-    << messageIn << " " << extraIn << endl;
+    << messageIn << ' ' << extraIn << endl;
 
 }
 
@@ -232,7 +232,7 @@ void Info::errorStatistics(ostream& os) {
        << "                                                          | \n";
   while (messageEntry != messages.end()) {
     // Message printout.
-    string temp = messageEntry->first;
+    stringbuf temp = messageEntry->first;
     int len = temp.length();
     temp.insert( len, max(0, 102 - len), ' ');
     os << " | " << setw(6) << messageEntry->second << "   "
@@ -321,10 +321,10 @@ void Info::setLHEF3EventInfo( map<string, string> *eventAttributesIn,
 
 // Retrieve events tag information.
 
-string Info::getEventAttribute(string key, bool doRemoveWhitespace) {
+cstring Info::getEventAttribute(stringref2 key, bool doRemoveWhitespace) {
   if (!eventAttributes) return "";
   if ( eventAttributes->find(key) != eventAttributes->end() ) {
-    string res = (*eventAttributes)[key];
+    stringbuf res = (*eventAttributes)[key];
     if (doRemoveWhitespace)
       res.erase (remove (res.begin(), res.end(), ' '), res.end());
     return res;
@@ -356,15 +356,15 @@ unsigned int Info::getGeneratorSize() {
   return generators->size();
 }
 
-string Info::getGeneratorValue(unsigned int n) {
+cstring Info::getGeneratorValue(unsigned int n) {
   if (!generators || generators->size() < n+1) return "";
   return (*generators)[n].contents;
 }
 
-string Info::getGeneratorAttribute( unsigned int n, string key,
+cstring Info::getGeneratorAttribute( unsigned int n, stringref2 key,
   bool doRemoveWhitespace) {
   if (!generators || generators->size() < n+1) return "";
-  string res("");
+  stringbuf res("");
   if ( key == "name") {
     res = (*generators)[n].name;
   } else if ( key == "version") {
@@ -387,17 +387,17 @@ unsigned int Info::getWeightsDetailedSize() {
   return weights_detailed->size();
 }
 
-double Info::getWeightsDetailedValue(string n) {
+double Info::getWeightsDetailedValue(stringref2 n) {
   if (weights_detailed->empty()
     || weights_detailed->find(n) == weights_detailed->end()) return 0./0.;
   return (*weights_detailed)[n];
 }
 
-string Info::getWeightsDetailedAttribute(string n, string key,
+cstring Info::getWeightsDetailedAttribute(stringref2 n, stringref2 key,
   bool doRemoveWhitespace) {
   if (!rwgt || rwgt->wgts.find(n) == rwgt->wgts.end())
     return "";
-  string res("");
+  stringbuf res("");
   if ( key == "id") {
     res = rwgt->wgts[n].id;
   } else if ( rwgt->wgts[n].attributes.find(key)
@@ -424,11 +424,11 @@ double Info::getWeightsCompressedValue(unsigned int n) {
   return (*weights_compressed)[n];
 }
 
-string Info::getWeightsCompressedAttribute(string key,
+cstring Info::getWeightsCompressedAttribute(stringref2 key,
   bool doRemoveWhitespace) {
   if (!weights || weights->attributes.find(key) == weights->attributes.end())
     return "";
-  string res("");
+  stringbuf res("");
   if ( weights->attributes.find(key)
            != weights->attributes.end() ) {
     res = weights->attributes[key];
@@ -442,15 +442,15 @@ string Info::getWeightsCompressedAttribute(string key,
 
 // Retrieve scales tag information.
 
-string Info::getScalesValue(bool doRemoveWhitespace) {
+cstring Info::getScalesValue(bool doRemoveWhitespace) {
   if (!scales) return "";
-  string res = scales->contents;
+  stringbuf res = scales->contents;
   if (doRemoveWhitespace && res != "")
     res.erase (remove (res.begin(), res.end(), ' '), res.end());
   return res;
 }
 
-double Info::getScalesAttribute(string key) {
+double Info::getScalesAttribute(stringref2 key) {
   if (!scales) return 0./0.;
   double res = 0./0.;
   if ( key == "muf") {

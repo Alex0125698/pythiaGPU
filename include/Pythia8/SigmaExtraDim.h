@@ -41,9 +41,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return "g g -> G*";}
+  virtual cstring name()       const {return "g g -> G*";}
   virtual int    code()       const {return 5001;}
-  virtual string inFlux()     const {return "gg";}
+  virtual cstring inFlux()     const {return "gg";}
   virtual int    resonanceA() const {return idGstar;}
 
 private:
@@ -88,9 +88,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return "f fbar -> G*";}
+  virtual cstring name()       const {return "f fbar -> G*";}
   virtual int    code()       const {return 5002;}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual int    resonanceA() const {return idGstar;}
 
 private:
@@ -135,9 +135,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return "q qbar -> g*/KK-gluon*";}
+  virtual cstring name()       const {return "q qbar -> g*/KK-gluon*";}
   virtual int    code()       const {return 5006;}
-  virtual string inFlux()     const {return "qqbarSame";}
+  virtual cstring inFlux()     const {return "qqbarSame";}
   virtual int    resonanceA() const {return idKKgluon;}
 
 private:
@@ -188,9 +188,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return "g g -> G* g";}
+  virtual cstring name()    const {return "g g -> G* g";}
   virtual int    code()    const {return 5003;}
-  virtual string inFlux()  const {return "gg";}
+  virtual cstring inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idGstar;}
 
 private:
@@ -228,9 +228,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return "q g -> G* q";}
+  virtual cstring name()    const {return "q g -> G* q";}
   virtual int    code()    const {return 5004;}
-  virtual string inFlux()  const {return "qg";}
+  virtual cstring inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return idGstar;}
 
 private:
@@ -268,9 +268,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return "q qbar -> G* g";}
+  virtual cstring name()    const {return "q qbar -> G* g";}
   virtual int    code()    const {return 5005;}
-  virtual string inFlux()  const {return "qqbarSame";}
+  virtual cstring inFlux()  const {return "qqbarSame";}
   virtual int    id3Mass() const {return idGstar;}
 
 private:
@@ -310,9 +310,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
+  virtual cstring name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual bool   isSChannel() const {return true;}
   virtual int    idSChannel() const {return 5000023;}
   virtual int    resonanceA() const {return 23;}
@@ -326,7 +326,7 @@ public:
 private:
 
   // Values stored for process type.
-  string  nameSave;
+  stringbuf  nameSave;
   int     idNew, gmZmode, codeSave, nexcitationmax;
   bool    isPhysical;
   double  gPlusf, gMinusf, gPlusF, gMinusF, gPlusTop, gMinusTop, gf, gF;
@@ -368,10 +368,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "g g -> G g" : "g g -> U g") ;}
   virtual int    code()       const {return (eDgraviton ? 5021 : 5045);}
-  virtual string inFlux()     const {return "gg";}
+  virtual cstring inFlux()     const {return "gg";}
   virtual int    id3Mass()    const {return 5000039;}
   virtual int    id4Mass()    const {return 21;}
 
@@ -410,10 +410,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "q g -> G q" : "q g -> U q") ;}
   virtual int    code()       const {return (eDgraviton ? 5022 : 5046);}
-  virtual string inFlux()     const {return "qg";}
+  virtual cstring inFlux()     const {return "qg";}
   virtual int    id3Mass()    const {return 5000039;}
 
 private:
@@ -451,10 +451,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "q qbar -> G g" : "q qbar -> U g") ;}
   virtual int    code()       const {return (eDgraviton ? 5023 : 5047);}
-  virtual string inFlux()     const {return "qqbarSame";}
+  virtual cstring inFlux()     const {return "qqbarSame";}
   virtual int    id3Mass()    const {return 5000039;}
   virtual int    id4Mass()    const {return 21;}
 
@@ -493,10 +493,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "f fbar -> G Z" : "f fbar -> U Z") ;}
   virtual int    code()       const {return (eDgraviton ? 5024 : 5041);}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual int    id3Mass()    const {return 5000039;}
   virtual int    id4Mass()    const {return 23;}
   virtual int    resonanceA() const {return 23;}
@@ -542,10 +542,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "f fbar -> G gamma" : "f fbar -> U gamma") ;}
   virtual int    code()       const {return (eDgraviton ? 5025 : 5042);}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual int    id3Mass()    const {return 5000039;}
   virtual int    id4Mass()    const {return 22;}
 
@@ -589,11 +589,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "f fbar -> (LED G*) -> gamma gamma"
     : "f fbar -> (U*) -> gamma gamma") ;}
   virtual int    code()       const {return (eDgraviton ? 5026 : 5043);}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
 
 private:
 
@@ -630,10 +630,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return (eDgraviton
+  virtual cstring name()       const {return (eDgraviton
     ? "g g -> (LED G*) -> gamma gamma" : "g g -> (U*) -> gamma gamma") ;}
   virtual int    code()       const {return (eDgraviton ? 5027 : 5044);}
-  virtual string inFlux()     const {return "gg";}
+  virtual cstring inFlux()     const {return "gg";}
 
 private:
 
@@ -670,10 +670,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "f fbar -> (LED G*) -> l l" : "f fbar -> (U*) -> l l") ;}
   virtual int    code()       const {return (eDgraviton ? 5028 : 5048);}
-  virtual string inFlux()     const {return "ffbarSame";}
+  virtual cstring inFlux()     const {return "ffbarSame";}
   virtual bool   isSChannel() const {return true;}
 
 private:
@@ -714,10 +714,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()       const {return
+  virtual cstring name()       const {return
     (eDgraviton ? "g g -> (LED G*) -> l l" : "g g -> (U*) -> l l") ;}
   virtual int    code()       const {return (eDgraviton ? 5029 : 5049);}
-  virtual string inFlux()     const {return "gg";}
+  virtual cstring inFlux()     const {return "gg";}
 
 private:
 
@@ -751,9 +751,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()   const {return "g g -> (LED G*) -> g g";}
+  virtual cstring name()   const {return "g g -> (LED G*) -> g g";}
   virtual int    code()   const {return 5030;}
-  virtual string inFlux() const {return "gg";}
+  virtual cstring inFlux() const {return "gg";}
 
 private:
 
@@ -790,9 +790,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()   const {return "g g -> (LED G*) -> q qbar (uds)";}
+  virtual cstring name()   const {return "g g -> (LED G*) -> q qbar (uds)";}
   virtual int    code()   const {return 5031;}
-  virtual string inFlux() const {return "gg";}
+  virtual cstring inFlux() const {return "gg";}
 
 private:
 
@@ -834,9 +834,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()   const {return "q g -> (LED G*) -> q g";}
+  virtual cstring name()   const {return "q g -> (LED G*) -> q g";}
   virtual int    code()   const {return 5032;}
-  virtual string inFlux() const {return "qg";}
+  virtual cstring inFlux() const {return "qg";}
 
 private:
 
@@ -873,9 +873,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()   const {return "q q(bar)' -> (LED G*) -> q q(bar)'";}
+  virtual cstring name()   const {return "q q(bar)' -> (LED G*) -> q q(bar)'";}
   virtual int    code()   const {return 5033;}
-  virtual string inFlux() const {return "qq";}
+  virtual cstring inFlux() const {return "qq";}
 
  private:
 
@@ -913,9 +913,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()   const {return "q qbar -> (LED G*) -> g g";}
+  virtual cstring name()   const {return "q qbar -> (LED G*) -> g g";}
   virtual int    code()   const {return 5034;}
-  virtual string inFlux() const {return "qqbarSame";}
+  virtual cstring inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -952,9 +952,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()  const {return "q qbar -> (LED G*) -> q' qbar' (uds)";}
+  virtual cstring name()  const {return "q qbar -> (LED G*) -> q' qbar' (uds)";}
   virtual int    code()   const {return 5035;}
-  virtual string inFlux() const {return "qqbarSame";}
+  virtual cstring inFlux() const {return "qqbarSame";}
 
  private:
 

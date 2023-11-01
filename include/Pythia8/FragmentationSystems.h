@@ -34,7 +34,7 @@ public:
   // Constructors.
   ColSinglet() : pSum(0., 0., 0., 0.), mass(0.), massExcess(0.),
     hasJunction(false), isClosed(false), isCollected(false) {}
-  ColSinglet(vector<int>& iPartonIn, Vec4 pSumIn, double massIn,
+  ColSinglet(const vector<int>& iPartonIn, const Vec4& pSumIn, double massIn,
     double massExcessIn, bool hasJunctionIn = false,
     bool isClosedIn = false, bool isCollectedIn = false)
     : iParton(iPartonIn), pSum(pSumIn), mass(massIn),
@@ -72,12 +72,15 @@ public:
   // Overload index operator to access separate colour singlets.
   ColSinglet& operator[](int iSub) {return singlets[iSub];}
 
+  // Overload index operator to access separate colour singlets.
+  const ColSinglet& operator[](int iSub) const {return singlets[iSub];}
+
   // Clear contents.
   void clear() {singlets.resize(0);}
 
   // Insert a new colour singlet system in ascending mass order.
   // Calculate its properties. Join nearby partons.
-  bool insert( vector<int>& iPartonIn, Event& event);
+  bool insert(vector<int>& iPartonIn, Event& event);
 
   // Erase a colour singlet system. (Rare operation.)
   void erase(int iSub) {singlets.erase(singlets.begin() + iSub);}
@@ -140,11 +143,11 @@ public:
   void setUp(Vec4 p1, Vec4 p2, bool isMassless = false);
 
   // Construct a four-momentum from (x+, x-, px, py).
-  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn)
+  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn) const
     { return xPosIn * pPos + xNegIn * pNeg + pxIn * eX + pyIn * eY; }
 
   // Project a four-momentum onto (x+, x-, px, py). Read out projection.
-  void project(Vec4 pIn);
+  void project(const Vec4& pIn);
   void project( double pxIn, double pyIn, double pzIn, double eIn)
     { project( Vec4( pxIn, pyIn, pzIn, eIn) ); }
   double xPos() const {return xPosProj;}
@@ -167,7 +170,7 @@ public:
   StringSystem() {}
 
   // Set up system from parton list.
-  void setUp(vector<int>& iSys, Event& event);
+  void setUp(const vector<int>& iSys, Event& event);
 
   // Calculate string region from (iPos, iNeg) pair.
   int iReg( int iPos, int iNeg) const
@@ -175,11 +178,14 @@ public:
 
   // Reference to string region specified by (iPos, iNeg) pair.
   StringRegion& region(int iPos, int iNeg) {return system[iReg(iPos, iNeg)];}
+  const StringRegion& region(int iPos, int iNeg) const {return system[iReg(iPos, iNeg)];}
 
   // Reference to low string region specified either by iPos or iNeg.
   StringRegion& regionLowPos(int iPos) {
     return system[iReg(iPos, iMax - iPos)]; }
-  StringRegion& regionLowNeg(int iNeg) {
+  const StringRegion& regionLowPos(int iPos) const {
+    return system[iReg(iPos, iMax - iPos)]; }
+  const StringRegion& regionLowNeg(int iNeg) const {
     return system[iReg(iMax - iNeg, iNeg)]; }
 
   // Main content: a vector with all the string regions of the system.

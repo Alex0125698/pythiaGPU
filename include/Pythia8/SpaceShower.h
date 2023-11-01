@@ -144,7 +144,7 @@ public:
   // Return clustering kinematics - as needed form merging.
   // Usage: clustered( const Event& event, string name, int iRad, int iEmt,
   //                   int iRec)
-  virtual Event clustered( const Event&, string, int, int, int)
+  virtual Event clustered( const Event&, stringref, int, int, int)
     { return Event();}
 
   // Return state after a branching, as needed to evaluate more complicated
@@ -152,7 +152,7 @@ public:
   // Usage: branched( const Event& event, int iRadBef, int iRecBef, int idEmt,
   //                  double pT2, double z, double RN, vector<double> aux)
   virtual Event branched( const Event&, int, int, int, int, double,
-    double, double, vector<double>) { return Event();}
+    double, double, const vector<double>&) { return Event();}
 
   // Return the evolution variable.
   // Usage: pT2Space( const Particle& rad, const Particle& emt,
@@ -290,8 +290,8 @@ private:
 
   // Provide actual ME weight for t-channel weak emissions.
   double calcMEcorrWeak(int MEtype, double m2, double z,
-    double pT2, Vec4 pMother, Vec4 pB, Vec4 pDaughter,
-    Vec4 pB0, Vec4 p1, Vec4 p2, Vec4 pSister);
+    double pT2, const Vec4& pMother, const Vec4& pB, Vec4 pDaughter,
+    Vec4 pB0, Vec4 p1, Vec4 p2, const Vec4& pSister);
 
   // Find coefficient of azimuthal asymmetry from gluon polarization.
   void findAsymPol( Event& event, SpaceDipoleEnd* dip);

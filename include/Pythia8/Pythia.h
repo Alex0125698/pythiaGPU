@@ -64,7 +64,7 @@ public:
 
   // Constructor. (See Pythia.cc file.)
   // @@@ MAIN
-  Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
+  Pythia(stringref xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
@@ -72,14 +72,14 @@ public:
   // looks like a wrapper of settings, but may store stuff elsewhere too
 
   // Read in one update for a setting or particle data from a single line.
-  bool readString(string, bool warn = true);
+  bool readString(stringref, bool warn = true);
 
   // why do we need another function for this?
 
   // Read in updates for settings or particle data from user-defined file.
-  bool readFile(string fileName, bool warn = true,
+  bool readFile(stringref fileName, bool warn = true,
     int subrun = SUBRUNDEFAULT);
-  bool readFile(string fileName, int subrun) {
+  bool readFile(stringref fileName, int subrun) {
     return readFile(fileName, true, subrun);}
   bool readFile(istream& is = cin, bool warn = true,
     int subrun = SUBRUNDEFAULT);
@@ -170,15 +170,15 @@ public:
   // these wrappers should be removed
 
   // Read in settings values: shorthand, not new functionality.
-  bool   flag(string key) {return settings.flag(key);}
-  int    mode(string key) {return settings.mode(key);}
-  double parm(string key) {return settings.parm(key);}
-  string word(string key) {return settings.word(key);}
+  bool   flag(stringref key) {return settings.flag(key);}
+  int    mode(stringref key) {return settings.mode(key);}
+  double parm(stringref key) {return settings.parm(key);}
+  string word(stringref key) {return settings.word(key);}
 
   // @@@ DATA
 
   // Auxiliary to set parton densities among list of possibilities.
-  PDF* getPDFPtr(int idIn, int sequence = 1, string beam = "");
+  PDF* getPDFPtr(int idIn, int sequence = 1, stringref beam = "");
 
   // The event record for the parton-level central process.
   Event          process;
@@ -336,10 +336,10 @@ private:
   void banner(ostream& os = cout);
 
   // Check for lines in file that mark the beginning of new subrun.
-  int readSubrun(string line, bool warn = true, ostream& os = cout);
+  int readSubrun(stringref line, bool warn = true, ostream& os = cout);
 
   // Check for lines that mark the beginning or end of commented section.
-  int readCommented(string line);
+  int readCommented(stringref line);
 
   // Check that combinations of settings are allowed; change if not.
   void checkSettings();

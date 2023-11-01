@@ -100,7 +100,7 @@ public:
   void acol(int acolIn) {acolSave = acolIn;}
   void cols(int colIn = 0,int acolIn = 0) {colSave = colIn;
     acolSave = acolIn;}
-  void p(Vec4 pIn) {pSave = pIn;}
+  void p(const Vec4& pIn) {pSave = pIn;}
   void p(double pxIn, double pyIn, double pzIn, double eIn)
     {pSave.p(pxIn, pyIn, pzIn, eIn);}
   void px(double pxIn) {pSave.px(pxIn);}
@@ -110,7 +110,7 @@ public:
   void m(double mIn) {mSave = mIn;}
   void scale(double scaleIn) {scaleSave = scaleIn;}
   void pol(double polIn) {polSave = polIn;}
-  void vProd(Vec4 vProdIn) {vProdSave = vProdIn; hasVertexSave = true;}
+  void vProd(const Vec4& vProdIn) {vProdSave = vProdIn; hasVertexSave = true;}
   void vProd(double xProdIn, double yProdIn, double zProdIn, double tProdIn)
     {vProdSave.p(xProdIn, yProdIn, zProdIn, tProdIn); hasVertexSave = true;}
   void xProd(double xProdIn) {vProdSave.px(xProdIn); hasVertexSave = true;}
@@ -200,9 +200,9 @@ public:
   bool undoDecay();
 
   // Further output, based on a pointer to a ParticleDataEntry object.
-  string name()      const {
+  cstring name()      const {
     return (pdePtr != 0) ? pdePtr->name(idSave) : " ";}
-  string nameWithStatus(int maxLen = 20) const;
+  cstring nameWithStatus(int maxLen = 20) const;
   int    spinType()  const {
     return (pdePtr != 0) ? pdePtr->spinType() : 0;}
   int    chargeType() const {
@@ -380,7 +380,7 @@ public:
   Event(const Event& oldEvent) {*this = oldEvent;}
 
   // Initialize header for event listing, particle data table, and colour.
-  void init( string headerIn = "", ParticleData* particleDataPtrIn = 0,
+  void init(const string& headerIn = "", ParticleData* particleDataPtrIn = 0,
     int startColTagIn = 100) {
     headerList.replace(0, headerIn.length() + 2, headerIn + "  ");
      particleDataPtr = particleDataPtrIn; startColTag = startColTagIn;}
@@ -406,7 +406,7 @@ public:
   int size() const {return entry.size();}
 
   // Put a new particle at the end of the event record; return index.
-  int append(Particle entryIn) {
+  int append(const Particle& entryIn) {
     entry.push_back(entryIn); setEvtPtr();
     if (entryIn.col() > maxColTag) maxColTag = entryIn.col();
     if (entryIn.acol() > maxColTag) maxColTag = entryIn.acol();
@@ -422,7 +422,7 @@ public:
     return entry.size() - 1;
   }
   int append(int id, int status, int mother1, int mother2, int daughter1,
-    int daughter2, int col, int acol, Vec4 p, double m = 0.,
+    int daughter2, int col, int acol, const Vec4& p, double m = 0.,
     double scaleIn = 0., double polIn = 9.) {
     entry.push_back( Particle(id, status, mother1, mother2, daughter1,
     daughter2, col, acol, p, m, scaleIn, polIn) ); setEvtPtr();
@@ -440,7 +440,7 @@ public:
     if (acol > maxColTag) maxColTag = acol;
     return entry.size() - 1;
   }
-  int append(int id, int status, int col, int acol, Vec4 p, double m = 0.,
+  int append(int id, int status, int col, int acol, const Vec4& p, double m = 0.,
     double scaleIn = 0., double polIn = 9.) {entry.push_back( Particle(id,
     status, 0, 0, 0, 0, col, acol, p, m, scaleIn, polIn) ); setEvtPtr();
     if (col > maxColTag) maxColTag = col;
@@ -520,7 +520,7 @@ public:
   int appendJunction( int kind, int col0, int col1, int col2)
     { junction.push_back( Junction( kind, col0, col1, col2) );
     return junction.size() - 1;}
-  int appendJunction(Junction junctionIn) {junction.push_back(junctionIn);
+  int appendJunction(const Junction& junctionIn) {junction.push_back(junctionIn);
     return junction.size() - 1;}
   int sizeJunction() const {return junction.size();}
   bool remainsJunction(int i) const {return junction[i].remains();}

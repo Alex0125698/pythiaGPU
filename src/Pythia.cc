@@ -41,7 +41,9 @@ const int Pythia::SUBRUNDEFAULT = -999;
 // Constructor.
 
 // done
-Pythia::Pythia(string xmlDir, bool printBanner) {
+Pythia::Pythia(stringref xmlDir_, bool printBanner) {
+
+  thread_local string xmlDir; xmlDir = xmlDir_;
 
   // Benchmark::init();
   Benchmark_start(PythiaP);
@@ -208,7 +210,7 @@ Pythia::~Pythia() {
 // Read in one update for a setting or particle data from a single line.
 
 // done
-bool Pythia::readString(string line, bool warn) {
+bool Pythia::readString(stringref line, bool warn) {
 
   // Check that constructor worked.
   if (!isConstructed) return false;
@@ -237,7 +239,7 @@ bool Pythia::readString(string line, bool warn) {
 // Read in updates for settings or particle data from user-defined file.
 
 // done
-bool Pythia::readFile(string fileName, bool warn, int subrun) {
+bool Pythia::readFile(stringref fileName, bool warn, int subrun) {
 
   // Check that constructor worked.
   if (!isConstructed) return false;
@@ -1782,8 +1784,8 @@ void Pythia::banner(ostream& os) {
      << setw(5) << versionNumber << "      |  | \n"
      << " |  |   PPP     Y      T    HHHHH   I   AAAAA"
      << "    Last date of change: " << setw(2) << versionDate%100
-     << " " << month[ (versionDate/100)%100 - 1 ]
-     << " " << setw(4) << versionDate/10000 <<  "  |  | \n"
+     << ' ' << month[ (versionDate/100)%100 - 1 ]
+     << ' ' << setw(4) << versionDate/10000 <<  "  |  | \n"
      << " |  |   P       Y      T    H   H   I   A   A"
      << "                                      |  | \n"
      << " |  |   P       Y      T    H   H  III  A   A"
@@ -1891,7 +1893,7 @@ void Pythia::banner(ostream& os) {
 
 // Check for lines in file that mark the beginning of new subrun.
 
-int Pythia::readSubrun(string line, bool warn, ostream& os) {
+int Pythia::readSubrun(stringref line, bool warn, ostream& os) {
 
   // If empty line then done.
   int subrunLine = SUBRUNDEFAULT;
@@ -1944,7 +1946,7 @@ int Pythia::readSubrun(string line, bool warn, ostream& os) {
 // Return +1 for beginning, -1 for end, 0 else.
 
 // done
-int Pythia::readCommented(string line) {
+int Pythia::readCommented(stringref line) {
 
   // If less than two nontrivial characters on line then done.
   if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return 0;
@@ -2038,7 +2040,7 @@ bool Pythia::check(ostream& os) {
         || (colType ==  2 && (col <= 0 || acol <= 0)) ) {
         ostringstream errCode;
         errCode << ", i = " << i << ", id = " << id << " cols = " << col
-                << " " << acol;
+                << ' ' << acol;
         info.errorMsg("Error in Pythia::check: "
           "incorrect colours", errCode.str());
         physical = false;
@@ -2225,31 +2227,31 @@ bool Pythia::check(ostream& os) {
     if (iErrId.size() > 0) {
       os << " unknown particle codes in lines ";
       for (int i = 0; i < int(iErrId.size()); ++i)
-        os << iErrId[i] << " ";
+        os << iErrId[i] << ' ';
       os << "\n";
     }
     if (iErrCol.size() > 0) {
       os << " incorrect colour assignments in lines ";
       for (int i = 0; i < int(iErrCol.size()); ++i)
-        os << iErrCol[i] << " ";
+        os << iErrCol[i] << ' ';
       os << "\n";
     }
     if (iErrEpm.size() > 0) {
       os << " mismatch between energy/momentum/mass in lines ";
       for (int i = 0; i < int(iErrEpm.size()); ++i)
-        os << iErrEpm[i] << " ";
+        os << iErrEpm[i] << ' ';
       os << "\n";
     }
     if (iErrNan.size() > 0) {
       os << " not-a-number energy/momentum/mass in lines ";
       for (int i = 0; i < int(iErrNan.size()); ++i)
-        os << iErrNan[i] << " ";
+        os << iErrNan[i] << ' ';
       os << "\n";
     }
     if (iErrNanVtx.size() > 0) {
       os << " not-a-number vertex/lifetime in lines ";
       for (int i = 0; i < int(iErrNanVtx.size()); ++i)
-        os << iErrNanVtx[i] << " ";
+        os << iErrNanVtx[i] << ' ';
       os << "\n";
     }
     if (epDev > epTolErr * eLab) os << scientific << setprecision(3)
@@ -2258,18 +2260,18 @@ bool Pythia::check(ostream& os) {
       << " total charge non-conservation = " << chargeSum << "\n";
     if (noMot.size() > 0) {
       os << " missing mothers for particles ";
-      for (int i = 0; i < int(noMot.size()); ++i) os << noMot[i] << " ";
+      for (int i = 0; i < int(noMot.size()); ++i) os << noMot[i] << ' ';
       os << "\n";
     }
     if (noDau.size() > 0) {
       os << " missing daughters for particles ";
-      for (int i = 0; i < int(noDau.size()); ++i) os << noDau[i] << " ";
+      for (int i = 0; i < int(noDau.size()); ++i) os << noDau[i] << ' ';
       os << "\n";
     }
     if (noMotDau.size() > 0) {
       os << " inconsistent history for (mother,daughter) pairs ";
       for (int i = 0; i < int(noMotDau.size()); ++i)
-        os << "(" << noMotDau[i].first << "," << noMotDau[i].second << ") ";
+        os << '(' << noMotDau[i].first << ',' << noMotDau[i].second << ") ";
       os << "\n";
     }
 
@@ -2292,7 +2294,7 @@ bool Pythia::check(ostream& os) {
 // Routine to set up a PDF pointer.
 
 // done
-PDF* Pythia::getPDFPtr(int idIn, int sequence, string beam) {
+PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
 
   // Temporary pointer to be returned.
   PDF* tempPDFPtr = 0;

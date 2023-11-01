@@ -126,7 +126,7 @@ void LHAup::listEvent(ostream& os) {
 
 // Open and write header to a Les Houches Event File.
 
-bool LHAup::openLHEF(string fileNameIn) {
+bool LHAup::openLHEF(stringref fileNameIn) {
 
   // Open file for writing. Reset it to be empty.
   fileName = fileNameIn;
@@ -171,10 +171,10 @@ bool LHAup::initLHEF() {
 
   // Write information on all the subprocesses.
   for (int ip = 0; ip < int(processes.size()); ++ip)
-    osLHEF << " " << setw(13) << processes[ip].xSecProc
-           << " " << setw(13) << processes[ip].xErrProc
-           << " " << setw(13) << processes[ip].xMaxProc
-           << " " << setw(6) << processes[ip].idProc << "\n";
+    osLHEF << ' ' << setw(13) << processes[ip].xSecProc
+           << ' ' << setw(13) << processes[ip].xErrProc
+           << ' ' << setw(13) << processes[ip].xMaxProc
+           << ' ' << setw(6) << processes[ip].idProc << "\n";
 
   // Done.
   osLHEF << "</init>" << endl;
@@ -195,74 +195,74 @@ bool LHAup::eventLHEF(bool verbose) {
 
     // Write information on process as such.
     osLHEF << "<event>\n" << scientific << setprecision(6)
-           << " " << setw(5) << particles.size() - 1
-           << " " << setw(5) << idProc
-           << " " << setw(13) << weightProc
-           << " " << setw(13) << scaleProc
-           << " " << setw(13) << alphaQEDProc
-           << " " << setw(13) << alphaQCDProc << "\n";
+           << ' ' << setw(5) << particles.size() - 1
+           << ' ' << setw(5) << idProc
+           << ' ' << setw(13) << weightProc
+           << ' ' << setw(13) << scaleProc
+           << ' ' << setw(13) << alphaQEDProc
+           << ' ' << setw(13) << alphaQCDProc << "\n";
 
     // Write information on the particles, excluding zeroth.
     for (int ip = 1; ip < int(particles.size()); ++ip) {
       LHAParticle& ptNow = particles[ip];
-      osLHEF << " " << setw(8) << ptNow.idPart
-             << " " << setw(5) << ptNow.statusPart
-             << " " << setw(5) << ptNow.mother1Part
-             << " " << setw(5) << ptNow.mother2Part
-             << " " << setw(5) << ptNow.col1Part
-             << " " << setw(5) << ptNow.col2Part << setprecision(10)
-             << " " << setw(17) << ptNow.pxPart
-             << " " << setw(17) << ptNow.pyPart
-             << " " << setw(17) << ptNow.pzPart
-             << " " << setw(17) << ptNow.ePart
-             << " " << setw(17) <<  ptNow.mPart << setprecision(6);
+      osLHEF << ' ' << setw(8) << ptNow.idPart
+             << ' ' << setw(5) << ptNow.statusPart
+             << ' ' << setw(5) << ptNow.mother1Part
+             << ' ' << setw(5) << ptNow.mother2Part
+             << ' ' << setw(5) << ptNow.col1Part
+             << ' ' << setw(5) << ptNow.col2Part << setprecision(10)
+             << ' ' << setw(17) << ptNow.pxPart
+             << ' ' << setw(17) << ptNow.pyPart
+             << ' ' << setw(17) << ptNow.pzPart
+             << ' ' << setw(17) << ptNow.ePart
+             << ' ' << setw(17) <<  ptNow.mPart << setprecision(6);
       if (ptNow.tauPart == 0.) osLHEF << " 0.";
-      else osLHEF << " " << setw(13) << ptNow.tauPart;
+      else osLHEF << ' ' << setw(13) << ptNow.tauPart;
       if (ptNow.spinPart == 9.) osLHEF << " 9.";
-      else osLHEF << " " << setw(13) << ptNow.spinPart;
+      else osLHEF << ' ' << setw(13) << ptNow.spinPart;
       osLHEF << "\n";
     }
 
     // Optionally write information on PDF values at hard interaction.
     if (pdfIsSetSave) osLHEF << "#pdf"
-             << " " << setw(4) << id1pdfSave
-             << " " << setw(4) << id2pdfSave
-             << " " << setw(13) << x1pdfSave
-             << " " << setw(13) << x2pdfSave
-             << " " << setw(13) << scalePDFSave
-             << " " << setw(13) << pdf1Save
-             << " " << setw(13) << pdf2Save << "\n";
+             << ' ' << setw(4) << id1pdfSave
+             << ' ' << setw(4) << id2pdfSave
+             << ' ' << setw(13) << x1pdfSave
+             << ' ' << setw(13) << x2pdfSave
+             << ' ' << setw(13) << scalePDFSave
+             << ' ' << setw(13) << pdf1Save
+             << ' ' << setw(13) << pdf2Save << "\n";
 
   // Alternative non-verbose option.
   } else {
 
     // Write information on process as such.
     osLHEF << "<event>\n" << scientific << setprecision(6)
-           << particles.size() - 1 << " " << idProc       << " "
-           << weightProc           << " " << scaleProc    << " "
-           << alphaQEDProc         << " " << alphaQCDProc << "\n";
+           << particles.size() - 1 << ' ' << idProc       << ' '
+           << weightProc           << ' ' << scaleProc    << ' '
+           << alphaQEDProc         << ' ' << alphaQCDProc << "\n";
 
     // Write information on the particles, excluding zeroth.
     for (int ip = 1; ip < int(particles.size()); ++ip) {
       LHAParticle& ptNow = particles[ip];
-      osLHEF        << ptNow.idPart      << " " << ptNow.statusPart
-             << " " << ptNow.mother1Part << " " << ptNow.mother2Part
-             << " " << ptNow.col1Part    << " " << ptNow.col2Part
-             << setprecision(10)         << " " << ptNow.pxPart
-             << " " << ptNow.pyPart      << " " << ptNow.pzPart
-             << " " << ptNow.ePart       << " " << ptNow.mPart
+      osLHEF        << ptNow.idPart      << ' ' << ptNow.statusPart
+             << ' ' << ptNow.mother1Part << ' ' << ptNow.mother2Part
+             << ' ' << ptNow.col1Part    << ' ' << ptNow.col2Part
+             << setprecision(10)         << ' ' << ptNow.pxPart
+             << ' ' << ptNow.pyPart      << ' ' << ptNow.pzPart
+             << ' ' << ptNow.ePart       << ' ' << ptNow.mPart
              << setprecision(6);
       if (ptNow.tauPart == 0.) osLHEF << " 0.";
-      else osLHEF << " " << setw(13) << ptNow.tauPart;
+      else osLHEF << ' ' << setw(13) << ptNow.tauPart;
       if (ptNow.spinPart == 9.) osLHEF << " 9.";
-      else osLHEF << " " << setw(13) << ptNow.spinPart;
+      else osLHEF << ' ' << setw(13) << ptNow.spinPart;
       osLHEF << "\n";
     }
 
     // Optionally write information on PDF values at hard interaction.
-    if (pdfIsSetSave) osLHEF << "#pdf" << " " << id1pdfSave
-             << " " << id2pdfSave << " " << x1pdfSave << " " << x2pdfSave
-             << " " << scalePDFSave << " " << pdf1Save << " " << pdf2Save
+    if (pdfIsSetSave) osLHEF << "#pdf" << ' ' << id1pdfSave
+             << ' ' << id2pdfSave << ' ' << x1pdfSave << ' ' << x2pdfSave
+             << ' ' << scalePDFSave << ' ' << pdf1Save << ' ' << pdf2Save
              << "\n";
   }
 
@@ -1166,7 +1166,7 @@ bool LHAupFromPYTHIA8::updateSigma() {
 
 // Function to open the output file stream.
 
-bool LHEF3FromPythia8::openLHEF(string fileNameIn) {
+bool LHEF3FromPythia8::openLHEF(stringref fileNameIn) {
 
   // Open file for writing. Reset it to be empty.
   fileName = fileNameIn;

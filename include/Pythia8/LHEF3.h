@@ -52,7 +52,7 @@ struct XMLTag {
 
   // Find an attribute named n and set the double variable v to
   // the corresponding value. Return false if no attribute was found.
-  bool getattr(string n, double & v) const {
+  bool getattr(stringref n, double & v) const {
     map<string,string>::const_iterator it = attr.find(n);
     if ( it == attr.end() ) return false;
     v = atof(it->second.c_str());
@@ -61,7 +61,7 @@ struct XMLTag {
 
   // Find an attribute named n and set the bool variable v to true if the
   // corresponding value is "yes". Return false if no attribute was found.
-  bool getattr(string n, bool & v) const {
+  bool getattr(stringref n, bool & v) const {
     map<string,string>::const_iterator it = attr.find(n);
     if ( it == attr.end() ) return false;
     if ( it->second == "yes" ) v = true;
@@ -70,7 +70,7 @@ struct XMLTag {
 
   // Find an attribute named n and set the long variable v to the
   // corresponding value. Return false if no attribute was found.
-  bool getattr(string n, long & v) const {
+  bool getattr(stringref n, long & v) const {
     map<string,string>::const_iterator it = attr.find(n);
     if ( it == attr.end() ) return false;
     v = atoi(it->second.c_str());
@@ -79,7 +79,7 @@ struct XMLTag {
 
   // Find an attribute named n and set the long variable v to the
   // corresponding value. Return false if no attribute was found.
-  bool getattr(string n, int & v) const {
+  bool getattr(stringref n, int & v) const {
     map<string,string>::const_iterator it = attr.find(n);
     if ( it == attr.end() ) return false;
     v = int(atoi(it->second.c_str()));
@@ -88,7 +88,7 @@ struct XMLTag {
 
   // Find an attribute named n and set the string variable v to the
   // corresponding value. Return false if no attribute was found.
-  bool getattr(string n, string & v) const {
+  bool getattr(stringref n, string & v) const {
     map<string,string>::const_iterator it = attr.find(n);
     if ( it == attr.end() ) return false;
     v = it->second;
@@ -97,7 +97,7 @@ struct XMLTag {
 
   // Scan the given string and return all XML tags found as a vector
   // of pointers to XMLTag objects.
-  static vector<XMLTag*> findXMLTags(string str,
+  static vector<XMLTag*> findXMLTags(stringref str,
     string * leftover = 0) {
     vector<XMLTag*> tags;
     pos_t curr = 0;
@@ -201,19 +201,19 @@ struct XMLTag {
 
   // Print out this tag to a stream.
   void print(ostream & os) const {
-    os << "<" << name;
+    os << '<' << name;
     for ( map<string,string>::const_iterator it = attr.begin();
           it != attr.end(); ++it )
-      os << " " << it->first << "=\"" << it->second << "\"";
+      os << ' ' << it->first << "=\"" << it->second << "\"";
     if ( contents.empty() && tags.empty() ) {
       os << "/>" << endl;
       return;
     }
-    os << ">" << endl;
+    os << '>' << endl;
     for ( int i = 0, N = tags.size(); i < N; ++i )
       tags[i]->print(os);
 
-    os << "````" << contents << "''''</" << name << ">" << endl;
+    os << "````" << contents << "''''</" << name << '>' << endl;
   }
 
 };
@@ -306,7 +306,7 @@ struct LHAgenerator {
   : name(""), version(""), contents("") {}
 
   // Construct from an XML-tag
-  LHAgenerator(const XMLTag & tag, string defname = "");
+  LHAgenerator(const XMLTag & tag, stringref defname = "");
 
   // Print out the corresponding XML-tag.
   void print(ostream & file) const;
@@ -374,11 +374,11 @@ struct LHAwgt {
 struct LHAweight {
 
   // Empty constructor.
-  LHAweight(string defname = "")
+  LHAweight(stringref defname = "")
   : id(defname), contents(defname) {}
 
   // Construct from an XML-tag
-  LHAweight(const XMLTag & tag, string defname = "");
+  LHAweight(const XMLTag & tag, stringref defname = "");
 
   // Print out the corresponding XML-tag.
   void print(ostream & file) const;
@@ -787,7 +787,7 @@ public:
   //
   // filename: the name of the file to read from.
   //
-  Reader(string filenameIn)
+  Reader(stringref filenameIn)
     : filename(filenameIn), intstream(NULL), file(NULL) {
     intstream = new igzstream(filename.c_str());
     file = intstream;
@@ -800,7 +800,7 @@ public:
   //
   // filename: File name (not used as the input file stream is given)
   // isIn    : Name of the input file stream.
-  bool setup(string filenameIn) {
+  bool setup(stringref filenameIn) {
     filename = filenameIn;
     if (intstream) delete intstream;
     intstream = new igzstream(filename.c_str());
@@ -940,7 +940,7 @@ public:
 
   // Create a Writer object giving a filename to write to.
   // @param filename the name of the event file to be written.
-  Writer(string filename)
+  Writer(stringref filename)
     : intstream(filename.c_str()), file(intstream), version(3) {}
 
   // The destructor.

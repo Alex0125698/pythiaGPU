@@ -491,7 +491,7 @@ bool JunctionSplitting::splitJunChains(Event& event) {
 // If it has 1 connection, depend on the string length.
 
 bool JunctionSplitting::splitJunPairs(Event& event,
-  vector<vector< int > >& iPartonJun, vector<vector< int > >& iPartonAntiJun) {
+  const vector<vector< int > >& iPartonJun, const vector<vector< int > >& iPartonAntiJun) {
 
   // Clear old memory.
   event.saveJunctionSize();

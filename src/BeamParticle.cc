@@ -1541,7 +1541,7 @@ bool BeamParticle::remnantFlavoursNew(Event& event) {
 
 // Set initial colours.
 
-void BeamParticle::setInitialCol(Event& event) {
+void BeamParticle::setInitialCol(const Event& event) {
 
   // Set beam colours equal to those in the event record.
   for (int i = 0;i < size(); ++i) {
@@ -1612,7 +1612,7 @@ int BeamParticle::findSingleCol(Event& event, bool isAcol,
 
 // Update list of all colours in beam.
 
-void BeamParticle::updateCol(vector<pair<int,int> > colourChanges) {
+void BeamParticle::updateCol(const vector<pair<int,int>>& colourChanges) {
 
   for (int iCol = 0;iCol < int(colourChanges.size()); ++iCol) {
     int oldCol = colourChanges[iCol].first;

@@ -50,7 +50,7 @@ void ColConfig::init(Info* infoPtrIn, Settings& settings,
 // Insert a new colour singlet system in ascending mass order.
 // Calculate its properties. Join nearby partons.
 
-bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
+bool ColConfig::insert(vector<int>& iPartonIn, Event& event) {
 
   // Find momentum and invariant mass of system, minus endpoint masses.
   Vec4 pSumIn;
@@ -393,7 +393,7 @@ void ColConfig::list(ostream& os) const {
     // List all partons belonging to each singlet.
     os << " singlet " << iSub << " contains " ;
     for (int i = 0; i < singlets[iSub].size(); ++i)
-      os << singlets[iSub].iParton[i] << " ";
+      os << singlets[iSub].iParton[i] << ' ';
     os << "\n";
 
   // Done.
@@ -507,7 +507,7 @@ void StringRegion::setUp(Vec4 p1, Vec4 p2, bool isMassless) {
 
 // Project a four-momentum onto (x+, x-, px, py).
 
-void StringRegion::project(Vec4 pIn) {
+void StringRegion::project(const Vec4& pIn) {
 
   // Perform projections by four-vector multiplication.
   xPosProj = 2. * (pIn * pNeg) / w2;
@@ -525,7 +525,7 @@ void StringRegion::project(Vec4 pIn) {
 
 // Set up system from parton list.
 
-void StringSystem::setUp(vector<int>& iSys, Event& event) {
+void StringSystem::setUp(const vector<int>& iSys, Event& event) {
 
   // Figure out how big the system is. (Closed gluon loops?)
   sizePartons = iSys.size();

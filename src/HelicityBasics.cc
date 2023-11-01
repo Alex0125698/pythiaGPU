@@ -94,7 +94,7 @@ double m2(Wave4 w1, Wave4 w2) {
 
 // Print a Wave4 vector.
 
-ostream& operator<< (ostream& os, Wave4 w) {
+ostream& operator<< (ostream& os, const Wave4& w) {
 
   os << left << setprecision(2);
   for (int i = 0; i < 4; i++) os << setw(20) << w.val[i];
@@ -232,7 +232,7 @@ ostream& operator<< (ostream& os, GammaMatrix g) {
 
 // Return wave vector for given helicity.
 
-Wave4 HelicityParticle::wave(int h) {
+Wave4 HelicityParticle::wave(int h) const {
 
   // Create wave vector to return.
   Wave4 w;
@@ -333,7 +333,7 @@ Wave4 HelicityParticle::wave(int h) {
 
 // Bar of a wave function.
 
-Wave4 HelicityParticle::waveBar(int h) {
+Wave4 HelicityParticle::waveBar(int h) const {
 
   if (spinType() == 2) return conj(wave(h)) * GammaMatrix(0);
   else                 return conj(wave(h));
@@ -361,7 +361,7 @@ void HelicityParticle::normalize(vector< vector<complex> >& matrix) {
 
 // Return the number of spin states.
 
-  int HelicityParticle::spinStates() {
+  int HelicityParticle::spinStates() const {
 
     int sT = spinType();
     if (sT == 0) return 1;

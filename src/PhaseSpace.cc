@@ -1171,8 +1171,11 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   // Check if negative cross section.
   Benchmark_start(trialKin123_McheckNegativeXsec);
   if (sigmaNw < sigmaNeg) {
-    infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+    thread_local string tmp; tmp = "for ";
+    tmp += sigmaProcessPtr->name();
+
+    infoPtr->errorMsg( "Warning in PhaseSpace2to2tauyz::trialKin:"
+      " negative cross section set 0", tmp );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
@@ -2806,7 +2809,7 @@ bool PhaseSpace2to2diffractive::trialKin( bool, bool ) {
           if (P > ddpmax) {
             ostringstream osWarn;
             osWarn << "ddpmax = " << scientific << setprecision(3)
-                   << ddpmax << " " << P << " " << dy << endl;
+                   << ddpmax << ' ' << P << ' ' << dy << endl;
             infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
               "trialKin for double diffraction:", osWarn.str());
           }
@@ -2844,7 +2847,7 @@ bool PhaseSpace2to2diffractive::trialKin( bool, bool ) {
           if (P > sdpmax) {
             ostringstream osWarn;
             osWarn << "sdpmax = " << scientific << setprecision(3)
-                   << sdpmax << " " << P << " " << dy << endl;
+                   << sdpmax << ' ' << P << ' ' << dy << endl;
             infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
               "trialKin for single diffraction:", osWarn.str());
           }
@@ -3257,7 +3260,7 @@ bool PhaseSpace2to3diffractive::trialKin( bool, bool ) {
         if (P > dpepmax) {
           ostringstream osWarn;
           osWarn << "dpepmax = " << scientific << setprecision(3)
-                 << dpepmax << " " << P << " " << dy << endl;
+                 << dpepmax << ' ' << P << ' ' << dy << endl;
           infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
             "trialKin for central diffraction:", osWarn.str());
         }
@@ -3873,8 +3876,9 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
 
   // Check if negative cross section.
   if (sigmaNw < sigmaNeg) {
+    thread_local string tmp; tmp = "for "; tmp += sigmaProcessPtr->name();
     infoPtr->errorMsg("Warning in PhaseSpace2to3yyycyl::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+      " negative cross section set 0", tmp );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.

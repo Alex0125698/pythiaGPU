@@ -2930,8 +2930,8 @@ void History::attachClusterings (vector<Clustering>& clus, int iEmt, int iRad,
 
 vector<Clustering> History::findQCDTriple (int EmtTagIn, int colTopIn,
                       const Event& event,
-                      vector<int> posFinalPartn,
-                      vector <int> posInitPartn ) {
+                      const vector<int>& posFinalPartn,
+                      const vector <int>& posInitPartn ) {
 
   // Copy input parton tag
   int EmtTag = EmtTagIn;
@@ -3483,8 +3483,8 @@ vector<Clustering> History::getSQCDClusterings( const Event& event) {
 
 vector<Clustering> History::findSQCDTriple (int EmtTagIn, int colTopIn,
                       const Event& event,
-                      vector<int> posFinalPartn,
-                      vector <int> posInitPartn ) {
+                      const vector<int>& posFinalPartn,
+                      const vector <int>& posInitPartn ) {
 
   // Copy input parton tag
   int EmtTag = EmtTagIn;
@@ -4559,7 +4559,7 @@ double History::hardProcessME( const Event& event ) {
 // IN Clustering : rad,rec,emt triple to be clustered to two partons
 // OUT clustered state
 
-Event History::cluster( Clustering & inSystem ) {
+Event History::cluster(const Clustering & inSystem ) {
 
   // Initialise tags of particles to be changed
   int Rad = inSystem.emittor;
@@ -5915,7 +5915,10 @@ bool History::getColSinglet( const int flavType, const int iParton,
 // OUT bool        : Is a colour singlet / is not
 
 bool History::isColSinglet( const Event& event,
-  vector<int> system ) {
+  const vector<int>& system_ ) {
+
+  // @fixme
+  thread_local vector<int> system; system = system_;
 
   // Check if system forms a colour singlet
   for(int i=0; i < int(system.size()); ++i ) {
@@ -5975,7 +5978,10 @@ bool History::isColSinglet( const Event& event,
 // OUT bool        : Is a flavour singlet / is not
 
 bool History::isFlavSinglet( const Event& event,
-  vector<int> system, int flav) {
+  const vector<int>& system_, int flav) {
+
+  // @fixme
+  thread_local vector<int> system; system = system_;
 
   // If a decoupled colour singlet has been found, check if this is also
   // a flavour singlet
@@ -6826,7 +6832,7 @@ bool History::validEvent( const Event& event ) {
 // Function to check whether two clusterings are identical, used
 // for finding the history path in the mother -> children direction
 
-bool History::equalClustering( Clustering clus1 , Clustering clus2 ) {
+bool History::equalClustering(const Clustering& clus1 , const Clustering& clus2 ) {
   return (  (clus1.emittor     == clus2.emittor)
          && (clus1.emitted     == clus2.emitted)
          && (clus1.recoiler    == clus2.recoiler)

@@ -178,7 +178,7 @@ public:
     if (!setEvent()) return false; return true;}
 
   // Four routines to write a Les Houches Event file in steps.
-  virtual bool openLHEF(string fileNameIn);
+  virtual bool openLHEF(stringref fileNameIn);
   virtual bool closeLHEF(bool updateInit = false);
   bool   initLHEF();
   bool   eventLHEF(bool verbose = true);
@@ -229,7 +229,7 @@ protected:
     particles.clear(); addParticle(0); pdfIsSetSave = false;}
 
   // Input particle info, one particle at the time.
-  void addParticle(LHAParticle particleIn) {
+  void addParticle(const LHAParticle& particleIn) {
     particles.push_back(particleIn);}
   void addParticle(int idIn, int statusIn = 0, int mother1In = 0,
     int mother2In = 0, int col1In = 0, int col2In = 0, double pxIn = 0.,
@@ -266,7 +266,7 @@ protected:
   // LHAup is a friend class to infoPtr, but derived classes
   // are not. This wrapper function can be used by derived classes
   // to set headers in the Info class.
-  void setInfoHeader(const string &key, const string &val) {
+  void setInfoHeader(const string& key, const string& val) {
     infoPtr->setHeader(key, val); }
 
   // Event properties from LHEF files, for repeated use.
@@ -494,7 +494,7 @@ public:
   bool setEvent(int = 0);
 
   // Function to open the output file.
-  bool openLHEF(string fileNameIn);
+  bool openLHEF(stringref fileNameIn);
 
   // Function to close (and possibly update) the output file.
   bool closeLHEF(bool updateInit = false);
