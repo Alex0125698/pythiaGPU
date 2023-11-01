@@ -1038,7 +1038,10 @@ void History::findPath(vector<int>& out) {
 //                       ordering
 // NO OUTPUT
 
-void History::setScales( vector<int> index, bool forward) {
+void History::setScales( const vector<int>& index_, bool forward) {
+
+  // @fixme
+  thread_local vector<int> index; index = index_;
 
   // First, set the scales of the hard process to the kinematial
   // limit (=s)

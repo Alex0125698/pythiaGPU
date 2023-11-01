@@ -174,7 +174,8 @@ inline void toLowerInPlace(string& name)
   // }
 }
 
-const string& toLower(const string& name)
+// @fixme
+inline string toLower(const string& name)
 {
   // -- old version
 

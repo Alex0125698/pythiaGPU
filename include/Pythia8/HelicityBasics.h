@@ -36,6 +36,9 @@ public:
   // Access an element of the wave vector.
   complex& operator() (int i) {return val[i];}
 
+  // Access an element of the wave vector.
+  const complex& operator() (int i) const {return val[i];}
+
   // Wave4 + Wave4.
   Wave4 operator+(const Wave4& w) const {return Wave4( val[0] + w.val[0],
     val[1] + w.val[1], val[2] + w.val[2], val[3] + w.val[3]);}
