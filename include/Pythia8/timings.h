@@ -60,7 +60,7 @@ namespace Pythia8
   }
 }
 
-// #define ENABLE_BENCHMARKS
+#define ENABLE_BENCHMARKS
 
 #ifdef ENABLE_BENCHMARKS
 
