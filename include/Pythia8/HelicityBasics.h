@@ -29,7 +29,7 @@ public:
   Wave4() {};
   Wave4(complex v0, complex v1, complex v2, complex v3) {val[0] = v0;
     val[1] = v1; val[2] = v2; val[3] = v3;}
-  Wave4(const Vec4& v) {val[0] = v.e(); val[1] = v.px(); val[2] = v.py();
+  Wave4(Vec4ref v) {val[0] = v.e(); val[1] = v.px(); val[2] = v.py();
     val[3] = v.pz();}
   ~Wave4() {};
 
@@ -199,7 +199,7 @@ public:
     initRhoD();
     direction = 1; }
   HelicityParticle(int idIn, int statusIn, int mother1In, int mother2In,
-    int daughter1In, int daughter2In, int colIn, int acolIn, const Vec4& pIn,
+    int daughter1In, int daughter2In, int colIn, int acolIn, Vec4ref pIn,
     double mIn = 0., double scaleIn = 0., ParticleData* ptr = 0)
     : Particle(idIn, statusIn, mother1In, mother2In, daughter1In, daughter2In,
     colIn, acolIn, pIn, mIn, scaleIn) {

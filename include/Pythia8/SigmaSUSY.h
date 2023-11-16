@@ -83,9 +83,9 @@ public:
   //  virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "ff";}
+  virtual string inFlux()  const {return "ff";}
   virtual int    id3Mass() const {return abs(id3);}
   virtual int    id4Mass() const {return abs(id4);}
   virtual int    resonanceA() const {return 23;}
@@ -96,7 +96,7 @@ public:
 
   // Basic process information
   int     id3chi, id4chi, codeSave;
-  stringbuf  nameSave;
+  string  nameSave;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -225,9 +225,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qg";}
+  virtual string inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return abs(id3);}
   virtual int    id4Mass() const {return abs(id4);}
   virtual bool   isSUSY()  const {return true;}
@@ -236,7 +236,7 @@ public:
 
   // Basic process information
   int     id3chi, id4sq, codeSave;
-  stringbuf  nameSave;
+  string  nameSave;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -335,9 +335,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qq";}
+  virtual string inFlux()  const {return "qq";}
   virtual int    id3Mass() const {return abs(id3Sav);}
   virtual int    id4Mass() const {return abs(id4Sav);}
   virtual bool   isSUSY()  const {return true;}
@@ -346,7 +346,7 @@ private:
 
   // Basic process information
   int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  stringbuf  nameSave;
+  string  nameSave;
   bool    isUD, onlyQCD;
 
   // Storage of mass squares
@@ -405,9 +405,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qq";}
+  virtual string inFlux()  const {return "qq";}
   virtual int    id3Mass() const {return abs(id3Sav);}
   virtual int    id4Mass() const {return abs(id4Sav);}
   virtual bool   isSUSY()  const {return true;}
@@ -416,7 +416,7 @@ private:
 
   // Basic process information
   int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  stringbuf  nameSave;
+  string  nameSave;
   bool    isUD, isCC, onlyQCD;
 
   // Storage of mass squares
@@ -478,9 +478,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "gg";}
+  virtual string inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return abs(id3Sav);}
   virtual int    id4Mass() const {return abs(id4Sav);}
   virtual bool   isSUSY()  const {return true;}
@@ -489,7 +489,7 @@ private:
 
   // Basic process information
   int     id3Sav, id4Sav, codeSave;
-  stringbuf  nameSave;
+  string  nameSave;
   double sigma, m2Sq, openFracPair;
 
   //SUSY couplings
@@ -533,9 +533,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qg";}
+  virtual string inFlux()  const {return "qg";}
   virtual int    id3Mass() const {return abs(id3Sav);}
   virtual int    id4Mass() const {return 1000021;}
   virtual bool   isSUSY()  const {return true;}
@@ -544,7 +544,7 @@ private:
 
   // Basic process information
   int     id3Sav, codeSave;
-  stringbuf  nameSave;
+  string  nameSave;
   double sigmaA, sigmaB, comFacHat, m2Glu, m2Sq, openFracPair;
 
   //SUSY couplings
@@ -577,9 +577,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return "g g -> gluino gluino";}
+  virtual string name()    const {return "g g -> gluino gluino";}
   virtual int    code()    const {return 1201;}
-  virtual cstring inFlux()  const {return "gg";}
+  virtual string inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return 1000021;}
   virtual int    id4Mass() const {return 1000021;}
   virtual bool   isSUSY()  const {return true;}
@@ -620,9 +620,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return "q qbar -> gluino gluino";}
+  virtual string name()    const {return "q qbar -> gluino gluino";}
   virtual int    code()    const {return 1202;}
-  virtual cstring inFlux()  const {return "qq";}
+  virtual string inFlux()  const {return "qq";}
   virtual int    id3Mass() const {return 1000021;}
   virtual int    id4Mass() const {return 1000021;}
   virtual bool   isSUSY()  const {return true;}
@@ -665,9 +665,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qq";}
+  virtual string inFlux()  const {return "qq";}
   virtual bool   isSUSY()  const {return true;}
   virtual bool   isRPV()   const {return true;}
   virtual int    resonanceA() const {return idRes;}
@@ -677,7 +677,7 @@ private:
   // Values stored for process type and colour flow selection.
   double mRes, GammaRes, m2Res, sigBW, widthOut;
   int    codeSave, idRes;
-  stringbuf nameSave;
+  string nameSave;
 
   //SUSY couplings
   CoupSUSY* coupSUSYPtr;
@@ -730,9 +730,9 @@ public:
   //  virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "ff";}
+  virtual string inFlux()  const {return "ff";}
   virtual int    id3Mass() const {return abs(id3);}
   virtual int    id4Mass() const {return abs(id4);}
   virtual int    resonanceA() const {return 23;}
@@ -743,7 +743,7 @@ public:
 
   // Basic process information
   int     id3chi, id4chi, codeSave;
-  stringbuf  nameSave;
+  string  nameSave;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -830,9 +830,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qq";}
+  virtual string inFlux()  const {return "qq";}
   virtual int    id3Mass() const {return abs(id3Sav);}
   virtual int    id4Mass() const {return abs(id4Sav);}
   virtual bool   isSUSY()  const {return true;}
@@ -841,7 +841,7 @@ private:
 
   // Basic process information
   int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  stringbuf  nameSave;
+  string  nameSave;
   bool    isUD;
 
   // Storage of mass squares

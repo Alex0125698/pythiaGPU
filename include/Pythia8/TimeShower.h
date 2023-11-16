@@ -327,7 +327,7 @@ private:
   void findAsymPol( Event& event, TimeDipoleEnd* dip);
 
   // Rescatter: propagate dipole recoil to internal lines connecting systems.
-  bool rescatterPropagateRecoil( Event& event, const Vec4& pNew);
+  bool rescatterPropagateRecoil( Event& event, Vec4ref pNew);
 
   // Properties stored for (some) global recoil schemes.
   // Vectors of event indices defining the hard process.

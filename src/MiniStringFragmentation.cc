@@ -314,7 +314,7 @@ bool MiniStringFragmentation::ministring2one( int iSub,
   if (iMax == -1) return false;
 
   // Construct kinematics of the hadron and recoiling system.
-  const Vec4& pRec     = colConfig[iMax].pSum;
+  Vec4ref pRec     = colConfig[iMax].pSum;
   double mRec    = colConfig[iMax].mass;
   double vecProd = pSum * pRec;
   double coefOld = mSum*mSum + vecProd;

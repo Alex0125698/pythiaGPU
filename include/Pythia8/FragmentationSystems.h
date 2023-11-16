@@ -34,7 +34,7 @@ public:
   // Constructors.
   ColSinglet() : pSum(0., 0., 0., 0.), mass(0.), massExcess(0.),
     hasJunction(false), isClosed(false), isCollected(false) {}
-  ColSinglet(const vector<int>& iPartonIn, const Vec4& pSumIn, double massIn,
+  ColSinglet(const vector<int>& iPartonIn, Vec4ref pSumIn, double massIn,
     double massExcessIn, bool hasJunctionIn = false,
     bool isClosedIn = false, bool isCollectedIn = false)
     : iParton(iPartonIn), pSum(pSumIn), mass(massIn),
@@ -147,7 +147,7 @@ public:
     { return xPosIn * pPos + xNegIn * pNeg + pxIn * eX + pyIn * eY; }
 
   // Project a four-momentum onto (x+, x-, px, py). Read out projection.
-  void project(const Vec4& pIn);
+  void project(Vec4ref pIn);
   void project( double pxIn, double pyIn, double pzIn, double eIn)
     { project( Vec4( pxIn, pyIn, pzIn, eIn) ); }
   double xPos() const {return xPosProj;}
@@ -185,6 +185,9 @@ public:
     return system[iReg(iPos, iMax - iPos)]; }
   const StringRegion& regionLowPos(int iPos) const {
     return system[iReg(iPos, iMax - iPos)]; }
+    // !@!@
+  StringRegion& regionLowNeg(int iNeg) {
+    return system[iReg(iMax - iNeg, iNeg)]; }
   const StringRegion& regionLowNeg(int iNeg) const {
     return system[iReg(iMax - iNeg, iNeg)]; }
 

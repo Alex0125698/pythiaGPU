@@ -40,16 +40,16 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qg";}
+  virtual string inFlux()     const {return "qg";}
   virtual int    resonanceA() const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
   int    idq, idRes, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupFcol, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -84,16 +84,16 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "fgm";}
+  virtual string inFlux()     const {return "fgm";}
   virtual int    resonanceA() const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
   int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupChg, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -128,16 +128,16 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qq";}
+  virtual string inFlux()     const {return "qq";}
   virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
   int    idq, idRes, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double Lambda, preFac, openFracPos, openFracNeg, sigmaA, sigmaB;
 
 };
@@ -169,16 +169,16 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
+  virtual string inFlux()     const {return "qqbarSame";}
   virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
   int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -211,9 +211,9 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
+  virtual string inFlux()     const {return "qqbarSame";}
   virtual int    id3Mass()    const {return idRes;}
   virtual int    id4Mass()    const {return idRes;}
 
@@ -221,7 +221,7 @@ private:
 
   // Parameters set at initialization or for current kinematics.
   int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -251,9 +251,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q q(bar)' -> (QC) -> q q(bar)'";}
+  virtual string name()   const {return "q q(bar)' -> (QC) -> q q(bar)'";}
   virtual int    code()   const {return 4201;}
-  virtual cstring inFlux() const {return "qq";}
+  virtual string inFlux() const {return "qq";}
 
  private:
 
@@ -292,9 +292,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q qbar -> (QC) -> q' qbar' (uds)";}
+  virtual string name()   const {return "q qbar -> (QC) -> q' qbar' (uds)";}
   virtual int    code()   const {return 4202;}
-  virtual cstring inFlux() const {return "qqbarSame";}
+  virtual string inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -339,15 +339,15 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameNew;}
+  virtual string name()       const {return nameNew;}
   virtual int    code()       const {return codeNew;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
+  virtual string inFlux()     const {return "ffbarSame";}
   virtual bool   isSChannel() const {return true;}
 
 private:
 
   // Process values.
-  stringbuf nameNew;
+  string nameNew;
   int    idNew, codeNew;
   double qCmNew, qCmNew2, qCmZ, qCmZ2, qCGZ, qCGZ2, sigma0;
 

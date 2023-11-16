@@ -100,7 +100,7 @@ public:
   void acol(int acolIn) {acolSave = acolIn;}
   void cols(int colIn = 0,int acolIn = 0) {colSave = colIn;
     acolSave = acolIn;}
-  void p(const Vec4& pIn) {pSave = pIn;}
+  void p(Vec4ref pIn) {pSave = pIn;}
   void p(double pxIn, double pyIn, double pzIn, double eIn)
     {pSave.p(pxIn, pyIn, pzIn, eIn);}
   void px(double pxIn) {pSave.px(pxIn);}
@@ -110,7 +110,7 @@ public:
   void m(double mIn) {mSave = mIn;}
   void scale(double scaleIn) {scaleSave = scaleIn;}
   void pol(double polIn) {polSave = polIn;}
-  void vProd(const Vec4& vProdIn) {vProdSave = vProdIn; hasVertexSave = true;}
+  void vProd(Vec4ref vProdIn) {vProdSave = vProdIn; hasVertexSave = true;}
   void vProd(double xProdIn, double yProdIn, double zProdIn, double tProdIn)
     {vProdSave.p(xProdIn, yProdIn, zProdIn, tProdIn); hasVertexSave = true;}
   void xProd(double xProdIn) {vProdSave.px(xProdIn); hasVertexSave = true;}
@@ -200,9 +200,9 @@ public:
   bool undoDecay();
 
   // Further output, based on a pointer to a ParticleDataEntry object.
-  cstring name()      const {
+  string name()      const {
     return (pdePtr != 0) ? pdePtr->name(idSave) : " ";}
-  cstring nameWithStatus(int maxLen = 20) const;
+  string nameWithStatus(int maxLen = 20) const;
   int    spinType()  const {
     return (pdePtr != 0) ? pdePtr->spinType() : 0;}
   int    chargeType() const {
@@ -265,13 +265,13 @@ public:
   void bst(double betaX, double betaY, double betaZ, double gamma) {
     pSave.bst(betaX, betaY, betaZ, gamma);
     if (hasVertexSave) vProdSave.bst(betaX, betaY, betaZ, gamma);}
-  void bst(const Vec4& pBst) {pSave.bst(pBst);
+  void bst(Vec4ref pBst) {pSave.bst(pBst);
     if (hasVertexSave) vProdSave.bst(pBst);}
-  void bst(const Vec4& pBst, double mBst) {pSave.bst(pBst, mBst);
+  void bst(Vec4ref pBst, double mBst) {pSave.bst(pBst, mBst);
     if (hasVertexSave) vProdSave.bst(pBst, mBst);}
-  void bstback(const Vec4& pBst) {pSave.bstback(pBst);
+  void bstback(Vec4ref pBst) {pSave.bstback(pBst);
     if (hasVertexSave) vProdSave.bstback(pBst);}
-  void bstback(const Vec4& pBst, double mBst) {pSave.bstback(pBst, mBst);
+  void bstback(Vec4ref pBst, double mBst) {pSave.bstback(pBst, mBst);
     if (hasVertexSave) vProdSave.bstback(pBst, mBst);}
   void rotbst(const RotBstMatrix& M) {pSave.rotbst(M);
     if (hasVertexSave) vProdSave.rotbst(M);}
@@ -380,7 +380,7 @@ public:
   Event(const Event& oldEvent) {*this = oldEvent;}
 
   // Initialize header for event listing, particle data table, and colour.
-  void init(const string& headerIn = "", ParticleData* particleDataPtrIn = 0,
+  void init(stringref headerIn = "", ParticleData* particleDataPtrIn = 0,
     int startColTagIn = 100) {
     headerList.replace(0, headerIn.length() + 2, headerIn + "  ");
      particleDataPtr = particleDataPtrIn; startColTag = startColTagIn;}
@@ -422,7 +422,7 @@ public:
     return entry.size() - 1;
   }
   int append(int id, int status, int mother1, int mother2, int daughter1,
-    int daughter2, int col, int acol, const Vec4& p, double m = 0.,
+    int daughter2, int col, int acol, Vec4ref p, double m = 0.,
     double scaleIn = 0., double polIn = 9.) {
     entry.push_back( Particle(id, status, mother1, mother2, daughter1,
     daughter2, col, acol, p, m, scaleIn, polIn) ); setEvtPtr();
@@ -440,7 +440,7 @@ public:
     if (acol > maxColTag) maxColTag = acol;
     return entry.size() - 1;
   }
-  int append(int id, int status, int col, int acol, const Vec4& p, double m = 0.,
+  int append(int id, int status, int col, int acol, Vec4ref p, double m = 0.,
     double scaleIn = 0., double polIn = 9.) {entry.push_back( Particle(id,
     status, 0, 0, 0, 0, col, acol, p, m, scaleIn, polIn) ); setEvtPtr();
     if (col > maxColTag) maxColTag = col;
@@ -508,7 +508,7 @@ public:
   void bst(double betaX, double betaY, double betaZ, double gamma)
     {for (int i = 0; i < size(); ++i) entry[i].bst(betaX, betaY, betaZ,
     gamma);}
-  void bst(const Vec4& vec)
+  void bst(Vec4ref vec)
     {for (int i = 0; i < size(); ++i) entry[i].bst(vec);}
   void rotbst(const RotBstMatrix& M)
     {for (int i = 0; i < size(); ++i) entry[i].rotbst(M);}

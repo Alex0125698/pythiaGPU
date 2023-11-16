@@ -77,9 +77,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar -> gamma*/Z0/Zprime0";}
+  virtual string name()       const {return "f fbar -> gamma*/Z0/Zprime0";}
   virtual int    code()       const {return 3001;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
+  virtual string inFlux()     const {return "ffbarSame";}
   virtual int    resonanceA() const {return 23;}
   virtual int    resonanceB() const {return 32;}
 
@@ -124,9 +124,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar' -> W'+-";}
+  virtual string name()       const {return "f fbar' -> W'+-";}
   virtual int    code()       const {return 3021;}
-  virtual cstring inFlux()     const {return "ffbarChg";}
+  virtual string inFlux()     const {return "ffbarChg";}
   virtual int    resonanceA() const {return 34;}
 
 private:
@@ -163,9 +163,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar' -> R^0";}
+  virtual string name()       const {return "f fbar' -> R^0";}
   virtual int    code()       const {return 3041;}
-  virtual cstring inFlux()     const {return "ffbar";}
+  virtual string inFlux()     const {return "ffbar";}
   virtual int    resonanceA() const {return 41;}
 
 private:

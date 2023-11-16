@@ -88,7 +88,7 @@ public:
   void reset();
 
   // Process name and code, and the number of final-state particles.
-  cstring name()        const {return sigmaProcessPtr->name();}
+  string name()        const {return sigmaProcessPtr->name();}
   int    code()        const {return sigmaProcessPtr->code();}
   int    nFinal()      const {return sigmaProcessPtr->nFinal();}
   bool   isSUSY()      const {return sigmaProcessPtr->isSUSY();}
