@@ -43,6 +43,7 @@ const int Pythia::SUBRUNDEFAULT = -999;
 // done
 Pythia::Pythia(stringref xmlDir_, bool printBanner) {
 
+  // !@!@
   thread_local string xmlDir; xmlDir = xmlDir_;
 
   // Benchmark::init();
@@ -599,8 +600,8 @@ bool Pythia::init() {
     mergingHooksPtr->init( settings, &info, &particleData, &partonSystems );
 
   // Initialize the random number generator.
-  if ( settings.flag("Random:setSeed") )
-    rndm.init( 123 ); // !!!
+  // if ( settings.flag("Random:setSeed") )
+    // rndm.init( 123 ); // !!!
     // rndm.init( settings.mode("Random:seed") ); // !!!
 
   // Check that combinations of settings are allowed; change if not.

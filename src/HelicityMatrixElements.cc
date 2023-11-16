@@ -486,7 +486,7 @@ void HMETwoFermions2GammaZ2TwoFermions::initWaves(const vector<HelicityParticle>
 
 // Return element for the helicity matrix element.
 
-complex HMETwoFermions2GammaZ2TwoFermions::calculateME(vector<int> h) {
+complex HMETwoFermions2GammaZ2TwoFermions::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   if (includeGamma)
@@ -503,7 +503,7 @@ complex HMETwoFermions2GammaZ2TwoFermions::calculateME(vector<int> h) {
 
 // Return gamma element for the helicity matrix element.
 
-complex HMETwoFermions2GammaZ2TwoFermions::calculateGammaME(vector<int> h) {
+complex HMETwoFermions2GammaZ2TwoFermions::calculateGammaME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -519,7 +519,7 @@ complex HMETwoFermions2GammaZ2TwoFermions::calculateGammaME(vector<int> h) {
 // Return Z/Z' element for helicity matrix element.
 
 complex HMETwoFermions2GammaZ2TwoFermions::calculateZME(
-  vector<int> h, double m, double g, double p0CA, double p2CA, double p0CV,
+  const vector<int>& h, double m, double g, double p0CA, double p2CA, double p0CV,
   double p2CV) {
 
   complex answer(0,0);
@@ -628,7 +628,7 @@ void HMEW2TwoFermions::initConstants() {
 
 // Return element for helicity matrix element.
 
-complex HMEW2TwoFermions::calculateME(vector<int> h) {
+complex HMEW2TwoFermions::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {
@@ -651,7 +651,7 @@ complex HMEW2TwoFermions::calculateME(vector<int> h) {
 
 // Return element for helicity matrix element.
 
-complex HMEGamma2TwoFermions::calculateME(vector<int> h) {
+complex HMEGamma2TwoFermions::calculateME(const vector<int>& h) {
 
   complex answer(0,0);
   for (int mu = 0; mu <= 3; mu++) {

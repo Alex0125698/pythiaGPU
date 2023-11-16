@@ -1171,11 +1171,8 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   // Check if negative cross section.
   Benchmark_start(trialKin123_McheckNegativeXsec);
   if (sigmaNw < sigmaNeg) {
-    thread_local string tmp; tmp = "for ";
-    tmp += sigmaProcessPtr->name();
-
-    infoPtr->errorMsg( "Warning in PhaseSpace2to2tauyz::trialKin:"
-      " negative cross section set 0", tmp );
+    infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin:"
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
@@ -3876,9 +3873,8 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
 
   // Check if negative cross section.
   if (sigmaNw < sigmaNeg) {
-    thread_local string tmp; tmp = "for "; tmp += sigmaProcessPtr->name();
     infoPtr->errorMsg("Warning in PhaseSpace2to3yyycyl::trialKin:"
-      " negative cross section set 0", tmp );
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.

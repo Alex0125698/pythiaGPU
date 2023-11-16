@@ -3705,7 +3705,7 @@ inline vectorPairInt findParentSystems(const int sys,
 //  from the radiator system and the recoiler system and find where they
 //  intersect.
 
-bool TimeShower::rescatterPropagateRecoil( Event& event, const Vec4& pNew) {
+bool TimeShower::rescatterPropagateRecoil( Event& event, Vec4ref pNew) {
 
   // Some useful variables for later
   int  iRadBef    = dipSel->iRadiator;

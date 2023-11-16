@@ -441,7 +441,7 @@ public:
 
     // Set and Get comment
     void setComment(stringref comment) {commentP=comment;}
-    void getComment(string& comment) {comment=commentP;}
+    void getComment(string& comment) {comment=commentP;} // !@!@
 
     // Generic functions to get value
     bool get(int& val) {val=n; return isIntP;}
@@ -607,10 +607,10 @@ public:
   LHmatrixBlock<5> imnmnmix; //   Im{} (for future use)
 
   //*************************** SET BLOCK VALUE ****************************//
-  template <class T> int set(stringref,T);
-  template <class T> int set(stringref,int,T);
-  template <class T> int set(stringref,int,int,T);
-  template <class T> int set(stringref,int,int,int,T);
+  template <class T> int set(string,T); // !@!@
+  template <class T> int set(string,int,T); // !@!@
+  template <class T> int set(string,int,int,T); // !@!@
+  template <class T> int set(string,int,int,int,T); // !@!@
 
   //********************* GENERIC/USER-DEFINED BLOCKS **********************//
   // bool getEntry(name, indices, value)
@@ -618,11 +618,11 @@ public:
   //        typecast by user in call)
   //      = false otherwise
   map<string, LHgenericBlock> genericBlocks;
-  template <class T> bool getEntry(stringref, T&);
-  template <class T> bool getEntry(stringref, int, T&);
-  template <class T> bool getEntry(stringref, int, int, T&);
-  template <class T> bool getEntry(stringref, int, int, int, T&);
-  template <class T> bool getEntry(stringref, const vector<int>&, T&);
+  template <class T> bool getEntry(string, T&); // !@!@
+  template <class T> bool getEntry(string, int, T&); // !@!@
+  template <class T> bool getEntry(string, int, int, T&); // !@!@
+  template <class T> bool getEntry(string, int, int, int, T&); // !@!@
+  template <class T> bool getEntry(string, const vector<int>&, T&);
 
   // Access/change verbose setting
   int verbose() {return verboseSav;}
@@ -633,7 +633,8 @@ public:
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class
-  // void toLower(string& name);
+  // !@!@
+  void toLower(string& name);
 
   //***************************** SLHA PRIVATE *****************************//
 private:
@@ -648,7 +649,8 @@ private:
 
 // utilities to set generic blocks
 
-template <class T> int SusyLesHouches::set(stringref blockName, T val) {
+// !@!@
+template <class T> int SusyLesHouches::set(string blockName, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
   toLower(blockName);
@@ -666,7 +668,8 @@ template <class T> int SusyLesHouches::set(stringref blockName, T val) {
 
 }
 
-template <class T> int SusyLesHouches::set(stringref blockName, int indx, T val) {
+// !@!@
+template <class T> int SusyLesHouches::set(string blockName, int indx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
   toLower(blockName);
@@ -684,7 +687,8 @@ template <class T> int SusyLesHouches::set(stringref blockName, int indx, T val)
 
 }
 
-template <class T> int SusyLesHouches::set(stringref blockName, int indx,
+// !@!@
+template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
@@ -703,7 +707,8 @@ template <class T> int SusyLesHouches::set(stringref blockName, int indx,
 
 }
 
-template <class T> int SusyLesHouches::set(stringref blockName, int indx,
+// !@!@
+template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, int kndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
@@ -724,7 +729,8 @@ template <class T> int SusyLesHouches::set(stringref blockName, int indx,
 
 // utilities to read generic blocks
 
-template <class T> bool SusyLesHouches::getEntry(stringref blockName, T& val) {
+// !@!@
+template <class T> bool SusyLesHouches::getEntry(string blockName, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
   toLower(blockName);
@@ -759,7 +765,8 @@ template <class T> bool SusyLesHouches::getEntry(stringref blockName, T& val) {
   return true;
 }
 
-template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
+// !@!@
+template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
@@ -797,7 +804,8 @@ template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
   return false;
 }
 
-template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
+// !@!@
+template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
@@ -835,7 +843,8 @@ template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
   return false;
 }
 
-template <class T> bool SusyLesHouches::getEntry(stringref blockName, int indx,
+// !@!@
+template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, int kndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)

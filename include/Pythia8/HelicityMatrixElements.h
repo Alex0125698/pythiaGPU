@@ -157,15 +157,18 @@ public:
 
   void initWaves(const vector<HelicityParticle>&);
 
-  complex calculateME(const vector<int>);
+  // !@!@
+  complex calculateME(const vector<int>&);
 
 private:
 
   // Return gamma element for the helicity matrix element.
-  complex calculateGammaME(const vector<int>);
+  // !@!@
+  complex calculateGammaME(const vector<int>&);
 
   // Return Z/Z' element for helicity matrix element.
-  complex calculateZME(const vector<int>, double, double, double, double,
+  // !@!@
+  complex calculateZME(const vector<int>&, double, double, double, double,
     double, double);
 
   // Return the Z' vector or axial coupling for a fermion.
@@ -207,7 +210,8 @@ public:
 
   void initConstants();
 
-  complex calculateME(const vector<int>);
+  // !@!@
+  complex calculateME(const vector<int>&);
 
 private:
 
@@ -224,7 +228,8 @@ class HMEGamma2TwoFermions : public HMEX2TwoFermions {
 
 public:
 
-  complex calculateME(const vector<int>);
+  // !@!@
+  complex calculateME(const vector<int>&);
 
 };
 

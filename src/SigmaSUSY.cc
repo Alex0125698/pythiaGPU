@@ -127,10 +127,8 @@ void Sigma2qqbar2chi0chi0::initProc() {
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
   // Construct name of process.
-  nameSave = "q qbar' -> ";
-  nameSave += particleDataPtr->name(id3);
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(id4);
+  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
+    + particleDataPtr->name(id4);
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(id3, id4);
@@ -695,18 +693,12 @@ void Sigma2qg2chi0squark::initProc() {
 
   // Construct name of process.
   if (id4 % 2 == 0) {
-    nameSave = "q g -> "; 
-    nameSave += particleDataPtr->name(id3); 
-    nameSave += ' ';
-    nameSave += particleDataPtr->name(id4); 
-    nameSave += " + c.c. (q=u,c)";
+    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
+      + particleDataPtr->name(id4) + " + c.c. (q=u,c)";
   }
   else {
-    nameSave = "q g -> "; 
-    nameSave += particleDataPtr->name(id3); 
-    nameSave += ' ';
-    nameSave += particleDataPtr->name(id4);
-    nameSave += " + c.c. (q=d,s,b)";
+    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
+      + particleDataPtr->name(id4) + " + c.c. (q=d,s,b)";
   }
 
   // Secondary open width fraction.
@@ -835,18 +827,12 @@ void Sigma2qg2charsquark::initProc() {
 
   // Construct name of process.
   if (id4 % 2 == 0) {
-    nameSave = "q g -> ";
-    nameSave += particleDataPtr->name(id3);
-    nameSave += ' ';
-    nameSave += particleDataPtr->name(id4);
-    nameSave += " + c.c. (q=d,s,b)";
+    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
+      + particleDataPtr->name(id4) + " + c.c. (q=d,s,b)";
   }
   else {
-    nameSave = "q g -> ";
-    nameSave += particleDataPtr->name(id3);
-    nameSave += ' ';
-    nameSave += particleDataPtr->name(id4);
-    nameSave += " + c.c. (q=u,c)";
+    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
+      + particleDataPtr->name(id4) + " + c.c. (q=u,c)";
   }
 
   // Secondary open width fraction.
@@ -982,11 +968,8 @@ void Sigma2qq2squarksquark::initProc() {
   else isUD = true;
 
   // Derive name
-  nameSave = "q q' -> ";
-  nameSave += particleDataPtr->name(abs(id3Sav));
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(abs(id4Sav));
-  nameSave += " + c.c.";
+  nameSave = "q q' -> "+particleDataPtr->name(abs(id3Sav))+" "
+    +particleDataPtr->name(abs(id4Sav))+" + c.c.";
 
   // Count 5 neutralinos in NMSSM
   nNeut = (coupSUSYPtr->isNMSSM ? 5 : 4);
@@ -1563,11 +1546,9 @@ void Sigma2qqbar2squarkantisquark::initProc() {
   }
 
   // Derive name
-  nameSave = "q qbar' -> ";
-  nameSave += particleDataPtr->name(abs(id3Sav)); 
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(-abs(id4Sav));
-  if (isUD && abs(id3Sav) != abs(id4Sav)) nameSave += " + c.c.";
+  nameSave = "q qbar' -> "+particleDataPtr->name(abs(id3Sav))+" "+
+    particleDataPtr->name(-abs(id4Sav));
+  if (isUD && abs(id3Sav) != abs(id4Sav)) nameSave +=" + c.c.";
 
   // Count 5 neutralinos in NMSSM
   nNeut = (coupSUSYPtr->isNMSSM ? 5 : 4);
@@ -1888,10 +1869,8 @@ void Sigma2gg2squarkantisquark::initProc() {
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
   // Process Name
-  nameSave = "g g -> ";
-  nameSave += particleDataPtr->name(abs(id3Sav));
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(-abs(id4Sav));
+  nameSave = "g g -> "+particleDataPtr->name(abs(id3Sav))+" "
+    +particleDataPtr->name(-abs(id4Sav));
 
   // Squark pole mass
   m2Sq = pow2(particleDataPtr->m0(id3Sav));
@@ -1964,9 +1943,7 @@ void Sigma2qg2squarkgluino::initProc() {
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
   // Derive name
-  nameSave = "q g -> ";
-  nameSave += particleDataPtr->name(abs(id3Sav));
-  nameSave += " gluino + c.c.";
+  nameSave = "q g -> "+particleDataPtr->name(abs(id3Sav))+" gluino + c.c.";
 
   // Final-state mass squares
   m2Glu     = pow2(particleDataPtr->m0(1000021));
@@ -2339,9 +2316,7 @@ void Sigma1qq2antisquark::initProc(){
 
   //Construct name of the process from lambda'' couplings
 
-  nameSave = "q q' -> ";
-  nameSave += particleDataPtr->name(-idRes);
-  nameSave += " + c.c";
+  nameSave = "q q' -> " + particleDataPtr->name(-idRes)+" + c.c";
   codeSave = 2000 + 10*abs(idRes)/1000000 + abs(idRes)%10;
 }
 
@@ -2455,10 +2430,8 @@ void Sigma2qqbar2chi0gluino::initProc() {
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
   // Construct name of process.
-  nameSave = "q qbar' -> ";
-  nameSave += particleDataPtr->name(id3);
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(id4);
+  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
+    + particleDataPtr->name(id4);
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(id3, id4);
@@ -2639,11 +2612,8 @@ void Sigma2qqbar2chargluino::initProc() {
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
   // Construct name of process.
-  nameSave = "q qbar' -> ";
-  nameSave += particleDataPtr->name(id3);
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(id4);
-  nameSave += " + c.c";
+  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
+    + particleDataPtr->name(id4) + " + c.c";
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(id3, id4);
@@ -2801,11 +2771,9 @@ void Sigma2qqbar2sleptonantislepton::initProc() {
   else isUD = true;
 
   // Derive name
-  nameSave = "q qbar' -> ";
-  nameSave += particleDataPtr->name(abs(id3Sav));
-  nameSave += ' ';
-  nameSave += particleDataPtr->name(-abs(id4Sav));
-  if (isUD) nameSave += " + c.c.";
+  nameSave = "q qbar' -> "+particleDataPtr->name(abs(id3Sav))+" "+
+    particleDataPtr->name(-abs(id4Sav));
+  if (isUD) nameSave +=" + c.c.";
 
   // Extract isospin and mass-ordering indices
 
