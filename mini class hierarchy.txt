@@ -1,0 +1,141 @@
+mini class hierarchy
+----------------------
+
+Pythia
+
+  ----------------
+  > ProcessLevel
+    > SetupContainers - # is there a single container for each process?
+      > SigmaOniaSetup
+    > ResonanceDecays - # where do they get used? process or parton?
+    > ProcessContainer
+      > SigmaProcess # where do they get setup? how/where are each run?
+        > vector<InBeam>
+        > vector<InPair>
+      > PhaseSpace
+  ----------------
+  > PartonLevel - # weaird that the parton showers don't belong here
+    > ResonanceDecays (dup)
+    > MultipartonInteractions
+      > SigmaMultiparton
+        > vector(SigmaProcess*) (dup) - # are these the same processes as above?
+    > BeamRemnants
+      > JunctionSplitting (dup) - # what is this for? it seems to be used a lot
+      > StringLength (dup)
+    > ColourReconnection - # is this only done at hadron level?
+      > StringFragmentation (dup)
+      > StringLength (dup)
+      > ColourJunction
+      > ColourDipole
+      > TrialReconnection
+      > ColourParticle
+    > JunctionSplitting
+      > StringFlav
+      > StringPT
+      > StringZ
+      > StringLength (dup)
+      > ColourTracing (dup) # - what is color tracing?
+      > StringFragmentation
+        > StringSystem
+        > StringEnd
+          > FlavContainer
+      > ColourTracing
+      > StringLength
+    > HardDiffraction
+  ----------------
+  > HadronLevel - # where is Hadronisation part
+    > ColConfig
+      > vector(ColSinglet)
+    > StringFragmentation (dup) - # Lund string fragmentation?
+    > MiniStringFragmentation
+      > FlavContainer (dup)
+    > ParticleDecays
+      > DecayHandler
+      > TauDecays
+        > HelicityMatrixElement
+          > vector(GammaMatrix)
+        > HelicityParticle
+          > Wave4
+    > HadronScatter
+      > vector<vector<set<HSIndex>>>
+      > set <HSIndex>
+      > SigmaPartialWave
+      > HadronScatterPair
+        > HSIndex
+      > SigmaPartialWave
+    > BoseEinstein
+      > vector(BoseEinsteinHadron)
+    > StringFlav (dup)
+    > StringPT (dup)
+    > StringZ (dup)
+    > ColourTracing (dup)
+    > JunctionSplitting (dup)
+    > HiddenValleyFragmentation
+      > ColConfig (dup)
+      > StringFragmentation (dup)
+      > MiniStringFragmentation (dup)
+      > Event (dup)
+      > HVStringFlav
+      > HVStringPT
+      > HVStringZ
+ 
+globals
+----------
+
+Info
+  > LHArwgt
+  > LHAweights
+  > LHAscales
+  > LHAweightgroup
+  > LHAgenerator
+Settings
+Rndm
+ParticleData
+  > map(int, ParticleDataEntry)
+    > vector(DecayChannel)
+
+Couplings
+  > CoupSM
+    > AlphaStrong (dup)
+    > AlphaEM (dup)
+BeamParticle (4 of them)
+  > vector(ResolvedParton)
+Event (2 of them)
+  > vector(Particle)
+  > vector(Junction)
+
+> SLHAinterface
+  > SusyLesHouches
+    > LHblock
+    > LHmatrixBlock
+  > CoupSUSY
+> PDF - # mostly used indirectly via BeamParticle
+> PartonSystems
+  > vector(PartonSystem)
+> Merging
+> MergingHooks
+  > HardProcess
+  > AlphaStrong FSR (util)
+  > AlphaStrong ISR (util)
+  > AlphaEM (util)
+> LHAup
+  > vector(LHAProcess)
+  > vector(LHAParticle)
+> UserHooks
+  > Event (dup)
+> BeamShape
+> TimeShower
+  > WeakShowerMEs 
+  > AlphaStrong (dup) (util)
+  > AlphaEM (dup) (util)
+  > vector(TimeDipoleEnd)
+> SpaceShower
+  > WeakShowerMEs (dup)
+  > AlphaStrong (dup) (util)
+  > AlphaEM (dup) (util)
+  > vector(SpaceDipoleEnd)
+SigmaTotal
+
+
+utilitis
+---------

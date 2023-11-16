@@ -1,0 +1,106 @@
+
+namespace Pythia8 {
+
+
+// I guess Hook -> some external code to do something?
+
+// (ColourReconnection.h)
+
+// Contain a single colour chain. It always start from a quark and goes to an anti quark or from an anti-junction to a junction
+class ColourDipole; // missing !! helper only
+// Junction class. In addition to the normal junction class, also contains a list of dipoles connected to it.
+class ColourJunction; // : public Junction // missing !! helper only
+// ??
+class TrialReconnection; // missing !! helper only
+// ??
+class ColourParticle; // : public Particle // missing !! helper only
+// handles the colour reconnection
+class ColourReconnection;
+
+// (HadronScatter.h)
+
+// ??
+class SigmaPartialWave;
+// hold details of a pair of hadrons which will scatter. Stores indices in event record and the measure used for ordering
+class HadronScatterPair; // missing !! helper only
+// ??
+class HadronScatter;
+
+
+
+// (HiddenValleyFragmentation.h)
+
+// used to select HV-quark and HV-hadron flavours.
+class HVStringFlav; // : public StringFlav; // missing !!
+// used to select select HV transverse momenta.
+class HVStringPT; // : public StringPT; // missing !!
+// used to sample the HV fragmentation function f(z).
+class HVStringZ; // : public StringZ; // missing !!
+// routines to fragment a Hidden Valley partonic system
+class HiddenValleyFragmentation;
+
+
+// (LesHouches.h)
+
+// processes stored in LHAup
+class LHAProcess;
+// particles stored in LHAup
+class LHAParticle;
+// base class for initialization and event information from an external parton-level generator
+class LHAup;
+// information read from a Les Houches Event File
+class LHAupLHEF; // : public LHAup; // missing !!
+// information read from PYTHIA 8 itself, for output
+class LHAupFromPYTHIA8; // : public LHAup; // missing !!
+// with LHEF 3.0 information read from PYTHIA 8 itself, for output.
+class LHEF3FromPythia8; // : public LHAup; // missing !!
+
+
+// (MultipartonInteractions.h)
+
+// SigmaMultiparton is a helper class to MultipartonInteractions.
+// It packs pointers to the allowed processes for different
+// flavour combinations and levels of ambition.
+class SigmaMultiparton;
+// The MultipartonInteractions class contains the main methods for the
+// generation of multiparton parton-parton interactions in hadronic collisions.
+class MultipartonInteractions;
+
+
+// (SusyLesHouches.h)
+
+// the generic SLHA block
+template <class T> class LHblock;
+// Derived class for generic blocks containing vectors of strings
+class LHgenericBlock; // : public LHblock<string>;
+// the generic SLHA matrix block
+template <int size> class LHmatrixBlock;
+// generic SLHA tensor block
+template <int size> class LHtensor3Block;
+// ??
+class LHdecayChannel;
+// ??
+class LHdecayTable;
+// ??
+class SusyLesHouches;
+
+// (SusyResonanceWidths.h)
+
+// more resonance widths for susy particles
+class SUSYResonanceWidths; // : public ResonanceWidths; // missing !!
+class ResonanceSquark; // : public SUSYResonanceWidths; // missing !!
+class ResonanceGluino; // : public SUSYResonanceWidths; // missing !!
+class ResonanceNeut; // : public SUSYResonanceWidths; // missing !!
+class ResonanceChar; // : public SUSYResonanceWidths; // missing !!
+class ResonanceSlepton; // : public SUSYResonanceWidths; // missing !!
+
+// (SusyWidthFunctions.h)
+
+// base class for SUSY 3-body decay width functions.
+class WidthFunction; // missing !!
+// ??
+class StauWidths; // : public WidthFunction; // missing !!
+
+
+
+}

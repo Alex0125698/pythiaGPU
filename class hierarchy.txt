@@ -1,0 +1,649 @@
+class hierarchy
+---------------
+
+
+BeamParticle:
+
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) PDF*_pdfBeamPtr
+  > (non-owner) PDF*_pdfHardBeamPtr
+  > (non-owner) StringFlav*
+  > (owner) vector(ResolvedParton)
+
+  ResolvedParton: (none)
+
+Event:
+
+  > (owner) vector(Particle)
+  > (owner) vector(Junction)
+  > (non-owner) ParticleData*
+
+  Particle:
+
+  > (non-owner) ParticleDataEntry*
+  > (non-owner) Event*
+
+  Junction: (none)
+
+Info:
+
+  > (non-owner) LHAinitrwgt*
+  > (non-owner) vector(LHAgenerator)
+  > (non-owner) map(string,LHAweightgroup)*
+  > (non-owner) map(string,LHAweight)*
+  > (non-owner) LHAscales*
+  > (non-owner) LHAweights*
+  > (non-owner) LHArwgt*
+
+  LHArwgt: (none)
+  LHAweights: (none)
+  LHAscales: (none)
+  LHAweightgroup: (none)
+  LHAgenerator: (none)
+
+Settings: (none)
+
+ParticleData:
+
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) Rndm*
+  > (non-owner) Couplings*
+  > (owner) map(int, ParticleDataEntry)
+  > (owner) ParticleDataEntry*
+
+  ParticleDataEntry:
+
+    > (owner) vector(DecayChannel)
+    > (non-owner) ResonanceWidths*
+    > (non-owner) ParticleData*
+
+    DecayChannel: (none)
+
+Rndm:
+
+  > (non-owner) RndmEngine*
+
+  RndmEngine: (none)
+
+Couplings -> CoupSM: (none)
+
+  CoupSM:
+
+    > (non-owner) Rndm*
+    > (owner) AlphaStrong
+    > (owner) AlphaEM
+
+      AlphaStrong: (none)
+      AlphaEM: (none)
+
+SLHAinterface -> Couplings:
+
+  > (owner) SusyLesHouches
+  > (owner) CoupSUSY
+  > (non-owner) Info*
+  > (non-owner) Settings*
+
+  SusyLesHouches:
+
+    > (owner) LHblock
+    > (owner) LHmatrixBlock
+
+  CoupSUSY:
+
+    > (non-owner) SusyLesHouches*
+    > (non-owner) Info*
+    > (non-owner) Settings*
+    > (non-owner) ParticleData*
+
+PartonSystems:
+ 
+  > vector(PartonSystem)
+
+  PartonSystem: (none)
+
+Merging:
+
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) PartonLevel*
+  > (non-owner) MergingHooks*
+  > (non-owner) BeamParticle*_beamAPtr
+  > (non-owner) BeamParticle*_beamBPtr
+
+  History:
+
+    > (owner) History*_mother
+    > (owner) vector(History*)
+    > (owner) map<double,History*>_paths
+    > (owner) map<double,History*>_goodBranches
+    > (owner) map<double,History*>_badBranches
+    > (owner) Clustering clusterIn
+    > (owner) BeamParticle_beamA - to access PDFs
+    > (owner) BeamParticle_beamB
+    > (non-owner) MergingHooks*
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) PartonLevel*
+
+    Clustering:
+
+      > (none)
+
+
+MergingHooks:
+
+  > (owner) HardProcess
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+  > (non-owner) PartonSystems*
+  > (non-owner) PartonLevel*
+  > (owner) AlphaStrong_AlphaS_FSRSave
+  > (owner) AlphaStrong_AlphaS_ISRSave
+  > (owner) AlphaEM_AlphaEM_FSRSave
+
+  HardProcess: (none)
+
+PDF: (none)
+
+BeamParticle: (none)
+
+LHAup:
+
+  > (non-owner) Info*
+  > (owner) vector(LHAProcess)
+  > (owner) vector(LHAParticle)
+
+  LHAProcess: (none)
+  LHAParticle: (none)
+
+DecayHandler: (none)
+
+UserHooks:
+
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) BeamParticle*_beamAPtr
+  > (non-owner) BeamParticle*_beamBPtr
+  > (non-owner) BeamParticle*_beamHadAPtr
+  > (non-owner) BeamParticle*_beamHadBPtr
+  > (non-owner) CoupSM*
+  > (non-owner) PartonSystems*
+  > (non-owner) SigmaTotal*
+  > (owner) Event
+
+BeamShape:
+
+  > (non-owner) Rndm*
+
+ResonanceWidths:
+
+  > (non-owner) ParticleData*
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) Couplings*
+
+TimeShower:
+
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) BeamParticle*_beamAPtr
+  > (non-owner) BeamParticle*_beamBPtr
+  > (non-owner) CoupSM*
+  > (non-owner) PartonSystems*
+  > (non-owner) UserHooks*
+  > (non-owner) MergingHooks*
+  > (owner) WeakShowerMEs
+  > (owner) AlphaStrong
+  > (owner) AlphaEM
+  > (owner) vector(TimeDipoleEnd)
+  > (owner) TimeDipoleEnd*
+
+  TimeDipoleEnd: (none)
+
+  WeakShowerMEs: (none)
+
+SpaceShower:
+
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) CoupSM*
+  > (non-owner) BeamParticle*_beamAPtr
+  > (non-owner) BeamParticle*_beamBPtr
+  > (non-owner) PartonSystems*
+  > (non-owner) UserHooks*
+  > (non-owner) MergingHooks*
+  > (owner) WeakShowerMEs
+  > (owner) AlphaStrong
+  > (owner) AlphaEM
+  > vector(SpaceDipoleEnd)
+  > SpaceDipoleEnd*_dipEndNow
+  > SpaceDipoleEnd*_dipEndSel
+
+  SpaceDipoleEnd: (none)
+
+
+SigmaTotal:
+
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+
+RHadrons:
+
+  > (non-owner) Settings*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) ColSinglet*
+  > (non-owner) StringFlav*
+  > (non-owner) StringZ*
+
+Pythia:
+
+  > (owner) Event_process
+  > (owner) Event_event
+  > (owner) Info
+  > (owner) Settings
+  > (owner) ParticleData
+  > (owner) Rndm
+  > (owner) Couplings - not used. We use the pointer below instead
+  > Couplings* (owed by slhaInterface) - set to Couplings but may be overwritten with slhaInterface.couplingsPtr
+  > (owner) SLHAinterface - for getting SUSY spectrum
+  > (owner) PartonSystems - list of parton pairs colliding within beam (including xsec and out particles)
+  > (owner) Merging - matrix element merging
+  > (owner, Pythia::init) MergingHooks* - user input to the merging procedure
+  > (owner, Pythia::getPDFPtr) PDF*_pdfAPtr - parton distributions of the two incoming beams
+  > (owner) PDF*_pdfBPtr 
+  > (owner) PDF*_pdfHardAPtr - used in hard processes only
+  > (owner) PDF*_pdfHardBPtr
+  > (owner) PDF*_pdfPomAPtr - for Pomeron
+  > (owner) PDF*_pdfPomBPtr
+  > (owner) BeamParticle_beamA - the incoming beams
+  > (owner) BeamParticle_beamB - the incoming beams
+  > (owner) BeamParticle_beamPomA - for Pomeron beam-inside-beam
+  > (owner) BeamParticle_beamPomB - for Pomeron beam-inside-beam
+  > (owner, Pythia::init) LHAup* - for generating external events
+  > (external) DecayHandler* - external decay handler
+  > (external) UserHooks* - allow user access to program at different stages
+  > (owner, Pythia::init) BeamShape* - not used often
+  > (external) vector(SigmaProcess*) - will make extra process containers for the processes passed in
+  > (external) vector(PhaseSpace*) - corresponding PhaseSpace for above SigmaProcess
+  > (external) vector(ResonanceWidths*) - just passed into particleData so that we can refer to external ResonanceWidths
+  > (owner, Pythia::init) TimeShower*_timesDecPtr
+  > (owner, Pythia::init) TimeShower*_timesPtr
+  > (owner, Pythia::init) SpaceShower*
+  > (owner) ProcessLevel
+  > (owner) PartonLevel
+  > (owner) PartonLevel_trialPartonLevel
+  > (owner) ColourReconnection - note: runs in forceHadronLevel
+  > (owner) JunctionSplitting - note: runs in forceHadronLevel
+  > (owner) HadronLevel
+  > (owner) SigmaTotal - contains parametrizations of total, elastic and diffractive cross sections. What is it for ???
+  > (owner) RHadrons
+
+ProcessLevel:
+
+  > (owner, ProcessLevel::init) vector(ProcessContainer*)_containerPtrs - setup using sigmaPtrs.
+  > (owner, ProcessLevel::init) vector(ProcessContainer*)_container2Ptrs
+  > (owner)     ProcessContainer_containerLHAdec
+  > (owner)     ResonanceDecays
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) BeamParticle*
+  > (non-owner) BeamParticle*
+  > (non-owner) Couplings*
+  > (non-owner) SigmaTotal*
+  > (non-owner) SLHAinterface*
+  > (non-owner) UserHooks*
+  > (non-owner) LHAup*
+
+  SetupContainers: allocs at least 1 SigmaProcess based on flags
+    > SigmaOniaSetup
+
+  ProcessContainer:
+
+    > (non-owner/deleter, SetupContainers::init) SigmaProcess* - takes ownership of this pointer
+    > (owner, ProcessContainer::init) PhaseSpace* - selected depending on the process type (2to2, 2to3, diffractive/elastic/nondiffractive)
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) ResonanceDecays*
+    > (non-owner) UserHooks*
+    > (non-owner) LHAup*
+
+  SigmaProcess:
+    
+    > (non-owner) Info*
+    > (non-owner) Settings*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) Couplings*
+    > (non-owner) SigmaTotal*
+    > (non-owner) SusyLesHouches* (slhaInterfacePtrIn->slha)
+    > (non-owner) LHAup*
+    > (owner) vector<InBeam> inBeamA - added in SigmaProcess::initFlux
+    > (owner) vector<InBeam> inBeamB - added in SigmaProcess::initFlux
+    > (owner) vector<InPair> inPair - added in SigmaProcess::initFlux
+
+    InBeam: (none)
+    InPair: (none)
+
+  PhaseSpace:
+
+    > (non-owner) SigmaProcess*
+    > (non-owner) Info*
+    > (non-owner) Settings*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) Couplings*
+    > (non-owner) SigmaTotal*
+    > (non-owner) UserHooks*
+    > (non-owner) LHAup*
+
+  ResonanceDecays: sequential decay of resonances (t, W, Z, H, SUSY,...).
+
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+
+
+
+PartonLevel:
+
+  > (non-owner) Info*
+  > (non-owner) Settings*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) BeamParticle*_beamAPtr
+  > (non-owner) BeamParticle*_beamBPtr
+  > (non-owner) BeamParticle*_beamHadAPtr
+  > (non-owner) BeamParticle*_beamHadBPtr
+  > (non-owner) BeamParticle*_beamPomAPtr
+  > (non-owner) BeamParticle*_beamPomBPtr
+  > (non-owner) Couplings*
+  > (non-owner) PartonSystems*
+  > (non-owner) UserHooks*
+  > (non-owner) TimeShower*_timesDecPtr
+  > (non-owner) TimeShower*_timesPtr
+  > (non-owner) SpaceShower*
+  > (non-owner) RHadrons*
+  > (non-owner) MergingHooks*
+  > (owner) MultipartonInteractions_multiMB;
+  > (owner) MultipartonInteractions_multiSDA;
+  > (owner) MultipartonInteractions_multiSDB;
+  > (owner) MultipartonInteractions_multiCD;
+  > (owner) MultipartonInteractions*_multiPtr;
+  > (owner) BeamRemnants
+  > (owner) ResonanceDecays
+  > (owner) ColourReconnection
+  > (owner) JunctionSplitting
+  > (owner) HardDiffraction
+
+  MultipartonInteractions:
+
+    > (non-owner) Info*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) Couplings*
+    > (non-owner) PartonSystems*
+    > (non-owner) SigmaTotal*
+    > (non-owner) UserHooks*
+    > (owner) SigmaMultiparton_sigma2gg, 
+    > (owner) SigmaMultiparton_sigma2qg
+    > (owner) SigmaMultiparton_sigma2qqbarSame
+    > (owner) SigmaMultiparton_sigma2qq
+    > (owner) SigmaMultiparton*_sigma2Sel (points to one of above)
+    > (owner) SigmaProcess*_dSigmaDtSel ??? where created (dSigmaDtSel = sigma2Sel->sigmaSel())
+    > (owner) SigmaProcess*_dSigmaDtSelSave ??? where created
+
+    SigmaMultiparton:
+
+      > (owner, SigmaMultiparton::init) vector(SigmaProcess*)_sigmaT;
+      > (owner, SigmaMultiparton::init) vector(SigmaProcess*)_sigmaU;
+
+  BeamRemnants:
+
+    > (non-owner) Info*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) ColourReconnection*
+    > (non-owner) PartonSystems*
+    > (owner) StringLength
+    > (owner) JunctionSplitting
+
+    StringLength: 
+
+      > (non-owner) Info*
+      > (owner) StringFragmentation  - only to access the function call junctionRestFrame
+
+      StringFragmentation:
+
+        > (non-owner) Info*
+        > (non-owner) ParticleData*
+        > (non-owner) Rndm*
+        > (non-owner) UserHooks*
+        > (non-owner) StringFlav* (doesn't appear to be initialized)
+        > (non-owner) StringPT*
+        > (non-owner) StringZ*
+        > (owner) Event hadrons
+        > (owner) StringSystem_system
+        > (owner) StringSystem_systemMin
+        > (owner) StringSystem_systemMid
+        > (owner) StringEnd_posEnd
+        > (owner) StringEnd_negEnd
+
+        StringSystem: (none)
+
+        StringEnd:
+
+          > (non-owner) ParticleData*
+          > (non-owner) StringFlav* (doesn't appear to be initialized)
+          > (non-owner) StringPT*
+          > (non-owner) StringZ*
+          > FlavContainer_flavOld
+          > FlavContainer_flavNew
+
+          StringRegion: (none)
+
+        FlavContainer: (none)
+
+  ColourReconnection:
+
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) PartonSystems*
+    > (owner) StringFragmentation - only to access the function call junctionRestFrame
+    > (owner) StringLength
+
+    ColourJunction -> Junction:
+
+      > (non-owner) ColourDipole*_dips
+      > (non-owner) ColourDipole*_dipsOrig
+
+    ColourDipole: (none)
+
+    TrialReconnection:
+
+      > (non-owner) vector(ColourDipole*)
+
+    ColourParticle:
+
+      > (non-owner) vector(ColourDipole*)
+
+  JunctionSplitting:
+
+    > (non-owner) Info*
+    > (non-owner) Rndm*
+    > (owner) StringFlav (Classes for flavour, pT and z generation)
+    > (owner) StringPT
+    > (owner) StringZ
+    > (owner) StringFragmentation
+    > (owner) ColourTracing
+    > (owner) StringLength
+
+    StringFlav:
+
+      > (non-owner) Rndm*
+
+    StringPT:
+
+      > (non-owner) Rndm*
+
+    StringZ:
+
+      > (non-owner) Rndm*
+
+    ColourTracing: 
+
+      > (non-owner) Info*
+
+
+
+  HardDiffraction:
+
+    > (non-owner) Info*
+    > (non-owner) Settings*
+    > (non-owner) Rndm*
+    > (non-owner) BeamParticle*_beamAPtr
+    > (non-owner) BeamParticle*_beamBPtr
+    > (non-owner) BeamParticle*_beamPomAPtr
+    > (non-owner) BeamParticle*_beamPomBPtr
+    > (non-owner) BeamParticle*_tmpPDFPtr
+
+HadronLevel:
+
+  > (non-owner) Info*
+  > (non-owner) ParticleData*
+  > (non-owner) Rndm*
+  > (non-owner) UserHooks*
+  > (non-owner) Couplings*
+  > (non-owner) RHadrons*
+  > (owner) ColConfig
+  > (owner) StringFragmentation
+  > (owner) MiniStringFragmentation
+  > (owner) ParticleDecays
+  > (owner) HadronScatter
+  > (owner) BoseEinstein
+  > (owner) StringFlav
+  > (owner) StringPT
+  > (owner) StringZ
+  > (owner) ColourTracing
+  > (owner) JunctionSplitting
+  > (owner) HiddenValleyFragmentation
+
+  ParticleDecays:
+
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) Couplings*
+    > (non-owner) TimeShower*
+    > (non-owner) StringFlav*
+    > (non-owner) DecayHandler*
+
+    TauDecays:
+
+      > (owner) HelicityMatrixElement*_hardME
+      > (owner) Helicity_etc.. 
+      > (owner) HelicityParticle
+      > (non-owner) Info*
+      > (non-owner) ParticleData*
+      > (non-owner) Rndm*
+      > (non-owner) Couplings*
+      > (non-owner) Settings*
+
+      HelicityMatrixElement:
+
+        > (owner) vector(GammaMatrix)
+        > (non-owner) ParticleData*
+        > (non-owner) Couplings*
+        > (non-owner) Settings*
+
+        GammaMatrix: (none)
+
+      HelicityParticle -> Particle:
+
+        > Wave4_wave
+        > Wave4_waveBar
+
+        Wave4: (none)
+
+  HadronScatter:
+
+    > (owner) vector<vector<set<HSIndex>>>
+    > (owner) set <HSIndex>
+    > (owner) SigmaPartialWave
+
+    HadronScatterPair: 
+
+      > (owner) HSIndex_i1
+      > (owner) HSIndex_i2
+
+    SigmaPartialWave:
+
+      > (non-owner) Info*
+      > (non-owner) ParticleData*
+      > (non-owner) Rndm*
+
+    HSIndex: (none)
+
+  BoseEinstein:
+
+    > (non-owner) Info*
+    > vector(BoseEinsteinHadron)
+
+    BoseEinsteinHadron: (none)
+
+  HiddenValleyFragmentation:
+
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (owner) ColConfig
+    > (owner) Event - Temporary event record for the Hidden Valley system
+    > (owner) StringFragmentation
+    > (owner) MiniStringFragmentation
+    > (non-owner) StringFlav*
+    > (non-owner) StringPT*
+    > (non-owner) StringZ*
+
+    HVStringFlav -> StringFlav: (none)
+    HVStringPT -> StringPT: (none)
+    HVStringZ -> StringZ: (none)
+
+  ColConfig:
+
+    > (non-owner) Info*
+    > (non-owner) StringFlav*
+    > (owner) vector(ColSinglet)
+
+    ColSinglet: (none)
+
+  MiniStringFragmentation:
+
+    > (non-owner) Info*
+    > (non-owner) ParticleData*
+    > (non-owner) Rndm*
+    > (non-owner) StringFlav*
+    > (non-owner) StringPT*
+    > (non-owner) StringZ*
+    > (owner) FlavContainer_flav1
+    > (owner) FlavContainer_flav2

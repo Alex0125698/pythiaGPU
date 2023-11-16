@@ -6,6 +6,8 @@ namespace Pythia8 {
 
 // (Analysis.h)
 
+// !!! ONLY USED IN EXAMPLES
+
 // performs sphericity analysis on an event
 class Sphericity;
 // performs thrust analysis on an event
@@ -67,13 +69,13 @@ class BoseEinstein;
 // (ColourReconnection.h)
 
 // Contain a single colour chain. It always start from a quark and goes to an anti quark or from an anti-junction to a junction
-class ColourDipole;
+class ColourDipole; // helper only
 // Junction class. In addition to the normal junction class, also contains a list of dipoles connected to it.
-class ColourJunction; // : public Junction
+class ColourJunction; // : public Junction // helper only
 // ??
-class TrialReconnection;
+class TrialReconnection; // helper only
 // ??
-class ColourParticle; // : public Particle
+class ColourParticle; // : public Particle // helper only
 // handles the colour reconnection
 class ColourReconnection;
 
@@ -113,7 +115,7 @@ class ColSinglet;
 // describes the colour configuration of the whole event
 class ColConfig;
 // contains the information related to one string section in the evolution of a multiparton system. Only to be used inside StringFragmentation and MiniStringFragmentation
-class StringRegion;
+class StringRegion; // utility only (used in functions)
 // contains the complete set of all string regions. Only to be used inside StringFragmentation, so no private members
 class StringSystem;
 
@@ -127,7 +129,7 @@ class HadronLevel;
 // ??
 class SigmaPartialWave;
 // hold details of a pair of hadrons which will scatter. Stores indices in event record and the measure used for ordering
-class HadronScatterPair;
+class HadronScatterPair; // helper only
 // ??
 class HadronScatter;
 
@@ -196,6 +198,7 @@ class HiddenValleyFragmentation;
 
 // holds information about one radiator, recoiler, emitted system. This class is a container class for History class use
 class Clustering;
+
 // A History object represents an event in a given step in the CKKW-L
 // clustering procedure. It defines a tree-like recursive structure,
 // where the root node represents the state with n jets as given by
@@ -229,11 +232,11 @@ class LHAParticle;
 // base class for initialization and event information from an external parton-level generator
 class LHAup;
 // information read from a Les Houches Event File
-class LHAupLHEF; // : public LHAup;
+class LHAupLHEF; // : public LHAup; // missing !!
 // information read from PYTHIA 8 itself, for output
-class LHAupFromPYTHIA8; // : public LHAup;
+class LHAupFromPYTHIA8; // : public LHAup; // missing !!
 // with LHEF 3.0 information read from PYTHIA 8 itself, for output.
-class LHEF3FromPythia8; // : public LHAup;
+class LHEF3FromPythia8; // : public LHAup; // missing !!
 
 // (LHEF3.h) Les Houches Event File version 3
 
@@ -277,14 +280,14 @@ class HEPEUP;
 // information about the event is available in the hepeup member
 // variable and any additional comments in the eventComments
 // variable. A typical reading sequence would look as follows:
-class Reader;
+class Reader; // missing !!
 // The Writer class is initialized with a stream to which to write a
 // version 1.0 or 3.0 Les Houches Accord event file. In the init() function of
 // the Writer object the main XML tag, header and init blocks are written,
 // with the corresponding end tag is written by print_end_tag().
 // After a Writer object (in the following called "writer") has been created,
 // it is possible to assign version (3 by default) information.
-class Writer;
+class Writer; // missing !!
 
 // (Merging.h)
 
@@ -582,9 +585,9 @@ class ResonanceSlepton; // : public SUSYResonanceWidths;
 // (SusyWidthFunctions.h)
 
 // base class for SUSY 3-body decay width functions.
-class WidthFunction;
+class WidthFunction; // missing !! -> only used via StauWidths
 // ??
-class StauWidths; // : public WidthFunction;
+class StauWidths; // : public WidthFunction; // missing !! -> only used in ResonanceSlepton
 
 // (TauDecays.h)
 
@@ -606,7 +609,7 @@ class UserHooks;
 // It is a simple example, illustrating how to suppress the cross section
 // of 2 -> 2 processes by a factor pT^4 / (pT0^2 + pT^2)^2, with pT0 input,
 // and also modify alpha_strong scale similarly.
-class SuppressSmallPT; // : public UserHooks;
+class SuppressSmallPT; // : public UserHooks; - just an example
 
 // (WeakShowerMEs.h)
 

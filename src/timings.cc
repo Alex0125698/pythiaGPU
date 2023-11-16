@@ -316,7 +316,8 @@ namespace Pythia8
             }
             sumTimes.back() += dur;
                         double perTotal = 100.*dur / durTotal;
-            std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(per,1) << "%" << std::endl;
+            std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(1000.*dur,1) << std::endl;
+            // std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(per,1) << "%" << std::endl;
           }
         }
         else
