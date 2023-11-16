@@ -548,6 +548,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
   ostream& os) {
 
   // @fixme
+  // !@!@
   thread_local string match; match=match_;
 
   // Table header; output for bool as off/on.
@@ -1022,6 +1023,7 @@ vector<double> Settings::pvecDefault(stringref keyIn) {
 map<string, Flag> Settings::getFlagMap(stringref match_) {
 
   // @fixme
+  // !@!@
   thread_local string match; match=match_;
   // Make the match string lower case. Start with an empty map.
   match = toLower(match);
@@ -2412,19 +2414,20 @@ void Settings::initTunePP( int ppTune) {
 // Convert string to lowercase for case-insensitive comparisons.
 // Also remove initial and trailing blanks, if any.
 
-// string Settings::toLower(const string& name) {
+  // !@!@
+string Settings::toLower(stringref name) {
 
-//   // Copy string without initial and trailing blanks.
-//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+  // Copy string without initial and trailing blanks.
+  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
+  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-//   // Convert to lowercase letter by letter.
-//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-//   return temp;
+  // Convert to lowercase letter by letter.
+  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+  return temp;
 
-// }
+}
 
 //--------------------------------------------------------------------------
 

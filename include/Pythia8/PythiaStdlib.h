@@ -104,127 +104,127 @@ using std::setprecision;
 
 namespace Pythia8 {
 
-inline const string& trim(const string& name)
-{
-  // figure out where whitespace starts and ends
-  int tstart = 0, tend = (int)name.size()-1;
-  while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
-  while (name[tend] <= ' ' && tend >= 0) --tend;
+// inline const string& trim(const string& name)
+// {
+//   // figure out where whitespace starts and ends
+//   int tstart = 0, tend = (int)name.size()-1;
+//   while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
+//   while (name[tend] <= ' ' && tend >= 0) --tend;
 
-  // if no whitespace then return original string
-  if (tstart == 0 && tend == name.size()-1) return name;
+//   // if no whitespace then return original string
+//   if (tstart == 0 && tend == name.size()-1) return name;
 
-  // prepare buffer to write new string
-  thread_local string tmp;
-  tmp.resize(tend-tstart+1);
+//   // prepare buffer to write new string
+//   thread_local string tmp;
+//   tmp.resize(tend-tstart+1);
 
-  // copy new string to buffer
-  for (int i=tstart; i<=tend; ++i) tmp[i-tstart] = name[i];
+//   // copy new string to buffer
+//   for (int i=tstart; i<=tend; ++i) tmp[i-tstart] = name[i];
 
-  return tmp;
-}
+//   return tmp;
+// }
 
-inline const void trimInPlace(string& name)
-{
-  // figure out where whitespace starts and ends
-  int tstart = 0, tend = (int)name.size()-1;
-  while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
-  while (name[tend] <= ' ' && tend >= 0) --tend;
+// inline const void trimInPlace(string& name)
+// {
+//   // figure out where whitespace starts and ends
+//   int tstart = 0, tend = (int)name.size()-1;
+//   while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
+//   while (name[tend] <= ' ' && tend >= 0) --tend;
 
-  // if no whitespace then return original string
-  if (tstart == 0 && tend == name.size()-1) return;
+//   // if no whitespace then return original string
+//   if (tstart == 0 && tend == name.size()-1) return;
 
-  // shift string into new position
-  if (tstart != 0)
-  {
-    for (int i=tstart; i<=tend; ++i) name[i-tstart] = name[i];
-  }
+//   // shift string into new position
+//   if (tstart != 0)
+//   {
+//     for (int i=tstart; i<=tend; ++i) name[i-tstart] = name[i];
+//   }
 
-  // update size of string
-  name.resize(tend-tstart+1);
-}
+//   // update size of string
+//   name.resize(tend-tstart+1);
+// }
 
-inline void toLowerInPlace(string& name)
-{
-  // -- old version
+// inline void toLowerInPlace(string& name)
+// {
+//   // -- old version
   
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
-    name = "";
-    return;
-  }
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+//   // Copy string without initial and trailing blanks.
+//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
+//     name = "";
+//     return;
+//   }
+//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  // Copy to input string and return
-  name=temp;
+//   // Convert to lowercase letter by letter.
+//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+//   // Copy to input string and return
+//   name=temp;
 
-  // -- new version
+//   // -- new version
 
-  // trimInPlace(name);
+//   // trimInPlace(name);
 
-  // for (int i=0; i<(int)name.size(); ++i)
-  // {
-  //   constexpr char delta = 'a' - 'A';
-  //   bool swap = name[i] >= 'A' && name[i] <= 'Z';
-  //   name[i] = swap ? name[i] + delta : name[i];
-  // }
-}
+//   // for (int i=0; i<(int)name.size(); ++i)
+//   // {
+//   //   constexpr char delta = 'a' - 'A';
+//   //   bool swap = name[i] >= 'A' && name[i] <= 'Z';
+//   //   name[i] = swap ? name[i] + delta : name[i];
+//   // }
+// }
 
-// @fixme
-inline string toLower(const string& name)
-{
-  // -- old version
+// // @fixme
+// inline string toLower(const string& name)
+// {
+//   // -- old version
 
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+//   // Copy string without initial and trailing blanks.
+//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
+//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  return temp;
+//   // Convert to lowercase letter by letter.
+//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+//   return temp;
 
-  // -- new version
+//   // -- new version
 
-  // // for some reason we also trim whitespace characters
-  // // will assume no non-printable characters are being used at all
+//   // // for some reason we also trim whitespace characters
+//   // // will assume no non-printable characters are being used at all
 
-  // int tstart = 0, tend = name.size()-1;
-  // while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
-  // while (name[tend] <= ' ' && tend >= 0) --tend;
+//   // int tstart = 0, tend = name.size()-1;
+//   // while (name[tstart] <= ' ' && tstart < name.size()) ++tstart;
+//   // while (name[tend] <= ' ' && tend >= 0) --tend;
 
-  // // figure out where the non-lowercase begins
-  // int start = tstart;
-  // while ((name[start] < 'A' || name[start] > 'Z') && start <= tend) ++start;
+//   // // figure out where the non-lowercase begins
+//   // int start = tstart;
+//   // while ((name[start] < 'A' || name[start] > 'Z') && start <= tend) ++start;
 
-  // // if no whitespace or uppercase then return original string
-  // if (start >= name.size()) return name;
+//   // // if no whitespace or uppercase then return original string
+//   // if (start >= name.size()) return name;
 
-  // // prepare buffer to write new string
-  // thread_local string tmp;
-  // tmp.resize(tend-tstart+1);
+//   // // prepare buffer to write new string
+//   // thread_local string tmp;
+//   // tmp.resize(tend-tstart+1);
 
-  // // write everything after whitespace and before first uppercase
-  // for (int i=tstart; i<start; ++i)
-  // {
-  //   tmp[i-tstart] = name[i];
-  // }
+//   // // write everything after whitespace and before first uppercase
+//   // for (int i=tstart; i<start; ++i)
+//   // {
+//   //   tmp[i-tstart] = name[i];
+//   // }
 
-  // // write rest up to start of trailing whitespace
-  // for (int i=start; i<=tend; ++i)
-  // {
-  //   constexpr char delta = 'a' - 'A';
-  //   bool swap = name[i] >= 'A' && name[i] <= 'Z';
-  //   tmp[i-tstart] = swap ? name[i] + delta : name[i];
-  // }
+//   // // write rest up to start of trailing whitespace
+//   // for (int i=start; i<=tend; ++i)
+//   // {
+//   //   constexpr char delta = 'a' - 'A';
+//   //   bool swap = name[i] >= 'A' && name[i] <= 'Z';
+//   //   tmp[i-tstart] = swap ? name[i] + delta : name[i];
+//   // }
 
-  // return tmp;
-}
+//   // return tmp;
+// }
 
 // Powers of small integers - for balance speed/code clarity.
 inline double pow2(const double& x) {return x*x;}
@@ -247,6 +247,11 @@ double GammaReal(double x);
   using stringref2 = const std::string&;
   using stringbuf = std::string;
   // using stringbuf = std::string;
+
+  class Vec4;
+  using Vec4ref = const Vec4&;
+  class Wave4;
+  using Wave4ref = const Wave4&;
 
 } // end namespace Pythia8
 
