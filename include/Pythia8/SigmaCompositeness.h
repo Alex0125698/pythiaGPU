@@ -22,7 +22,10 @@ class Sigma1qg2qStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1qg2qStar(int idqIn) : idq(idqIn) {}
+  Sigma1qg2qStar(int idqIn) : idq(idqIn)
+  {
+    inFluxSave = "qg";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -40,16 +43,15 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qg";}
-  virtual int    resonanceA() const {return idRes;}
+  // virtual cstring name()       const {return nameSave;}
+  // virtual int    code()       const {return codeSave;}
+  // virtual cstring inFlux()     const {return "qg";}
+  // virtual int    resonanceA() const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idq, idRes, codeSave;
-  stringbuf nameSave;
+  int    idq, idRes;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupFcol, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -66,7 +68,10 @@ class Sigma1lgm2lStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1lgm2lStar(int idlIn) : idl(idlIn) {}
+  Sigma1lgm2lStar(int idlIn) : idl(idlIn)
+  {
+    inFluxSave = "fgm";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -84,16 +89,15 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "fgm";}
-  virtual int    resonanceA() const {return idRes;}
+  // virtual cstring name()       const {return nameSave;}
+  // virtual int    code()       const {return codeSave;}
+  // virtual cstring inFlux()     const {return "fgm";}
+  // virtual int    resonanceA() const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  int    idl, idRes;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupChg, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -110,7 +114,10 @@ class Sigma2qq2qStarq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2qStarq(int idqIn) : idq(idqIn) {}
+  Sigma2qq2qStarq(int idqIn) : idq(idqIn)
+  {
+    inFluxSave = "qq";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -127,17 +134,16 @@ public:
   // Evaluate weight for q* decay angles (else inactive).
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qq";}
-  virtual int    id3Mass()    const {return idRes;}
+  // // Info on the subprocess.
+  // virtual cstring name()       const {return nameSave;}
+  // virtual int    code()       const {return codeSave;}
+  // virtual cstring inFlux()     const {return "qq";}
+  // virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idq, idRes, codeSave;
-  stringbuf nameSave;
+  int    idq, idRes;
   double Lambda, preFac, openFracPos, openFracNeg, sigmaA, sigmaB;
 
 };
@@ -151,7 +157,10 @@ class Sigma2qqbar2lStarlbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2lStarlbar(int idlIn) : idl(idlIn) {}
+  Sigma2qqbar2lStarlbar(int idlIn) : idl(idlIn)
+  {
+    inFluxSave = "qqbarSame";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -168,17 +177,16 @@ public:
   // Evaluate weight for l* decay angles (else inactive).
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
-  virtual int    id3Mass()    const {return idRes;}
+  // // Info on the subprocess.
+  // virtual cstring name()       const {return nameSave;}
+  // virtual int    code()       const {return codeSave;}
+  // virtual cstring inFlux()     const {return "qqbarSame";}
+  // virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  int    idl, idRes;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -193,7 +201,10 @@ class Sigma2qqbar2lStarlStarBar: public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2lStarlStarBar(int idlIn) : idl(idlIn) {}
+  Sigma2qqbar2lStarlStarBar(int idlIn) : idl(idlIn)
+  {
+    inFluxSave = "qqbarSame";
+  }
 
   // Initialize process.
   void initProc();
@@ -210,18 +221,17 @@ public:
   // Evaluate weight for l* decay angles (else inactive).
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
-  virtual int    id3Mass()    const {return idRes;}
-  virtual int    id4Mass()    const {return idRes;}
+  // // Info on the subprocess.
+  // virtual cstring name()       const {return nameSave;}
+  // virtual int    code()       const {return codeSave;}
+  // virtual cstring inFlux()     const {return "qqbarSame";}
+  // virtual int    id3Mass()    const {return idRes;}
+  // virtual int    id4Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  stringbuf nameSave;
+  int    idl, idRes;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -236,7 +246,12 @@ class Sigma2QCqq2qq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2QCqq2qq(){}
+  Sigma2QCqq2qq()
+  {
+    inFluxSave = "qq";
+    codeSave = 4201;
+    nameSave2 = "q q(bar)' -> (QC) -> q q(bar)'";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -250,10 +265,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual cstring name()   const {return "q q(bar)' -> (QC) -> q q(bar)'";}
-  virtual int    code()   const {return 4201;}
-  virtual cstring inFlux() const {return "qq";}
+  // // Info on the subprocess.
+  // virtual cstring name()   const {return "q q(bar)' -> (QC) -> q q(bar)'";}
+  // virtual int    code()   const {return 4201;}
+  // virtual cstring inFlux() const {return "qq";}
 
  private:
 
@@ -277,7 +292,12 @@ class Sigma2QCqqbar2qqbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2QCqqbar2qqbar(){}
+  Sigma2QCqqbar2qqbar()
+  {
+    inFluxSave = "qqbarSame";
+    nameSave2 = "q qbar -> (QC) -> q' qbar' (uds)";
+    codeSave = 4202;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -291,10 +311,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual cstring name()   const {return "q qbar -> (QC) -> q' qbar' (uds)";}
-  virtual int    code()   const {return 4202;}
-  virtual cstring inFlux() const {return "qqbarSame";}
+  // // Info on the subprocess.
+  // virtual cstring name()   const {return "q qbar -> (QC) -> q' qbar' (uds)";}
+  // virtual int    code()   const {return 4202;}
+  // virtual cstring inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -323,7 +343,11 @@ class Sigma2QCffbar2llbar : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2QCffbar2llbar (int idIn, int codeIn) : idNew(idIn), codeNew(codeIn) {}
+  Sigma2QCffbar2llbar (int idIn, int codeIn) : idNew(idIn), codeNew(codeIn)
+  {
+    inFluxSave = "ffbarSame";
+    isSChannelSave = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -338,16 +362,15 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual cstring name()       const {return nameNew;}
-  virtual int    code()       const {return codeNew;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
-  virtual bool   isSChannel() const {return true;}
+  // // Info on the subprocess.
+  // virtual cstring name()       const {return nameNew;}
+  // virtual int    code()       const {return codeNew;}
+  // virtual cstring inFlux()     const {return "ffbarSame";}
+  // virtual bool   isSChannel() const {return true;}
 
 private:
 
   // Process values.
-  stringbuf nameNew;
   int    idNew, codeNew;
   double qCmNew, qCmNew2, qCmZ, qCmZ2, qCGZ, qCGZ2, sigma0;
 

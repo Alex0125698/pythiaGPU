@@ -141,7 +141,7 @@ bool SigmaPartialWave::init(int processIn, stringref xmlPath, stringref filename
 
 bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
   // Create full path and open file
-  string fullPath = xmlPath + filename;
+  STRBUFA(fullPath) = xmlPath + filename;
   ifstream ifs(fullPath.c_str());
   if (!ifs.good()) {
     infoPtr->errorMsg("Error in SigmaPartialWave::init: "
@@ -164,7 +164,7 @@ bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
   vector < int > Lvec, Ivec, Jvec;
 
   // Parse the file
-  string line;
+  STRBUFA(line) = "";
   while (ifs.good()) {
     // Get line, convert to lowercase and strip leading whitespace
     getline(ifs, line);
@@ -176,7 +176,7 @@ bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
     if (line.length() == 0 || line[0] == '#') continue;
 
     // Tokenise line on whitespace (spaces or tabs)
-    string lineT = line;
+    STRBUFA(lineT) = line;
     vector < string > token;
     while (true) {
       startPos = lineT.find_first_of("   ");
@@ -244,10 +244,10 @@ bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
         // Extract L
         startPos = token[i].find_first_of(",");
         if (startPos == string::npos) { badHeader = true; break; }
-        string Lstr = token[i].substr(0, startPos);
+        STRBUFA(Lstr) = token[i].substr(0, startPos);
         token[i] = token[i].substr(startPos + 1);
         // Extract 2I
-        string Istr;
+        STRBUFA(Istr);
         startPos = token[i].find_first_of(",     ");
         if (startPos == string::npos) {
           Istr = token[i];
@@ -257,7 +257,7 @@ bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
           token[i] = token[i].substr(startPos + 1);
         }
         // Extract 2J
-        string Jstr("0");
+        STRBUFA(Jstr) ="0";
         if (token[i].length() != 0) Jstr = token[i];
 
         // Convert to integers and store
@@ -761,7 +761,7 @@ bool HadronScatter::init(Info* infoPtrIn, Settings& settings,
   // Environment variable takes precedence, else use constructor input.
   // XXX - as in Pythia.cc, but not passed around in e.g. Info/Settings,
   //       so redo here
-  string xmlPath = "";
+  STRBUFA(xmlPath) = "";
   const char* PYTHIA8DATA = "PYTHIA8DATA";
   char* envPath = getenv(PYTHIA8DATA);
   if (envPath != 0 && *envPath != '\0') {

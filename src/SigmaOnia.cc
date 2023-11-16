@@ -414,9 +414,9 @@ void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
 void Sigma2gg2QQbar3S11g::initProc() {
 
   // Process name.
-  nameSave = "g g -> ";
-  nameSave += (codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar";
-  nameSave += "(3S1)[3S1(1)] g";
+  nameSave1 = "g g -> ";
+  nameSave1 += (codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar";
+  nameSave1 += "(3S1)[3S1(1)] g";
 
 }
 
@@ -467,14 +467,14 @@ void Sigma2gg2QQbar3PJ1g::initProc() {
   // Process name.
   if (jSave >= 0 && jSave <= 2)
   {
-    nameSave = namePrefix();
-    nameSave += " -> ";
-    nameSave += nameMidfix();
-    nameSave += "(3PJ)[3PJ(1)] ";
-    nameSave += namePostfix();
+    nameSave1 = namePrefix;
+    nameSave1 += " -> ";
+    nameSave1 += nameMidfix();
+    nameSave1 += "(3PJ)[3PJ(1)] ";
+    nameSave1 += namePostfix;
   }
   else
-    nameSave = "illegal process";
+    nameSave2 = "illegal process";
 
 }
 
@@ -650,14 +650,14 @@ void Sigma2gg2QQbar3DJ1g::initProc() {
   // Process name.
   if (jSave >= 1 && jSave <= 3)
   {
-    nameSave = namePrefix();
-    nameSave += " -> ";
-    nameSave += nameMidfix();
-    nameSave += "(3DJ)[3DJ(1)] ";
-    nameSave += namePostfix();
+    nameSave1 = namePrefix;
+    nameSave1 += " -> ";
+    nameSave1 += nameMidfix();
+    nameSave1 += "(3DJ)[3DJ(1)] ";
+    nameSave1 += namePostfix;
   }
   else
-    nameSave = "illegal process";
+    nameSave2 = "illegal process";
 
 }
 
@@ -827,7 +827,7 @@ void Sigma2gg2QQbarX8g::initProc() {
   // Return for illegal process.
   if (stateSave < 0 || stateSave > 2) {
     idHad = 0;
-    nameSave = "illegal process";
+    nameSave2 = "illegal process";
     return;
   }
 
@@ -862,17 +862,17 @@ void Sigma2gg2QQbarX8g::initProc() {
   if (stateSave == 0) stateName = "[3S1(8)]";
   else if (stateSave == 1) stateName = "[1S0(8)]";
   else if (stateSave == 2) stateName = "[3PJ(8)]";
-  nameSave = namePrefix(); 
-  nameSave += " -> ";
-  nameSave += (digits[1] == 4 ? "ccbar" : "bbbar");
-  nameSave += "(";
-  nameSave += sName.str();
-  nameSave += lName;
-  nameSave += jName.str();
-  nameSave += ")";
-  nameSave += stateName;
-  nameSave += " ";
-  nameSave += namePostfix();
+  nameSave1 = namePrefix; 
+  nameSave1 += " -> ";
+  nameSave1 += (digits[1] == 4 ? "ccbar" : "bbbar");
+  nameSave1 += "(";
+  nameSave1 += sName.str();
+  nameSave1 += lName;
+  nameSave1 += jName.str();
+  nameSave1 += ")";
+  nameSave1 += stateName;
+  nameSave1 += " ";
+  nameSave1 += namePostfix;
 
   // Ensure the dummy particle for the colour-octet state is valid.
   int idOct = 9900000 + digits[1]*10000 + stateSave*1000 + digits[5]*100

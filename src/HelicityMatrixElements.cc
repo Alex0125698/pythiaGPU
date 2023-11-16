@@ -548,7 +548,7 @@ double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
+  STRBUFA(name) = "";
   if      (id == 1)  name = "d";
   else if (id == 2)  name = "u";
   else if (id == 3)  name = "s";
@@ -710,7 +710,7 @@ double HMEZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
+  STRBUFA(name) = "";
   if      (id == 1)  name = "d";
   else if (id == 2)  name = "u";
   else if (id == 3)  name = "s";

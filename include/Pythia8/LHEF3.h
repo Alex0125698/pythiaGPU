@@ -157,7 +157,7 @@ struct XMLTag {
         pos_t tend = str.find_first_of("= \t\n", curr);
         if ( tend == end || tend >= close ) break;
 
-        string name = str.substr(curr, tend - curr);
+        STRBUFA(name) = str.substr(curr, tend - curr);
         curr = str.find("=", curr) + 1;
 
         // OK now find the beginning and end of the atribute.
@@ -168,7 +168,7 @@ struct XMLTag {
         while ( curr != end && str[curr - 1] == '\\' )
           curr = str.find("\"", curr + 1);
 
-        string value = str.substr(bega, curr == end? end: curr - bega);
+        STRBUFA(value) = str.substr(bega, curr == end? end: curr - bega);
 
         tags.back()->attr[name] = value;
 

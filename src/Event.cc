@@ -471,7 +471,7 @@ bool Particle::undoDecay() {
 cstring Particle::nameWithStatus(int maxLen) const {
 
   if (pdePtr == 0) return " ";
-  thread_local string temp; temp = (statusSave > 0) ? pdePtr->name(idSave)
+  STRBUFA(temp) = (statusSave > 0) ? pdePtr->name(idSave)
     : "(" + pdePtr->name(idSave) + ")";
   while (int(temp.length()) > maxLen) {
     // Remove from end, excluding closing bracket and charge.

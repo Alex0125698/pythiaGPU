@@ -262,19 +262,19 @@ double History::weightTREE(PartonLevel* trial, AlphaStrong * asFSR,
   AlphaStrong * asISR, double RN) {
 
   if ( mergingHooksPtr->canCutOnRecState() && !foundAllowedPath ) {
-    string message="Warning in History::weightTREE: No allowed history";
+    STRBUFA(message)="Warning in History::weightTREE: No allowed history";
     message+=" found. Using disallowed history.";
     infoPtr->errorMsg(message);
   }
   if ( mergingHooksPtr->orderHistories() && !foundOrderedPath ) {
-    string message="Warning in History::weightTREE: No ordered history";
+    STRBUFA(message)="Warning in History::weightTREE: No ordered history";
     message+=" found. Using unordered history.";
     infoPtr->errorMsg(message);
   }
   if ( mergingHooksPtr->canCutOnRecState()
     && mergingHooksPtr->orderHistories()
     && !foundAllowedPath && !foundOrderedPath ) {
-    string message="Warning in History::weightTREE: No allowed or ordered";
+    STRBUFA(message)="Warning in History::weightTREE: No allowed or ordered";
     message+=" history found.";
     infoPtr->errorMsg(message);
   }
@@ -341,7 +341,7 @@ double History::weightTREE(PartonLevel* trial, AlphaStrong * asFSR,
 double History::weightLOOP(PartonLevel* trial, double RN ) {
 
   if ( mergingHooksPtr->canCutOnRecState() && !foundAllowedPath ) {
-    string message="Warning in History::weightLOOP: No allowed history";
+    STRBUFA(message)="Warning in History::weightLOOP: No allowed history";
     message+=" found. Using disallowed history.";
     infoPtr->errorMsg(message);
   }
@@ -2797,7 +2797,7 @@ vector<Clustering> History::getAllQCDClusterings() {
     }
 
     if ( !ret.empty() ) {
-      string message="Warning in History::getAllQCDClusterings: Changed";
+      STRBUFA(message)="Warning in History::getAllQCDClusterings: Changed";
       message+=" colour structure to allow at least one clustering.";
       infoPtr->errorMsg(message);
     }
@@ -3929,7 +3929,7 @@ double History::getProb(const Clustering & SystemIn) {
   if ( mergingHooksPtr->useShowerPlugin() ) {
     int iPartner = (isISR && SystemIn.partner > 0) ? SystemIn.partner : Rec;
     // Construct name.
-    string name = "";
+    STRBUFA(name) = "";
     double pr = 0.;
     if (isISR)
           pr = showers->spacePtr->getSplittingProb(state,Rad,Emt,iPartner);
@@ -4023,7 +4023,7 @@ double History::getProb(const Clustering & SystemIn) {
     } else if (mergingHooksPtr->pickByPoPT2()) {
       fac = 1./(pT1sq + pT0sq);
     } else {
-      string message="Error in History::getProb: Scheme for calculating";
+      STRBUFA(message)="Error in History::getProb: Scheme for calculating";
       message+=" shower splitting probability is undefined.";
       infoPtr->errorMsg(message);
     }
@@ -4164,7 +4164,7 @@ double History::getProb(const Clustering & SystemIn) {
 
     // Print error if no kernel calculated
     } else {
-      string message = "Error in History::getProb: Splitting kernel"
+      STRBUFA(message) = "Error in History::getProb: Splitting kernel"
         " undefined in ISR in clustering.";
       infoPtr->errorMsg(message);
     }
@@ -4239,7 +4239,7 @@ double History::getProb(const Clustering & SystemIn) {
     } else if (mergingHooksPtr->pickByPoPT2()) {
       fac = 1. / pT1sq;
     } else {
-      string message="Error in History::getProb: Scheme for calculating";
+      STRBUFA(message)="Error in History::getProb: Scheme for calculating";
       message+=" shower splitting probability is undefined.";
       infoPtr->errorMsg(message);
     }
@@ -4328,7 +4328,7 @@ double History::getProb(const Clustering & SystemIn) {
 
     // Print error if no kernel calculated
     } else {
-      string message="Error in History::getProb: Splitting kernel undefined";
+      STRBUFA(message)="Error in History::getProb: Splitting kernel undefined";
       message+=" in FSR clustering.";
       infoPtr->errorMsg(message);
     }
@@ -4351,7 +4351,7 @@ double History::getProb(const Clustering & SystemIn) {
 
     // Done for FSR
   } else {
-    string message="Error in History::getProb: Radiation could not be";
+    STRBUFA(message)="Error in History::getProb: Radiation could not be";
     message+=" interpreted as FSR or ISR.";
     infoPtr->errorMsg(message);
   }
@@ -4516,7 +4516,7 @@ double History::pdfForSudakov() {
 double History::hardProcessME( const Event& event ) {
 
   // Get hard process.
-  string process = mergingHooksPtr->getProcessString();
+  STRBUFA(process) = mergingHooksPtr->getProcessString();
   double result = 1.;
 
   if ( process.compare("pp>e+ve") == 0
@@ -4581,7 +4581,7 @@ Event History::cluster(const Clustering & inSystem ) {
     int iPartner = (radType == -1 && inSystem.partner > 0)
                  ? inSystem.partner : Rec;
     // Construct name.
-    string name = "";
+    STRBUFA(name) = "";
     if (radType ==  1)
       name = showers->timesPtr->getSplittingName(state,Rad,Emt);
     if (radType == -1)

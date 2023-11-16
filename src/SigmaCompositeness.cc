@@ -23,12 +23,13 @@ void Sigma1qg2qStar::initProc() {
 
   // Set up process properties from the chosen quark flavour.
   idRes         = 4000000 + idq;
+  resonanceASave = idRes;
   codeSave      = 4000 + idq;
-  if      (idq == 1) nameSave = "d g -> d^*";
-  else if (idq == 2) nameSave = "u g -> u^*";
-  else if (idq == 3) nameSave = "s g -> s^*";
-  else if (idq == 4) nameSave = "c g -> c^*";
-  else               nameSave = "b g -> b^*";
+  if      (idq == 1) nameSave2 = "d g -> d^*";
+  else if (idq == 2) nameSave2 = "u g -> u^*";
+  else if (idq == 3) nameSave2 = "s g -> s^*";
+  else if (idq == 4) nameSave2 = "c g -> c^*";
+  else               nameSave2 = "b g -> b^*";
 
   // Store q* mass and width for propagator.
   mRes          = particleDataPtr->m0(idRes);
@@ -148,10 +149,11 @@ void Sigma1lgm2lStar::initProc() {
 
   // Set up process properties from the chosen lepton flavour.
   idRes         = 4000000 + idl;
+  resonanceASave = idRes; 
   codeSave      = 4000 + idl;
-  if      (idl == 11) nameSave = "e gamma -> e^*";
-  else if (idl == 13) nameSave = "mu gamma -> mu^*";
-  else                nameSave = "tau gamma -> tau^*";
+  if      (idl == 11) nameSave2 = "e gamma -> e^*";
+  else if (idl == 13) nameSave2 = "mu gamma -> mu^*";
+  else                nameSave2 = "tau gamma -> tau^*";
 
   // Store l* mass and width for propagator.
   mRes          = particleDataPtr->m0(idRes);
@@ -272,11 +274,11 @@ void Sigma2qq2qStarq::initProc() {
   // Set up process properties from the chosen quark flavour.
   idRes         = 4000000 + idq;
   codeSave      = 4020 + idq;
-  if      (idq == 1) nameSave = "q q -> d^* q";
-  else if (idq == 2) nameSave = "q q -> u^* q";
-  else if (idq == 3) nameSave = "q q -> s^* q";
-  else if (idq == 4) nameSave = "q q -> c^* q";
-  else               nameSave = "q q -> b^* q";
+  if      (idq == 1) nameSave2 = "q q -> d^* q";
+  else if (idq == 2) nameSave2 = "q q -> u^* q";
+  else if (idq == 3) nameSave2 = "q q -> s^* q";
+  else if (idq == 4) nameSave2 = "q q -> c^* q";
+  else               nameSave2 = "q q -> b^* q";
 
   // Locally stored properties and couplings.
   Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
@@ -429,12 +431,12 @@ void Sigma2qqbar2lStarlbar::initProc() {
   // Set up process properties from the chosen lepton flavour.
   idRes         = 4000000 + idl;
   codeSave      = 4020 + idl;
-  if      (idl == 11) nameSave = "q qbar -> e^*+- e^-+";
-  else if (idl == 12) nameSave = "q qbar -> nu_e^* nu_ebar";
-  else if (idl == 13) nameSave = "q qbar -> mu^*+- mu^-+";
-  else if (idl == 14) nameSave = "q qbar -> nu_mu^* nu_mubar";
-  else if (idl == 15) nameSave = "q qbar -> tau^*+- tau^-+";
-  else                nameSave = "q qbar -> nu_tau^* nu_taubar";
+  if      (idl == 11) nameSave2 = "q qbar -> e^*+- e^-+";
+  else if (idl == 12) nameSave2 = "q qbar -> nu_e^* nu_ebar";
+  else if (idl == 13) nameSave2 = "q qbar -> mu^*+- mu^-+";
+  else if (idl == 14) nameSave2 = "q qbar -> nu_mu^* nu_mubar";
+  else if (idl == 15) nameSave2 = "q qbar -> tau^*+- tau^-+";
+  else                nameSave2 = "q qbar -> nu_tau^* nu_taubar";
 
   // Secondary open width fractions.
   openFracPos = particleDataPtr->resOpenFrac( idRes);
@@ -531,13 +533,15 @@ void Sigma2qqbar2lStarlStarBar::initProc() {
 
   // Set up process properties from the chosen lepton flavour.
   idRes         = 4000000 + idl;
+  id3MassSave = idRes; 
+  id4MassSave = idRes; 
   codeSave      = 4040 + idl;
-  if      (idl == 11) nameSave = "q qbar -> e^*+- e^*-+";
-  else if (idl == 12) nameSave = "q qbar -> nu_e^* nu_e^*bar";
-  else if (idl == 13) nameSave = "q qbar -> mu^*+- mu^*-+";
-  else if (idl == 14) nameSave = "q qbar -> nu_mu^* nu_mu^*bar";
-  else if (idl == 15) nameSave = "q qbar -> tau^*+- tau^*-+";
-  else                nameSave = "q qbar -> nu_tau^* nu_tau^*bar";
+  if      (idl == 11) nameSave2 = "q qbar -> e^*+- e^*-+";
+  else if (idl == 12) nameSave2 = "q qbar -> nu_e^* nu_e^*bar";
+  else if (idl == 13) nameSave2 = "q qbar -> mu^*+- mu^*-+";
+  else if (idl == 14) nameSave2 = "q qbar -> nu_mu^* nu_mu^*bar";
+  else if (idl == 15) nameSave2 = "q qbar -> tau^*+- tau^*-+";
+  else                nameSave2 = "q qbar -> nu_tau^* nu_tau^*bar";
 
   // Secondary open width fractions.
   openFracPos = particleDataPtr->resOpenFrac( idRes);
@@ -820,9 +824,9 @@ void Sigma2QCffbar2llbar::initProc() {
   qCLambda2  *= qCLambda2;
 
   // Process name.
-  if (idNew == 11) nameNew = "f fbar -> (QC) -> e- e+";
-  if (idNew == 13) nameNew = "f fbar -> (QC) -> mu- mu+";
-  if (idNew == 15) nameNew = "f fbar -> (QC) -> tau- tau+";
+  if (idNew == 11) nameSave2 = "f fbar -> (QC) -> e- e+";
+  if (idNew == 13) nameSave2 = "f fbar -> (QC) -> mu- mu+";
+  if (idNew == 15) nameSave2 = "f fbar -> (QC) -> tau- tau+";
 
   // Kinematics.
   qCmNew  = particleDataPtr->m0(idNew);

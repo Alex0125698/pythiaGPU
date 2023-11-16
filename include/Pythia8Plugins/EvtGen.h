@@ -449,7 +449,7 @@ void EvtGenDecays::updateData(bool final) {
     }
 
     // Check for signal.
-    string egName = EvtPDL::name(egId);
+    STRBUFA(egName) = EvtPDL::name(egId);
     if (egName.size() <= signalSuffix.size() || egName.substr
         (egName.size() - signalSuffix.size()) != signalSuffix) continue;
     signal = signals.find(pyId);

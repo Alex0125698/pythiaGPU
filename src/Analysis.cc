@@ -686,7 +686,7 @@ void ClusterJet::reassign() {
 void ClusterJet::list(ostream& os) const {
 
   // Header.
-  string method = (measure == 1) ? "Lund pT"
+  STRBUFA(method) = (measure == 1) ? "Lund pT"
         : ( (measure == 2) ? "JADE m" : "Durham kT" ) ;
   os << "\n --------  PYTHIA ClusterJet Listing, " << setw(9) <<  method
      << " =" << fixed << setprecision(3) << setw(7) << sqrt(dist2Join)

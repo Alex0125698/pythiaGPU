@@ -22,7 +22,12 @@ class Sigma0nonDiffractive : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0nonDiffractive() {}
+  Sigma0nonDiffractive()
+  {
+    nameSave2 = "non-diffractive";
+    codeSave = 101;
+    isNonDiffSave = true;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaND();}
@@ -31,9 +36,9 @@ public:
   virtual void setIdColAcol() {}
 
   // Info on the subprocess.
-  virtual cstring name()      const {return "non-diffractive";}
-  virtual int    code()      const {return 101;}
-  virtual bool   isNonDiff() const {return true;}
+  // virtual cstring name()      const {return "non-diffractive";}
+  // virtual int    code()      const {return 101;}
+  // virtual bool   isNonDiff() const {return true;}
 
 private:
 
@@ -48,7 +53,12 @@ class Sigma0AB2AB : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0AB2AB() {}
+  Sigma0AB2AB()
+  {
+    nameSave2 = "A B -> A B elastic";
+    codeSave = 102;
+    isResolvedSave = false;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaEl();}
@@ -57,9 +67,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "A B -> A B elastic";}
-  virtual int    code()       const {return 102;}
-  virtual bool   isResolved() const {return false;}
+  // virtual cstring name()       const {return "A B -> A B elastic";}
+  // virtual int    code()       const {return 102;}
+  // virtual bool   isResolved() const {return false;}
 
 private:
 
@@ -74,7 +84,13 @@ class Sigma0AB2XB : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0AB2XB() {}
+  Sigma0AB2XB()
+  {
+    nameSave2 = "A B -> X B single diffractive";
+    codeSave = 103;
+    isResolvedSave = false;
+    isDiffASave = true;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaXB();}
@@ -83,10 +99,10 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "A B -> X B single diffractive";}
-  virtual int    code()       const {return 103;}
-  virtual bool   isResolved() const {return false;}
-  virtual bool   isDiffA()    const {return true;};
+  // virtual cstring name()       const {return "A B -> X B single diffractive";}
+  // virtual int    code()       const {return 103;}
+  // virtual bool   isResolved() const {return false;}
+  // virtual bool   isDiffA()    const {return true;};
 
 private:
 
@@ -101,7 +117,13 @@ class Sigma0AB2AX : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0AB2AX() {}
+  Sigma0AB2AX()
+  {
+    nameSave2 = "A B -> A X single diffractive";
+    codeSave = 104;
+    isResolvedSave = false;
+    isDiffBSave = true;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaAX();}
@@ -110,12 +132,12 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "A B -> A X single diffractive";}
-  virtual int    code()       const {return 104;}
-  virtual bool   isResolved() const {return false;}
-  virtual bool   isDiffB()    const {return true;};
+  // virtual cstring name()       const {return "A B -> A X single diffractive";}
+  // virtual int    code()       const {return 104;}
+  // virtual bool   isResolved() const {return false;}
+  // virtual bool   isDiffB()    const {return true;};
 
-private:
+// private:
 
 };
 
@@ -128,7 +150,14 @@ class Sigma0AB2XX : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0AB2XX() {}
+  Sigma0AB2XX()
+  {
+    nameSave2 = "A B -> X X double diffractive";
+    codeSave = 105;
+    isResolvedSave = false;
+    isDiffASave = true;
+    isDiffBSave = true;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaXX();}
@@ -137,13 +166,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "A B -> X X double diffractive";}
-  virtual int    code()       const {return 105;}
-  virtual bool   isResolved() const {return false;}
-  virtual bool   isDiffA()    const {return true;};
-  virtual bool   isDiffB()    const {return true;};
+  // virtual cstring name()       const {return "A B -> X X double diffractive";}
+  // virtual int    code()       const {return 105;}
+  // virtual bool   isResolved() const {return false;}
+  // virtual bool   isDiffA()    const {return true;};
+  // virtual bool   isDiffB()    const {return true;};
 
-private:
+// private:
 
 };
 
@@ -156,7 +185,14 @@ class Sigma0AB2AXB : public Sigma0Process {
 public:
 
   // Constructor.
-  Sigma0AB2AXB() {}
+  Sigma0AB2AXB()
+  {
+    nameSave2 = "A B -> A X B central diffractive";
+    codeSave = 106;
+    isResolvedSave = false;
+    isDiffCSave = true;
+    nFinalSave = 3;
+  }
 
   // Evaluate sigma.
   virtual double sigmaHat() {return sigmaTotPtr->sigmaAXB();}
@@ -165,13 +201,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()      const {return "A B -> A X B central diffractive";}
-  virtual int    code()       const {return 106;}
-  virtual int    nFinal()     const {return 3;}
-  virtual bool   isResolved() const {return false;}
-  virtual bool   isDiffC()    const {return true;};
+  // virtual cstring name()      const {return "A B -> A X B central diffractive";}
+  // virtual int    code()       const {return 106;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual bool   isResolved() const {return false;}
+  // virtual bool   isDiffC()    const {return true;};
 
-private:
+// private:
 
 };
 
@@ -184,7 +220,12 @@ class Sigma2gg2gg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2gg() {}
+  Sigma2gg2gg()
+  {
+    nameSave2 = "g g -> g g";
+    codeSave = 111;
+    inFluxSave = "gg";
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -196,9 +237,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "g g -> g g";}
-  virtual int    code()   const {return 111;}
-  virtual cstring inFlux() const {return "gg";}
+  // virtual cstring name()   const {return "g g -> g g";}
+  // virtual int    code()   const {return 111;}
+  // virtual cstring inFlux() const {return "gg";}
 
 private:
 
@@ -216,7 +257,12 @@ class Sigma2gg2qqbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2qqbar() {}
+  Sigma2gg2qqbar()
+  {
+    nameSave2 = "g g -> q qbar (uds)";
+    codeSave = 112;
+    inFluxSave = "gg";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -231,9 +277,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "g g -> q qbar (uds)";}
-  virtual int    code()   const {return 112;}
-  virtual cstring inFlux() const {return "gg";}
+  // virtual cstring name()   const {return "g g -> q qbar (uds)";}
+  // virtual int    code()   const {return 112;}
+  // virtual cstring inFlux() const {return "gg";}
 
 private:
 
@@ -256,7 +302,12 @@ class Sigma2qg2qg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2qg() {}
+  Sigma2qg2qg()
+  {
+    nameSave2 = "q g -> q g";
+    codeSave = 113;
+    inFluxSave = "qg";
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -268,9 +319,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q g -> q g";}
-  virtual int    code()   const {return 113;}
-  virtual cstring inFlux() const {return "qg";}
+  // virtual cstring name()   const {return "q g -> q g";}
+  // virtual int    code()   const {return 113;}
+  // virtual cstring inFlux() const {return "qg";}
 
 private:
 
@@ -289,7 +340,12 @@ class Sigma2qq2qq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2qq() {}
+  Sigma2qq2qq()
+  {
+    nameSave2 = "q q(bar)' -> q q(bar)'";
+    codeSave = 114;
+    inFluxSave = "qq";
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -301,9 +357,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q q(bar)' -> q q(bar)'";}
-  virtual int    code()   const {return 114;}
-  virtual cstring inFlux() const {return "qq";}
+  // virtual cstring name()   const {return "q q(bar)' -> q q(bar)'";}
+  // virtual int    code()   const {return 114;}
+  // virtual cstring inFlux() const {return "qq";}
 
  private:
 
@@ -321,7 +377,12 @@ class Sigma2qqbar2gg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2gg() {}
+  Sigma2qqbar2gg()
+  {
+    nameSave2 = "q qbar -> g g";
+    codeSave = 115;
+    inFluxSave = "qqbarSame";
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -333,9 +394,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q qbar -> g g";}
-  virtual int    code()   const {return 115;}
-  virtual cstring inFlux() const {return "qqbarSame";}
+  // virtual cstring name()   const {return "q qbar -> g g";}
+  // virtual int    code()   const {return 115;}
+  // virtual cstring inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -353,7 +414,12 @@ class Sigma2qqbar2qqbarNew : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2qqbarNew() {}
+  Sigma2qqbar2qqbarNew()
+  {
+    nameSave2 = "q qbar -> q' qbar' (uds)";
+    codeSave = 116;
+    inFluxSave = "qqbarSame";
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -368,9 +434,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()   const {return "q qbar -> q' qbar' (uds)";}
-  virtual int    code()   const {return 116;}
-  virtual cstring inFlux() const {return "qqbarSame";}
+  // virtual cstring name()   const {return "q qbar -> q' qbar' (uds)";}
+  // virtual int    code()   const {return 116;}
+  // virtual cstring inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -392,7 +458,13 @@ class Sigma2gg2QQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
+  Sigma2gg2QQbar(int idIn, int codeIn) : idNew(idIn)
+  {
+    inFluxSave = "gg";
+    id3MassSave = idNew;
+    id4MassSave = idNew;
+    codeSave = codeIn;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -410,17 +482,17 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idNew;}
-  virtual int    id4Mass() const {return idNew;}
+  // virtual cstring name()    const {return nameSave;}
+  // virtual int    code()    const {return codeSave;}
+  // virtual cstring inFlux()  const {return "gg";}
+  // virtual int    id3Mass() const {return idNew;}
+  // virtual int    id4Mass() const {return idNew;}
 
  private:
 
   // Values stored for process type and colour flow selection.
-  int    idNew, codeSave;
-  stringbuf nameSave;
+  int    idNew;
+  // stringbuf nameSave;
   double sigTS, sigUS, sigSum, sigma, openFracPair;
 
 };
@@ -434,7 +506,13 @@ class Sigma2qqbar2QQbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2QQbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
+  Sigma2qqbar2QQbar(int idIn, int codeIn) : idNew(idIn)
+  {
+    inFluxSave = "qqbarSame";
+    id3MassSave = idNew;
+    id4MassSave = idNew;
+    codeSave = codeIn;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -452,17 +530,17 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idNew;}
-  virtual int    id4Mass() const {return idNew;}
+  // virtual cstring name()    const {return nameSave;}
+  // virtual int    code()    const {return codeSave;}
+  // virtual cstring inFlux()  const {return "qqbarSame";}
+  // virtual int    id3Mass() const {return idNew;}
+  // virtual int    id4Mass() const {return idNew;}
 
  private:
 
   // Values stored for process type.
-  int    idNew, codeSave;
-  stringbuf nameSave;
+  int    idNew;
+  // stringbuf nameSave;
   double sigma, openFracPair;
 
 };
@@ -476,7 +554,14 @@ class Sigma3gg2ggg : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3gg2ggg() {}
+  Sigma3gg2ggg()
+  {
+    nameSave2 = "g g -> g g g";
+    codeSave = 131;
+    nFinalSave = 3;
+    inFluxSave = "gg";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -488,11 +573,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "g g -> g g g";}
-  virtual int    code()       const {return 131;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "gg";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "g g -> g g g";}
+  // virtual int    code()       const {return 131;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "gg";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 
@@ -515,7 +600,14 @@ class Sigma3qqbar2ggg : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qqbar2ggg() {}
+  Sigma3qqbar2ggg()
+  {
+    nameSave2 = "q qbar -> g g g";
+    codeSave = 132;
+    nFinalSave = 3;
+    inFluxSave = "qqbarSame";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -527,11 +619,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q qbar -> g g g";}
-  virtual int    code()       const {return 132;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q qbar -> g g g";}
+  // virtual int    code()       const {return 132;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qqbarSame";}
+  // virtual bool   isQCD3body() const {return true;}
 
 protected:
 
@@ -564,7 +656,14 @@ class Sigma3qg2qgg : public Sigma3qqbar2ggg {
 public:
 
   // Constructor.
-  Sigma3qg2qgg() {}
+  Sigma3qg2qgg()
+  {
+    nameSave2 = "q g -> q g g";
+    codeSave = 133;
+    nFinalSave = 3;
+    inFluxSave = "qg";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -576,11 +675,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q g -> q g g";}
-  virtual int    code()       const {return 133;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qg";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q g -> q g g";}
+  // virtual int    code()       const {return 133;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qg";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 
@@ -599,7 +698,14 @@ class Sigma3gg2qqbarg : public Sigma3qqbar2ggg {
 public:
 
   // Constructor.
-  Sigma3gg2qqbarg() {}
+  Sigma3gg2qqbarg()
+  {
+    nameSave2 = "g g -> q qbar g";
+    codeSave = 138;
+    nFinalSave = 3;
+    inFluxSave = "gg";
+    isQCD3bodySave = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -611,11 +717,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "g g -> q qbar g";}
-  virtual int    code()       const {return 138;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "gg";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "g g -> q qbar g";}
+  // virtual int    code()       const {return 138;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "gg";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 
@@ -633,7 +739,14 @@ class Sigma3qq2qqgDiff : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qq2qqgDiff() {}
+  Sigma3qq2qqgDiff()
+  {
+    nameSave2 = "q(bar) q(bar)' -> q(bar) q(bar)' g";
+    codeSave = 134;
+    nFinalSave = 3;
+    inFluxSave = "qq";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -645,12 +758,12 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const
-    {return "q(bar) q(bar)' -> q(bar) q(bar)' g";}
-  virtual int    code()       const {return 134;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qq";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const
+    // {return "q(bar) q(bar)' -> q(bar) q(bar)' g";}
+  // virtual int    code()       const {return 134;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qq";}
+  // virtual bool   isQCD3body() const {return true;}
 
 protected:
 
@@ -683,7 +796,14 @@ class Sigma3qqbar2qqbargDiff : public Sigma3qq2qqgDiff {
 public:
 
   // Constructor.
-  Sigma3qqbar2qqbargDiff() {}
+  Sigma3qqbar2qqbargDiff()
+  {
+    nameSave2 = "q qbar -> q' qbar' g";
+    codeSave = 136;
+    nFinalSave = 3;
+    inFluxSave = "qqbarSame";
+    isQCD3bodySave = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -698,11 +818,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q qbar -> q' qbar' g";}
-  virtual int    code()       const {return 136;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q qbar -> q' qbar' g";}
+  // virtual int    code()       const {return 136;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qqbarSame";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 
@@ -721,7 +841,14 @@ class Sigma3qg2qqqbarDiff : public Sigma3qq2qqgDiff {
 public:
 
   // Constructor.
-  Sigma3qg2qqqbarDiff() {}
+  Sigma3qg2qqqbarDiff()
+  {
+    nameSave2 = "q g -> q q' qbar'";
+    codeSave = 139;
+    nFinalSave = 3;
+    inFluxSave = "qg";
+    isQCD3bodySave = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -736,11 +863,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q g -> q q' qbar'";}
-  virtual int    code()       const {return 139;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qg";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q g -> q q' qbar'";}
+  // virtual int    code()       const {return 139;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qg";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 
@@ -761,7 +888,14 @@ class Sigma3qq2qqgSame : public Sigma3Process {
 public:
 
   // Constructor.
-  Sigma3qq2qqgSame() {}
+  Sigma3qq2qqgSame()
+  {
+    nameSave2 = "q(bar) q(bar) -> q(bar) q(bar) g";
+    codeSave = 135;
+    nFinalSave = 3;
+    inFluxSave = "qq";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -773,12 +907,12 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const
-    {return "q(bar) q(bar) -> q(bar) q(bar) g";}
-  virtual int    code()       const {return 135;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qq";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const
+    // {return "q(bar) q(bar) -> q(bar) q(bar) g";}
+  // virtual int    code()       const {return 135;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qq";}
+  // virtual bool   isQCD3body() const {return true;}
 
 protected:
 
@@ -812,7 +946,14 @@ class Sigma3qqbar2qqbargSame : public Sigma3qq2qqgSame {
 public:
 
   // Constructor.
-  Sigma3qqbar2qqbargSame() {}
+  Sigma3qqbar2qqbargSame()
+  {
+    nameSave2 = "q qbar -> q qbar g";
+    codeSave = 137;
+    nFinalSave = 3;
+    inFluxSave = "qqbarSame";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -824,13 +965,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q qbar -> q qbar g";}
-  virtual int    code()       const {return 137;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qqbarSame";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q qbar -> q qbar g";}
+  // virtual int    code()       const {return 137;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qqbarSame";}
+  // virtual bool   isQCD3body() const {return true;}
 
-private:
+// private:
 
 };
 
@@ -844,7 +985,14 @@ class Sigma3qg2qqqbarSame : public Sigma3qq2qqgSame {
 public:
 
   // Constructor.
-  Sigma3qg2qqqbarSame() {}
+  Sigma3qg2qqqbarSame()
+  {
+    nameSave2 = "q g -> q q qbar";
+    codeSave = 140;
+    nFinalSave = 3;
+    inFluxSave = "qg";
+    isQCD3bodySave = true;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
@@ -856,11 +1004,11 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "q g -> q q qbar";}
-  virtual int    code()       const {return 140;}
-  virtual int    nFinal()     const {return 3;}
-  virtual cstring inFlux()     const {return "qg";}
-  virtual bool   isQCD3body() const {return true;}
+  // virtual cstring name()       const {return "q g -> q q qbar";}
+  // virtual int    code()       const {return 140;}
+  // virtual int    nFinal()     const {return 3;}
+  // virtual cstring inFlux()     const {return "qg";}
+  // virtual bool   isQCD3body() const {return true;}
 
 private:
 

@@ -98,131 +98,236 @@ public:
   void setLHAPtr( LHAup* lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn;}
 
   // Initialize process. Only used for some processes.
+  // OVER
   virtual void initProc() {}
 
   // Set up allowed flux of incoming partons. Default is no flux.
+  // NUM
   virtual bool initFlux();
 
   // Input and complement kinematics for resolved 2 -> 1 process.
   // Usage: set1Kin( x1in, x2in, sHin).
+  // NUM
   virtual void set1Kin( double , double , double ) {}
 
   // Input and complement kinematics for resolved 2 -> 2 process.
   // Usage: set2Kin( x1in, x2in, sHin, tHin, m3in, m4in, runBW3in, runBW4in).
+  // NUM
   virtual void set2Kin( double , double , double , double , double ,
     double, double, double ) {}
 
   // Ditto, but for Multiparton Interactions applications, so different input.
   // Usage: set2KinMPI( x1in, x2in, sHin, tHin, uHin,
   //                   alpSin, alpEMin, needMasses, m3in, m4in)
+  // NUM
   virtual void set2KinMPI( double , double , double , double ,
     double , double , double , bool , double , double ) {}
 
   // Input and complement kinematics for resolved 2 -> 3 process.
   // Usage: set3Kin( x1in, x2in, sHin, p3prel, p4prel, p5prel,
   //                 m3in, m4in, m5in, runBW3in, runBW4in, runBW5in);
+  // NUM
   virtual void set3Kin( double , double , double , Vec4 , Vec4 , Vec4 ,
     double , double , double , double , double , double ) {}
 
   // Calculate flavour-independent parts of cross section.
+  // OVER
   virtual void sigmaKin() {}
 
   // Evaluate sigma for unresolved, sigmaHat(sHat) for 2 -> 1 processes,
   // d(sigmaHat)/d(tHat) for (resolved) 2 -> 2 processes, and |M|^2 for
   // 2 -> 3 processes. Answer in "native" units, either mb or GeV^-2.
+  // OVER
   virtual double sigmaHat() {return 0.;}
 
   // Wrapper to sigmaHat, to (a) store current incoming flavours and
   // (b) convert from GeV^-2 to mb where required.
   // For 2 -> 1/2 also (c) convert from from |M|^2 to d(sigmaHat)/d(tHat).
+  // NUM
   virtual double sigmaHatWrap(int id1in = 0, int id2in = 0) {
     id1 = id1in; id2 = id2in;
     return ( convert2mb() ? CONVERT2MB * sigmaHat() : sigmaHat() ); }
 
   // Convolute above with parton flux and K factor. Sum over open channels.
+  // NUM
   virtual double sigmaPDF();
 
   // Select incoming parton channel and extract parton densities (resolved).
   void pickInState(int id1in = 0, int id2in = 0);
 
   // Select flavour, colour and anticolour.
+  // USED
   virtual void setIdColAcol() {}
 
   // Perform kinematics for a Multiparton Interaction, in its rest frame.
+  // NUM
   virtual bool final2KinMPI( int = 0, int = 0, const Vec4& = 0., const Vec4& = 0.,
     double = 0., double = 0.) {return true;}
 
   // Evaluate weight for simultaneous flavours (only gamma*/Z0 gamma*/Z0).
   // Usage: weightDecayFlav( process).
+  // USED ONCE
   virtual double weightDecayFlav( Event&) {return 1.;}
 
   // Evaluate weight for decay angular configuration.
   // Usage: weightDecay( process, iResBeg, iResEnd), where
   // iResBeg <= i < iResEnd is range of sister partons to test decays of.
+  // USED
   virtual double weightDecay( Event&, int, int) {return 1.;}
 
   // Set scale, when that is missing for an external LHA process.
+  // NUM
   virtual void setScale() {}
 
+  // Save and load kinematics for trial interactions
+  void saveKin() {
+    for (int i = 0; i < 12; i++) { partonT[i] = parton[i];
+      mSaveT[i] = mSave[i]; }
+    pTFinT = pTFin; phiT = phi; cosThetaT = cosTheta; sinThetaT = sinTheta; }
+  
+  // Save and load kinematics for trial interactions
+  void loadKin() {
+    for (int i = 0; i < 12; i++) { parton[i] = partonT[i];
+    mSave[i] = mSaveT[i]; }
+    pTFin = pTFinT; cosTheta = cosThetaT; sinTheta = sinThetaT; phi = phiT;
+  }
+
+  // Save and load kinematics for trial interactions
+  void swapKin() {
+    for (int i = 0; i < 12; i++) { swap(parton[i], partonT[i]);
+                                  swap(mSave[i], mSaveT[i]); }
+    swap(pTFin, pTFinT); swap(cosTheta, cosThetaT);
+    swap(sinTheta, sinThetaT); swap(phi, phiT); }
+
+public:
+
+
   // Process name and code, and the number of final-state particles.
-  virtual cstring name()            const {return "unnamed process";}
-  virtual int    code()            const {return 0;}
-  virtual int    nFinal()          const {return 2;}
+  int** name()            ;
+  int**    code()            ;
+  int**    nFinal()          ;
 
   // Need to know which incoming partons to set up interaction for.
-  virtual cstring inFlux()          const {return "unknown";}
+  int** inFlux()          ;
 
   // Need to know whether to convert cross section answer from GeV^-2 to mb.
-  virtual bool   convert2mb()      const {return true;}
+  int**   convert2mb()      ;
 
   // For 2 -> 2 process optional conversion from |M|^2 to d(sigmaHat)/d(tHat).
-  virtual bool   convertM2()       const {return false;}
+  int**   convertM2()       ;
 
   // Special treatment needed for Les Houches processes.
-  virtual bool   isLHA()           const {return false;}
+  // NUM
+  int**   isLHA()           ;
 
   // Special treatment needed for elastic and diffractive processes.
-  virtual bool   isNonDiff()       const {return false;}
-  virtual bool   isResolved()      const {return true;}
-  virtual bool   isDiffA()         const {return false;}
-  virtual bool   isDiffB()         const {return false;}
-  virtual bool   isDiffC()         const {return false;}
+  int**   isNonDiff()       ;
+  int**   isResolved()      ;
+  int**   isDiffA()         ;
+  int**   isDiffB()         ;
+  int**   isDiffC()         ;
 
   // Special treatment needed for SUSY processes.
-  virtual bool   isSUSY()          const {return false;}
+  int**   isSUSY()          ;
 
   // Special treatment needed if negative cross sections allowed.
-  virtual bool   allowNegativeSigma() const {return false;}
+  int**   allowNegativeSigma() ;
+
+  // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
+  int**    gmZmode()         ;
 
   // Flavours in 2 -> 2/3 processes where masses needed from beginning.
   // (For a light quark masses will be used in the final kinematics,
   // but not at the matrix-element level. For a gluon no masses at all.)
-  virtual int    id3Mass()         const {return 0;}
-  virtual int    id4Mass()         const {return 0;}
-  virtual int    id5Mass()         const {return 0;}
+  int**    id3Mass()         ;
+  int**    id4Mass()         ;
+  int**    id5Mass()         ;
 
   // Special treatment needed if process contains an s-channel resonance.
-  virtual int    resonanceA()      const {return 0;}
-  virtual int    resonanceB()      const {return 0;}
+  int**    resonanceA()      ;
+  int**    resonanceB()      ;
 
   // 2 -> 2 and 2 -> 3 processes only through s-channel exchange.
-  virtual bool   isSChannel()      const {return false;}
+  int**   isSChannel()      ;
 
   // NOAM: Insert an intermediate resonance in 2 -> 1 -> 2 (or 3) listings.
-  virtual int    idSChannel()      const {return 0;}
+  int**    idSChannel()      ;
 
   // QCD 2 -> 3 processes need special phase space selection machinery.
-  virtual bool   isQCD3body()      const {return false;}
+  int**   isQCD3body()      ;
 
   // Special treatment in 2 -> 3 with two massive propagators.
-  virtual int    idTchan1()        const {return 0;}
-  virtual int    idTchan2()        const {return 0;}
-  virtual double tChanFracPow1()   const {return 0.3;}
-  virtual double tChanFracPow2()   const {return 0.3;}
-  virtual bool   useMirrorWeight() const {return false;}
+  int**    idTchan1()        ;
+  int**    idTchan2()        ;
+  int** tChanFracPow1()   ;
+  int** tChanFracPow2()   ;
+  int**   useMirrorWeight() ;
 
-  // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
-  virtual int    gmZmode()         const {return -1;}
+
+  // ---- getters ----
+
+  // // Process name and code, and the number of final-state particles.
+  // const string_view name()            const {if (nameSave1.empty()) return nameSave2; else return nameSave1; }
+  // int    code()            const {return codeSave;}
+  // int    nFinal()          const {return nFinalSave;}
+
+  // // Need to know which incoming partons to set up interaction for.
+  // const char* inFlux()          const {return inFluxSave;}
+
+  // // Need to know whether to convert cross section answer from GeV^-2 to mb.
+  // bool   convert2mb()      const {return convert2mbSave;}
+
+  // // For 2 -> 2 process optional conversion from |M|^2 to d(sigmaHat)/d(tHat).
+  // bool   convertM2()       const {return convertM2Save;}
+
+  // // Special treatment needed for Les Houches processes.
+  // // NUM
+  // bool   isLHA()           const {return isLHASave;}
+
+  // // Special treatment needed for elastic and diffractive processes.
+  // bool   isNonDiff()       const {return isNonDiffSave;}
+  // bool   isResolved()      const {return isResolvedSave;}
+  // bool   isDiffA()         const {return isDiffASave;}
+  // bool   isDiffB()         const {return isDiffBSave;}
+  // bool   isDiffC()         const {return isDiffCSave;}
+
+  // // Special treatment needed for SUSY processes.
+  // bool   isSUSY()          const {return isSUSYSave;}
+
+  // // Special treatment needed if negative cross sections allowed.
+  // bool   allowNegativeSigma() const {return allowNegativeSigmaSave;}
+
+  // // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
+  // int    gmZmode()         const {return gmZmodeSave;}
+
+  // // Flavours in 2 -> 2/3 processes where masses needed from beginning.
+  // // (For a light quark masses will be used in the final kinematics,
+  // // but not at the matrix-element level. For a gluon no masses at all.)
+  // int    id3Mass()         const {return id3MassSave;}
+  // int    id4Mass()         const {return id4MassSave;}
+  // int    id5Mass()         const {return id5MassSave;}
+
+  // // Special treatment needed if process contains an s-channel resonance.
+  // int    resonanceA()      const {return resonanceASave;}
+  // int    resonanceB()      const {return resonanceBSave;}
+
+  // // 2 -> 2 and 2 -> 3 processes only through s-channel exchange.
+  // bool   isSChannel()      const {return isSChannelSave;}
+
+  // // NOAM: Insert an intermediate resonance in 2 -> 1 -> 2 (or 3) listings.
+  // int    idSChannel()      const {return idSChannelSave;}
+
+  // // QCD 2 -> 3 processes need special phase space selection machinery.
+  // bool   isQCD3body()      const {return isQCD3bodySave;}
+
+  // // Special treatment in 2 -> 3 with two massive propagators.
+  // int    idTchan1()        const {return idTchan1Save;}
+  // int    idTchan2()        const {return idTchan2Save;}
+  // double tChanFracPow1()   const {return tChanFracPow1Save;}
+  // double tChanFracPow2()   const {return tChanFracPow2Save;}
+  // bool   useMirrorWeight() const {return useMirrorWeightSave;}
+
+  // --- original getters ---
 
   // Tell whether tHat and uHat are swapped (= same as swap 3 and 4).
   bool swappedTU()          const {return swapTU;}
@@ -250,21 +355,39 @@ public:
   double pT2MPI()           const {return pT2Mass;}
   double pTMPIFin()         const {return pTFin;}
 
-  // Save and load kinematics for trial interactions
-  void saveKin() {
-    for (int i = 0; i < 12; i++) { partonT[i] = parton[i];
-      mSaveT[i] = mSave[i]; }
-    pTFinT = pTFin; phiT = phi; cosThetaT = cosTheta; sinThetaT = sinTheta; }
-  void loadKin() {
-    for (int i = 0; i < 12; i++) { parton[i] = partonT[i];
-    mSave[i] = mSaveT[i]; }
-    pTFin = pTFinT; cosTheta = cosThetaT; sinTheta = sinThetaT; phi = phiT;
-  }
-  void swapKin() {
-    for (int i = 0; i < 12; i++) { swap(parton[i], partonT[i]);
-                                  swap(mSave[i], mSaveT[i]); }
-    swap(pTFin, pTFinT); swap(cosTheta, cosThetaT);
-    swap(sinTheta, sinThetaT); swap(phi, phiT); }
+protected:
+
+  // ---- getter data ----
+
+  string nameSave1;
+  const  char* nameSave2        = "unnamed process";
+  int    codeSave               = 0;
+  int    nFinalSave             = 2;
+  const  char* inFluxSave       = "unknown";
+  bool   convert2mbSave         = true;
+  bool   convertM2Save          = false;
+  bool   isLHASave              = false;
+  bool   isNonDiffSave          = false;
+  bool   isResolvedSave         = true;
+  bool   isDiffASave            = false;
+  bool   isDiffBSave            = false;
+  bool   isDiffCSave            = false;
+  bool   isSUSYSave             = false;
+  bool   allowNegativeSigmaSave = false;
+  int    gmZmodeSave            = -1;
+  int    id3MassSave            = 0;
+  int    id4MassSave            = 0;
+  int    id5MassSave            = 0;
+  int    resonanceASave         = 0;
+  int    resonanceBSave         = 0;
+  bool   isSChannelSave         = false;
+  int    idSChannelSave         = 0;
+  bool   isQCD3bodySave         = false;
+  int    idTchan1Save           = 0;
+  int    idTchan2Save           = 0;
+  double tChanFracPow1Save      = 0.3;
+  double tChanFracPow2Save      = 0.3;
+  bool   useMirrorWeightSave    = false;
 
 protected:
 

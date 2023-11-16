@@ -186,7 +186,7 @@ public:
 private:
 
   // Warn if a parameter is going to be overwriten
-  void warnParamOverwrite(const string &paramIn, double val);
+  void warnParamOverwrite(stringref paramIn, double val);
 
   // Simple string trimmer
   static string trim(string s);
@@ -231,7 +231,7 @@ inline bool AlpgenPar::parse(const string paramStr) {
 
   // Loop over incoming lines
   stringstream paramStream(paramStr);
-  string line;
+  STRBUFA(line) = "";
   while (getline(paramStream, line)) {
 
     // Change to 'run parameters' block
@@ -264,8 +264,8 @@ inline void AlpgenPar::extractRunParam(string line) {
   // Extract information to the right of the final '!' character
   size_t idx = line.rfind("!");
   if (idx == string::npos) return;
-  string paramName = trim(line.substr(idx + 1));
-  string paramVal  = trim(line.substr(0, idx));
+  STRBUFA(paramName) = trim(line.substr(idx + 1));
+  STRBUFA(paramVal)  = trim(line.substr(0, idx));
   istringstream iss(paramVal);
 
   // Special case: 'hard process code' - single integer input
@@ -297,7 +297,7 @@ inline void AlpgenPar::extractRunParam(string line) {
   } else if (paramName.find(",") != string::npos) {
 
     // Simple tokeniser
-    string        paramNameNow;
+    STRBUFA(paramNameNow);
     istringstream issName(paramName);
     while (getline(issName, paramNameNow, ',')) {
       iss >> val;

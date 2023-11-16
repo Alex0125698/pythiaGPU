@@ -310,6 +310,8 @@ bool LHAup::closeLHEF(bool updateInit) {
 
 bool LHAup::setInitLHEF(istream& is, bool readHeaders) {
 
+  // @asw up to here STRBUFA
+
   // Check that first line is consistent with proper LHEF file.
   string line;
   if (!getline(is, line)) return false;

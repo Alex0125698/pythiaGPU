@@ -2038,7 +2038,7 @@ void TimeShower::pT2nextQCD(double pT2begDip, double pT2sel,
   bool isEnhancedQ2QG, isEnhancedG2QQ, isEnhancedG2GG;
   isEnhancedQ2QG = isEnhancedG2QQ = isEnhancedG2GG = false;
   double enhanceNow = 1.;
-  string nameNow = "";
+  STRBUFA(nameNow) = "";
 
   Benchmark_stop(TimeShower0pT2nextQCD_setup);
 
