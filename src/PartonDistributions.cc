@@ -575,6 +575,7 @@ const double MSTWpdf::qqInit[49] = {0., 1.0, 1.25, 1.5, 0., 0., 2.5, 3.2,
 void MSTWpdf::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
 
   // @fixme
+  // !@!@
   thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities. Counters and temporary variables.
@@ -1190,6 +1191,7 @@ const double CTEQ6pdf::XPOWER = 0.3;
 
 void CTEQ6pdf::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
 
+  // !@!@
   thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities.
@@ -1777,6 +1779,7 @@ void PomFix::xfUpdate(int , double x, double) {
 
 void PomH1FitAB::init( int iFit, stringref xmlPath_, Info* infoPtr) {
 
+  // !@!@
   thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Open files from which grids should be read in.
@@ -1887,6 +1890,7 @@ void PomH1FitAB::xfUpdate(int , double x, double Q2) {
 
 void PomH1Jets::init( stringref xmlPath_, Info* infoPtr) {
 
+  // !@!@
   thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Open files from which grids should be read in.
@@ -2091,6 +2095,7 @@ const double NNPDF::fXMINGRID = 1e-9;
 
 void NNPDF::init(int iFitIn, stringref xmlPath_, Info* infoPtr) {
 
+  // !@!@
   thread_local string xmlPath; xmlPath=xmlPath_;
 
   // Choice of fit among possibilities.

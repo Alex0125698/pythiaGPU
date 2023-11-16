@@ -40,9 +40,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar -> Z_R^0";}
+  virtual string name()       const {return "f fbar -> Z_R^0";}
   virtual int    code()       const {return 3101;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
+  virtual string inFlux()     const {return "ffbarSame";}
   virtual int    resonanceA() const {return idZR;}
 
 private:
@@ -83,9 +83,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar' -> W_R^+-";}
+  virtual string name()       const {return "f fbar' -> W_R^+-";}
   virtual int    code()       const {return 3102;}
-  virtual cstring inFlux()     const {return "ffbarChg";}
+  virtual string inFlux()     const {return "ffbarChg";}
   virtual int    resonanceA() const {return idWR;}
 
 private:
@@ -123,16 +123,16 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "ff";}
+  virtual string inFlux()     const {return "ff";}
   virtual int    resonanceA() const {return idHLR;}
 
 private:
 
   // Parameters set at initialization.
   int    leftRight, idHLR, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double mRes, GammaRes, m2Res, GamMRat, yukawa[4][4];
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -165,16 +165,16 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "fgm";}
+  virtual string inFlux()     const {return "fgm";}
   virtual int    resonanceA() const {return idHLR;}
 
 private:
 
   // Parameters set at initialization.
   int    leftRight, idHLR, idLep, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double yukawa[4], openFracPos, openFracNeg;
 
 };
@@ -206,9 +206,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "ff";}
+  virtual string inFlux()  const {return "ff";}
   virtual int    id3Mass() const {return idHLR;}
 
   // Instructions for 3-body phase space with t-channel propagators.
@@ -222,7 +222,7 @@ private:
 
   // Store standard prefactor.
   int    leftRight, idHLR, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double mWS, prefac, sigma0TU, sigma0T, openFracPos, openFracNeg;
 
 };
@@ -251,9 +251,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return nameSave;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
+  virtual string inFlux()     const {return "ffbarSame";}
   virtual int    id3Mass()    const {return idHLR;}
   virtual int    id4Mass()    const {return idHLR;}
   virtual int    resonanceA() const {return 23;}
@@ -262,7 +262,7 @@ private:
 
   // Parameters set at initialization.
   int    leftRight, idHLR, codeSave;
-  stringbuf nameSave;
+  string nameSave;
   double mRes, GammaRes, m2Res, GamMRat, sin2tW, preFac, yukawa[4][4],
          openFrac;
 

@@ -59,7 +59,7 @@ private:
   bool onia, onia3S1, onia3PJ, onia3DJ, oniaFlavour;
   bool valid3S1, valid3PJ, valid3DJ;
   int flavour;
-  stringbuf cat, key;
+  string cat, key;
 
   // Stored parameters.
   double mSplit;

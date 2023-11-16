@@ -41,9 +41,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "gg";}
+  virtual string inFlux()  const {return "gg";}
   virtual int    id3Mass() const {return idNew;}
   virtual int    id4Mass() const {return idNew;}
 
@@ -51,7 +51,7 @@ private:
 
   // Values stored for process type and colour flow selection.
   int    idNew, codeSave, spinSave, nCHV;
-  stringbuf nameSave;
+  string nameSave;
   bool   hasKappa;
   double openFracPair, sigma, sigTS, sigUS, sigSum, kappam1;
 
@@ -83,9 +83,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "qqbarSame";}
+  virtual string inFlux()  const {return "qqbarSame";}
   virtual int    id3Mass() const {return idNew;}
   virtual int    id4Mass() const {return idNew;}
 
@@ -93,7 +93,7 @@ private:
 
   // Values stored for process type and colour flow selection.
   int    idNew, codeSave, spinSave, nCHV;
-  stringbuf nameSave;
+  string nameSave;
   double openFracPair, sigma, sigSum, kappa;
 
 };
@@ -125,9 +125,9 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual cstring name()    const {return nameSave;}
+  virtual string name()    const {return nameSave;}
   virtual int    code()    const {return codeSave;}
-  virtual cstring inFlux()  const {return "ffbarSame";}
+  virtual string inFlux()  const {return "ffbarSame";}
   virtual int    id3Mass() const {return idNew;}
   virtual int    id4Mass() const {return idNew;}
 
@@ -135,7 +135,7 @@ private:
 
   // Values stored for process type and colour flow selection.
   int    idNew, codeSave, spinSave, nCHV;
-  stringbuf nameSave;
+  string nameSave;
   bool   hasColour;
   double eQHV2, openFracPair, sigma0, sigSum, kappa, colFac;
 
@@ -169,9 +169,9 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual cstring name()       const {return "f fbar -> Zv";}
+  virtual string name()       const {return "f fbar -> Zv";}
   virtual int    code()       const {return 4941;}
-  virtual cstring inFlux()     const {return "ffbarSame";}
+  virtual string inFlux()     const {return "ffbarSame";}
   virtual int    resonanceA() const {return 4900023;}
 
 private:

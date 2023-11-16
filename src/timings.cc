@@ -277,7 +277,7 @@ namespace Pythia8
             double dur = pTimes.back() - sumTimes.back();
             double per = 100.* dur / pTimes.back();
             double perTotal = 100.*dur / durTotal;
-            std::cerr << indent << rjust(pNames.back()+"/missing", 40) << ": " << 0 << ", " << dec(perTotal,1) << "%, " << dec(per,1) << '%' << std::endl;
+            std::cerr << indent << rjust(pNames.back()+"/missing", 40) << ": " << 0 << ", " << dec(perTotal,1) << "%, " << dec(per,1) << "%" << std::endl;
             
             sumTimes.pop_back();
             pNames.pop_back();
@@ -316,7 +316,8 @@ namespace Pythia8
             }
             sumTimes.back() += dur;
                         double perTotal = 100.*dur / durTotal;
-            std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(per,1) << '%' << std::endl;
+            std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(1000.*dur,1) << std::endl;
+            // std::cerr << indent << name2 << ": " << calls << ", " << dec(perTotal,1) << "%, " << dec(per,1) << "%" << std::endl;
           }
         }
         else
@@ -334,7 +335,7 @@ namespace Pythia8
           double dur = pTimes.back() - sumTimes.back();
           double per = 100.* dur / pTimes.back();
           double perTotal = 100.*dur / durTotal;
-          std::cerr << indent << rjust(pNames.back()+"/missing", 40, ' ') << ": " << 0 << ", " << dec(perTotal,1) << "%, " << dec(per,1) << '%' << std::endl;
+          std::cerr << indent << rjust(pNames.back()+"/missing", 40, ' ') << ": " << 0 << ", " << dec(perTotal,1) << "%, " << dec(per,1) << "%" << std::endl;
         }        
       }
       std::cerr << "-------------------------" << std::endl;

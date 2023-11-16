@@ -54,7 +54,7 @@ public:
   bool   tooLowPTmin()        const {return lowPTmin;}
 
   // Process name and code, and the number of final-state particles.
-  cstring name()               const {return nameSave;}
+  string name()               const {return nameSave;}
   int    code()               const {return codeSave;}
   int    nFinal()             const {return nFinalSave;}
 
@@ -73,7 +73,7 @@ public:
 
   // For nondiffractive and Les Houches Accord identify hardest subprocess.
   bool   hasSub(int i = 0)    const {return hasSubSave[i];}
-  cstring nameSub(int i = 0)   const {return nameSubSave[i];}
+  string nameSub(int i = 0)   const {return nameSubSave[i];}
   int    codeSub(int i = 0)   const {return codeSubSave[i];}
   int    nFinalSub(int i = 0) const {return nFinalSubSave[i];}
 
@@ -151,7 +151,7 @@ public:
 
   // Cross section estimate, optionally process by process.
   vector<int> codesHard();
-  cstring nameProc(int i = 0)  {return (i == 0) ? "sum"
+  string nameProc(int i = 0)  {return (i == 0) ? "sum"
     : ( (procNameM[i] == "") ? "unknown process" : procNameM[i] );}
   long   nTried(int i = 0)    {return (i == 0) ? nTry : nTryM[i];}
   long   nSelected(int i = 0) {return (i == 0) ? nSel : nSelM[i];}
@@ -211,7 +211,7 @@ public:
   void setWeightFIRST( double weightIn) { weightFIRSTSave = weightIn;}
 
   // Return an LHEF header
-  cstring header(stringref key) {
+  string header(stringref key) {
     if (headers.find(key) == headers.end()) return "";
     else return headers[key];
   }
@@ -275,7 +275,7 @@ public:
     LHArwgt *rwgtIn );
 
   // Retrieve events tag information.
-  cstring getEventAttribute(stringref key, bool doRemoveWhitespace = false);
+  string getEventAttribute(stringref key, bool doRemoveWhitespace = false);
 
   // Retrieve LHEF version
   int LHEFversion();
@@ -285,24 +285,24 @@ public:
 
   // Retrieve generator tag information.
   unsigned int getGeneratorSize();
-  cstring getGeneratorValue(unsigned int n = 0);
-  cstring getGeneratorAttribute( unsigned int n, stringref key,
+  string getGeneratorValue(unsigned int n = 0);
+  string getGeneratorAttribute( unsigned int n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve rwgt tag information.
   unsigned int getWeightsDetailedSize();
   double getWeightsDetailedValue(stringref n);
-  cstring getWeightsDetailedAttribute(stringref n, stringref key,
+  string getWeightsDetailedAttribute(stringref n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve weights tag information.
   unsigned int getWeightsCompressedSize();
   double getWeightsCompressedValue(unsigned int n);
-  cstring getWeightsCompressedAttribute(stringref key,
+  string getWeightsCompressedAttribute(stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve scales tag information.
-  cstring getScalesValue(bool doRemoveWhitespace = false);
+  string getScalesValue(bool doRemoveWhitespace = false);
   double getScalesAttribute(stringref key);
 
   // Set LHEF headers
@@ -364,7 +364,7 @@ private:
          m4H[4], thetaH[4], phiH[4], weightSave, bMPISave, enhanceMPISave,
          pTmaxMPISave, pTmaxISRSave, pTmaxFSRSave, pTnowSave,
          zNowISRSave, pT2NowISRSave, xPomA, xPomB, tPomA, tPomB;
-  stringbuf nameSave, nameSubSave[4];
+  string nameSave, nameSubSave[4];
   vector<int>    codeMPISave, iAMPISave, iBMPISave;
   vector<double> pTMPISave, eMPISave;
 

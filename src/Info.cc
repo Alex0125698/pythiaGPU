@@ -182,7 +182,7 @@ vector<int> Info::codesHard() {
 
 // Print a message the first few times. Insert in database.
 
-  void Info::errorMsg(stringref2 messageIn, stringref2 extraIn, bool showAlways,
+  void Info::errorMsg(stringref messageIn, stringref extraIn, bool showAlways,
     ostream& os) {
 
   // Recover number of times message occured. Also inserts new string.
@@ -232,7 +232,7 @@ void Info::errorStatistics(ostream& os) {
        << "                                                          | \n";
   while (messageEntry != messages.end()) {
     // Message printout.
-    stringbuf temp = messageEntry->first;
+    string temp = messageEntry->first;
     int len = temp.length();
     temp.insert( len, max(0, 102 - len), ' ');
     os << " | " << setw(6) << messageEntry->second << "   "
@@ -321,10 +321,10 @@ void Info::setLHEF3EventInfo( map<string, string> *eventAttributesIn,
 
 // Retrieve events tag information.
 
-cstring Info::getEventAttribute(stringref2 key, bool doRemoveWhitespace) {
+string Info::getEventAttribute(stringref key, bool doRemoveWhitespace) {
   if (!eventAttributes) return "";
   if ( eventAttributes->find(key) != eventAttributes->end() ) {
-    stringbuf res = (*eventAttributes)[key];
+    string res = (*eventAttributes)[key];
     if (doRemoveWhitespace)
       res.erase (remove (res.begin(), res.end(), ' '), res.end());
     return res;
@@ -356,15 +356,15 @@ unsigned int Info::getGeneratorSize() {
   return generators->size();
 }
 
-cstring Info::getGeneratorValue(unsigned int n) {
+string Info::getGeneratorValue(unsigned int n) {
   if (!generators || generators->size() < n+1) return "";
   return (*generators)[n].contents;
 }
 
-cstring Info::getGeneratorAttribute( unsigned int n, stringref2 key,
+string Info::getGeneratorAttribute( unsigned int n, stringref key,
   bool doRemoveWhitespace) {
   if (!generators || generators->size() < n+1) return "";
-  stringbuf res("");
+  string res("");
   if ( key == "name") {
     res = (*generators)[n].name;
   } else if ( key == "version") {
@@ -387,17 +387,17 @@ unsigned int Info::getWeightsDetailedSize() {
   return weights_detailed->size();
 }
 
-double Info::getWeightsDetailedValue(stringref2 n) {
+double Info::getWeightsDetailedValue(stringref n) {
   if (weights_detailed->empty()
     || weights_detailed->find(n) == weights_detailed->end()) return 0./0.;
   return (*weights_detailed)[n];
 }
 
-cstring Info::getWeightsDetailedAttribute(stringref2 n, stringref2 key,
+string Info::getWeightsDetailedAttribute(stringref n, stringref key,
   bool doRemoveWhitespace) {
   if (!rwgt || rwgt->wgts.find(n) == rwgt->wgts.end())
     return "";
-  stringbuf res("");
+  string res("");
   if ( key == "id") {
     res = rwgt->wgts[n].id;
   } else if ( rwgt->wgts[n].attributes.find(key)
@@ -424,11 +424,11 @@ double Info::getWeightsCompressedValue(unsigned int n) {
   return (*weights_compressed)[n];
 }
 
-cstring Info::getWeightsCompressedAttribute(stringref2 key,
+string Info::getWeightsCompressedAttribute(stringref key,
   bool doRemoveWhitespace) {
   if (!weights || weights->attributes.find(key) == weights->attributes.end())
     return "";
-  stringbuf res("");
+  string res("");
   if ( weights->attributes.find(key)
            != weights->attributes.end() ) {
     res = weights->attributes[key];
@@ -442,15 +442,15 @@ cstring Info::getWeightsCompressedAttribute(stringref2 key,
 
 // Retrieve scales tag information.
 
-cstring Info::getScalesValue(bool doRemoveWhitespace) {
+string Info::getScalesValue(bool doRemoveWhitespace) {
   if (!scales) return "";
-  stringbuf res = scales->contents;
+  string res = scales->contents;
   if (doRemoveWhitespace && res != "")
     res.erase (remove (res.begin(), res.end(), ' '), res.end());
   return res;
 }
 
-double Info::getScalesAttribute(stringref2 key) {
+double Info::getScalesAttribute(stringref key) {
   if (!scales) return 0./0.;
   double res = 0./0.;
   if ( key == "muf") {

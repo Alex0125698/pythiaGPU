@@ -79,7 +79,7 @@ double StringLength::getStringLength( Vec4 p1, Vec4 p2) {
 // The first vector is the 4 vector of the particle.
 // The second vector represents (1,0,0,0) in dipole restframe.
 
-double StringLength::getLength(const Vec4& p, const Vec4& v, bool isJunc) {
+double StringLength::getLength(Vec4ref p, Vec4ref v, bool isJunc) {
   double m = m0;
   if (isJunc) m *= juncCorr;
 
@@ -111,7 +111,7 @@ double StringLength::getJuncLength( Event& event, int i, int j, int k) {
 
 // Calculate the length of a single junction given the 3 four-momenta.
 
-double StringLength::getJuncLength(const Vec4& p1, const Vec4& p2, const Vec4& p3) {
+double StringLength::getJuncLength(Vec4ref p1, Vec4ref p2, Vec4ref p3) {
 
   // Check for parallel particles.
   if (REtaPhi(p1,p2) < MINDELTAR || REtaPhi(p1,p3) < MINDELTAR ||
@@ -166,7 +166,7 @@ double StringLength::getJuncLength( Event& event, int i, int j, int k, int l) {
 // Calculate the length of a double junction given the 4 four-momenta.
 // The first two are expected to be quarks, the second two to be anti quarks.
 
-double StringLength::getJuncLength(const Vec4& p1, const Vec4& p2, const Vec4& p3, const Vec4& p4) {
+double StringLength::getJuncLength(Vec4ref p1, Vec4ref p2, Vec4ref p3, Vec4ref p4) {
   // Check for parallel problems.
   if (REtaPhi(p1,p2) < MINDELTAR || REtaPhi(p1,p3) < MINDELTAR ||
       REtaPhi(p1,p4) < MINDELTAR || REtaPhi(p2,p3) < MINDELTAR ||

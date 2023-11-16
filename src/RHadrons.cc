@@ -1408,7 +1408,7 @@ pair<int,int> RHadrons::fromIdWithGluino( int idRHad) {
 // minimal reshuffling of momentum along common axis.
 // Note that last two arguments are used to provide output!
 
-bool RHadrons::newKin( const Vec4& pOld1, const Vec4& pOld2, double mNew1, double mNew2,
+bool RHadrons::newKin( Vec4ref pOld1, Vec4ref pOld2, double mNew1, double mNew2,
   Vec4& pNew1, Vec4& pNew2, bool checkMargin) {
 
   // Squared masses in initial and final kinematics.

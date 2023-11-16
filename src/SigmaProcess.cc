@@ -128,7 +128,7 @@ bool SigmaProcess::initFlux() {
   inPair.clear();
 
   // Read in process-specific channel information.
-  auto fluxType = inFlux();
+  string fluxType = inFlux();
 
   // Case with g g incoming state.
   if (fluxType == "gg") {
@@ -912,7 +912,7 @@ void Sigma2Process::store2KinMPI( double x1in, double x2in,
 
 // Perform kinematics for a multiparton interaction, including a rescattering.
 
-bool Sigma2Process::final2KinMPI( int i1Res, int i2Res, const Vec4& p1Res, const Vec4& p2Res,
+bool Sigma2Process::final2KinMPI( int i1Res, int i2Res, Vec4ref p1Res, Vec4ref p2Res,
   double m1Res, double m2Res) {
 
   // Have to set flavours and colours.
@@ -1049,7 +1049,7 @@ bool Sigma2Process::setupForME() {
 // Input and complement kinematics for resolved 2 -> 3 process.
 
 void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
-  const Vec4& p3cmIn, const Vec4& p4cmIn, const Vec4& p5cmIn, double m3in, double m4in,
+  Vec4ref p3cmIn, Vec4ref p4cmIn, Vec4ref p5cmIn, double m3in, double m4in,
   double m5in, double runBW3in, double runBW4in, double runBW5in) {
 
   // Default ordering of particles 3 and 4 - not relevant here.

@@ -52,7 +52,7 @@ public:
     idRes = idIn; xRes = xIn;}
   void companion( int companionIn) {companionRes = companionIn;}
   void xqCompanion( double xqCompIn) {xqCompRes = xqCompIn;}
-  void p(const Vec4& pIn) {pRes = pIn;}
+  void p(Vec4ref pIn) {pRes = pIn;}
   void px(double pxIn) {pRes.px(pxIn);}
   void py(double pyIn) {pRes.py(pyIn);}
   void pz(double pzIn) {pRes.pz(pzIn);}
@@ -261,7 +261,7 @@ public:
   // Update colours.
   void updateCol(const vector<pair<int,int>>& colourChanges);
 
-  vector<pair<int,int>>& getColUpdates() {return colUpdates;}
+  vector<pair<int,int>> getColUpdates() {return colUpdates;} // !@!@
 
 private:
 

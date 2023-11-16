@@ -237,7 +237,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   if (settings.flag("Init:showProcesses")) {
 
     // Construct string with incoming beams and for cm energy.
-    string collision = "We collide "; collision += particleDataPtr->name(idA)
+    string collision = "We collide " + particleDataPtr->name(idA)
       + " with " + particleDataPtr->name(idB) + " at a CM energy of ";
     string pad( 51 - collision.length(), ' ');
 

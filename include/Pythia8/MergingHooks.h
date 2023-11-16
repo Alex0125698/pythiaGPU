@@ -650,14 +650,14 @@ protected:
   double muR() { return (muRSave > 0.) ? muRSave : infoPtr->QRen();}
   // Store / get factorisation scale used in matrix element calculation.
   double muFinME() {
-    auto mus = infoPtr->getEventAttribute("muf2",true);
+    string mus = infoPtr->getEventAttribute("muf2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("muf");
     return (mu > 0.) ? mu : (muFinMESave > 0.) ? muFinMESave : infoPtr->QFac();
   }
   double muRinME() {
-    auto mus = infoPtr->getEventAttribute("mur2",true);
+    string mus = infoPtr->getEventAttribute("mur2",true);
     double mu  = (mus.empty()) ? 0. : atof((char*)mus.c_str());
     mu = sqrt(mu);
     if (infoPtr->scales) mu = infoPtr->getScalesAttribute("mur");
@@ -707,7 +707,7 @@ protected:
   int findColour(int col, int iExclude1, int iExclude2,
     const Event& event, int type, bool isHardIn);
   // Function to compute Delta R separation from 4-vector input
-  double deltaRij(const Vec4& jet1, const Vec4& jet2);
+  double deltaRij(Vec4ref jet1, Vec4ref jet2);
 
   //----------------------------------------------------------------------//
   // Functions for weight management

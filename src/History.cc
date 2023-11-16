@@ -1038,7 +1038,11 @@ void History::findPath(vector<int>& out) {
 //                       ordering
 // NO OUTPUT
 
-void History::setScales( vector<int> index, bool forward) {
+void History::setScales( const vector<int>& index_, bool forward) {
+
+  // @fixme
+  // !@!@
+  thread_local vector<int> index; index = index_;
 
   // First, set the scales of the hard process to the kinematial
   // limit (=s)
@@ -5981,6 +5985,7 @@ bool History::isFlavSinglet( const Event& event,
   const vector<int>& system_, int flav) {
 
   // @fixme
+  // !@!@
   thread_local vector<int> system; system = system_;
 
   // If a decoupled colour singlet has been found, check if this is also

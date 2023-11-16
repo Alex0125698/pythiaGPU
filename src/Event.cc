@@ -468,7 +468,7 @@ bool Particle::undoDecay() {
 
 // Particle name, with status but imposed maximum length -> may truncate.
 
-cstring Particle::nameWithStatus(int maxLen) const {
+string Particle::nameWithStatus(int maxLen) const {
 
   if (pdePtr == 0) return " ";
   STRBUFA(temp) = (statusSave > 0) ? pdePtr->name(idSave)

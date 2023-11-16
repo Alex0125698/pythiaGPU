@@ -145,7 +145,7 @@ int Rndm::pick(const vector<double>& prob) {
 
 // Save current state of the random number generator to a binary file.
 
-bool Rndm::dumpState(stringref2 fileName) {
+bool Rndm::dumpState(stringref fileName) {
 
   // Open file as output stream.
   const char* fn = fileName.c_str();
@@ -177,7 +177,7 @@ bool Rndm::dumpState(stringref2 fileName) {
 
 // Read in the state of the random number generator from a binary file.
 
-bool Rndm::readState(stringref2 fileName) {
+bool Rndm::readState(stringref fileName) {
 
   // Open file as input stream.
   const char* fn = fileName.c_str();
@@ -264,7 +264,7 @@ void Vec4::rotaxis(double phiIn, double nx, double ny, double nz) {
 
 // Azimuthal rotation phi around an arbitrary (3-vector component of) axis.
 
-void Vec4::rotaxis(double phiIn, const Vec4& n) {
+void Vec4::rotaxis(double phiIn, Vec4ref n) {
 
   double nx   = n.xx;
   double ny   = n.yy;
@@ -321,7 +321,7 @@ void Vec4::bst(double betaX, double betaY, double betaZ, double gamma) {
 
 // Boost given by a Vec4 p.
 
-void Vec4::bst(const Vec4& pIn) {
+void Vec4::bst(Vec4ref pIn) {
 
   double betaX = pIn.xx / pIn.tt;
   double betaY = pIn.yy / pIn.tt;
@@ -341,7 +341,7 @@ void Vec4::bst(const Vec4& pIn) {
 
 // Boost given by a Vec4 p and double m.
 
-void Vec4::bst(const Vec4& pIn, double mIn) {
+void Vec4::bst(Vec4ref pIn, double mIn) {
 
   double betaX = pIn.xx / pIn.tt;
   double betaY = pIn.yy / pIn.tt;
@@ -360,7 +360,7 @@ void Vec4::bst(const Vec4& pIn, double mIn) {
 
 // Boost given by a Vec4 p; boost in opposite direction.
 
-void Vec4::bstback(const Vec4& pIn) {
+void Vec4::bstback(Vec4ref pIn) {
 
   double betaX = -pIn.xx / pIn.tt;
   double betaY = -pIn.yy / pIn.tt;
@@ -380,7 +380,7 @@ void Vec4::bstback(const Vec4& pIn) {
 
 // Boost given by a Vec4 p and double m; boost in opposite direction.
 
-void Vec4::bstback(const Vec4& pIn, double mIn) {
+void Vec4::bstback(Vec4ref pIn, double mIn) {
 
   double betaX = -pIn.xx / pIn.tt;
   double betaY = -pIn.yy / pIn.tt;
@@ -413,7 +413,7 @@ void Vec4::rotbst(const RotBstMatrix& M) {
 
 // The invariant mass of two four-vectors.
 
-double m(const Vec4& v1, const Vec4& v2) {
+double m(Vec4ref v1, Vec4ref v2) {
   double m2 = pow2(v1.tt + v2.tt) - pow2(v1.xx + v2.xx)
      - pow2(v1.yy + v2.yy) - pow2(v1.zz + v2.zz);
   return (m2 > 0.) ? sqrt(m2) : 0.;
@@ -423,7 +423,7 @@ double m(const Vec4& v1, const Vec4& v2) {
 
 // The squared invariant mass of two four-vectors.
 
-double m2(const Vec4& v1, const Vec4& v2) {
+double m2(Vec4ref v1, Vec4ref v2) {
   double m2 = pow2(v1.tt + v2.tt) - pow2(v1.xx + v2.xx)
      - pow2(v1.yy + v2.yy) - pow2(v1.zz + v2.zz);
   return m2;
@@ -433,7 +433,7 @@ double m2(const Vec4& v1, const Vec4& v2) {
 
 // The scalar product of two three-vectors.
 
-double dot3(const Vec4& v1, const Vec4& v2) {
+double dot3(Vec4ref v1, Vec4ref v2) {
   return v1.xx*v2.xx + v1.yy*v2.yy + v1.zz*v2.zz;
 }
 
@@ -441,7 +441,7 @@ double dot3(const Vec4& v1, const Vec4& v2) {
 
 // The cross product of two three-vectors.
 
-Vec4 cross3(const Vec4& v1, const Vec4& v2) {
+Vec4 cross3(Vec4ref v1, Vec4ref v2) {
   Vec4 v;
   v.xx = v1.yy * v2.zz - v1.zz * v2.yy;
   v.yy = v1.zz * v2.xx - v1.xx * v2.zz;
@@ -452,7 +452,7 @@ Vec4 cross3(const Vec4& v1, const Vec4& v2) {
 
 // Opening angle between two three-vectors.
 
-double theta(const Vec4& v1, const Vec4& v2) {
+double theta(Vec4ref v1, Vec4ref v2) {
   double cthe = (v1.xx * v2.xx + v1.yy * v2.yy + v1.zz * v2.zz)
     / sqrt( (v1.xx*v1.xx + v1.yy*v1.yy + v1.zz*v1.zz)
     * (v2.xx*v2.xx + v2.yy*v2.yy + v2.zz*v2.zz) );
@@ -464,7 +464,7 @@ double theta(const Vec4& v1, const Vec4& v2) {
 
 // Cosine of the opening angle between two three-vectors.
 
-double costheta(const Vec4& v1, const Vec4& v2) {
+double costheta(Vec4ref v1, Vec4ref v2) {
   double cthe = (v1.xx * v2.xx + v1.yy * v2.yy + v1.zz * v2.zz)
     / sqrt( (v1.xx*v1.xx + v1.yy*v1.yy + v1.zz*v1.zz)
     * (v2.xx*v2.xx + v2.yy*v2.yy + v2.zz*v2.zz) );
@@ -476,7 +476,7 @@ double costheta(const Vec4& v1, const Vec4& v2) {
 
 // Azimuthal angle between two three-vectors.
 
-double phi(const Vec4& v1, const Vec4& v2) {
+double phi(Vec4ref v1, Vec4ref v2) {
   double cphi = (v1.xx * v2.xx + v1.yy * v2.yy) / sqrt( max( Vec4::TINY,
     (v1.xx*v1.xx + v1.yy*v1.yy) * (v2.xx*v2.xx + v2.yy*v2.yy) ));
   cphi = max(-1., min(1., cphi));
@@ -487,7 +487,7 @@ double phi(const Vec4& v1, const Vec4& v2) {
 
 // Cosine of the azimuthal angle between two three-vectors.
 
-double cosphi(const Vec4& v1, const Vec4& v2) {
+double cosphi(Vec4ref v1, Vec4ref v2) {
   double cphi = (v1.xx * v2.xx + v1.yy * v2.yy) / sqrt( max( Vec4::TINY,
     (v1.xx*v1.xx + v1.yy*v1.yy) * (v2.xx*v2.xx + v2.yy*v2.yy) ));
   cphi = max(-1., min(1., cphi));
@@ -498,7 +498,7 @@ double cosphi(const Vec4& v1, const Vec4& v2) {
 
 // Azimuthal angle between two three-vectors around a third.
 
-double phi(const Vec4& v1, const Vec4& v2, const Vec4& n) {
+double phi(Vec4ref v1, Vec4ref v2, Vec4ref n) {
   double nx = n.xx; double ny = n.yy; double nz = n.zz;
   double norm = 1. / sqrt(nx*nx + ny*ny + nz*nz);
   nx *= norm; ny *=norm; nz *=norm;
@@ -517,7 +517,7 @@ double phi(const Vec4& v1, const Vec4& v2, const Vec4& n) {
 
 // Cosine of the azimuthal angle between two three-vectors around a third.
 
-double cosphi(const Vec4& v1, const Vec4& v2, const Vec4& n) {
+double cosphi(Vec4ref v1, Vec4ref v2, Vec4ref n) {
   double nx = n.xx; double ny = n.yy; double nz = n.zz;
   double norm = 1. / sqrt(nx*nx + ny*ny + nz*nz);
   nx *= norm; ny *=norm; nz *=norm;
@@ -536,7 +536,7 @@ double cosphi(const Vec4& v1, const Vec4& v2, const Vec4& n) {
 
 // Distance in cylindrical (y, phi) coordinates.
 
-double RRapPhi(const Vec4& v1, const Vec4& v2) {
+double RRapPhi(Vec4ref v1, Vec4ref v2) {
   double dRap = abs(v1.rap() - v2.rap());
   double dPhi = abs(v1.phi() - v2.phi());
   if (dPhi > M_PI) dPhi = 2. * M_PI - dPhi;
@@ -547,7 +547,7 @@ double RRapPhi(const Vec4& v1, const Vec4& v2) {
 
 // Distance in cylindrical (eta, phi) coordinates.
 
-double REtaPhi(const Vec4& v1, const Vec4& v2) {
+double REtaPhi(Vec4ref v1, Vec4ref v2) {
   double dEta = abs(v1.eta() - v2.eta());
   double dPhi = abs(v1.phi() - v2.phi());
   if (dPhi > M_PI) dPhi = 2. * M_PI - dPhi;
@@ -558,7 +558,7 @@ double REtaPhi(const Vec4& v1, const Vec4& v2) {
 
 // Print a four-vector: also operator overloading with friend.
 
-ostream& operator<<(ostream& os, const Vec4& v) {
+ostream& operator<<(ostream& os, Vec4ref v) {
   os << fixed << setprecision(3) << ' ' << setw(9) << v.xx << ' '
      << setw(9) << v.yy << ' ' << setw(9) << v.zz << ' ' << setw(9)
      << v.tt << " (" << setw(9) << v.mCalc() << ")\n";
@@ -612,7 +612,7 @@ void RotBstMatrix::rot(double theta, double phi) {
 
 // Rotate so that vector originally along z axis becomes parallel with p.
 
-void RotBstMatrix::rot(const Vec4& p) {
+void RotBstMatrix::rot(Vec4ref p) {
 
   double theta = p.theta();
   double phi = p.phi();
@@ -653,7 +653,7 @@ void RotBstMatrix::bst(double betaX, double betaY, double betaZ) {
 
 // Boost so that vector originally at rest obtains same velocity as p.
 
-void RotBstMatrix::bst(const Vec4& p) {
+void RotBstMatrix::bst(Vec4ref p) {
   double betaX = p.px() / p.e();
   double betaY = p.py() / p.e();
   double betaZ = p.pz() / p.e();
@@ -664,7 +664,7 @@ void RotBstMatrix::bst(const Vec4& p) {
 
 // Boost so vector originally with same velocity as p is brought to rest.
 
-void RotBstMatrix::bstback(const Vec4& p) {
+void RotBstMatrix::bstback(Vec4ref p) {
   double betaX = -p.px() / p.e();
   double betaY = -p.py() / p.e();
   double betaZ = -p.pz() / p.e();
@@ -675,7 +675,7 @@ void RotBstMatrix::bstback(const Vec4& p) {
 
 // Boost that transforms p1 to p2, where p1^2 = p2^2 is assumed.
 
-void RotBstMatrix::bst(const Vec4& p1, const Vec4& p2) {
+void RotBstMatrix::bst(Vec4ref p1, Vec4ref p2) {
   double eSum = p1.e() + p2.e();
   double betaX = (p2.px() - p1.px()) / eSum;
   double betaY = (p2.py() - p1.py()) / eSum;
@@ -690,7 +690,7 @@ void RotBstMatrix::bst(const Vec4& p1, const Vec4& p2) {
 // Boost and rotation that transforms from p1 and p2
 // to their rest frame with p1 along +z axis.
 
-void RotBstMatrix::toCMframe(const Vec4& p1, const Vec4& p2) {
+void RotBstMatrix::toCMframe(Vec4ref p1, Vec4ref p2) {
   Vec4 pSum = p1 + p2;
   Vec4 dir  = p1;
   dir.bstback(pSum);
@@ -706,7 +706,7 @@ void RotBstMatrix::toCMframe(const Vec4& p1, const Vec4& p2) {
 // Rotation and boost that transforms from rest frame of p1 and p2
 // with p1 along +z axis to actual frame of p1 and p2. (Inverse of above.)
 
-void RotBstMatrix::fromCMframe(const Vec4& p1, const Vec4& p2) {
+void RotBstMatrix::fromCMframe(Vec4ref p1, Vec4ref p2) {
   Vec4 pSum = p1 + p2;
   Vec4 dir  = p1;
   dir.bstback(pSum);
@@ -821,7 +821,7 @@ const char NUMBER[] = {'0', '1', '2', '3', '4', '5',
 
 // Book a histogram.
 
-void Hist::book(stringref2 titleIn, int nBinIn, double xMinIn,
+void Hist::book(stringref titleIn, int nBinIn, double xMinIn,
   double xMaxIn) {
 
   title = titleIn;

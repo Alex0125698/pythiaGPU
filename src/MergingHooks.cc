@@ -3793,7 +3793,7 @@ double MergingHooks::cutbasedms( const Event& event ){
 
 // Function to compute Delta R separation from 4-vector input.
 
-double MergingHooks::deltaRij(const Vec4& jet1, const Vec4& jet2){
+double MergingHooks::deltaRij(Vec4ref jet1, Vec4ref jet2){
 
   // Declare return variable
   double deltaR = 0.;

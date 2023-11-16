@@ -53,7 +53,7 @@ Wave4 conj(Wave4 w) {
 
 // Permutation operator.
 
-Wave4 epsilon(Wave4 w1, Wave4 w2, Wave4 w3) {
+Wave4 epsilon(const Wave4& w1, const Wave4& w2, const Wave4& w3) {
 
   Wave4 w4;
   w4(0) = -(w1(1) * w2(2) * w3(3)) + (w1(1) * w2(3) * w3(2))
@@ -76,14 +76,14 @@ Wave4 epsilon(Wave4 w1, Wave4 w2, Wave4 w3) {
 
 // Invariant squared mass for REAL Wave4 (to save time).
 
-double m2(Wave4 w) {
+double m2(const Wave4& w) {
 
   return real(w(0)) * real(w(0)) - real(w(1)) * real(w(1))
     - real(w(2)) * real(w(2)) - real(w(3)) * real(w(3));
 
 }
 
-double m2(Wave4 w1, Wave4 w2) {
+double m2(const Wave4& w1, const Wave4& w2) {
 
   return real(w1(0)) * real(w2(0)) - real(w1(1)) * real(w2(1))
        - real(w1(2)) * real(w2(2)) - real(w1(3)) * real(w2(3));
