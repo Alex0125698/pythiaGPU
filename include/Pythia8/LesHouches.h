@@ -266,7 +266,7 @@ protected:
   // LHAup is a friend class to infoPtr, but derived classes
   // are not. This wrapper function can be used by derived classes
   // to set headers in the Info class.
-  void setInfoHeader(const string& key, const string& val) {
+  void setInfoHeader(stringref key, stringref val) {
     infoPtr->setHeader(key, val); }
 
   // Event properties from LHEF files, for repeated use.

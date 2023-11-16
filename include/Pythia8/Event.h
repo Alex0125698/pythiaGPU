@@ -380,7 +380,7 @@ public:
   Event(const Event& oldEvent) {*this = oldEvent;}
 
   // Initialize header for event listing, particle data table, and colour.
-  void init(const string& headerIn = "", ParticleData* particleDataPtrIn = 0,
+  void init(stringref headerIn = "", ParticleData* particleDataPtrIn = 0,
     int startColTagIn = 100) {
     headerList.replace(0, headerIn.length() + 2, headerIn + "  ");
      particleDataPtr = particleDataPtrIn; startColTag = startColTagIn;}

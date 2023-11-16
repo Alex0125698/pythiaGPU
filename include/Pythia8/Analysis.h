@@ -176,7 +176,7 @@ class ClusterJet {
 public:
 
   // Constructor.
-  ClusterJet(const string& measureIn = "Lund", int selectIn = 2, int massSetIn = 2,
+  ClusterJet(stringref measureIn = "Lund", int selectIn = 2, int massSetIn = 2,
     bool preclusterIn = false, bool reassignIn = false) : measure(1),
     select(selectIn), massSet(massSetIn), doPrecluster(preclusterIn),
     doReassign(reassignIn), nFew(0) {

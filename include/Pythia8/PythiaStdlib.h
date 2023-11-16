@@ -104,7 +104,22 @@ using std::setprecision;
 
 namespace Pythia8 {
 
-inline const string& trim(const string& name)
+using std::string_view;
+using cstring = string;
+using ccstring = const char*;
+// using cstring = std::string_view;
+// using cstring = const char*;
+// using stringref = const std::string_view;
+using stringref = const std::string&;
+using stringref2 = const std::string&;
+using stringbuf = std::string;
+// using stringbuf = std::string;
+
+#define STRBUFA(name) thread_local string name; name 
+#define STRBUFB(name) thread_local string name; name 
+#define STRBUFC(name) thread_local string name; name 
+
+inline stringref trim(stringref name)
 {
   // figure out where whitespace starts and ends
   int tstart = 0, tend = (int)name.size()-1;
@@ -174,7 +189,7 @@ inline void toLowerInPlace(string& name)
   // }
 }
 
-const string& toLower(const string& name)
+stringref toLower(stringref name)
 {
   // -- old version
 
@@ -237,15 +252,6 @@ inline double sqrtpos(const double& x) {return sqrt( max( 0., x));}
 
 // The Gamma function for real argument.
 double GammaReal(double x);
-
-  using cstring = string;
-  // using cstring = std::string_view;
-  // using cstring = const char*;
-  // using stringref = const std::string_view;
-  using stringref = const std::string&;
-  using stringref2 = const std::string&;
-  using stringbuf = std::string;
-  // using stringbuf = std::string;
 
 } // end namespace Pythia8
 

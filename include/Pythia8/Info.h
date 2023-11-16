@@ -211,7 +211,7 @@ public:
   void setWeightFIRST( double weightIn) { weightFIRSTSave = weightIn;}
 
   // Return an LHEF header
-  cstring header(const string& key) {
+  cstring header(stringref key) {
     if (headers.find(key) == headers.end()) return "";
     else return headers[key];
   }
@@ -306,7 +306,7 @@ public:
   double getScalesAttribute(stringref key);
 
   // Set LHEF headers
-  void setHeader(const string& key, const string& val)
+  void setHeader(stringref key, stringref val)
     { headers[key] = val; }
 
   // Set abort in parton level.

@@ -347,7 +347,7 @@ private:
   void initTunePP(int ppTune);
 
   // Useful functions for string handling.
-  string toLower(const string& name);
+  string toLower(stringref name);
   bool   boolString(stringref tag);
   string attributeValue(stringref line, stringref attribute);
   bool   boolAttributeValue(stringref line, stringref attribute);

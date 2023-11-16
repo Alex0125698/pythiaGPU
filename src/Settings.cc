@@ -2412,7 +2412,7 @@ void Settings::initTunePP( int ppTune) {
 // Convert string to lowercase for case-insensitive comparisons.
 // Also remove initial and trailing blanks, if any.
 
-// string Settings::toLower(const string& name) {
+// string Settings::toLower(stringref name) {
 
 //   // Copy string without initial and trailing blanks.
 //   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
