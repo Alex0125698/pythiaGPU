@@ -496,7 +496,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
       if ( writeAll || valNow != valDefault ) {
         os  << fvecEntry->second.name << " = ";
         for (vector<bool>::iterator val = valNow.begin();
-             val != --valNow.end(); ++val) os << state[*val] << ",";
+             val != --valNow.end(); ++val) os << state[*val] << ',';
         os << *(--valNow.end()) << "\n";
       }
       ++fvecEntry;
@@ -510,7 +510,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
       if ( writeAll || valNow != valDefault ) {
         os  << mvecEntry->second.name << " = ";
         for (vector<int>::iterator val = valNow.begin();
-             val != --valNow.end(); ++val) os << *val << ",";
+             val != --valNow.end(); ++val) os << *val << ',';
         os << *(--valNow.end()) << "\n";
       }
       ++mvecEntry;
@@ -529,7 +529,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
           else if ( abs(*val) < 1000. ) os << fixed << setprecision(5);
           else if ( abs(*val) < 1000000. ) os << fixed << setprecision(3);
           else os << scientific << setprecision(4);
-          os << *val << ",";
+          os << *val << ',';
         } os << *(--valNow.end()) << "\n";
       }
       ++pvecEntry;
@@ -703,7 +703,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
             os << " | " << setw(45) << left
                << fvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];
@@ -734,7 +734,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
             os << " | " << setw(45) << left
                << mvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];
@@ -767,7 +767,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
             os << " | " << setw(45) << left
                << pvecEntry->second.name << right << " |             ";
           else
-            os << " | " << setw(45) << " " << right << " |             ";
+            os << " | " << setw(45) << ' ' << right << " |             ";
           for (int j = 0; j < 4; ++j) {
             if (i < valsNow.size()) valNow = valsNow[i];
             if (i < valsDefault.size()) valDefault = valsDefault[i];

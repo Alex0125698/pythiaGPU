@@ -97,11 +97,11 @@ void PartonSystems::list(ostream& os) const {
 
   // Loop over system list and over members in each system.
   for (int iSys = 0; iSys < sizeSys(); ++iSys) {
-    os << " " << setw(3) << iSys << " " << setw(4) << systems[iSys].iInA
-       << " " << setw(4) << systems[iSys].iInB;
+    os << ' ' << setw(3) << iSys << ' ' << setw(4) << systems[iSys].iInA
+       << ' ' << setw(4) << systems[iSys].iInB;
     for (int iMem = 0; iMem < sizeOut(iSys); ++iMem) {
       if (iMem%16 == 0 && iMem > 0) os << "\n              ";
-      os << " " << setw(4) << systems[iSys].iOut[iMem];
+      os << ' ' << setw(4) << systems[iSys].iOut[iMem];
     }
     os << "\n";
   }

@@ -393,7 +393,7 @@ void ColConfig::list(ostream& os) const {
     // List all partons belonging to each singlet.
     os << " singlet " << iSub << " contains " ;
     for (int i = 0; i < singlets[iSub].size(); ++i)
-      os << singlets[iSub].iParton[i] << " ";
+      os << singlets[iSub].iParton[i] << ' ';
     os << "\n";
 
   // Done.

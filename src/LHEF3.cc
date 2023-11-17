@@ -47,9 +47,9 @@ void LHAweights::print(ostream & file) const {
   file << "<weights";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
-  file << ">";
-  for ( int j = 0, M = weights.size(); j < M; ++j ) file << " " << weights[j];
+    file << ' ' << it->first << "=\"" << it->second << "\"";
+  file << '>';
+  for ( int j = 0, M = weights.size(); j < M; ++j ) file << ' ' << weights[j];
   file << "</weights>" << endl;
 }
 
@@ -85,8 +85,8 @@ void LHAscales::print(ostream & file) const {
   file << " mups=\"" << mups << "\"";
   for ( map<string,double>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
-  file << ">" << contents;
+    file << ' ' << it->first << "=\"" << it->second << "\"";
+  file << '>' << contents;
   file << "</scales>" << endl;
 }
 
@@ -120,7 +120,7 @@ void LHAgenerator::print(ostream & file) const {
   if ( version != "" ) file << " version=\"" << version << "\"";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >";
   file << contents;
   file << "</generator>" << endl;
@@ -154,7 +154,7 @@ void LHAwgt::print(ostream & file) const {
   if ( id    != "" ) file << " id=\""    << id << "\"";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >";
   file << contents;
   file << "</wgt>" << endl;
@@ -188,7 +188,7 @@ void LHAweight::print(ostream & file) const {
   if ( id  != "" ) file << " id=\""    << id << "\"";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >";
   file << contents;
   file << "</weight>" << endl;
@@ -242,7 +242,7 @@ void LHAweightgroup::print(ostream & file) const {
   if ( name != "" ) file << " name=\"" << name << "\"";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >\n";
   for ( map<string,LHAweight>::const_iterator it = weights.begin();
         it != weights.end(); ++it ) it->second.print(file);
@@ -293,7 +293,7 @@ void LHArwgt::print(ostream & file) const {
   file << "<rwgt";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >\n";
   for ( map<string,LHAwgt>::const_iterator it = wgts.begin();
         it != wgts.end(); ++it ) it->second.print(file);
@@ -391,7 +391,7 @@ void LHAinitrwgt::print(ostream & file) const {
   file << "<initrwgt";
   for ( map<string,string>::const_iterator it = attributes.begin();
         it != attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
+    file << ' ' << it->first << "=\"" << it->second << "\"";
   file << " >\n";
   for ( map<string,LHAweightgroup>::const_iterator it = weightgroups.begin();
         it != weightgroups.end(); ++it ) it->second.print(file);
@@ -829,22 +829,22 @@ void Writer::init() {
   file << "</header>" << endl;
 
   file << "<init>"<< endl
-       << " " << setw(8) << heprup.IDBMUP.first
-       << " " << setw(8) << heprup.IDBMUP.second
-       << " " << setw(14) << heprup.EBMUP.first
-       << " " << setw(14) << heprup.EBMUP.second
-       << " " << setw(4) << heprup.PDFGUP.first
-       << " " << setw(4) << heprup.PDFGUP.second
-       << " " << setw(4) << heprup.PDFSUP.first
-       << " " << setw(4) << heprup.PDFSUP.second
-       << " " << setw(4) << heprup.IDWTUP
-       << " " << setw(4) << heprup.NPRUP << endl;
+       << ' ' << setw(8) << heprup.IDBMUP.first
+       << ' ' << setw(8) << heprup.IDBMUP.second
+       << ' ' << setw(14) << heprup.EBMUP.first
+       << ' ' << setw(14) << heprup.EBMUP.second
+       << ' ' << setw(4) << heprup.PDFGUP.first
+       << ' ' << setw(4) << heprup.PDFGUP.second
+       << ' ' << setw(4) << heprup.PDFSUP.first
+       << ' ' << setw(4) << heprup.PDFSUP.second
+       << ' ' << setw(4) << heprup.IDWTUP
+       << ' ' << setw(4) << heprup.NPRUP << endl;
   heprup.resize();
   for ( int i = 0; i < heprup.NPRUP; ++i )
-    file << " " << setw(14) << heprup.XSECUP[i]
-         << " " << setw(14) << heprup.XERRUP[i]
-         << " " << setw(14) << heprup.XMAXUP[i]
-         << " " << setw(6) << heprup.LPRUP[i] << endl;
+    file << ' ' << setw(14) << heprup.XSECUP[i]
+         << ' ' << setw(14) << heprup.XERRUP[i]
+         << ' ' << setw(14) << heprup.XMAXUP[i]
+         << ' ' << setw(6) << heprup.LPRUP[i] << endl;
 
   if ( version == 1 ) {
     file << hashline(initStream.str(),true) << std::flush
@@ -874,30 +874,30 @@ bool Writer::writeEvent(HEPEUP * peup, int pDigits) {
   file << "<event";
   for ( map<string,string>::const_iterator it = eup.attributes.begin();
         it != eup.attributes.end(); ++it )
-    file << " " << it->first << "=\"" << it->second << "\"";
-  file << ">" << std::flush << endl;
-  file << " " << setw(4) << eup.NUP
-       << " " << setw(6) << eup.IDPRUP
-       << " " << setw(14) << eup.XWGTUP
-       << " " << setw(14) << eup.SCALUP
-       << " " << setw(14) << eup.AQEDUP
-       << " " << setw(14) << eup.AQCDUP << endl;
+    file << ' ' << it->first << "=\"" << it->second << "\"";
+  file << '>' << std::flush << endl;
+  file << ' ' << setw(4) << eup.NUP
+       << ' ' << setw(6) << eup.IDPRUP
+       << ' ' << setw(14) << eup.XWGTUP
+       << ' ' << setw(14) << eup.SCALUP
+       << ' ' << setw(14) << eup.AQEDUP
+       << ' ' << setw(14) << eup.AQCDUP << endl;
   eup.resize();
 
   for ( int i = 0; i < eup.NUP; ++i )
-    file << " " << setw(8) << eup.IDUP[i]
-         << " " << setw(2) << eup.ISTUP[i]
-         << " " << setw(4) << eup.MOTHUP[i].first
-         << " " << setw(4) << eup.MOTHUP[i].second
-         << " " << setw(4) << eup.ICOLUP[i].first
-         << " " << setw(4) << eup.ICOLUP[i].second
-         << " " << setw(pDigits) << eup.PUP[i][0]
-         << " " << setw(pDigits) << eup.PUP[i][1]
-         << " " << setw(pDigits) << eup.PUP[i][2]
-         << " " << setw(pDigits) << eup.PUP[i][3]
-         << " " << setw(pDigits) << eup.PUP[i][4]
-         << " " << setw(1) << eup.VTIMUP[i]
-         << " " << setw(1) << eup.SPINUP[i] << endl;
+    file << ' ' << setw(8) << eup.IDUP[i]
+         << ' ' << setw(2) << eup.ISTUP[i]
+         << ' ' << setw(4) << eup.MOTHUP[i].first
+         << ' ' << setw(4) << eup.MOTHUP[i].second
+         << ' ' << setw(4) << eup.ICOLUP[i].first
+         << ' ' << setw(4) << eup.ICOLUP[i].second
+         << ' ' << setw(pDigits) << eup.PUP[i][0]
+         << ' ' << setw(pDigits) << eup.PUP[i][1]
+         << ' ' << setw(pDigits) << eup.PUP[i][2]
+         << ' ' << setw(pDigits) << eup.PUP[i][3]
+         << ' ' << setw(pDigits) << eup.PUP[i][4]
+         << ' ' << setw(1) << eup.VTIMUP[i]
+         << ' ' << setw(1) << eup.SPINUP[i] << endl;
 
   // Write event comments.
   file << hashline(eventStream.str()) << std::flush;

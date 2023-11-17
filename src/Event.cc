@@ -672,7 +672,7 @@ void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
     // Optional extra line for scale value, polarization and production vertex.
     if (showScaleAndVertex)
       os << "                              " << setw(8+prec) << pt.scale()
-         << " " << fixed << setprecision(prec) << setw(8+prec) << pt.pol()
+         << ' ' << fixed << setprecision(prec) << setw(8+prec) << pt.pol()
          << "                        " << scientific << setprecision(prec)
          << setw(8+prec) << pt.xProd() << setw(8+prec) << pt.yProd()
          << setw(8+prec) << pt.zProd() << setw(8+prec) << pt.tProd()
@@ -684,13 +684,13 @@ void Event::list(bool showScaleAndVertex, bool showMothersAndDaughters,
       os << "                mothers:";
       vector<int> allMothers = pt.motherList();
       for (int j = 0; j < int(allMothers.size()); ++j) {
-        os << " " <<  allMothers[j];
+        os << ' ' <<  allMothers[j];
         if (++linefill == IPERLINE) {os << "\n                "; linefill = 0;}
       }
       os << ";   daughters:";
       vector<int> allDaughters = pt.daughterList();
       for (int j = 0; j < int(allDaughters.size()); ++j) {
-        os << " " <<  allDaughters[j];
+        os << ' ' <<  allDaughters[j];
         if (++linefill == IPERLINE) {os << "\n                "; linefill = 0;}
       }
       if (linefill !=0) os << "\n";

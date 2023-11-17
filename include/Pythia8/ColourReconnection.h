@@ -113,7 +113,7 @@ public:
   }
 
   void list() {
-    cout << "mode: " << mode << " " << "lambdaDiff: " << lambdaDiff << endl;
+    cout << "mode: " << mode << ' ' << "lambdaDiff: " << lambdaDiff << endl;
     for (int i = 0;i < int(dips.size()) && dips[i] != 0;++i) {
       cout << "   "; dips[i]->print(); }
   }

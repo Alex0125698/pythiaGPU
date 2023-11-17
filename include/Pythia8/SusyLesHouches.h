@@ -90,7 +90,7 @@ namespace Pythia8 {
       int ibegin=first();
       i=ibegin;
       while (!finished) {
-        cout << "  "<< i << " " << entry[i] <<endl;
+        cout << "  "<< i << ' ' << entry[i] <<endl;
         i=next();
         if (i == ibegin) finished=true;
       };
@@ -185,8 +185,8 @@ namespace Pythia8 {
     // Simple print utility, to be elaborated on.
     void print() {
       for (i=1;i<=size;i++) {
-        cout << "   "<<i << " " ;
-        for (j=1;j<=size;j++) cout << entry[i][j] << " ";
+        cout << "   "<<i << ' ' ;
+        for (j=1;j<=size;j++) cout << entry[i][j] << ' ';
         cout << endl;
       };
     };
@@ -262,9 +262,9 @@ namespace Pythia8 {
     void print() {
       for (i=1;i<=size;i++) {
         for (j=1;j<=size;j++) {
-          cout << "   "<<i << " "<<j << " " ;
+          cout << "   "<<i << ' '<<j << ' ' ;
           for (k=1;k<=size;k++) {
-            cout << entry[i][j][k] << " ";
+            cout << entry[i][j][k] << ' ';
             cout << endl;
           };
         };

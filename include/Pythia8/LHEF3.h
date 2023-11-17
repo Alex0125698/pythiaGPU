@@ -201,19 +201,19 @@ struct XMLTag {
 
   // Print out this tag to a stream.
   void print(ostream & os) const {
-    os << "<" << name;
+    os << '<' << name;
     for ( map<string,string>::const_iterator it = attr.begin();
           it != attr.end(); ++it )
-      os << " " << it->first << "=\"" << it->second << "\"";
+      os << ' ' << it->first << "=\"" << it->second << "\"";
     if ( contents.empty() && tags.empty() ) {
       os << "/>" << endl;
       return;
     }
-    os << ">" << endl;
+    os << '>' << endl;
     for ( int i = 0, N = tags.size(); i < N; ++i )
       tags[i]->print(os);
 
-    os << "````" << contents << "''''</" << name << ">" << endl;
+    os << "````" << contents << "''''</" << name << '>' << endl;
   }
 
 };
