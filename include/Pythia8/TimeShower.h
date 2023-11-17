@@ -169,7 +169,7 @@ public:
   // Usage: branched( const Event& event, int iRadBef, int iRecBef, int idEmt,
   //                  double pT2, double z, double RN, vector<double> aux)
   virtual Event branched( const Event&, int, int, int, double,
-    double, double, vector<double>) { return Event();}
+    double, double, const vector<double>&) { return Event();}
 
   // Return the evolution variable.
   // Usage: pT2Times( const Particle& rad, const Particle& emt,
@@ -312,8 +312,8 @@ private:
   double gammaZmix( Event& event, int iRes, int iDau1, int iDau2);
 
   // Set up to calculate QCD ME correction with calcMEcorr.
-  double findMEcorr(TimeDipoleEnd* dip, Particle& rad, Particle& partner,
-   Particle& emt, bool cutEdge = true);
+  double findMEcorr(TimeDipoleEnd* dip, const Particle& rad, const Particle& partner,
+   const Particle& emt, bool cutEdge = true);
 
   // Set up to calculate weak ME corrections for t-channel processes.
   double findMEcorrWeak(TimeDipoleEnd* dip, Vec4 rad, Vec4 rec,

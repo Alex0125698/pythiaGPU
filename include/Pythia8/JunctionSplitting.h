@@ -75,8 +75,8 @@ private:
   bool splitJunChains(Event& event);
 
   // Split junction pairs.
-  bool splitJunPairs(Event& event, vector<vector< int > >& iPartonJun,
-    vector<vector< int > >& iPartonAntiJun);
+  bool splitJunPairs(Event& event, const vector<vector< int > >& iPartonJun,
+    const vector<vector< int > >& iPartonAntiJun);
 
   // Get the list of partons connected to the junctions.
   bool getPartonLists(Event& event, vector<vector< int > >& iPartonJun,

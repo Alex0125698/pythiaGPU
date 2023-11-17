@@ -47,7 +47,7 @@ void ParticleDecays::init(Info* infoPtrIn, Settings& settings,
   ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
   Couplings* couplingsPtrIn, TimeShower* timesDecPtrIn,
   StringFlav* flavSelPtrIn, DecayHandler* decayHandlePtrIn,
-  vector<int> handledParticles) {
+  const vector<int>& handledParticles) {
 
   // Save pointers to error messages handling and flavour generation.
   infoPtr         = infoPtrIn;

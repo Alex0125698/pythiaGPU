@@ -356,7 +356,7 @@ FlavContainer StringFlav::pick(FlavContainer& flavOld) {
 // Combine two flavours (including diquarks) to produce a hadron.
 // The weighting of the combination may fail, giving output 0.
 
-int StringFlav::combine(FlavContainer& flav1, FlavContainer& flav2) {
+int StringFlav::combine(const FlavContainer& flav1, const FlavContainer& flav2) {
 
   // Recognize largest and smallest flavour.
   int id1Abs = abs(flav1.id);

@@ -205,10 +205,10 @@ public:
   // Do change fragmentation parameters.
   // Input: flavPtr, zPtr, pTPtr, idEnd, m2Had, iParton.
   virtual bool doChangeFragPar( StringFlav*, StringZ*, StringPT*, int,
-    double, vector<int>) { return false;}
+    double, const vector<int>&) { return false;}
 
  // Do a veto on a hadron just before it is added to the final state.
-  virtual bool doVetoFragmentation( Particle) { return false;}
+  virtual bool doVetoFragmentation( const Particle&) { return false;}
 
 protected:
 

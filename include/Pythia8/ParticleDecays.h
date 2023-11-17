@@ -35,8 +35,8 @@ public:
   virtual ~DecayHandler() {}
 
   // A pure virtual method, wherein the derived class method does a decay.
-  virtual bool decay(vector<int>& idProd, vector<double>& mProd,
-    vector<Vec4>& pProd, int iDec, const Event& event) = 0;
+  virtual bool decay(const vector<int>& idProd, const vector<double>& mProd,
+    const vector<Vec4>& pProd, int iDec, const Event& event) = 0;
 
 };
 
@@ -56,7 +56,7 @@ public:
     ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
     Couplings* couplingsPtrIn, TimeShower* timesDecPtrIn,
     StringFlav* flavSelPtrIn, DecayHandler* decayHandlePtrIn,
-    vector<int> handledParticles);
+    const vector<int>& handledParticles);
 
   // Perform a decay of a single particle.
   bool decay(int iDec, Event& event);

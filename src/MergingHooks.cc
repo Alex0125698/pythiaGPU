@@ -898,8 +898,8 @@ void HardProcess::translateProcessString( stringref process){
 // Function to check if the candidates stored in Pos1 and Pos2, together with
 // a proposed candidate iPos are allowed.
 
-bool HardProcess::allowCandidates(int iPos, vector<int> Pos1,
-  vector<int> Pos2, const Event& event){
+bool HardProcess::allowCandidates(int iPos, const vector<int>& Pos1,
+  const vector<int>& Pos2, const Event& event){
 
   bool allowed = true;
 
@@ -1718,8 +1718,8 @@ bool HardProcess::findOtherCandidates(int iPos, const Event& event,
 
 // Function to exchange hard process candidates.
 
-bool HardProcess::exchangeCandidates( vector<int> candidates1,
-    vector<int> candidates2, map<int,int> further1, map<int,int> further2) {
+bool HardProcess::exchangeCandidates( const vector<int>& candidates1,
+    const vector<int>& candidates2, const map<int,int>& further1, const map<int,int>& further2) {
 
   int nOld1 = candidates1.size();
   int nOld2 = candidates2.size();

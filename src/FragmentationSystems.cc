@@ -50,7 +50,7 @@ void ColConfig::init(Info* infoPtrIn, Settings& settings,
 // Insert a new colour singlet system in ascending mass order.
 // Calculate its properties. Join nearby partons.
 
-bool ColConfig::insert( vector<int>& iPartonIn, Event& event) {
+bool ColConfig::insert(vector<int>& iPartonIn, Event& event) {
 
   // Find momentum and invariant mass of system, minus endpoint masses.
   Vec4 pSumIn;
@@ -525,7 +525,7 @@ void StringRegion::project(Vec4ref pIn) {
 
 // Set up system from parton list.
 
-void StringSystem::setUp(vector<int>& iSys, Event& event) {
+void StringSystem::setUp(const vector<int>& iSys, Event& event) {
 
   // Figure out how big the system is. (Closed gluon loops?)
   sizePartons = iSys.size();

@@ -151,10 +151,10 @@ private:
   StringEnd posEnd, negEnd;
 
   // Find region where to put first string break for closed gluon loop.
-  vector<int> findFirstRegion(vector<int>& iPartonIn, Event& event);
+  vector<int> findFirstRegion(const vector<int>& iPartonIn, Event& event);
 
   // Set flavours and momentum position for initial string endpoints.
-  void setStartEnds(int idPos, int idNeg, StringSystem systemNow);
+  void setStartEnds(int idPos, int idNeg, const StringSystem& systemNow);
 
   // Check remaining energy-momentum whether it is OK to continue.
   bool energyUsedUp(bool fromPos);

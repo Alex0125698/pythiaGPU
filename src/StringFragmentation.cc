@@ -563,7 +563,7 @@ bool StringFragmentation::fragment( int iSub, ColConfig& colConfig,
 
 // Find region where to put first string break for closed gluon loop.
 
-vector<int> StringFragmentation::findFirstRegion(vector<int>& iPartonIn,
+vector<int> StringFragmentation::findFirstRegion(const vector<int>& iPartonIn,
   Event& event) {
 
   // Evaluate mass-squared for all adjacent gluon pairs.
@@ -598,7 +598,7 @@ vector<int> StringFragmentation::findFirstRegion(vector<int>& iPartonIn,
 // Set flavours and momentum position for initial string endpoints.
 
 void StringFragmentation::setStartEnds( int idPos, int idNeg,
-  StringSystem systemNow) {
+  const StringSystem& systemNow) {
 
   // Variables characterizing string endpoints: defaults for open string.
   double px          = 0.;

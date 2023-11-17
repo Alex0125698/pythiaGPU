@@ -352,7 +352,7 @@ public:
     return (xmlFormat) ? readXML(startFile) : readFF(startFile);}
 
   // Initialize pointers, normal Breit-Wigners and special resonances.
-  void initWidths(vector<ResonanceWidths*> resonancePtrs);
+  void initWidths(const vector<ResonanceWidths*>& resonancePtrs);
 
   // Read or list whole (or part of) database from/to an XML file.
   bool readXML(stringref inFile, bool reset = true) ;
@@ -379,7 +379,7 @@ public:
   // Print out specified particles.
   void list(int idList, ostream& os = cout) {vector<int> idListTemp;
     idListTemp.push_back(idList); list( idListTemp, os);}
-  void list(vector<int> idList, ostream& os = cout);
+  void list(const vector<int>& idList, ostream& os = cout);
 
   // Check that table makes sense, especially for decays.
   void checkTable(ostream& os = cout) {checkTable(1, os);};

@@ -252,7 +252,7 @@ private:
   //                       multiplicity and check and enforce
   //                       ordering
   // NO OUTPUT
-  void setScales( vector<int> index, bool forward);
+  void setScales(const vector<int>& index, bool forward);
 
   // Function to find a particle in all higher multiplicity events
   // along the history path and set its production scale to the input
@@ -443,8 +443,8 @@ private:
   //     Event : event record to be checked for ptential partners
   // OUT vector of all allowed radiator+recoiler+emitted triples
   vector<Clustering> findQCDTriple (int emtTagIn, int colTopIn,
-                       const Event& event, vector<int> posFinalPartn,
-                       vector <int> posInitPartn );
+                       const Event& event, const vector<int>& posFinalPartn,
+                       const vector <int>& posInitPartn );
 
   vector<Clustering> getAllEWClusterings();
   vector<Clustering> getEWClusterings( const Event& event);
@@ -454,8 +454,8 @@ private:
   vector<Clustering> getAllSQCDClusterings();
   vector<Clustering> getSQCDClusterings( const Event& event);
   vector<Clustering> findSQCDTriple (int emtTagIn, int colTopIn,
-                       const Event& event, vector<int> posFinalPartn,
-                       vector <int> posInitPartn );
+                       const Event& event, const vector<int>& posFinalPartn,
+                       const vector <int>& posInitPartn );
 
   // Function to attach (spin-dependent duplicates of) a clustering.
   void attachClusterings (vector<Clustering>& clus, int iEmt, int iRad,
@@ -490,7 +490,7 @@ private:
   // clustered state.
   // IN Clustering : rad,rec,emt triple to be clustered to two partons
   // OUT clustered state
-  Event cluster( Clustering & inSystem);
+  Event cluster(const Clustering & inSystem);
 
   // Function to get the flavour of the radiator before the splitting
   // for clustering
@@ -568,7 +568,7 @@ private:
   // IN  Event       : Reference event
   // IN  vector<int> : Positions of the partons in the set
   // OUT bool        : Is a colour singlet / is not
-  bool isColSinglet( const Event& event, vector<int> system);
+  bool isColSinglet( const Event& event, const vector<int>& system);
   // Function to check that a set of partons forms a flavour singlet
   // IN  Event       : Reference event
   // IN  vector<int> : Positions of the partons in the set
@@ -576,7 +576,7 @@ private:
   //                   all quarks in a set should have a fixed flavour
   // OUT bool        : Is a flavour singlet / is not
   bool isFlavSinglet( const Event& event,
-    vector<int> system, int flav=0);
+    const vector<int>& system, int flav=0);
 
   // Function to properly colour-connect the radiator to the rest of
   // the event, as needed during clustering
@@ -642,7 +642,7 @@ private:
 
   // Function to check whether two clusterings are identical, used
   // for finding the history path in the mother -> children direction
-  bool equalClustering( Clustering clus1 , Clustering clus2 );
+  bool equalClustering( const Clustering& clus1 , const Clustering& clus2 );
 
   // Chose dummy scale for event construction. By default, choose
   //     sHat     for 2->Boson(->2)+ n partons processes and

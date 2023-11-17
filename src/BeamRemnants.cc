@@ -91,7 +91,7 @@ bool BeamRemnants::init( Info* infoPtrIn, Settings& settings, Rndm* rndmPtrIn,
 // Notation: iPar = all partons, iSys = matched systems of two beams,
 //           iRem = additional partons in remnants.
 
-bool BeamRemnants::add( Event& event, int iFirst, bool doDiffCR) {
+bool BeamRemnants::add(Event& event, int iFirst, bool doDiffCR) {
 
   // Update to current CM energy.
   eCM     = infoPtr->eCM();
@@ -179,7 +179,7 @@ bool BeamRemnants::add( Event& event, int iFirst, bool doDiffCR) {
 
 // Old function for adding beam remnant.
 
-bool BeamRemnants::addOld( Event& event) {
+bool BeamRemnants::addOld(Event& event) {
 
   // Add required extra remnant flavour content.
   // Start all over if fails (in option where junctions not allowed).
@@ -250,7 +250,7 @@ bool BeamRemnants::addOld( Event& event) {
 
 // New function for adding beam remnant.
 
-bool BeamRemnants::addNew( Event& event) {
+bool BeamRemnants::addNew(Event& event) {
 
    // Start by saving a copy of the event, if the beam remnant fails.
   Event eventSave = event;
@@ -333,7 +333,7 @@ bool BeamRemnants::addNew( Event& event) {
 // Set up trial transverse and longitudinal kinematics for each beam
 // separately. Final decisions involve comparing the two beams.
 
-bool BeamRemnants::setKinematics( Event& event) {
+bool BeamRemnants::setKinematics(Event& event) {
 
   // References to beams to simplify indexing.
   BeamParticle& beamA = *beamAPtr;
@@ -801,7 +801,7 @@ bool BeamRemnants::setKinematics( Event& event) {
 // Special beam remnant kinematics for Deeply Inelastic Scattering.
 // Currently assumes unresolved lepton.
 
-bool BeamRemnants::setDISKinematics( Event& event) {
+bool BeamRemnants::setDISKinematics(Event& event) {
 
   // Identify lepton and hadron beams.
   BeamParticle& beamLep = (beamAPtr->isLepton()) ? *beamAPtr : *beamBPtr;
@@ -892,7 +892,7 @@ bool BeamRemnants::setDISKinematics( Event& event) {
 
 // Collapse colours and check that they are consistent.
 
-bool BeamRemnants::checkColours( Event& event) {
+bool BeamRemnants::checkColours(Event& event) {
 
   // No colours in lepton beams so no need to do anything.
   if (beamAPtr->isLepton() && beamBPtr->isLepton()) return true;
@@ -1149,8 +1149,8 @@ bool BeamRemnants::checkColours( Event& event) {
 
 // Update colours of outgoing particles in the event record.
 
-void BeamRemnants::updateColEvent( Event& event,
-  vector<pair <int,int> > colChanges) {
+void BeamRemnants::updateColEvent(Event& event,
+  const vector<pair <int,int> >& colChanges) {
 
   for (int iCol = 0; iCol < int(colChanges.size()); ++iCol) {
 

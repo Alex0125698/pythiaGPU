@@ -406,7 +406,7 @@ public:
   int size() const {return entry.size();}
 
   // Put a new particle at the end of the event record; return index.
-  int append(Particle entryIn) {
+  int append(const Particle& entryIn) {
     entry.push_back(entryIn); setEvtPtr();
     if (entryIn.col() > maxColTag) maxColTag = entryIn.col();
     if (entryIn.acol() > maxColTag) maxColTag = entryIn.acol();
@@ -520,7 +520,7 @@ public:
   int appendJunction( int kind, int col0, int col1, int col2)
     { junction.push_back( Junction( kind, col0, col1, col2) );
     return junction.size() - 1;}
-  int appendJunction(Junction junctionIn) {junction.push_back(junctionIn);
+  int appendJunction(const Junction& junctionIn) {junction.push_back(junctionIn);
     return junction.size() - 1;}
   int sizeJunction() const {return junction.size();}
   bool remainsJunction(int i) const {return junction[i].remains();}

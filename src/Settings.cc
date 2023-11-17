@@ -813,7 +813,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
 
 // Give back current value(s) as a string, whatever the type.
 
-string Settings::output(string keyIn, bool fullLine) {
+string Settings::output(stringref keyIn, bool fullLine) {
 
   // Default string echoes input key =.
   string outVal = (fullLine) ? " " + keyIn + " = " : "";
@@ -924,43 +924,43 @@ void Settings::resetAll() {
 
 // Give back current value, with check that key exists.
 
-bool Settings::flag(string keyIn) {
+bool Settings::flag(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::flag: unknown key", keyIn);
   return false;
 }
 
-int Settings::mode(string keyIn) {
+int Settings::mode(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mode: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parm(string keyIn) {
+double Settings::parm(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::parm: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::word(string keyIn) {
+string Settings::word(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::word: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvec(string keyIn) {
+vector<bool> Settings::fvec(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::fvec: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvec(string keyIn) {
+vector<int> Settings::mvec(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mvec: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvec(string keyIn) {
+vector<double> Settings::pvec(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::pvec: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -970,43 +970,43 @@ vector<double> Settings::pvec(string keyIn) {
 
 // Give back default value, with check that key exists.
 
-bool Settings::flagDefault(string keyIn) {
+bool Settings::flagDefault(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::flagDefault: unknown key", keyIn);
   return false;
 }
 
-int Settings::modeDefault(string keyIn) {
+int Settings::modeDefault(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::modeDefault: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parmDefault(string keyIn) {
+double Settings::parmDefault(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::parmDefault: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::wordDefault(string keyIn) {
+string Settings::wordDefault(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::wordDefault: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvecDefault(string keyIn) {
+vector<bool> Settings::fvecDefault(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::fvecDefault: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvecDefault(string keyIn) {
+vector<int> Settings::mvecDefault(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::mvecDefault: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvecDefault(string keyIn) {
+vector<double> Settings::pvecDefault(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::pvecDefault: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -1146,21 +1146,21 @@ void Settings::word(stringref keyIn, stringref nowIn) {
     if (isWord(keyIn)) words[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::fvec(string keyIn, vector<bool> nowIn) {
+void Settings::fvec(stringref keyIn, const vector<bool>& nowIn) {
   if (isFVec(keyIn)) {
     FVec& fvecNow = fvecs[toLower(keyIn)];
     fvecNow.valNow.clear();
-    for(vector<bool>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++)
       fvecNow.valNow.push_back(*now);
   }
 }
 
-void Settings::mvec(string keyIn, vector<int> nowIn) {
+void Settings::mvec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) {
     MVec& mvecNow = mvecs[toLower(keyIn)];
     mvecNow.valNow.clear();
-    for(vector<int>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (mvecNow.hasMin && *now < mvecNow.valMin)
         mvecNow.valNow.push_back(mvecNow.valMin);
@@ -1171,11 +1171,11 @@ void Settings::mvec(string keyIn, vector<int> nowIn) {
   }
 }
 
-void Settings::pvec(string keyIn, vector<double> nowIn) {
+void Settings::pvec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) {
     PVec& pvecNow = pvecs[toLower(keyIn)];
     pvecNow.valNow.clear();
-    for(vector<double>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (pvecNow.hasMin && *now < pvecNow.valMin)
         pvecNow.valNow.push_back(pvecNow.valMin);
@@ -1205,11 +1205,11 @@ void Settings::forceParm(stringref keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forceMVec(string keyIn, vector<int> nowIn) {
+void Settings::forceMVec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) mvecs[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forcePVec(string keyIn, vector<double> nowIn) {
+void Settings::forcePVec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) pvecs[toLower(keyIn)].valNow = nowIn;
 }
 

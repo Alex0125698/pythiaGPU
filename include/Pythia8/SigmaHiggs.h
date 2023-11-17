@@ -83,7 +83,7 @@ public:
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave ;}
+  virtual string name()       const {return nameSave;}
   virtual int    code()       const {return codeSave;}
   virtual string inFlux()     const {return "gg";}
   virtual int    resonanceA() const {return idRes;}

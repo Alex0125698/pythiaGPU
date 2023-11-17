@@ -94,7 +94,7 @@ class Word {
 public:
 
   // Constructor
-  Word(string nameIn = " ", string defaultIn = " ") : name(nameIn),
+  Word(stringref nameIn = " ", stringref defaultIn = " ") : name(nameIn),
     valNow(defaultIn) , valDefault(defaultIn) { }
 
   // Data members.
@@ -111,7 +111,7 @@ class FVec {
 public:
 
   // Constructor
-  FVec(string nameIn = " ", vector<bool> defaultIn = vector<bool>(1, false)) :
+  FVec(stringref nameIn = " ", const vector<bool>& defaultIn = vector<bool>(1, false)) :
     name(nameIn), valNow(defaultIn) , valDefault(defaultIn) { }
 
   // Data members.
@@ -129,7 +129,7 @@ class MVec {
 public:
 
   // Constructor
-  MVec(string nameIn = " ", vector<int> defaultIn = vector<int>(1, 0),
+  MVec(stringref nameIn = " ", const vector<int>& defaultIn = vector<int>(1, 0),
     bool hasMinIn = false, bool hasMaxIn = false, int minIn = 0,
     int maxIn = 0) :  name(nameIn), valNow(defaultIn),
     valDefault(defaultIn), hasMin(hasMinIn), hasMax(hasMaxIn),
@@ -152,7 +152,7 @@ class PVec {
 public:
 
   // Constructor
-  PVec(string nameIn = " ", vector<double> defaultIn = vector<double>(1, 0.),
+  PVec(stringref nameIn = " ", const vector<double>& defaultIn = vector<double>(1, 0.),
     bool hasMinIn = false, bool hasMaxIn = false, double minIn = 0.,
     double maxIn = 0.) :  name(nameIn), valNow(defaultIn),
     valDefault(defaultIn), hasMin(hasMinIn), hasMax(hasMaxIn),
@@ -242,12 +242,12 @@ public:
     = Parm(keyIn, defaultIn, hasMinIn, hasMaxIn, minIn, maxIn); }
   void addWord(stringref keyIn, stringref defaultIn) {
     words[toLower(keyIn)] = Word(keyIn, defaultIn); }
-  void addFVec(string keyIn, vector<bool> defaultIn) {
+  void addFVec(stringref keyIn, const vector<bool>& defaultIn) {
     fvecs[toLower(keyIn)] = FVec(keyIn, defaultIn); }
-  void addMVec(string keyIn, vector<int> defaultIn, bool hasMinIn,
+  void addMVec(stringref keyIn, const vector<int>& defaultIn, bool hasMinIn,
     bool hasMaxIn, int minIn, int maxIn) { mvecs[toLower(keyIn)]
     = MVec(keyIn, defaultIn, hasMinIn, hasMaxIn, minIn, maxIn); }
-   void addPVec(string keyIn, vector<double> defaultIn, bool hasMinIn,
+   void addPVec(stringref keyIn, const vector<double>& defaultIn, bool hasMinIn,
     bool hasMaxIn, double minIn, double maxIn) { pvecs[toLower(keyIn)]
     = PVec(keyIn, defaultIn, hasMinIn, hasMaxIn, minIn, maxIn); }
 
@@ -279,19 +279,19 @@ public:
   map<string, PVec> getPVecMap(stringref match);
 
   // Change current value, respecting limits.
-  void flag(string keyIn, bool nowIn);
-  bool mode(string keyIn, int nowIn);
-  void parm(string keyIn, double nowIn);
+  void flag(stringref keyIn, bool nowIn);
+  bool mode(stringref keyIn, int nowIn);
+  void parm(stringref keyIn, double nowIn);
   void word(stringref keyIn, stringref nowIn);
-  void fvec(string keyIn, vector<bool> nowIn);
-  void mvec(string keyIn, vector<int> nowIn);
-  void pvec(string keyIn, vector<double> nowIn);
+  void fvec(stringref keyIn, const vector<bool>& nowIn);
+  void mvec(stringref keyIn, const vector<int>& nowIn);
+  void pvec(stringref keyIn, const vector<double>& nowIn);
 
   // Change current value, disregarding limits.
-  void forceMode(string keyIn, int nowIn);
-  void forceParm(string keyIn, double nowIn);
-  void forceMVec(string keyIn, vector<int> nowIn);
-  void forcePVec(string keyIn, vector<double> nowIn);
+  void forceMode(stringref keyIn, int nowIn);
+  void forceParm(stringref keyIn, double nowIn);
+  void forceMVec(stringref keyIn, const vector<int>& nowIn);
+  void forcePVec(stringref keyIn, const vector<double>& nowIn);
 
   // Restore current value to default.
   void resetFlag(stringref keyIn);

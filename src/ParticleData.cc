@@ -574,7 +574,7 @@ void ParticleData::initCommon() {
 // of normal hadrons and the ResonanceWidths of resonances. For the latter
 // the order of initialization is essential to get secondary widths right.
 
-void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
+void ParticleData::initWidths(const vector<ResonanceWidths*>& resonancePtrs) {
 
   // Initialize some common data.
   initCommon();
@@ -1558,7 +1558,7 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
 
 // Print out partial table of database in input order.
 
-void ParticleData::list(vector<int> idList, ostream& os) {
+void ParticleData::list(const vector<int>& idList, ostream& os) {
 
   // Table header; output for bool as off/on.
   os << "\n --------  PYTHIA Particle Data Table (partial)  ---------"

@@ -87,7 +87,7 @@ public:
   virtual FlavContainer pick(FlavContainer& flavOld);
 
   // Combine two flavours (including diquarks) to produce a hadron.
-  virtual int combine(FlavContainer& flav1, FlavContainer& flav2);
+  virtual int combine(const FlavContainer& flav1, const FlavContainer& flav2);
 
   // Ditto, simplified input argument for simple configurations.
   virtual int combine( int id1, int id2, bool keepTrying = true) {
