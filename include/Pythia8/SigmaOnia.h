@@ -34,11 +34,11 @@ public:
 private:
 
   // Intialise and check settings.
-  void initStates(string wave, const vector<int> &states,
+  void initStates(stringref wave, const vector<int> &states,
     vector<int> &jnums, bool &valid);
-  void initSettings(string wave, unsigned int size,
+  void initSettings(stringref wave, unsigned int size,
     const vector<string> &names, vector< vector<double> > &pvecs, bool &valid);
-  void initSettings(string wave, unsigned int size,
+  void initSettings(stringref wave, unsigned int size,
     const vector<string> &names, vector< vector<bool> > &fvecs, bool &valid);
 
   // Stored pointers.

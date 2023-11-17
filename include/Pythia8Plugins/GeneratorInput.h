@@ -46,14 +46,14 @@ public:
   void extractRunParam(string line);
 
   // Check if a parameter exists
-  bool haveParam(const string &paramIn) {
+  bool haveParam(stringref paramIn) {
     return (params.find(paramIn) == params.end()) ? false : true; }
 
   // Get a parameter as a double or integer.
   // Caller should have already checked existance of the parameter.
-  double getParam(const string &paramIn) {
+  double getParam(stringref paramIn) {
     return (haveParam(paramIn)) ? params[paramIn] : 0.; }
-  int    getParamAsInt(const string &paramIn) {
+  int    getParamAsInt(stringref paramIn) {
     return (haveParam(paramIn)) ? int(params[paramIn]) : 0.; }
 
   // Print parameters read from the '.par' file
@@ -62,7 +62,7 @@ public:
 private:
 
   // Warn if a parameter is going to be overwriten
-  void warnParamOverwrite(const string &paramIn, double val);
+  void warnParamOverwrite(stringref paramIn, double val);
 
   // Simple string trimmer
   static string trim(string s);
@@ -170,14 +170,14 @@ public:
   void extractRunParam(string line);
 
   // Check if a parameter exists
-  bool haveParam(const string &paramIn) {
+  bool haveParam(stringref paramIn) {
     return (params.find(paramIn) == params.end()) ? false : true; }
 
   // Get a parameter as a double or integer.
   // Caller should have already checked existance of the parameter.
-  double getParam(const string &paramIn) {
+  double getParam(stringref paramIn) {
     return (haveParam(paramIn)) ? params[paramIn] : 0.; }
-  int    getParamAsInt(const string &paramIn) {
+  int    getParamAsInt(stringref paramIn) {
     return (haveParam(paramIn)) ? int(params[paramIn]) : 0.; }
 
   // Print parameters read from the '.par' file
@@ -186,7 +186,7 @@ public:
 private:
 
   // Warn if a parameter is going to be overwriten
-  void warnParamOverwrite(const string &paramIn, double val);
+  void warnParamOverwrite(stringref paramIn, double val);
 
   // Simple string trimmer
   static string trim(string s);
@@ -335,7 +335,7 @@ inline void AlpgenPar::printParams() {
 
 // Warn if a parameter is going to be overwriten
 
-inline void AlpgenPar::warnParamOverwrite(const string &paramIn, double val) {
+inline void AlpgenPar::warnParamOverwrite(stringref paramIn, double val) {
 
   // Check if present and if new value is different
   if (haveParam(paramIn) &&
@@ -1213,7 +1213,7 @@ inline void MadgraphPar::printParams() {
 
 // Warn if a parameter is going to be overwriten
 
-inline void MadgraphPar::warnParamOverwrite(const string &paramIn,
+inline void MadgraphPar::warnParamOverwrite(stringref paramIn,
   double val) {
 
   // Check if present and if new value is different

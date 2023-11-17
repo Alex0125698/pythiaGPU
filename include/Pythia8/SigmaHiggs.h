@@ -646,7 +646,7 @@ class Sigma2qg2Hchgq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2Hchgq(int idIn, int codeIn, string nameIn) : idNew(idIn),
+  Sigma2qg2Hchgq(int idIn, int codeIn, stringref nameIn) : idNew(idIn),
     codeSave(codeIn), nameSave(nameIn) {}
 
   // Initialize process.

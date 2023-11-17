@@ -507,7 +507,7 @@ void StringRegion::setUp(Vec4 p1, Vec4 p2, bool isMassless) {
 
 // Project a four-momentum onto (x+, x-, px, py).
 
-void StringRegion::project(Vec4 pIn) {
+void StringRegion::project(Vec4ref pIn) {
 
   // Perform projections by four-vector multiplication.
   xPosProj = 2. * (pIn * pNeg) / w2;

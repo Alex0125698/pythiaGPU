@@ -261,7 +261,7 @@ void SigmaOniaSetup::setupSigma2qq(vector<SigmaProcess*> &procs, bool oniaIn) {
 
 // Initialise and check the flavour, j-number, and validity of states.
 
-void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
+void SigmaOniaSetup::initStates(stringref wave, const vector<int> &states,
   vector<int> &jnums, bool &valid) {
 
   set<int> unique;
@@ -336,7 +336,7 @@ void SigmaOniaSetup::initStates(string wave, const vector<int> &states,
 
 // Initialise and check a group of PVec settings.
 
-void SigmaOniaSetup::initSettings(string wave, unsigned int size,
+void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   const vector<string> &names, vector< vector<double> > &pvecs,
   bool &valid) {
 
@@ -356,7 +356,7 @@ void SigmaOniaSetup::initSettings(string wave, unsigned int size,
 
 // Initialise and check a group of FVec settings.
 
-void SigmaOniaSetup::initSettings(string wave, unsigned int size,
+void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   const vector<string> &names, vector< vector<bool> > &fvecs,
   bool &valid) {
 

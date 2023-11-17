@@ -99,7 +99,7 @@ public:
   bool fragment( int iSub, ColConfig& colConfig, Event& event);
 
   // Find the boost matrix to the rest frame of a junction.
-  RotBstMatrix junctionRestFrame(Vec4& p0, Vec4& p1, Vec4& p2);
+  RotBstMatrix junctionRestFrame(Vec4ref p0, Vec4ref p1, Vec4ref p2);
 
 private:
 

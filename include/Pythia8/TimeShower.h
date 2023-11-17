@@ -161,7 +161,7 @@ public:
   // Return clustering kinematics - as needed for merging.
   // Usage: clustered( const Event& event, string name, int iRad, int iEmt,
   //                   int iRec)
-  virtual Event clustered( const Event&, string, int, int, int)
+  virtual Event clustered( const Event&, stringref, int, int, int)
     { return Event();}
 
   // Return state after a branching, as needed to evaluate more complicated
@@ -268,7 +268,8 @@ private:
   bool doTrialNow, canEnhanceEmission, canEnhanceTrial, canEnhanceET;
   string splittingNameNow, splittingNameSel;
   map< double, pair<string,double> > enhanceFactors;
-  void storeEnhanceFactor(double pT2, string name, double enhanceFactorIn)
+
+  void storeEnhanceFactor(double pT2, stringref name, double enhanceFactorIn)
     { enhanceFactors.insert(make_pair(pT2,make_pair(name,enhanceFactorIn)));}
 
   // All dipole ends and a pointer to the selected hardest dipole end.
@@ -326,7 +327,7 @@ private:
   void findAsymPol( Event& event, TimeDipoleEnd* dip);
 
   // Rescatter: propagate dipole recoil to internal lines connecting systems.
-  bool rescatterPropagateRecoil( Event& event, Vec4& pNew);
+  bool rescatterPropagateRecoil( Event& event, Vec4ref pNew);
 
   // Properties stored for (some) global recoil schemes.
   // Vectors of event indices defining the hard process.

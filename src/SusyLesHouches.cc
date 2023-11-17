@@ -17,7 +17,7 @@ namespace Pythia8 {
 
 // Main routine to read in SLHA and LHEF+SLHA files
 
-int SusyLesHouches::readFile(string slhaFileIn, int verboseIn,
+int SusyLesHouches::readFile(stringref slhaFileIn, int verboseIn,
   bool useDecayIn) {
 
   slhaFile = slhaFileIn;
@@ -1838,7 +1838,7 @@ int SusyLesHouches::checkSpectrum() {
 
 // Simple utility to print messages, warnings, and errors
 
-void SusyLesHouches::message(int level, string place,string themessage,
+void SusyLesHouches::message(int level, stringref place,stringref themessage,
   int line) {
   if (verboseSav == 0) return;
   // By default all output to cout, but lines below allow finer control.

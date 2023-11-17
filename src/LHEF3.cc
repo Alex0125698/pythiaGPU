@@ -168,7 +168,7 @@ void LHAwgt::print(ostream & file) const {
 
 // Construct from an XML-tag.
 
-LHAweight::LHAweight(const XMLTag & tag, string defname)
+LHAweight::LHAweight(const XMLTag & tag, stringref defname)
   : id(defname), contents(defname) {
   for ( map<string,string>::const_iterator it = tag.attr.begin();
         it != tag.attr.end(); ++it ) {

@@ -24,7 +24,7 @@ namespace Pythia8 {
 
 // Initialisation on the process string
 
-void HardProcess::initOnProcess( string process, ParticleData* particleData) {
+void HardProcess::initOnProcess( stringref process, ParticleData* particleData) {
   state.init("(hard process)", particleData);
   translateProcessString(process);
 }
@@ -33,7 +33,7 @@ void HardProcess::initOnProcess( string process, ParticleData* particleData) {
 
 // Initialisation on the path to LHE file
 
-void HardProcess::initOnLHEF( string LHEfile, ParticleData* particleData) {
+void HardProcess::initOnLHEF( stringref LHEfile, ParticleData* particleData) {
   state.init("(hard process)", particleData);
   translateLHEFString(LHEfile);
 }
@@ -49,7 +49,7 @@ void HardProcess::initOnLHEF( string LHEfile, ParticleData* particleData) {
 // is automatic, else the user is asked to supply the necessary
 // information.
 
-void HardProcess::translateLHEFString( string LHEpath){
+void HardProcess::translateLHEFString( stringref LHEpath){
 
   // Open path to LHEF and extract merging scale
   ifstream infile;
@@ -551,7 +551,7 @@ void HardProcess::translateLHEFString( string LHEpath){
 // internal notation
 // Currently, the input string has to be in MadEvent notation
 
-void HardProcess::translateProcessString( string process){
+void HardProcess::translateProcessString( stringref process){
 
   vector <int> incom;
   vector <int> inter;
@@ -969,7 +969,7 @@ bool HardProcess::allowCandidates(int iPos, vector<int> Pos1,
 
 // Function to identify the hard subprocess in the current event
 
-void HardProcess::storeCandidates( const Event& event, string process){
+void HardProcess::storeCandidates( const Event& event, stringref process){
 
   // Store the reference event
   state.clear();
@@ -3793,7 +3793,7 @@ double MergingHooks::cutbasedms( const Event& event ){
 
 // Function to compute Delta R separation from 4-vector input.
 
-double MergingHooks::deltaRij(Vec4 jet1, Vec4 jet2){
+double MergingHooks::deltaRij(Vec4ref jet1, Vec4ref jet2){
 
   // Declare return variable
   double deltaR = 0.;

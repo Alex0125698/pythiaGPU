@@ -208,7 +208,7 @@ Pythia::~Pythia() {
 // Read in one update for a setting or particle data from a single line.
 
 // done
-bool Pythia::readString(string line, bool warn) {
+bool Pythia::readString(stringref line, bool warn) {
 
   // Check that constructor worked.
   if (!isConstructed) return false;
@@ -237,7 +237,7 @@ bool Pythia::readString(string line, bool warn) {
 // Read in updates for settings or particle data from user-defined file.
 
 // done
-bool Pythia::readFile(string fileName, bool warn, int subrun) {
+bool Pythia::readFile(stringref fileName, bool warn, int subrun) {
 
   // Check that constructor worked.
   if (!isConstructed) return false;
@@ -1891,7 +1891,7 @@ void Pythia::banner(ostream& os) {
 
 // Check for lines in file that mark the beginning of new subrun.
 
-int Pythia::readSubrun(string line, bool warn, ostream& os) {
+int Pythia::readSubrun(stringref line, bool warn, ostream& os) {
 
   // If empty line then done.
   int subrunLine = SUBRUNDEFAULT;
@@ -1944,7 +1944,7 @@ int Pythia::readSubrun(string line, bool warn, ostream& os) {
 // Return +1 for beginning, -1 for end, 0 else.
 
 // done
-int Pythia::readCommented(string line) {
+int Pythia::readCommented(stringref line) {
 
   // If less than two nontrivial characters on line then done.
   if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return 0;

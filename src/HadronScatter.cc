@@ -95,7 +95,7 @@ const double  SigmaPartialWave::GRIDSAFETY = 0.05;
 
 // Perform initialization and store pointers.
 
-bool SigmaPartialWave::init(int processIn, string xmlPath, string filename,
+bool SigmaPartialWave::init(int processIn, stringref xmlPath, stringref filename,
                             Info *infoPtrIn, ParticleData *particleDataPtrIn,
                             Rndm *rndmPtrIn) {
   // Store incoming pointers
@@ -139,7 +139,7 @@ bool SigmaPartialWave::init(int processIn, string xmlPath, string filename,
 
 // Read input data file
 
-bool SigmaPartialWave::readFile(string xmlPath, string filename) {
+bool SigmaPartialWave::readFile(stringref xmlPath, stringref filename) {
   // Create full path and open file
   string fullPath = xmlPath + filename;
   ifstream ifs(fullPath.c_str());

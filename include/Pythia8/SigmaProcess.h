@@ -149,7 +149,7 @@ public:
   virtual void setIdColAcol() {}
 
   // Perform kinematics for a Multiparton Interaction, in its rest frame.
-  virtual bool final2KinMPI( int = 0, int = 0, Vec4 = 0., Vec4 = 0.,
+  virtual bool final2KinMPI( int = 0, int = 0, Vec4ref = 0., Vec4ref = 0.,
     double = 0., double = 0.) {return true;}
 
   // Evaluate weight for simultaneous flavours (only gamma*/Z0 gamma*/Z0).
@@ -537,8 +537,8 @@ public:
     if (convert2mb()) sigmaTmp *= CONVERT2MB; return sigmaTmp;}
 
   // Perform kinematics for a Multiparton Interaction, in its rest frame.
-  virtual bool   final2KinMPI( int i1Res = 0, int i2Res = 0, Vec4 p1Res = 0.,
-    Vec4 p2Res = 0., double m1Res = 0., double m2Res = 0.);
+  virtual bool   final2KinMPI( int i1Res = 0, int i2Res = 0, Vec4ref p1Res = 0.,
+    Vec4ref p2Res = 0., double m1Res = 0., double m2Res = 0.);
 
 protected:
 
@@ -579,7 +579,7 @@ public:
 
   // Input and complement kinematics for resolved 2 -> 3 process.
   virtual void   set3Kin( double x1in, double x2in, double sHin,
-    Vec4 p3cmIn, Vec4 p4cmIn, Vec4 p5cmIn, double m3in, double m4in,
+    Vec4ref p3cmIn, Vec4ref p4cmIn, Vec4ref p5cmIn, double m3in, double m4in,
     double m5in, double runBW3in, double runBW4in, double runBW5in) {
     store3Kin( x1in, x2in, sHin, p3cmIn, p4cmIn, p5cmIn, m3in, m4in, m5in,
     runBW3in, runBW4in, runBW5in); sigmaKin();}
@@ -594,7 +594,7 @@ protected:
 
   // Store kinematics and set scales for resolved 2 -> 3 process.
   virtual void   store3Kin( double x1in, double x2in, double sHin,
-    Vec4 p3cmIn, Vec4 p4cmIn, Vec4 p5cmIn, double m3in, double m4in,
+    Vec4ref p3cmIn, Vec4ref p4cmIn, Vec4ref p5cmIn, double m3in, double m4in,
     double m5in, double runBW3in, double runBW4in, double runBW5in);
 
   // Calculate modified masses and four-vectors for matrix elements.

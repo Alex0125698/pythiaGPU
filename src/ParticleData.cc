@@ -778,7 +778,7 @@ void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
 
 // Read in database from specific XML file (which may refer to others).
 
-bool ParticleData::readXML(string inFile, bool reset) {
+bool ParticleData::readXML(stringref inFile, bool reset) {
 
   // Normally reset whole database before beginning.
   if (reset) {pdt.clear(); isInit = false;}
@@ -904,7 +904,7 @@ bool ParticleData::readXML(string inFile, bool reset) {
 
 // Print out complete database in numerical order as an XML file.
 
-void ParticleData::listXML(string outFile) {
+void ParticleData::listXML(stringref outFile) {
 
   // Convert file name to ofstream.
     const char* cstring = outFile.c_str();
@@ -971,7 +971,7 @@ void ParticleData::listXML(string outFile) {
 
 // Read in database from specific free format file.
 
-bool ParticleData::readFF(string inFile, bool reset) {
+bool ParticleData::readFF(stringref inFile, bool reset) {
 
   // Normally reset whole database before beginning.
   if (reset) {pdt.clear(); isInit = false;}
@@ -1076,7 +1076,7 @@ bool ParticleData::readFF(string inFile, bool reset) {
 
 // Print out complete database in numerical order as a free format file.
 
-void ParticleData::listFF(string outFile) {
+void ParticleData::listFF(stringref outFile) {
 
   // Convert file name to ofstream.
     const char* cstring = outFile.c_str();
@@ -1130,7 +1130,7 @@ void ParticleData::listFF(string outFile) {
 // Read in updates from a character string, like a line of a file.
 // Is used by readString (and readFile) in Pythia.
 
-  bool ParticleData::readString(string lineIn, bool warn, ostream& os) {
+  bool ParticleData::readString(stringref lineIn, bool warn, ostream& os) {
 
   // If empty line then done.
   if (lineIn.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
@@ -2050,7 +2050,7 @@ double ParticleData::resOpenFrac(int id1In, int id2In, int id3In) {
 
 // Extract XML value string following XML attribute.
 
-string ParticleData::attributeValue(string line, string attribute) {
+string ParticleData::attributeValue(stringref line, stringref attribute) {
 
   if (line.find(attribute) == string::npos) return "";
   int iBegAttri = line.find(attribute);
@@ -2064,7 +2064,7 @@ string ParticleData::attributeValue(string line, string attribute) {
 
 // Extract XML bool value following XML attribute.
 
-bool ParticleData::boolAttributeValue(string line, string attribute) {
+bool ParticleData::boolAttributeValue(stringref line, stringref attribute) {
 
   string valString = attributeValue(line, attribute);
   if (valString == "") return false;
@@ -2076,7 +2076,7 @@ bool ParticleData::boolAttributeValue(string line, string attribute) {
 
 // Extract XML int value following XML attribute.
 
-int ParticleData::intAttributeValue(string line, string attribute) {
+int ParticleData::intAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0;
   istringstream valStream(valString);
@@ -2090,7 +2090,7 @@ int ParticleData::intAttributeValue(string line, string attribute) {
 
 // Extract XML double value following XML attribute.
 
-double ParticleData::doubleAttributeValue(string line, string attribute) {
+double ParticleData::doubleAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0.;
   istringstream valStream(valString);

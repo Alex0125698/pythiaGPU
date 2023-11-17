@@ -1281,8 +1281,8 @@ bool StringFragmentation::fragmentToJunction(Event& event) {
 // Find the boost matrix to the rest frame of a junction,
 // given the three respective endpoint four-momenta.
 
-RotBstMatrix StringFragmentation::junctionRestFrame(Vec4& p0, Vec4& p1,
-  Vec4& p2) {
+RotBstMatrix StringFragmentation::junctionRestFrame(Vec4ref p0, Vec4ref p1,
+  Vec4ref p2) {
 
   // Calculate masses and other invariants.
   Vec4 pSumJun  = p0 + p1 + p2;

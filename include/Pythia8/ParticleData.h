@@ -108,7 +108,7 @@ class ParticleDataEntry {
 public:
 
   // Constructors: for antiparticle exists or not.
-  ParticleDataEntry(int idIn = 0, string nameIn = " ",
+  ParticleDataEntry(int idIn = 0, stringref nameIn = " ",
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
     double mMaxIn = 0., double tau0In = 0.) : idSave(abs(idIn)),
@@ -117,7 +117,7 @@ public:
     mWidthSave (mWidthIn), mMinSave(mMinIn), mMaxSave(mMaxIn),
     tau0Save(tau0In), hasAntiSave(false), hasChangedSave(true),
     resonancePtr(0) {setDefaults();}
-  ParticleDataEntry(int idIn, string nameIn, string antiNameIn,
+  ParticleDataEntry(int idIn, stringref nameIn, stringref antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
     double mMaxIn = 0., double tau0In = 0.) : idSave(abs(idIn)),
@@ -139,7 +139,7 @@ public:
     particleDataPtr = particleDataPtrIn;}
 
   // Reset all the properties of an existing particle.
-  void setAll(string nameIn, string antiNameIn, int spinTypeIn = 0,
+  void setAll(stringref nameIn, stringref antiNameIn, int spinTypeIn = 0,
     int chargeTypeIn = 0, int colTypeIn = 0, double m0In = 0.,
     double mWidthIn = 0., double mMinIn = 0., double mMaxIn = 0.,
     double tau0In = 0.)
@@ -152,10 +152,10 @@ public:
 
   // Change current values one at a time (or set if not set before).
   // (Must use set here since else name+signature clash with get methods.)
-  void setName(string nameIn) {nameSave = nameIn; hasChangedSave = true;}
-  void setAntiName(string antiNameIn) {antiNameSave = antiNameIn;
+  void setName(stringref nameIn) {nameSave = nameIn; hasChangedSave = true;}
+  void setAntiName(stringref antiNameIn) {antiNameSave = antiNameIn;
     hasAntiSave = (toLower(antiNameIn) != "void"); hasChangedSave = true;}
-  void setNames(string nameIn, string antiNameIn) {nameSave = nameIn;
+  void setNames(stringref nameIn, stringref antiNameIn) {nameSave = nameIn;
     antiNameSave = antiNameIn; hasAntiSave = (toLower(antiNameIn) != "void");
     hasChangedSave = true;}
   void setSpinType(int spinTypeIn) {spinTypeSave = spinTypeIn;
@@ -319,7 +319,7 @@ private:
   void setConstituentMass();
 
   // Useful functions for string handling.
-  string toLower(const string& nameConv) { string temp(nameConv);
+  string toLower(stringref nameConv) { string temp(nameConv);
     for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
     return temp; }
 
@@ -344,26 +344,26 @@ public:
     couplingsPtr = couplingsPtrIn;}
 
   // Read in database from specific file.
-  bool init(string startFile = "../xmldoc/ParticleData.xml") {
+  bool init(stringref startFile = "../xmldoc/ParticleData.xml") {
     initCommon(); return readXML(startFile);}
 
   // Overwrite existing database by reading from specific file.
-  bool reInit(string startFile, bool xmlFormat = true) { initCommon();
+  bool reInit(stringref startFile, bool xmlFormat = true) { initCommon();
     return (xmlFormat) ? readXML(startFile) : readFF(startFile);}
 
   // Initialize pointers, normal Breit-Wigners and special resonances.
   void initWidths(vector<ResonanceWidths*> resonancePtrs);
 
   // Read or list whole (or part of) database from/to an XML file.
-  bool readXML(string inFile, bool reset = true) ;
-  void listXML(string outFile);
+  bool readXML(stringref inFile, bool reset = true) ;
+  void listXML(stringref outFile);
 
   // Read or list whole (or part of) database from/to a free format file.
-  bool readFF(string inFile, bool reset = true) ;
-  void listFF(string outFile);
+  bool readFF(stringref inFile, bool reset = true) ;
+  void listFF(stringref outFile);
 
   // Read in one update from a single line.
-  bool readString(string lineIn, bool warn = true, ostream& os = cout) ;
+  bool readString(stringref lineIn, bool warn = true, ostream& os = cout) ;
 
   // Keep track whether any readings have failed, invalidating run setup.
   bool readingFailed() {return readingFailedSave;}
@@ -386,13 +386,13 @@ public:
   void checkTable(int verbosity, ostream& os = cout) ;
 
   // Add new entry.
-  void addParticle(int idIn, string nameIn = " ", int spinTypeIn = 0,
+  void addParticle(int idIn, stringref nameIn = " ", int spinTypeIn = 0,
     int chargeTypeIn = 0, int colTypeIn = 0, double m0In = 0.,
     double mWidthIn = 0., double mMinIn = 0., double mMaxIn = 0.,
     double tau0In = 0.) { pdt[abs(idIn)] = ParticleDataEntry(idIn,
     nameIn, spinTypeIn, chargeTypeIn, colTypeIn, m0In, mWidthIn,
     mMinIn, mMaxIn, tau0In); pdt[abs(idIn)].initPtr(this); }
-  void addParticle(int idIn, string nameIn, string antiNameIn,
+  void addParticle(int idIn, stringref nameIn, stringref antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
     double mMaxIn = 0., double tau0In = 0.) { pdt[abs(idIn)]
@@ -401,7 +401,7 @@ public:
     pdt[abs(idIn)].initPtr(this); }
 
   // Reset all the properties of an entry in one go.
-  void setAll(int idIn, string nameIn, string antiNameIn,
+  void setAll(int idIn, stringref nameIn, stringref antiNameIn,
     int spinTypeIn = 0, int chargeTypeIn = 0, int colTypeIn = 0,
     double m0In = 0., double mWidthIn = 0., double mMinIn = 0.,
     double mMaxIn = 0.,double tau0In = 0.) { if (isParticle(idIn))
@@ -418,11 +418,11 @@ public:
   int nextId(int idIn) ;
 
   // Change current values one at a time (or set if not set before).
-  void name(int idIn, string nameIn) {
+  void name(int idIn, stringref nameIn) {
     if (isParticle(idIn)) pdt[abs(idIn)].setName(nameIn); }
-  void antiName(int idIn, string antiNameIn) {
+  void antiName(int idIn, stringref antiNameIn) {
     if (isParticle(idIn)) pdt[abs(idIn)].setAntiName(antiNameIn); }
-  void names(int idIn, string nameIn, string antiNameIn) {
+  void names(int idIn, stringref nameIn, stringref antiNameIn) {
     if (isParticle(idIn)) pdt[abs(idIn)].setNames(nameIn, antiNameIn); }
   void spinType(int idIn, int spinTypeIn) {
     if (isParticle(idIn)) pdt[abs(idIn)].setSpinType(spinTypeIn); }
@@ -594,18 +594,18 @@ private:
   void   initCommon();
 
   // Useful functions for string handling.
-  string toLower(const string& nameConv) { string temp(nameConv);
+  string toLower(stringref nameConv) { string temp(nameConv);
     for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
     return temp; }
-  bool   boolString(string tag) { string tagLow = toLower(tag);
+  bool   boolString(stringref tag) { string tagLow = toLower(tag);
     return ( tagLow == "true" || tagLow == "1" || tagLow == "on"
     || tagLow == "yes" || tagLow == "ok" ); }
 
   // Extract XML value following XML attribute.
-  string attributeValue(string line, string attribute);
-  bool   boolAttributeValue(string line, string attribute);
-  int    intAttributeValue(string line, string attribute);
-  double doubleAttributeValue(string line, string attribute);
+  string attributeValue(stringref line, stringref attribute);
+  bool   boolAttributeValue(stringref line, stringref attribute);
+  int    intAttributeValue(stringref line, stringref attribute);
+  double doubleAttributeValue(stringref line, stringref attribute);
 
 };
 

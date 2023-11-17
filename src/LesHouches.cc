@@ -126,7 +126,7 @@ void LHAup::listEvent(ostream& os) {
 
 // Open and write header to a Les Houches Event File.
 
-bool LHAup::openLHEF(string fileNameIn) {
+bool LHAup::openLHEF(stringref fileNameIn) {
 
   // Open file for writing. Reset it to be empty.
   fileName = fileNameIn;
@@ -1166,7 +1166,7 @@ bool LHAupFromPYTHIA8::updateSigma() {
 
 // Function to open the output file stream.
 
-bool LHEF3FromPythia8::openLHEF(string fileNameIn) {
+bool LHEF3FromPythia8::openLHEF(stringref fileNameIn) {
 
   // Open file for writing. Reset it to be empty.
   fileName = fileNameIn;

@@ -34,7 +34,7 @@ void HelicityMatrixElement::initPointers(ParticleData* particleDataPtrIn,
 // Initialize the channel for the helicity matrix element.
 
 HelicityMatrixElement* HelicityMatrixElement::initChannel(
-  vector<HelicityParticle>& p) {
+  const vector<HelicityParticle>& p) {
 
   pID.clear();
   pM.clear();
@@ -237,7 +237,7 @@ complex HelicityMatrixElement::calculateProductD(
 // Initialize a fermion line.
 
 void HelicityMatrixElement::setFermionLine(int position,
-  HelicityParticle& p0, HelicityParticle& p1) {
+  const HelicityParticle& p0, const HelicityParticle& p1) {
 
   vector< Wave4 > u0, u1;
 
@@ -544,7 +544,7 @@ complex HMETwoFermions2GammaZ2TwoFermions::calculateZME(
 
 // Return the Z' vector or axial coupling for a fermion.
 
-double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, string type) {
+double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
@@ -706,7 +706,7 @@ complex HMEZ2TwoFermions::calculateME(vector<int> h) {
 
 // Return the Z' vector or axial coupling for a fermion.
 
-double HMEZ2TwoFermions::zpCoupling(int id, string type) {
+double HMEZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
@@ -2135,8 +2135,8 @@ void HMETau2FourPions::initHadronicCurrent(vector<HelicityParticle>& p) {
 
 // Return the first t-vector.
 
-Wave4 HMETau2FourPions::t1(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t1(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
 
   Wave4  a1Q(q2 + q3 + q4);
   Wave4 rhoQ(q3 + q4);
@@ -2159,8 +2159,8 @@ Wave4 HMETau2FourPions::t1(Wave4 &q, Wave4 &q1, Wave4 &q2,
 
 // Return the second t-vector.
 
-Wave4 HMETau2FourPions::t2(Wave4 &q, Wave4 &/*q1*/, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t2(const Wave4& q, const Wave4& /*q1*/, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
 
   Wave4  a1Q(q2 + q3 + q4);
   Wave4 sigQ(q3 + q4);
@@ -2175,8 +2175,8 @@ Wave4 HMETau2FourPions::t2(Wave4 &q, Wave4 &/*q1*/, Wave4 &q2,
 
 // Return the third t-vector.
 
-Wave4 HMETau2FourPions::t3(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4) {
+Wave4 HMETau2FourPions::t3(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4) {
   Wave4 omeQ(q2 + q3 + q4);
   Wave4 rhoQ(q3 + q4);
   double omeS = m2(omeQ);
@@ -2480,8 +2480,8 @@ void HMETau2FivePions::initHadronicCurrent(vector<HelicityParticle>& p) {
 
 // Return the omega-rho hadronic current.
 
-Wave4 HMETau2FivePions::Ja(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4, Wave4 &q5) {
+Wave4 HMETau2FivePions::Ja(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4, const Wave4& q5) {
 
   Wave4 j = epsilon(q1, q2, q3);
   return omegaW * (breitWigner(m2(q), a1M, a1G)
@@ -2498,8 +2498,8 @@ Wave4 HMETau2FivePions::Ja(Wave4 &q, Wave4 &q1, Wave4 &q2,
 
 // Return the a1-sigma hadronic current.
 
-Wave4 HMETau2FivePions::Jb(Wave4 &q, Wave4 &q1, Wave4 &q2,
-                           Wave4 &q3, Wave4 &q4, Wave4 &q5) {
+Wave4 HMETau2FivePions::Jb(const Wave4& q, const Wave4& q1, const Wave4& q2,
+                           const Wave4& q3, const Wave4& q4, const Wave4& q5) {
 
   double s = m2(q);
   Wave4  a1Q = q1 + q2 + q3;

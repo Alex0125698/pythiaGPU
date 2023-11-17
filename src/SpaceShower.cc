@@ -2609,8 +2609,8 @@ double SpaceShower::calcMEcorr(int MEtype, int idMother, int idDaughterIn,
 // Provide actual ME weight for current branching for weak t-channel emissions.
 
 double SpaceShower::calcMEcorrWeak(int MEtype, double m2, double z,
-  double pT2, Vec4 pMother, Vec4 pB, Vec4 pDaughter,
-  Vec4 pB0, Vec4 p1, Vec4 p2, Vec4 pSister) {
+  double pT2, Vec4ref pMother, Vec4ref pB, Vec4 pDaughter,
+  Vec4 pB0, Vec4 p1, Vec4 p2, Vec4ref pSister) {
 
   // Find daughter four-momentum in current frame.
   Vec4 pA = pMother - pSister;

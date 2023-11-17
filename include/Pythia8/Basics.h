@@ -78,8 +78,8 @@ public:
   int pick(const vector<double>& prob) ;
 
   // Save or read current state to or from a binary file.
-  bool dumpState(string fileName);
-  bool readState(string fileName);
+  bool dumpState(stringref fileName);
+  bool readState(stringref fileName);
 
 private:
 
@@ -116,8 +116,8 @@ public:
   // Constructors.
   Vec4(double xIn = 0., double yIn = 0., double zIn = 0., double tIn = 0.)
     : xx(xIn), yy(yIn), zz(zIn), tt(tIn) { }
-  Vec4(const Vec4& v) : xx(v.xx), yy(v.yy), zz(v.zz), tt(v.tt) { }
-  Vec4& operator=(const Vec4& v) { if (this != &v) { xx = v.xx; yy = v.yy;
+  Vec4(Vec4ref v) : xx(v.xx), yy(v.yy), zz(v.zz), tt(v.tt) { }
+  Vec4& operator=(Vec4ref v) { if (this != &v) { xx = v.xx; yy = v.yy;
     zz = v.zz; tt = v.tt; } return *this; }
   Vec4& operator=(double value) { xx = value; yy = value; zz = value;
     tt = value; return *this; }
@@ -138,6 +138,12 @@ public:
   double pz() const {return zz;}
   double e() const {return tt;}
   double& operator[](int i) {
+    if      (i == 1) return xx;
+    else if (i == 2) return yy;
+    else if (i == 3) return zz;
+    else             return tt;
+  }
+  const double& operator[](int i) const {
     if      (i == 1) return xx;
     else if (i == 2) return yy;
     else if (i == 3) return zz;
@@ -170,21 +176,21 @@ public:
   void flip4() {xx = -xx; yy = -yy; zz = -zz; tt = -tt;}
   void rot(double thetaIn, double phiIn);
   void rotaxis(double phiIn, double nx, double ny, double nz);
-  void rotaxis(double phiIn, const Vec4& n);
+  void rotaxis(double phiIn, Vec4ref n);
   void bst(double betaX, double betaY, double betaZ);
   void bst(double betaX, double betaY, double betaZ, double gamma);
-  void bst(const Vec4& pIn);
-  void bst(const Vec4& pIn, double mIn);
-  void bstback(const Vec4& pIn);
-  void bstback(const Vec4& pIn, double mIn);
+  void bst(Vec4ref pIn);
+  void bst(Vec4ref pIn, double mIn);
+  void bstback(Vec4ref pIn);
+  void bstback(Vec4ref pIn, double mIn);
   void rotbst(const RotBstMatrix& M);
 
   // Operator overloading with member functions
-  Vec4 operator-() {Vec4 tmp; tmp.xx = -xx; tmp.yy = -yy; tmp.zz = -zz;
+  Vec4 operator-() const {Vec4 tmp; tmp.xx = -xx; tmp.yy = -yy; tmp.zz = -zz;
     tmp.tt = -tt; return tmp;}
-  Vec4& operator+=(const Vec4& v) {xx += v.xx; yy += v.yy; zz += v.zz;
+  Vec4& operator+=(Vec4ref v) {xx += v.xx; yy += v.yy; zz += v.zz;
     tt += v.tt; return *this;}
-  Vec4& operator-=(const Vec4& v) {xx -= v.xx; yy -= v.yy; zz -= v.zz;
+  Vec4& operator-=(Vec4ref v) {xx -= v.xx; yy -= v.yy; zz -= v.zz;
     tt -= v.tt; return *this;}
   Vec4& operator*=(double f) {xx *= f; yy *= f; zz *= f;
     tt *= f; return *this;}
@@ -192,39 +198,39 @@ public:
     tt /= f; return *this;}
 
   // Operator overloading with friends
-  friend Vec4 operator+(const Vec4& v1, const Vec4& v2);
-  friend Vec4 operator-(const Vec4& v1, const Vec4& v2);
-  friend Vec4 operator*(double f, const Vec4& v1);
-  friend Vec4 operator*(const Vec4& v1, double f);
-  friend Vec4 operator/(const Vec4& v1, double f);
-  friend double operator*(const Vec4& v1, const Vec4& v2);
+  friend Vec4 operator+(Vec4ref v1, Vec4ref v2);
+  friend Vec4 operator-(Vec4ref v1, Vec4ref v2);
+  friend Vec4 operator*(double f, Vec4ref v1);
+  friend Vec4 operator*(Vec4ref v1, double f);
+  friend Vec4 operator/(Vec4ref v1, double f);
+  friend double operator*(Vec4ref v1, Vec4ref v2);
 
   // Invariant mass of a pair and its square.
-  friend double m(const Vec4& v1, const Vec4& v2);
-  friend double m2(const Vec4& v1, const Vec4& v2);
+  friend double m(Vec4ref v1, Vec4ref v2);
+  friend double m2(Vec4ref v1, Vec4ref v2);
 
   // Scalar and cross product of 3-vector parts.
-  friend double dot3(const Vec4& v1, const Vec4& v2);
-  friend Vec4 cross3(const Vec4& v1, const Vec4& v2);
+  friend double dot3(Vec4ref v1, Vec4ref v2);
+  friend Vec4 cross3(Vec4ref v1, Vec4ref v2);
 
   // theta is polar angle between v1 and v2.
-  friend double theta(const Vec4& v1, const Vec4& v2);
-  friend double costheta(const Vec4& v1, const Vec4& v2);
+  friend double theta(Vec4ref v1, Vec4ref v2);
+  friend double costheta(Vec4ref v1, Vec4ref v2);
 
   // phi is azimuthal angle between v1 and v2 around z axis.
-  friend double phi(const Vec4& v1, const Vec4& v2);
-  friend double cosphi(const Vec4& v1, const Vec4& v2);
+  friend double phi(Vec4ref v1, Vec4ref v2);
+  friend double cosphi(Vec4ref v1, Vec4ref v2);
 
   // phi is azimuthal angle between v1 and v2 around n axis.
-  friend double phi(const Vec4& v1, const Vec4& v2, const Vec4& n);
-  friend double cosphi(const Vec4& v1, const Vec4& v2, const Vec4& n);
+  friend double phi(Vec4ref v1, Vec4ref v2, Vec4ref n);
+  friend double cosphi(Vec4ref v1, Vec4ref v2, Vec4ref n);
 
   // R is distance in cylindrical (y/eta, phi) coordinates.
-  friend double RRapPhi(const Vec4& v1, const Vec4& v2);
-  friend double REtaPhi(const Vec4& v1, const Vec4& v2);
+  friend double RRapPhi(Vec4ref v1, Vec4ref v2);
+  friend double REtaPhi(Vec4ref v1, Vec4ref v2);
 
   // Print a four-vector.
-  friend ostream& operator<<(ostream&, const Vec4& v) ;
+  friend ostream& operator<<(ostream&, Vec4ref v) ;
 
 private:
 
@@ -242,50 +248,50 @@ private:
 
 // Implementation of operator overloading with friends.
 
-inline Vec4 operator+(const Vec4& v1, const Vec4& v2)
+inline Vec4 operator+(Vec4ref v1, Vec4ref v2)
   {Vec4 v = v1 ; return v += v2;}
 
-inline Vec4 operator-(const Vec4& v1, const Vec4& v2)
+inline Vec4 operator-(Vec4ref v1, Vec4ref v2)
   {Vec4 v = v1 ; return v -= v2;}
 
-inline Vec4 operator*(double f, const Vec4& v1)
+inline Vec4 operator*(double f, Vec4ref v1)
   {Vec4 v = v1; return v *= f;}
 
-inline Vec4 operator*(const Vec4& v1, double f)
+inline Vec4 operator*(Vec4ref v1, double f)
   {Vec4 v = v1; return v *= f;}
 
-inline Vec4 operator/(const Vec4& v1, double f)
+inline Vec4 operator/(Vec4ref v1, double f)
   {Vec4 v = v1; return v /= f;}
 
-inline double operator*(const Vec4& v1, const Vec4& v2)
+inline double operator*(Vec4ref v1, Vec4ref v2)
   {return v1.tt*v2.tt - v1.xx*v2.xx - v1.yy*v2.yy - v1.zz*v2.zz;}
 
 // Invariant mass of a pair and its square.
-double m(const Vec4& v1, const Vec4& v2);
-double m2(const Vec4& v1, const Vec4& v2);
+double m(Vec4ref v1, Vec4ref v2);
+double m2(Vec4ref v1, Vec4ref v2);
 
 // Scalar and cross product of 3-vector parts.
-double dot3(const Vec4& v1, const Vec4& v2);
-Vec4 cross3(const Vec4& v1, const Vec4& v2);
+double dot3(Vec4ref v1, Vec4ref v2);
+Vec4 cross3(Vec4ref v1, Vec4ref v2);
 
 // theta is polar angle between v1 and v2.
-double theta(const Vec4& v1, const Vec4& v2);
-double costheta(const Vec4& v1, const Vec4& v2);
+double theta(Vec4ref v1, Vec4ref v2);
+double costheta(Vec4ref v1, Vec4ref v2);
 
 // phi is azimuthal angle between v1 and v2 around z axis.
-double phi(const Vec4& v1, const Vec4& v2);
-double cosphi(const Vec4& v1, const Vec4& v2);
+double phi(Vec4ref v1, Vec4ref v2);
+double cosphi(Vec4ref v1, Vec4ref v2);
 
 // phi is azimuthal angle between v1 and v2 around n axis.
-double phi(const Vec4& v1, const Vec4& v2, const Vec4& n);
-double cosphi(const Vec4& v1, const Vec4& v2, const Vec4& n);
+double phi(Vec4ref v1, Vec4ref v2, Vec4ref n);
+double cosphi(Vec4ref v1, Vec4ref v2, Vec4ref n);
 
 // R is distance in cylindrical (y/eta, phi) coordinates.
-double RRapPhi(const Vec4& v1, const Vec4& v2);
-double REtaPhi(const Vec4& v1, const Vec4& v2);
+double RRapPhi(Vec4ref v1, Vec4ref v2);
+double REtaPhi(Vec4ref v1, Vec4ref v2);
 
 // Print a four-vector.
-ostream& operator<<(ostream&, const Vec4& v) ;
+ostream& operator<<(ostream&, Vec4ref v) ;
 
 //==========================================================================
 
@@ -309,13 +315,13 @@ public:
 
   // Member functions.
   void rot(double = 0., double = 0.);
-  void rot(const Vec4& p);
+  void rot(Vec4ref p);
   void bst(double = 0., double = 0., double = 0.);
-  void bst(const Vec4&);
-  void bstback(const Vec4&);
-  void bst(const Vec4&, const Vec4&);
-  void toCMframe(const Vec4&, const Vec4&);
-  void fromCMframe(const Vec4&, const Vec4&);
+  void bst(Vec4ref);
+  void bstback(Vec4ref);
+  void bst(Vec4ref, Vec4ref);
+  void toCMframe(Vec4ref, Vec4ref);
+  void fromCMframe(Vec4ref, Vec4ref);
   void rotbst(const RotBstMatrix&);
   void invert();
   void reset();
@@ -357,14 +363,14 @@ public:
 
   // Constructors, including copy constructors.
   Hist() {;}
-  Hist(string titleIn, int nBinIn = 100, double xMinIn = 0.,
+  Hist(stringref titleIn, int nBinIn = 100, double xMinIn = 0.,
     double xMaxIn = 1.) {
     book(titleIn, nBinIn, xMinIn, xMaxIn);}
   Hist(const Hist& h)
     : title(h.title), nBin(h.nBin), nFill(h.nFill), xMin(h.xMin),
     xMax(h.xMax), dx(h.dx), under(h.under), inside(h.inside),
     over(h.over), res(h.res) { }
-  Hist(string titleIn, const Hist& h)
+  Hist(stringref titleIn, const Hist& h)
     : title(titleIn), nBin(h.nBin), nFill(h.nFill), xMin(h.xMin),
     xMax(h.xMax), dx(h.dx), under(h.under), inside(h.inside),
     over(h.over), res(h.res) { }
@@ -374,11 +380,11 @@ public:
     res = h.res; } return *this; }
 
   // Book a histogram.
-  void book(string titleIn = "  ", int nBinIn = 100, double xMinIn = 0.,
+  void book(stringref titleIn = "  ", int nBinIn = 100, double xMinIn = 0.,
     double xMaxIn = 1.) ;
 
   // Set title of a histogram.
-  void name(string titleIn = "  ") {title = titleIn; }
+  void name(stringref titleIn = "  ") {title = titleIn; }
 
   // Reset bin contents.
   void null() ;
@@ -392,14 +398,14 @@ public:
   // Print histogram contents as a table (e.g. for Gnuplot).
   void table(ostream& os = cout, bool printOverUnder = false,
     bool xMidBin = true) const ;
-  void table(string fileName, bool printOverUnder = false,
-    bool xMidBin = true) const { ofstream streamName(fileName.c_str());
+  void table(stringref fileName, bool printOverUnder = false,
+    bool xMidBin = true) const { ofstream streamName(fileName);
     table(streamName, printOverUnder, xMidBin);}
 
   // Print a table out of two histograms with same x axis.
   friend void table(const Hist& h1, const Hist& h2, ostream& os,
     bool printOverUnder, bool xMidBin) ;
-  friend void table(const Hist& h1, const Hist& h2, string fileName,
+  friend void table(const Hist& h1, const Hist& h2, stringref fileName,
     bool printOverUnder, bool xMidBin) ;
 
   // Return content of specific bin: 0 gives underflow and nBin+1 overflow.
@@ -466,7 +472,7 @@ ostream& operator<<(ostream& os, const Hist& h) ;
 // Print a table out of two histograms with same x axis.
 void table(const Hist& h1, const Hist& h2, ostream& os = cout,
   bool printOverUnder = false, bool xMidBin = true) ;
-void table(const Hist& h1, const Hist& h2, string fileName,
+void table(const Hist& h1, const Hist& h2, stringref fileName,
   bool printOverUnder = false, bool xMidBin = true) ;
 
 // Operator overloading with friends

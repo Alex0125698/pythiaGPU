@@ -29,64 +29,67 @@ public:
   Wave4() {};
   Wave4(complex v0, complex v1, complex v2, complex v3) {val[0] = v0;
     val[1] = v1; val[2] = v2; val[3] = v3;}
-  Wave4(Vec4 v) {val[0] = v.e(); val[1] = v.px(); val[2] = v.py();
+  Wave4(Vec4ref v) {val[0] = v.e(); val[1] = v.px(); val[2] = v.py();
     val[3] = v.pz();}
   ~Wave4() {};
 
   // Access an element of the wave vector.
   complex& operator() (int i) {return val[i];}
 
+  // Access an element of the wave vector.
+  const complex& operator() (int i) const {return val[i];}
+
   // Wave4 + Wave4.
-  Wave4 operator+(Wave4 w) {return Wave4( val[0] + w.val[0],
+  Wave4 operator+(const Wave4& w) const {return Wave4( val[0] + w.val[0],
     val[1] + w.val[1], val[2] + w.val[2], val[3] + w.val[3]);}
 
   // Wave4 - Wave4.
-  Wave4 operator-(Wave4 w) {return Wave4( val[0] - w.val[0],
+  Wave4 operator-(const Wave4& w) const {return Wave4( val[0] - w.val[0],
     val[1] - w.val[1], val[2] - w.val[2], val[3] - w.val[3]);}
 
   // - Wave4.
-  Wave4 operator-() {return Wave4(-val[0], -val[1], -val[2], -val[3]);}
+  Wave4 operator-() const {return Wave4(-val[0], -val[1], -val[2], -val[3]);}
 
   // Wave4 * Wave4.
-  complex operator*(Wave4 w) {return val[0] * w.val[0]
+  complex operator*(const Wave4& w) const {return val[0] * w.val[0]
     + val[1] * w.val[1] + val[2] * w.val[2] + val[3] * w.val[3];}
 
   // Wave4 * complex.
-  Wave4 operator*(complex s) {return Wave4(val[0] * s, val[1] * s,
+  Wave4 operator*(complex s) const {return Wave4(val[0] * s, val[1] * s,
     val[2] * s, val[3] * s);}
 
   // complex * Wave4.
   friend Wave4 operator*(complex s, const Wave4& w);
 
   // Wave4 * double.
-  Wave4 operator*(double s) {return Wave4(val[0] * s, val[1] * s,
+  Wave4 operator*(double s) const {return Wave4(val[0] * s, val[1] * s,
     val[2] * s, val[3] * s);}
 
   // double * Wave4.
   friend Wave4 operator*(double s, const Wave4& w);
 
   // Wave4 / complex.
-  Wave4 operator/(complex s) {return Wave4(val[0] / s, val[1] / s,
+  Wave4 operator/(complex s) const {return Wave4(val[0] / s, val[1] / s,
     val[2] / s, val[3] / s);}
 
   // Wave4 / double.
-  Wave4 operator/(double s) {return Wave4(val[0] / s, val[1] / s,
+  Wave4 operator/(double s) const {return Wave4(val[0] / s, val[1] / s,
     val[2]/s, val[3]/s);}
 
   // Complex conjugate.
   friend Wave4 conj(Wave4 w);
 
   // Permutation operator.
-  friend Wave4 epsilon(Wave4 w1, Wave4 w2, Wave4 w3);
+  friend Wave4 epsilon(const Wave4& w1, const Wave4& w2, const Wave4& w3);
 
   // Invariant squared mass for REAL Wave4 (to save time).
-  friend double m2(Wave4 w);
-  friend double m2(Wave4 w1, Wave4 w2);
+  friend double m2(const Wave4& w);
+  friend double m2(const Wave4& w1, const Wave4& w2);
 
   // Wave4 * GammaMatrix multiplication is defined in the GammaMatrix class.
 
   // Print a Wave4 vector.
-  friend ostream& operator<<(ostream& output, Wave4 w);
+  friend ostream& operator<<(ostream& output, const Wave4& w);
 
 protected:
 
@@ -100,10 +103,10 @@ protected:
 Wave4 operator*(complex s, const Wave4& w);
 Wave4 operator*(double s, const Wave4& w);
 Wave4 conj(Wave4 w);
-Wave4 epsilon(Wave4 w1, Wave4 w2, Wave4 w3);
-double m2(Wave4 w);
-double m2(Wave4 w1, Wave4 w2);
-ostream& operator<< (ostream& os, Wave4 w);
+Wave4 epsilon(const Wave4& w1, const Wave4& w2, const Wave4& w3);
+double m2(const Wave4& w);
+double m2(const Wave4& w1, const Wave4& w2);
+ostream& operator<< (ostream& os, const Wave4& w);
 
 //==========================================================================
 
@@ -196,7 +199,7 @@ public:
     initRhoD();
     direction = 1; }
   HelicityParticle(int idIn, int statusIn, int mother1In, int mother2In,
-    int daughter1In, int daughter2In, int colIn, int acolIn, Vec4 pIn,
+    int daughter1In, int daughter2In, int colIn, int acolIn, Vec4ref pIn,
     double mIn = 0., double scaleIn = 0., ParticleData* ptr = 0)
     : Particle(idIn, statusIn, mother1In, mother2In, daughter1In, daughter2In,
     colIn, acolIn, pIn, mIn, scaleIn) {
@@ -211,13 +214,13 @@ public:
     direction = 1; }
 
   // Methods.
-  Wave4 wave(int h);
-  Wave4 waveBar(int h);
+  Wave4 wave(int h) const;
+  Wave4 waveBar(int h) const;
   void normalize(vector< vector<complex> >& m);
-  int spinStates();
+  int spinStates() const;
 
   // Return and set mass (redefine from Particle).
-  double m() {return mSave;}
+  double m() const {return mSave;}
   void   m(double mIn) {mSave = mIn; initRhoD();}
 
   // Event record position (redefine from Particle).

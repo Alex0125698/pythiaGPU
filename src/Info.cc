@@ -182,7 +182,7 @@ vector<int> Info::codesHard() {
 
 // Print a message the first few times. Insert in database.
 
-  void Info::errorMsg(string messageIn, string extraIn, bool showAlways,
+  void Info::errorMsg(stringref messageIn, stringref extraIn, bool showAlways,
     ostream& os) {
 
   // Recover number of times message occured. Also inserts new string.
@@ -321,7 +321,7 @@ void Info::setLHEF3EventInfo( map<string, string> *eventAttributesIn,
 
 // Retrieve events tag information.
 
-string Info::getEventAttribute(string key, bool doRemoveWhitespace) {
+string Info::getEventAttribute(stringref key, bool doRemoveWhitespace) {
   if (!eventAttributes) return "";
   if ( eventAttributes->find(key) != eventAttributes->end() ) {
     string res = (*eventAttributes)[key];
@@ -361,7 +361,7 @@ string Info::getGeneratorValue(unsigned int n) {
   return (*generators)[n].contents;
 }
 
-string Info::getGeneratorAttribute( unsigned int n, string key,
+string Info::getGeneratorAttribute( unsigned int n, stringref key,
   bool doRemoveWhitespace) {
   if (!generators || generators->size() < n+1) return "";
   string res("");
@@ -387,13 +387,13 @@ unsigned int Info::getWeightsDetailedSize() {
   return weights_detailed->size();
 }
 
-double Info::getWeightsDetailedValue(string n) {
+double Info::getWeightsDetailedValue(stringref n) {
   if (weights_detailed->empty()
     || weights_detailed->find(n) == weights_detailed->end()) return 0./0.;
   return (*weights_detailed)[n];
 }
 
-string Info::getWeightsDetailedAttribute(string n, string key,
+string Info::getWeightsDetailedAttribute(stringref n, stringref key,
   bool doRemoveWhitespace) {
   if (!rwgt || rwgt->wgts.find(n) == rwgt->wgts.end())
     return "";
@@ -424,7 +424,7 @@ double Info::getWeightsCompressedValue(unsigned int n) {
   return (*weights_compressed)[n];
 }
 
-string Info::getWeightsCompressedAttribute(string key,
+string Info::getWeightsCompressedAttribute(stringref key,
   bool doRemoveWhitespace) {
   if (!weights || weights->attributes.find(key) == weights->attributes.end())
     return "";
@@ -450,7 +450,7 @@ string Info::getScalesValue(bool doRemoveWhitespace) {
   return res;
 }
 
-double Info::getScalesAttribute(string key) {
+double Info::getScalesAttribute(stringref key) {
   if (!scales) return 0./0.;
   double res = 0./0.;
   if ( key == "muf") {

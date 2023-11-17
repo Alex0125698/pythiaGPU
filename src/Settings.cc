@@ -21,7 +21,7 @@ namespace Pythia8 {
 
 // Read in database from specific file.
 
-bool Settings::init(string startFile, bool append, ostream& os) {
+bool Settings::init(stringref startFile, bool append, ostream& os) {
 
   // Don't initialize if it has already been done and not in append mode.
   if (isInit && !append) return true;
@@ -183,7 +183,7 @@ bool Settings::init(string startFile, bool append, ostream& os) {
 
 // Overwrite existing database by reading from specific file.
 
-bool Settings::reInit(string startFile, ostream& os) {
+bool Settings::reInit(stringref startFile, ostream& os) {
 
   // Reset maps to empty.
   flags.clear();
@@ -205,7 +205,7 @@ bool Settings::reInit(string startFile, ostream& os) {
 // Read in updates from a character string, like a line of a file.
 // Is used by readString (and readFile) in Pythia.
 
-bool Settings::readString(string line, bool warn, ostream& os) {
+bool Settings::readString(stringref line, bool warn, ostream& os) {
 
   // If empty line then done.
   if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
@@ -378,7 +378,7 @@ bool Settings::readString(string line, bool warn, ostream& os) {
 
 // Write updates or everything to user-defined file.
 
-bool Settings::writeFile(string toFile, bool writeAll) {
+bool Settings::writeFile(stringref toFile, bool writeAll) {
 
   // Open file for writing.
   const char* cstring = toFile.c_str();
@@ -544,7 +544,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
 
 // Print out table of database in lexigraphical order.
 
-void Settings::list(bool doListAll,  bool doListString, string match,
+void Settings::list(bool doListAll,  bool doListString, stringref match_,
   ostream& os) {
 
   // Table header; output for bool as off/on.
@@ -1104,14 +1104,14 @@ map<string, PVec> Settings::getPVecMap(string match) {
 
 // Change current value, respecting limits.
 
-void Settings::flag(string keyIn, bool nowIn) {
+void Settings::flag(stringref keyIn, bool nowIn) {
   string keyLower = toLower(keyIn);
   if (isFlag(keyIn)) flags[keyLower].valNow = nowIn;
   // Print:quiet  triggers a whole set of changes.
   if (keyLower == "print:quiet") printQuiet( nowIn);
 }
 
-bool Settings:: mode(string keyIn, int nowIn) {
+bool Settings:: mode(stringref keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow = modes[keyLower];
@@ -1131,7 +1131,7 @@ bool Settings:: mode(string keyIn, int nowIn) {
 
 }
 
-void Settings::parm(string keyIn, double nowIn) {
+void Settings::parm(stringref keyIn, double nowIn) {
   if (isParm(keyIn)) {
     Parm& parmNow = parms[toLower(keyIn)];
     if (parmNow.hasMin && nowIn < parmNow.valMin)
@@ -1142,7 +1142,7 @@ void Settings::parm(string keyIn, double nowIn) {
   }
 }
 
-void Settings::word(string keyIn, string nowIn) {
+void Settings::word(stringref keyIn, stringref nowIn) {
     if (isWord(keyIn)) words[toLower(keyIn)].valNow = nowIn;
 }
 
@@ -1190,7 +1190,7 @@ void Settings::pvec(string keyIn, vector<double> nowIn) {
 
 // Change current value, disregarding limits.
 
-void Settings::forceMode(string keyIn, int nowIn) {
+void Settings::forceMode(stringref keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow   = modes[keyLower];
@@ -1201,7 +1201,7 @@ void Settings::forceMode(string keyIn, int nowIn) {
   }
 }
 
-void Settings::forceParm(string keyIn, double nowIn) {
+void Settings::forceParm(stringref keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 
@@ -1217,12 +1217,12 @@ void Settings::forcePVec(string keyIn, vector<double> nowIn) {
 
 // Restore current value to default.
 
-void Settings::resetFlag(string keyIn) {
+void Settings::resetFlag(stringref keyIn) {
   if (isFlag(keyIn)) flags[toLower(keyIn)].valNow
     = flags[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetMode(string keyIn) {
+void Settings::resetMode(stringref keyIn) {
   string keyLower = toLower(keyIn);
   if (isMode(keyIn)) modes[keyLower].valNow
     = modes[toLower(keyIn)].valDefault ;
@@ -1231,27 +1231,27 @@ void Settings::resetMode(string keyIn) {
   if (keyLower == "tune:pp") resetTunePP();
 }
 
-void Settings::resetParm(string keyIn) {
+void Settings::resetParm(stringref keyIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow
     = parms[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetWord(string keyIn) {
+void Settings::resetWord(stringref keyIn) {
   if (isWord(keyIn)) words[toLower(keyIn)].valNow
     = words[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetFVec(string keyIn) {
+void Settings::resetFVec(stringref keyIn) {
   if (isFVec(keyIn)) fvecs[toLower(keyIn)].valNow
     = fvecs[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetMVec(string keyIn) {
+void Settings::resetMVec(stringref keyIn) {
   if (isMVec(keyIn)) mvecs[toLower(keyIn)].valNow
     = mvecs[toLower(keyIn)].valDefault ;
 }
 
-void Settings::resetPVec(string keyIn) {
+void Settings::resetPVec(stringref keyIn) {
   if (isPVec(keyIn)) pvecs[toLower(keyIn)].valNow
     = pvecs[toLower(keyIn)].valDefault ;
 }
@@ -2387,7 +2387,7 @@ void Settings::initTunePP( int ppTune) {
 // Convert string to lowercase for case-insensitive comparisons.
 // Also remove initial and trailing blanks, if any.
 
-string Settings::toLower(const string& name) {
+string Settings::toLower(stringref name) {
 
   // Copy string without initial and trailing blanks.
   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
@@ -2405,7 +2405,7 @@ string Settings::toLower(const string& name) {
 
 // Allow several alternative inputs for true/false.
 
-bool Settings::boolString(string tag) {
+bool Settings::boolString(stringref tag) {
 
   string tagLow = toLower(tag);
   return ( tagLow == "true" || tagLow == "1" || tagLow == "on"
@@ -2417,7 +2417,7 @@ bool Settings::boolString(string tag) {
 
 // Extract XML value string following XML attribute.
 
-string Settings::attributeValue(string line, string attribute) {
+string Settings::attributeValue(stringref line, stringref attribute) {
 
   if (line.find(attribute) == string::npos) return "";
   int iBegAttri = line.find(attribute);
@@ -2431,7 +2431,7 @@ string Settings::attributeValue(string line, string attribute) {
 
 // Extract XML bool value following XML attribute.
 
-bool Settings::boolAttributeValue(string line, string attribute) {
+bool Settings::boolAttributeValue(stringref line, stringref attribute) {
 
   string valString = attributeValue(line, attribute);
   if (valString == "") return false;
@@ -2443,7 +2443,7 @@ bool Settings::boolAttributeValue(string line, string attribute) {
 
 // Extract XML int value following XML attribute.
 
-int Settings::intAttributeValue(string line, string attribute) {
+int Settings::intAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0;
   istringstream valStream(valString);
@@ -2457,7 +2457,7 @@ int Settings::intAttributeValue(string line, string attribute) {
 
 // Extract XML double value following XML attribute.
 
-double Settings::doubleAttributeValue(string line, string attribute) {
+double Settings::doubleAttributeValue(stringref line, stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return 0.;
   istringstream valStream(valString);
@@ -2471,8 +2471,8 @@ double Settings::doubleAttributeValue(string line, string attribute) {
 
 // Extract XML bool vector value following XML attribute.
 
-vector<bool> Settings::boolVectorAttributeValue(string line,
-  string attribute) {
+vector<bool> Settings::boolVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<bool>(1, false);
   vector<bool> vectorVal;
@@ -2491,8 +2491,8 @@ vector<bool> Settings::boolVectorAttributeValue(string line,
 
 // Extract XML int vector value following XML attribute.
 
-vector<int> Settings::intVectorAttributeValue(string line,
-  string attribute) {
+vector<int> Settings::intVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<int>(1, 0);
   int         intVal;
@@ -2513,8 +2513,8 @@ vector<int> Settings::intVectorAttributeValue(string line,
 
 // Extract XML double vector value following XML attribute.
 
-vector<double> Settings::doubleVectorAttributeValue(string line,
-  string attribute) {
+vector<double> Settings::doubleVectorAttributeValue(stringref line,
+  stringref attribute) {
   string valString = attributeValue(line, attribute);
   if (valString == "") return vector<double>(1, 0.);
   double         doubleVal;

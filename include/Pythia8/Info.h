@@ -170,7 +170,7 @@ public:
   void   errorReset() {messages.clear();}
 
   // Print a message the first few times. Insert in database.
-  void   errorMsg(string messageIn, string extraIn = " ",
+  void   errorMsg(stringref messageIn, stringref extraIn = " ",
     bool showAlways = false, ostream& os = cout);
 
   // Provide total number of errors/aborts/warnings experienced to date.
@@ -211,7 +211,7 @@ public:
   void setWeightFIRST( double weightIn) { weightFIRSTSave = weightIn;}
 
   // Return an LHEF header
-  string header(const string &key) {
+  string header(stringref key) {
     if (headers.find(key) == headers.end()) return "";
     else return headers[key];
   }
@@ -275,7 +275,7 @@ public:
     LHArwgt *rwgtIn );
 
   // Retrieve events tag information.
-  string getEventAttribute(string key, bool doRemoveWhitespace = false);
+  string getEventAttribute(stringref key, bool doRemoveWhitespace = false);
 
   // Retrieve LHEF version
   int LHEFversion();
@@ -286,27 +286,27 @@ public:
   // Retrieve generator tag information.
   unsigned int getGeneratorSize();
   string getGeneratorValue(unsigned int n = 0);
-  string getGeneratorAttribute( unsigned int n, string key,
+  string getGeneratorAttribute( unsigned int n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve rwgt tag information.
   unsigned int getWeightsDetailedSize();
-  double getWeightsDetailedValue(string n);
-  string getWeightsDetailedAttribute(string n, string key,
+  double getWeightsDetailedValue(stringref n);
+  string getWeightsDetailedAttribute(stringref n, stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve weights tag information.
   unsigned int getWeightsCompressedSize();
   double getWeightsCompressedValue(unsigned int n);
-  string getWeightsCompressedAttribute(string key,
+  string getWeightsCompressedAttribute(stringref key,
     bool doRemoveWhitespace = false);
 
   // Retrieve scales tag information.
   string getScalesValue(bool doRemoveWhitespace = false);
-  double getScalesAttribute(string key);
+  double getScalesAttribute(stringref key);
 
   // Set LHEF headers
-  void setHeader(const string &key, const string &val)
+  void setHeader(stringref key, stringref val)
     { headers[key] = val; }
 
   // Set abort in parton level.
@@ -429,7 +429,7 @@ private:
 
   // Set info on the (sub)process: from ProcessLevel, ProcessContainer or
   // MultipartonInteractions classes.
-  void setType( string nameIn, int codeIn, int nFinalIn,
+  void setType( stringref nameIn, int codeIn, int nFinalIn,
     bool isNonDiffIn = false, bool isResolvedIn = true,
     bool isDiffractiveAin = false, bool isDiffractiveBin = false,
     bool isDiffractiveCin = false, bool isLHAin = false) {
@@ -439,7 +439,7 @@ private:
     nTotal = 2 + nFinalSave; bIsSet = false; hasSubSave[0] = false;
     nameSubSave[0] = " "; codeSubSave[0] = 0; nFinalSubSave[0] = 0;
     evolIsSet = false;}
-  void setSubType( int iDS, string nameSubIn, int codeSubIn,
+  void setSubType( int iDS, stringref nameSubIn, int codeSubIn,
     int nFinalSubIn) { hasSubSave[iDS] = true; nameSubSave[iDS] = nameSubIn;
     codeSubSave[iDS] = codeSubIn; nFinalSubSave[iDS] = nFinalSubIn;}
   void setPDFalpha( int iDS, int id1pdfIn, int id2pdfIn, double x1pdfIn,
@@ -467,7 +467,7 @@ private:
   void sigmaReset() { nTry = nSel = nAcc = 0; sigGen = sigErr = wtAccSum = 0.;
     procNameM.clear(); nTryM.clear(); nSelM.clear(); nAccM.clear();
     sigGenM.clear(); sigErrM.clear();}
-  void setSigma( int i, string procNameIn, long nTryIn, long nSelIn,
+  void setSigma( int i, stringref procNameIn, long nTryIn, long nSelIn,
     long nAccIn, double sigGenIn, double sigErrIn, double wtAccSumIn) {
     if (i == 0) {nTry = nTryIn; nSel = nSelIn; nAcc = nAccIn;
       sigGen = sigGenIn; sigErr = sigErrIn; wtAccSum = wtAccSumIn;}

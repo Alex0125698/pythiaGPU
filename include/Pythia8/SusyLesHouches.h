@@ -388,14 +388,14 @@ public:
   SusyLesHouches(int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
     slhaRead(false), lhefRead(false), lhefSlha(false), useDecay(true) {};
-  SusyLesHouches(string filename, int verboseIn=1) : verboseSav(verboseIn),
+  SusyLesHouches(stringref filename, int verboseIn=1) : verboseSav(verboseIn),
     headerPrinted(false), footerPrinted(false), filePrinted(false),
     slhaRead(true), lhefRead(false), lhefSlha(false), useDecay(true)
     {readFile(filename);};
 
   //***************************** SLHA FILE I/O *****************************//
   // Read and write SLHA files
-  int readFile(string slhaFileIn="slha.spc",int verboseIn=1,
+  int readFile(stringref slhaFileIn="slha.spc",int verboseIn=1,
     bool useDecayIn=true);
   int readFile(istream& ,int verboseIn=1,
     bool useDecayIn=true);
@@ -434,13 +434,13 @@ public:
       n=val;isIntP=true;isDoubleP=false;isStringP=false;
       return *this;
     };
-    Entry& operator=(string& val)  {
+    Entry& operator=(stringref val)  {
       s=val;isIntP=false;isDoubleP=false;isStringP=true;
       return *this;
     };
 
     // Set and Get comment
-    void setComment(string comment) {commentP=comment;}
+    void setComment(stringref comment) {commentP=comment;}
     void getComment(string comment) {comment=commentP;}
 
     // Generic functions to get value
@@ -629,7 +629,7 @@ public:
   void verbose(int verboseIn) {verboseSav = verboseIn;}
 
   // Output of messages from SLHA interface
-  void message(int, string,string ,int line=0);
+  void message(int, stringref,stringref ,int line=0);
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class

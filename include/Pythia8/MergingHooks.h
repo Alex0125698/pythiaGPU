@@ -101,7 +101,7 @@ public:
   void translateLHEFString( string LHEpath);
 
   // Function to translate the process string (in MG/ME notation)
-  void translateProcessString( string process);
+  void translateProcessString( stringref process);
 
   // Function to clear hard process information
   void clear();
@@ -111,7 +111,7 @@ public:
   bool allowCandidates(int iPos, vector<int> Pos1, vector<int> Pos2,
     const Event& event);
   // Function to identify the hard subprocess in the current event
-  void storeCandidates( const Event& event, string process);
+  void storeCandidates( const Event& event, stringref process);
   // Function to check if the particle event[iPos] matches any of
   // the stored outgoing particles of the hard subprocess
   bool matchesAnyOutgoing(int iPos, const Event& event);
@@ -541,7 +541,7 @@ protected:
   // This is done so that the HarsProcess class can access both the +0 and +1
   // LHE files to find both the merging scale and the core process string
   // Store.
-  void setLHEInputFile( string lheFile) {
+  void setLHEInputFile( stringref lheFile) {
     lheInputFile = lheFile.substr(0,lheFile.size()-6); }
 
   //----------------------------------------------------------------------//
@@ -707,7 +707,7 @@ protected:
   int findColour(int col, int iExclude1, int iExclude2,
     const Event& event, int type, bool isHardIn);
   // Function to compute Delta R separation from 4-vector input
-  double deltaRij(Vec4 jet1, Vec4 jet2);
+  double deltaRij(Vec4ref jet1, Vec4ref jet2);
 
   //----------------------------------------------------------------------//
   // Functions for weight management

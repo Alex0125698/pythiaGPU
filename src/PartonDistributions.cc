@@ -2351,7 +2351,7 @@ void NNPDF::polin2(double x1al[], double x2al[], double yal[][fN],
 
 // Constructor.
 
-LHAPDF::LHAPDF(int idIn, string pSet, Info* infoPtrIn) :
+LHAPDF::LHAPDF(int idIn, stringref pSet, Info* infoPtrIn) :
   pdfPtr(0), infoPtr(infoPtrIn) {
   isSet = false;
   if (!infoPtr) return;
@@ -2415,7 +2415,7 @@ LHAPDF::~LHAPDF() {
 
 // Access a plugin library symbol.
 
-LHAPDF::Symbol LHAPDF::symbol(string symName) {
+LHAPDF::Symbol LHAPDF::symbol(stringref symName) {
   void  *lib(0);
   Symbol sym(0);
   const char* error(0);

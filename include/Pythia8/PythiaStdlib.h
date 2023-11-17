@@ -43,6 +43,7 @@ extern "C" void *(*dlsym(void *handle, const char *symbol))();
 #include <sstream>
 
 #include "Pythia8/SIMDString.h"
+#include "Pythia8/forwardDeclarations.h"
 
 // Define pi if not yet done.
 #ifndef M_PI
@@ -103,6 +104,18 @@ using std::setprecision;
 } // end namespace Pythia8
 
 namespace Pythia8 {
+
+using Vec4ref = const Vec4&;
+using std::string_view;
+using cstring = string;
+using ccstring = const char*;
+// using cstring = std::string_view;
+// using cstring = const char*;
+// using stringref = const std::string_view;
+using stringref = const std::string&;
+using stringref2 = const std::string&;
+using stringbuf = std::string;
+// using stringbuf = std::string;
 
 // Powers of small integers - for balance speed/code clarity.
 inline double pow2(const double& x) {return x*x;}

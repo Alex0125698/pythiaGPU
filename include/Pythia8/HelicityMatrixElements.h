@@ -52,7 +52,7 @@ public:
   virtual void calculateRho(unsigned int, vector<HelicityParticle>&);
 
   // Set a fermion line.
-  void setFermionLine(int, HelicityParticle&, HelicityParticle&);
+  void setFermionLine(int, const HelicityParticle&, const HelicityParticle&);
 
   // Calculate Breit-Wigner's with running widths and fixed.
   virtual complex  breitWigner(double s, double M, double G);
@@ -169,7 +169,7 @@ private:
     double, double);
 
   // Return the Z' vector or axial coupling for a fermion.
-  double zpCoupling(int id, string type);
+  double zpCoupling(int id, stringref type);
 
   // Vector and axial couplings.
   double p0CAZ, p2CAZ, p0CVZ, p2CVZ, p0CAZp, p2CAZp, p0CVZp, p2CVZp;
@@ -243,7 +243,7 @@ public:
 private:
 
   // Return the Z' vector or axial coupling for a fermion.
-  double zpCoupling(int id, string type);
+  double zpCoupling(int id, stringref type);
 
   // Vector and axial couplings.
   double p2CA, p2CV;
@@ -540,9 +540,9 @@ private:
   double G(int i, double s);
 
   // T-vector functions.
-  Wave4 t1(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
-  Wave4 t2(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
-  Wave4 t3(Wave4&, Wave4&, Wave4&, Wave4&, Wave4&);
+  Wave4 t1(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
+  Wave4 t2(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
+  Wave4 t3(const Wave4&, const Wave4&, const Wave4&, const Wave4&, const Wave4&);
 
   // Breit-Wigner denominators for the intermediate mesons.
   complex  a1D(double s);
@@ -586,8 +586,8 @@ public:
 private:
 
   // Hadronic currents.
-  Wave4 Ja(Wave4 &q, Wave4 &q1, Wave4 &q2, Wave4 &q3, Wave4 &q4, Wave4 &q5);
-  Wave4 Jb(Wave4 &q, Wave4 &q1, Wave4 &q2, Wave4 &q3, Wave4 &q4, Wave4 &q5);
+  Wave4 Ja(const Wave4& q, const Wave4& q1, const Wave4& q2, const Wave4& q3, const Wave4& q4, const Wave4& q5);
+  Wave4 Jb(const Wave4& q, const Wave4& q1, const Wave4& q2, const Wave4& q3, const Wave4& q4, const Wave4& q5);
 
   // Simplified s-wave Breit-Wigner assuming massless products.
   complex breitWigner(double s, double M, double G);

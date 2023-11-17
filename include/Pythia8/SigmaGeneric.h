@@ -25,7 +25,7 @@ public:
 
   // Constructor.
   Sigma2gg2qGqGbar(int idIn, int codeIn, int spinIn,
-    string nameIn = "g g -> qG qGbar") : idNew(idIn), codeSave(codeIn),
+    stringref nameIn = "g g -> qG qGbar") : idNew(idIn), codeSave(codeIn),
     spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.
@@ -67,7 +67,7 @@ public:
 
   // Constructor.
   Sigma2qqbar2qGqGbar(int idIn, int codeIn, int spinIn,
-    string nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
+    stringref nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
     spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.
@@ -109,7 +109,7 @@ public:
 
   // Constructor.
   Sigma2ffbar2fGfGbar(int idIn, int codeIn, int spinIn,
-    string nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
+    stringref nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
     spinSave(spinIn), nameSave(nameIn) {}
 
   // Initialize process.

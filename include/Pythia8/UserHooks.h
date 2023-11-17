@@ -186,8 +186,8 @@ public:
 
   // Enhance emission rates (sec. 4 in EPJC (2013) 73).
   virtual bool canEnhanceEmission() {return false;}
-  virtual double enhanceFactor( string ) {return 1.;}
-  virtual double vetoProbability( string ) {return 0.;}
+  virtual double enhanceFactor( stringref ) {return 1.;}
+  virtual double vetoProbability( stringref ) {return 0.;}
   void setEnhancedEventWeight(double wt) { enhancedEventWeight = wt;}
   double getEnhancedEventWeight() { return enhancedEventWeight;}
 

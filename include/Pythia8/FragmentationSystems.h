@@ -72,6 +72,9 @@ public:
   // Overload index operator to access separate colour singlets.
   ColSinglet& operator[](int iSub) {return singlets[iSub];}
 
+  // Overload index operator to access separate colour singlets.
+  const ColSinglet& operator[](int iSub) const {return singlets[iSub];}
+
   // Clear contents.
   void clear() {singlets.resize(0);}
 
@@ -140,7 +143,7 @@ public:
   void setUp(Vec4 p1, Vec4 p2, bool isMassless = false);
 
   // Construct a four-momentum from (x+, x-, px, py).
-  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn)
+  Vec4 pHad( double xPosIn, double xNegIn, double pxIn, double pyIn) const
     { return xPosIn * pPos + xNegIn * pNeg + pxIn * eX + pyIn * eY; }
 
   // Project a four-momentum onto (x+, x-, px, py). Read out projection.
@@ -175,11 +178,17 @@ public:
 
   // Reference to string region specified by (iPos, iNeg) pair.
   StringRegion& region(int iPos, int iNeg) {return system[iReg(iPos, iNeg)];}
+  const StringRegion& region(int iPos, int iNeg) const {return system[iReg(iPos, iNeg)];}
 
   // Reference to low string region specified either by iPos or iNeg.
   StringRegion& regionLowPos(int iPos) {
     return system[iReg(iPos, iMax - iPos)]; }
+  const StringRegion& regionLowPos(int iPos) const {
+    return system[iReg(iPos, iMax - iPos)]; }
+    // !@!@
   StringRegion& regionLowNeg(int iNeg) {
+    return system[iReg(iMax - iNeg, iNeg)]; }
+  const StringRegion& regionLowNeg(int iNeg) const {
     return system[iReg(iMax - iNeg, iNeg)]; }
 
   // Main content: a vector with all the string regions of the system.
