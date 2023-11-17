@@ -8,7 +8,7 @@
  |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.212      |  | 
  |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change: 23 Sep 2015  |  | 
  |  |   P       Y      T    H   H   I   A   A                                      |  | 
- |  |   P       Y      T    H   H  III  A   A    Now is 17 Nov 2023 at 13:15:45    |  | 
+ |  |   P       Y      T    H   H  III  A   A    Now is 17 Nov 2023 at 17:19:39    |  | 
  |  |                                                                              |  | 
  |  |   Torbjorn Sjostrand;  Department of Astronomy and Theoretical Physics,      |  | 
  |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  | 
@@ -887,3 +887,78 @@
 
  --------  End PYTHIA Event Listing  -----------------------------------------------------------------------------------------------
  PYTHIA Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame  
+
+ *-------  PYTHIA Event and Cross Section Statistics  -------------------------------------------------------------*
+ |                                                                                                                 |
+ | Subprocess                                    Code |            Number of events       |      sigma +- delta    |
+ |                                                    |       Tried   Selected   Accepted |     (estimated) (mb)   |
+ |                                                    |                                   |                        |
+ |-----------------------------------------------------------------------------------------------------------------|
+ |                                                    |                                   |                        |
+ | g g -> g g                                     111 |         397         52         52 |   1.980e-01  1.408e-02 |
+ | g g -> q qbar (uds)                            112 |           2          0          0 |   0.000e+00  0.000e+00 |
+ | q g -> q g                                     113 |         320         44         44 |   1.346e-01  1.151e-02 |
+ | q q(bar)' -> q q(bar)'                         114 |          32          4          4 |   1.087e-02  3.261e-03 |
+ | q qbar -> g g                                  115 |           0          0          0 |   0.000e+00  0.000e+00 |
+ | q qbar -> q' qbar' (uds)                       116 |           0          0          0 |   0.000e+00  0.000e+00 |
+ | g g -> c cbar                                  121 |           1          0          0 |   0.000e+00  0.000e+00 |
+ | q qbar -> c cbar                               122 |           0          0          0 |   0.000e+00  0.000e+00 |
+ | g g -> b bbar                                  123 |           0          0          0 |   0.000e+00  0.000e+00 |
+ | q qbar -> b bbar                               124 |           0          0          0 |   0.000e+00  0.000e+00 |
+ |                                                    |                                   |                        |
+ | sum                                                |         752        100        100 |   3.435e-01  1.848e-02 |
+ |                                                                                                                 |
+ *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
+
+ *-------  PYTHIA Error and Warning Messages Statistics  ----------------------------------------------------------* 
+ |                                                                                                                 | 
+ |  times   message                                                                                                | 
+ |                                                                                                                 | 
+ |      1   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |                                                                                                                 | 
+ *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
+
+
+  2023-11-17 17:19       Number of charged particles
+
+        8.10*10^ 0                     7                                                                                
+        7.80*10^ 0                     X                                                                                
+        7.50*10^ 0                     X                                                                                
+        7.20*10^ 0                     X                                                                                
+        6.90*10^ 0                     X                                                                                
+        6.60*10^ 0                     X                                                                                
+        6.30*10^ 0                     X                                                                                
+        6.00*10^ 0                X XX X     X                                                                          
+        5.70*10^ 0                X XX X     X                                                                          
+        5.40*10^ 0                X XX X     X                                                                          
+        5.10*10^ 0              7 X XX X  7  X    7                                                                     
+        4.80*10^ 0              X X XX X  X  X    X                                                                     
+        4.50*10^ 0              X X XX X  X  X    X                                                                     
+        4.20*10^ 0              X X XX X3 X33X    X                                                                     
+        3.90*10^ 0              X X XX XX XXXX    X                                                                     
+        3.60*10^ 0              X X XX XX XXXX    X                                                                     
+        3.30*10^ 0              X X XX XX XXXX    X                                                                     
+        3.00*10^ 0            X X X XXXXXXXXXXX  XXXX                                                                   
+        2.70*10^ 0            X X X XXXXXXXXXXX  XXXX                                                                   
+        2.40*10^ 0            X X X XXXXXXXXXXX  XXXX                                                                   
+        2.10*10^ 0           7X7X7X7XXXXXXXXXXX  XXXX                                                                   
+        1.80*10^ 0           XXXXXXXXXXXXXXXXXX  XXXX                                                                   
+        1.50*10^ 0           XXXXXXXXXXXXXXXXXX  XXXX                                                                   
+        1.20*10^ 0      3   3XXXXXXXXXXXXXXXXXX 3XXXX3    333333 3  3                                                   
+        0.90*10^ 0      X   XXXXXXXXXXXXXXXXXXX XXXXXX    XXXXXX X  X                                                   
+        0.60*10^ 0      X   XXXXXXXXXXXXXXXXXXX XXXXXX    XXXXXX X  X                                                   
+        0.30*10^ 0      X   XXXXXXXXXXXXXXXXXXX XXXXXX    XXXXXX X  X                                                   
+
+          Contents                                                                                                      
+            *10^ 0  0000100012325262663843544630135331000011111101001000000000000000000000000000000000000000000000000000
+            *10^-1  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            *10^-2  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            *10^-3  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+          Low edge  -                                                                                                   
+            *10^ 2  0000000000000111111111111222222222222233333333333344444444444445555555555556666666666666777777777777
+            *10^ 1  0012344567889012234566789001234456788901223456678900123445678890122345667890012344567889012234566789
+            *10^ 0  1864208642086420864208642086420864208642086420864208642086420864208642086420864208642086420864208642
+
+   Entries  =         100    Mean =  1.7774e+02    Underflow =  0.0000e+00    Low edge  = -5.0000e-01
+   All chan =  1.0000e+02    Rms  =  7.0387e+01    Overflow  =  0.0000e+00    High edge =  7.9950e+02
