@@ -48,7 +48,7 @@ public:
     int iDSin) {beamAPtr = beamAPtrIn; beamBPtr = beamBPtrIn; iDS = iDSin;}
 
   // Select the flavours/kinematics/colours of the two beam remnants.
-  bool add( Event& event, int iFirst = 0, bool doDiffCR = false);
+  bool add(Event& event, int iFirst = 0, bool doDiffCR = false);
 
 private:
 
@@ -90,36 +90,36 @@ private:
   JunctionSplitting junctionSplitting;
 
   // Select the flavours/kinematics/colours of the two beam remnants.
-  bool addOld( Event& event);
+  bool addOld(Event& event);
 
   // Select the flavours/kinematics/colours of the two beam remnants.
-  bool addNew( Event& event);
+  bool addNew(Event& event);
 
   // Pointer to information on subcollision parton locations.
   PartonSystems* partonSystemsPtr;
 
   // Do the kinematics of the collision subsystems and two beam remnants.
-  bool setKinematics( Event& event);
+  bool setKinematics(Event& event);
 
   // Special beam remnant kinematics for Deeply Inelastic Scattering.
-  bool setDISKinematics( Event& event);
+  bool setDISKinematics(Event& event);
 
   // Update colours of outgoing particles in the event.
-  void updateColEvent( Event& event, vector<pair <int,int> > colChanges);
+  void updateColEvent(Event& event, const vector<pair <int,int> >& colChanges);
 
   // Check that colours are consistent.
-  bool checkColours( Event& event);
+  bool checkColours(Event& event);
 
   // Find junction chains.
-  vector <vector<int> > findJunChains(vector<vector <int> > iPartonJun,
+  vector <vector<int> > findJunChains(const vector<vector <int> >& iPartonJun,
     vector<vector<int> > iPartonAjun);
 
   // Split junction configuration into smaller parts.
-  bool splitJunChains(Event& event, vector<vector<int > >& iPartonJun,
-    vector<vector< int > >& ipartonAntiJun);
+  bool splitJunChains(const Event& event, const vector<vector<int > >& iPartonJun,
+    const vector<vector< int > >& ipartonAntiJun);
 
   // Get junction chains.
-  vector<vector<int > > getJunChains(Event& event);
+  vector<vector<int>> getJunChains(const Event& event);
 
 };
 

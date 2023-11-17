@@ -39,10 +39,10 @@ public:
   void init(Settings& settings, Rndm* rndmPtrIn);
 
   // Pick a new flavour (including diquarks) given an incoming one.
-  FlavContainer pick(FlavContainer& flavOld);
+  FlavContainer pick(const FlavContainer& flavOld);
 
   // Combine two flavours (including diquarks) to produce a hadron.
-  int combine(FlavContainer& flav1, FlavContainer& flav2);
+  int combine(const FlavContainer& flav1, const FlavContainer& flav2);
 
 private:
 

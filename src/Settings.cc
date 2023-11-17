@@ -1146,21 +1146,21 @@ void Settings::word(stringref keyIn, stringref nowIn) {
     if (isWord(keyIn)) words[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::fvec(string keyIn, vector<bool> nowIn) {
+void Settings::fvec(stringref keyIn, const vector<bool>& nowIn) {
   if (isFVec(keyIn)) {
     FVec& fvecNow = fvecs[toLower(keyIn)];
     fvecNow.valNow.clear();
-    for(vector<bool>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++)
       fvecNow.valNow.push_back(*now);
   }
 }
 
-void Settings::mvec(string keyIn, vector<int> nowIn) {
+void Settings::mvec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) {
     MVec& mvecNow = mvecs[toLower(keyIn)];
     mvecNow.valNow.clear();
-    for(vector<int>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (mvecNow.hasMin && *now < mvecNow.valMin)
         mvecNow.valNow.push_back(mvecNow.valMin);
@@ -1171,11 +1171,11 @@ void Settings::mvec(string keyIn, vector<int> nowIn) {
   }
 }
 
-void Settings::pvec(string keyIn, vector<double> nowIn) {
+void Settings::pvec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) {
     PVec& pvecNow = pvecs[toLower(keyIn)];
     pvecNow.valNow.clear();
-    for(vector<double>::iterator now = nowIn.begin();
+    for(auto now = nowIn.cbegin();
         now != nowIn.end(); now++) {
       if (pvecNow.hasMin && *now < pvecNow.valMin)
         pvecNow.valNow.push_back(pvecNow.valMin);
@@ -1205,11 +1205,11 @@ void Settings::forceParm(string keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forceMVec(string keyIn, vector<int> nowIn) {
+void Settings::forceMVec(stringref keyIn, const vector<int>& nowIn) {
   if (isMVec(keyIn)) mvecs[toLower(keyIn)].valNow = nowIn;
 }
 
-void Settings::forcePVec(string keyIn, vector<double> nowIn) {
+void Settings::forcePVec(stringref keyIn, const vector<double>& nowIn) {
   if (isPVec(keyIn)) pvecs[toLower(keyIn)].valNow = nowIn;
 }
 

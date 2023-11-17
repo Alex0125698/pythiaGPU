@@ -278,8 +278,8 @@ public:
 
   // Constructor.
   SingleCellJet(double eTjetIn = 0., double etaCenterIn = 0.,
-    double phiCenterIn = 0., double etaWeightedIn = 0.,
-    double phiWeightedIn = 0., int multiplicityIn = 0,
+     double phiCenterIn = 0., double etaWeightedIn = 0.,
+     double phiWeightedIn = 0., int multiplicityIn = 0,
     Vec4ref pMassiveIn = 0.) : eTjet(eTjetIn), etaCenter(etaCenterIn),
     phiCenter(phiCenterIn), etaWeighted(etaWeightedIn),
     phiWeighted(phiWeightedIn), multiplicity(multiplicityIn),

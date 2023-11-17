@@ -4270,8 +4270,8 @@ double TimeShower::gammaZmix( Event& event, int iRes, int iDau1, int iDau2) {
 // Set up to calculate QCD ME correction with calcMEcorr.
 // Normally for primary particles, but also from g/gamma -> f fbar.
 
-double TimeShower::findMEcorr(TimeDipoleEnd* dip, Particle& rad,
-  Particle& partner, Particle& emt, bool cutEdge) {
+double TimeShower::findMEcorr(TimeDipoleEnd* dip, const Particle& rad,
+  const Particle& partner, const Particle& emt, bool cutEdge) {
 
   // Initial values and matrix element kind.
   double wtME    = 1.;

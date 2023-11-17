@@ -256,12 +256,12 @@ public:
   void findColSetup(Event& event);
 
   // Set initial colours.
-  void setInitialCol(Event & event);
+  void setInitialCol(const Event & event);
 
   // Update colours.
-  void updateCol(vector<pair<int,int> > colourChanges);
+  void updateCol(const vector<pair<int,int>>& colourChanges);
 
-  vector<pair <int,int> > getColUpdates() {return colUpdates;}
+  vector<pair<int,int>> getColUpdates() {return colUpdates;}
 
 private:
 

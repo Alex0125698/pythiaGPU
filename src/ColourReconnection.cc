@@ -755,7 +755,7 @@ void ColourReconnection::setupDipoles( Event& event, int iFirst) {
 // Calculate the string length of a dipole.
 
 double ColourReconnection::calculateStringLength(ColourDipole * dip,
-  vector<ColourDipole *> &dips) {
+  vector<ColourDipole*>& dips) {
 
   // Check if dipole was already included.
   for (int i = 0; i < int(dips.size()); ++i)
@@ -839,7 +839,7 @@ void ColourReconnection::updateEvent( Event& event, int iFirst) {
 
 bool ColourReconnection::findJunctionParticles(int iJun,
   vector<int>& iParticles, vector<bool> &usedJuns, int &nJuns,
-  vector<ColourDipole*> &dips ) {
+  vector<ColourDipole*>& dips ) {
 
   // Mark current junction as used.
   usedJuns[iJun] = true;
@@ -1572,7 +1572,7 @@ bool sortFunc(ColourDipole* a, ColourDipole* b) {
 
 // Form all pseudoparticles below m0.
 
-void ColourReconnection::makeAllPseudoParticles( Event & event, int iFirst) {
+void ColourReconnection::makeAllPseudoParticles( Event& event, int iFirst) {
 
   // Make junctions.
   for (int i = 0; i < event.sizeJunction(); ++i)
@@ -2091,7 +2091,7 @@ bool ColourReconnection::checkTimeDilation(Vec4 p1,
 
 // Store the formation times.
 
-void ColourReconnection::setupFormationTimes(Event & event) {
+void ColourReconnection::setupFormationTimes(Event& event) {
 
   for (int i = 0;i < event.size(); ++i) {
     // First check the colour.
@@ -2157,7 +2157,7 @@ void ColourReconnection::setupFormationTimes(Event & event) {
 
 // Find the invariant mass of all the partons connected to a junction system.
 
-double ColourReconnection::getJunctionMass(Event & event, int col) {
+double ColourReconnection::getJunctionMass(Event& event, int col) {
 
   // Find the partons connected to the junction system.
   vector<int> iPar, usedJuncs;
@@ -2189,7 +2189,7 @@ double ColourReconnection::getJunctionMass(Event & event, int col) {
 // Find all particles connected to a junction system for junctions stored in
 // the event record.
 
-void ColourReconnection::addJunctionIndices(Event & event, int col,
+void ColourReconnection::addJunctionIndices(Event& event, int col,
   vector<int> &iPar, vector<int> &usedJuncs) {
 
   // Find the junction.
@@ -2250,8 +2250,8 @@ void ColourReconnection::addJunctionIndices(Event & event, int col,
 
 // Find all particles connected to a junction system.
 
-void ColourReconnection::addJunctionIndices(int iSinglePar, vector<int> &iPar,
-  vector<int> &usedJuncs) {
+void ColourReconnection::addJunctionIndices(int iSinglePar, vector<int>& iPar,
+  vector<int>& usedJuncs) {
 
   // Check if junction was already considered.
   int iJun = -(1 + iSinglePar/10);
@@ -2364,7 +2364,7 @@ void ColourReconnection::listJunctions() {
 // Matching q-qbar pairs are treated by analogy with gluons.
 // Note: owing to rescatterings some outgoing partons must be skipped.
 
-bool ColourReconnection::reconnectMPIs( Event&  event, int oldSize) {
+bool ColourReconnection::reconnectMPIs(Event& event, int oldSize) {
 
   // References to beams to simplify indexing.
   BeamParticle& beamA = *beamAPtr;
@@ -2754,7 +2754,7 @@ bool ColourReconnection::findColNeighbour(ColourDipole*& dip) {
 
 // Store used dipoles for a junction formation.
 
-void ColourReconnection::storeUsedDips(TrialReconnection& trial) {
+void ColourReconnection::storeUsedDips(const TrialReconnection& trial) {
   // Normal dipole swap.
   if (trial.mode == 5) {
 
@@ -2879,7 +2879,7 @@ double ColourReconnection::getLambdaDiff(ColourDipole* dip1,
 
 // Change colour structure to describe the reconnection in juncTrial.
 
-void ColourReconnection::doDipoleTrial(TrialReconnection& trial) {
+void ColourReconnection::doDipoleTrial(const TrialReconnection& trial) {
 
   // Store for easier use.
   ColourDipole* dip1 = trial.dips[0];
@@ -2998,7 +2998,7 @@ void ColourReconnection::updateJunctionTrials() {
 // Change colour structure to describe the reconnection in juncTrial.
 
 void ColourReconnection::doJunctionTrial(Event& event,
-  TrialReconnection& juncTrial) {
+  const TrialReconnection& juncTrial) {
 
   int mode = juncTrial.mode;
   // If trial mode is 3 (three dipoles -> 2 junctions) use its own update.
@@ -3365,7 +3365,7 @@ void ColourReconnection::doJunctionTrial(Event& event,
 // Change colour structure if it is three dipoles forming a junction system.
 
 void ColourReconnection::doTripleJunctionTrial(Event& event,
-  TrialReconnection& juncTrial) {
+  const TrialReconnection& juncTrial) {
 
   // store information for easier acces.
   ColourDipole* dip1 = juncTrial.dips[0];
@@ -3517,7 +3517,7 @@ void ColourReconnection::doTripleJunctionTrial(Event& event,
 // Allow colour reconnections by moving gluons from their current location
 // to another colour line. Also optionally flip two colour chains.
 
-bool ColourReconnection::reconnectMove( Event&  event, int oldSize) {
+bool ColourReconnection::reconnectMove(Event&  event, int oldSize) {
 
   // Create or reset arrays to prepare for the new event analysis.
   vector<int> iGlu;
@@ -3863,7 +3863,7 @@ bool ColourReconnection::reconnectMove( Event&  event, int oldSize) {
 
 // Common code for the SK I and SK II models for WW/ZZ/WZ systems.
 
-bool ColourReconnection::reconnectTypeCommon( Event& event, int ) {
+bool ColourReconnection::reconnectTypeCommon(Event& event, int ) {
 
   // Make storage containers. Check that at least two parton systems.
   vector<vector< ColourDipole> > dips;
@@ -3967,8 +3967,8 @@ bool ColourReconnection::reconnectTypeCommon( Event& event, int ) {
 
 // The SK I model for WW/ZZ/WZ systems.
 
-map<double,pair<int,int> > ColourReconnection::reconnectTypeI( Event& event,
-  vector<vector<ColourDipole> > &dips, Vec4 decays[2]) {
+map<double,pair<int,int> > ColourReconnection::reconnectTypeI(Event& event,
+  const vector<vector<ColourDipole>>& dips, const Vec4 decays[2]) {
 
   // Make storage containers.
   multimap<double,pair<int,int> > reconnections;
@@ -4110,8 +4110,8 @@ map<double,pair<int,int> > ColourReconnection::reconnectTypeI( Event& event,
 
 // The SK II model for WW/ZZ/WZ systems.
 
-map<double,pair<int,int> > ColourReconnection::reconnectTypeII( Event& event,
-  vector<vector<ColourDipole> > &dips, Vec4 decays[2]) {
+map<double,pair<int,int> > ColourReconnection::reconnectTypeII(Event& event,
+  const vector<vector<ColourDipole>>& dips, const Vec4 decays[2]) {
 
   // Make storage containers.
   map<double,pair<int,int> > reconnections;
@@ -4201,7 +4201,7 @@ map<double,pair<int,int> > ColourReconnection::reconnectTypeII( Event& event,
 
 // Calculate the determinant of a 3 * 3 matrix.
 
-double ColourReconnection::determinant3(vector<vector< double> >& vec) {
+double ColourReconnection::determinant3(const vector<vector<double>>& vec) {
   return vec[0][0]*vec[1][1]*vec[2][2] + vec[0][1]*vec[1][2]*vec[2][0]
     + vec[0][2]*vec[1][0]*vec[2][1] - vec[0][0]*vec[2][1]*vec[1][2]
     - vec[0][1]*vec[1][0]*vec[2][2] - vec[0][2]*vec[1][1]*vec[2][0];

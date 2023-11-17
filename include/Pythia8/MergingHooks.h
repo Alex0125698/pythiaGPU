@@ -85,7 +85,7 @@ public:
   }
 
   // Constructor with path to LHE file
-  HardProcess( string LHEfile, ParticleData* particleData) {
+  HardProcess( stringref LHEfile, ParticleData* particleData) {
     state = Event();
     state.init("(hard process)", particleData);
     translateLHEFString(LHEfile);
@@ -108,7 +108,7 @@ public:
 
   // Function to check whether the sets of candidates Pos1, Pos2, together
   // with the proposed candidate iPos give an allowed hard process state
-  bool allowCandidates(int iPos, vector<int> Pos1, vector<int> Pos2,
+  bool allowCandidates(int iPos, const vector<int>& Pos1, const vector<int>& Pos2,
     const Event& event);
   // Function to identify the hard subprocess in the current event
   void storeCandidates( const Event& event, stringref process);
@@ -120,8 +120,8 @@ public:
   // is already stored as part of the hard process.
   bool findOtherCandidates(int iPos, const Event& event, bool doReplace);
   // Function to exchange a stored hard process candidate with another choice.
-  bool exchangeCandidates( vector<int> candidates1, vector<int> candidates2,
-    map<int,int> further1, map<int,int> further2);
+  bool exchangeCandidates( const vector<int>& candidates1, const vector<int>& candidates2,
+    const map<int,int>& further1, const map<int,int>& further2);
 
   // Function to get the number of coloured final state partons in the
   // hard process

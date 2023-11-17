@@ -21,7 +21,7 @@ bool HadronLevel::init(Info* infoPtrIn, Settings& settings,
   ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
   Couplings* couplingsPtrIn, TimeShower* timesDecPtr,
   RHadrons* rHadronsPtrIn, DecayHandler* decayHandlePtr,
-  vector<int> handledParticles, UserHooks* userHooksPtrIn) {
+  const vector<int>& handledParticles, UserHooks* userHooksPtrIn) {
 
   // Save pointers.
   infoPtr         = infoPtrIn;

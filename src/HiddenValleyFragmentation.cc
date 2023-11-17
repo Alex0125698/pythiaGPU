@@ -33,7 +33,7 @@ void HVStringFlav::init(Settings& settings, Rndm* rndmPtrIn) {
 
 // Pick a new HV-flavour given an incoming one.
 
-FlavContainer HVStringFlav::pick(FlavContainer& flavOld) {
+FlavContainer HVStringFlav::pick(const FlavContainer& flavOld) {
 
   // Initial values for new flavour.
   FlavContainer flavNew;
@@ -53,7 +53,7 @@ FlavContainer HVStringFlav::pick(FlavContainer& flavOld) {
 // Combine two HV-flavours to produce an HV-hadron.
 // This is simplified procedure, assuming only two HV mesons defined.
 
-int HVStringFlav::combine(FlavContainer& flav1, FlavContainer& flav2) {
+int HVStringFlav::combine(const FlavContainer& flav1, const FlavContainer& flav2) {
 
   // Positive and negative flavour. Note that with kinetic mixing
   // the Fv are really intended to represent qv, so remap.

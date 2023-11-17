@@ -286,13 +286,13 @@ namespace Pythia8 {
   public:
 
     LHdecayChannel() : brat(0.0) {};
-    LHdecayChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") { setChannel(bratIn,nDaIn,idDaIn,cIn);
+    LHdecayChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") { setChannel(bratIn,nDaIn,idDaIn,cIn);
     }
 
     // Functions to set decay channel information
-    void setChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") {
+    void setChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") {
       brat    = bratIn;
       for (int i=0; i<=nDaIn; i++) {
         if (i < int(idDaIn.size())) idDa.push_back(idDaIn[i]);
@@ -300,7 +300,7 @@ namespace Pythia8 {
       }
     }
     void setBrat(double bratIn) {brat=bratIn;}
-    void setIdDa(vector<int> idDaIn) {idDa = idDaIn;}
+    void setIdDa(const vector<int>& idDaIn) {idDa = idDaIn;}
 
     // Functions to get decay channel information
     double getBrat() {return brat;}
@@ -335,8 +335,8 @@ namespace Pythia8 {
 
     // Function to add another decay channel
     void addChannel(LHdecayChannel channelIn) {table.push_back(channelIn);}
-    void addChannel(double bratIn, int nDaIn, vector<int> idDaIn,
-      string cIn="") {
+    void addChannel(double bratIn, int nDaIn, const vector<int>& idDaIn,
+      stringref cIn="") {
       LHdecayChannel newChannel(bratIn, nDaIn, idDaIn, cIn);
       table.push_back(newChannel);
     }
@@ -622,7 +622,7 @@ public:
   template <class T> bool getEntry(string, int, T&);
   template <class T> bool getEntry(string, int, int, T&);
   template <class T> bool getEntry(string, int, int, int, T&);
-  template <class T> bool getEntry(string, vector<int>, T&);
+  template <class T> bool getEntry(string, const vector<int>&, T&);
 
   // Access/change verbose setting
   int verbose() {return verboseSav;}

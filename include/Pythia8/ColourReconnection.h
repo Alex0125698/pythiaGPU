@@ -44,7 +44,7 @@ public:
     isAntiJun(isAntiJunIn),isActive(isActiveIn), isReal(isRealIn)
     {leftDip = 0; rightDip = 0; iColLeg = 0; iAcolLeg = 0; printed = false;}
 
-  double mDip(Event & event) {
+  double mDip(Event& event) {
     if (isJun || isAntiJun) return 1E9;
     else return m(event[iCol].p(),event[iAcol].p());
   }
@@ -172,7 +172,7 @@ public:
     {beamAPtr = beamAPtrIn; beamBPtr = beamBPtrIn;}
 
   // Do colour reconnection for current event.
-  bool next( Event & event, int oldSize);
+  bool next(Event& event, int oldSize);
 
 private:
 
@@ -219,13 +219,13 @@ private:
   StringLength stringLength;
 
   // Do colour reconnection for the event using the new model.
-  bool nextNew( Event & event, int oldSize);
+  bool nextNew(Event& event, int oldSize);
 
   // Simple test swap between two dipoles.
   void swapDipoles(ColourDipole* dip1, ColourDipole* dip2, bool back = false);
 
   // Setup the dipoles.
-  void setupDipoles( Event& event, int iFirst = 0);
+  void setupDipoles(Event& event, int iFirst = 0);
 
   // Form pseuparticle of a given dipole (or junction system).
   void makePseudoParticle( ColourDipole* dip, int status,
@@ -237,13 +237,13 @@ private:
     int &i2, int &junLeg0, int &junLeg1, int &junLeg2);
 
   // Form all possible pseudoparticles.
-  void makeAllPseudoParticles(Event & event, int iFirst = 0);
+  void makeAllPseudoParticles(Event& event, int iFirst = 0);
 
   // Update all colours in the event.
-  void updateEvent( Event& event, int iFirst = 0);
+  void updateEvent(Event& event, int iFirst = 0);
 
   double calculateStringLength( ColourDipole* dip,
-    vector<ColourDipole*> & dips);
+    vector<ColourDipole*>& dips);
 
   // Calculate the string length for two event indices.
   double calculateStringLength( int i, int j);
@@ -261,7 +261,7 @@ private:
   // If a single junction, the size of iParticles should be 3.
   // For multiple junction structures, the size will increase.
   bool findJunctionParticles( int iJun, vector<int>& iParticles,
-    vector<bool> &usedJuns, int &nJuns, vector<ColourDipole*> &dips);
+    vector<bool>& usedJuns, int &nJuns, vector<ColourDipole*>& dips);
 
   // Do a single trial reconnection.
   void singleReconnection( ColourDipole* dip1, ColourDipole* dip2);
@@ -309,16 +309,16 @@ private:
   bool checkJunctionTrials();
 
   // Store all dipoles connected to the ones used in the junction connection.
-  void storeUsedDips(TrialReconnection& trial);
+  void storeUsedDips(const TrialReconnection& trial);
 
   // Change colour structure to describe the reconnection in juncTrial.
-  void doJunctionTrial(Event& event, TrialReconnection& juncTrial);
+  void doJunctionTrial(Event& event, const TrialReconnection& juncTrial);
 
   // Change colour structure to describe the reconnection in juncTrial.
-  void doDipoleTrial(TrialReconnection& trial);
+  void doDipoleTrial(const TrialReconnection& trial);
 
   // Change colour structure if it is three dipoles forming a junction system.
-  void doTripleJunctionTrial(Event& event, TrialReconnection& juncTrial);
+  void doTripleJunctionTrial(Event& event, const TrialReconnection& juncTrial);
 
   // Calculate the difference between the old and new lambda.
   double getLambdaDiff(ColourDipole* dip1,
@@ -344,21 +344,21 @@ private:
   Vec4 getDipoleMomentum(ColourDipole* dip);
 
   // Find all particles connected to a junction system (particle list).
-  void addJunctionIndices(int iSinglePar, vector<int> &iPar,
-    vector<int> &usedJuncs);
+  void addJunctionIndices(int iSinglePar, vector<int>& iPar,
+    vector<int>& usedJuncs);
 
   // Find all the formation times.
-  void setupFormationTimes( Event & event);
+  void setupFormationTimes(Event& event);
 
   // Get the mass of all partons connected to a junction system (event list).
-  double getJunctionMass(Event & event, int col);
+  double getJunctionMass(Event& event, int col);
 
   // Find all particles connected to a junction system (event list).
-  void addJunctionIndices(Event & event, int iSinglePar,
-    vector<int> &iPar, vector<int> &usedJuncs);
+  void addJunctionIndices(Event& event, int iSinglePar,
+    vector<int>& iPar, vector<int>& usedJuncs);
 
   // The old MPI-based scheme.
-  bool reconnectMPIs( Event& event, int oldSize);
+  bool reconnectMPIs(Event& event, int oldSize);
 
   // Vectors and methods needed for the new gluon-move model.
 
@@ -384,23 +384,23 @@ private:
   }
 
   // The new gluon-move scheme.
-  bool reconnectMove( Event& event, int oldSize);
+  bool reconnectMove(Event& event, int oldSize);
 
   // The common part for both Type I and II reconnections in e+e..
-  bool reconnectTypeCommon( Event& event, int oldSize);
+  bool reconnectTypeCommon(Event& event, int oldSize);
 
   // The e+e- type I CR model.
-  map<double,pair<int,int> > reconnectTypeI( Event& event,
-    vector<vector<ColourDipole> > &dips, Vec4 decays[2]);
+  map<double,pair<int,int> > reconnectTypeI(Event& event,
+    const vector<vector<ColourDipole>>& dips, const Vec4 decays[2]);
   //  bool reconnectTypeI( Event& event, int oldSize);
 
   // The e+e- type II CR model.
-  map<double,pair<int,int> > reconnectTypeII( Event& event,
-    vector<vector<ColourDipole> > &dips, Vec4 decays[2]);
+  map<double,pair<int,int> > reconnectTypeII(Event& event,
+    const vector<vector<ColourDipole>>& dips, const Vec4 decays[2]);
   //    bool reconnectTypeII( Event& event, int oldSize);
 
   // calculate the determinant of 3 * 3 matrix.
-  double determinant3(vector<vector< double> >& vec);
+  double determinant3(const vector<vector<double>>& vec);
 };
 
 //==========================================================================

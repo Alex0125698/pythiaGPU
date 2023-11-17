@@ -229,7 +229,7 @@ protected:
     particles.clear(); addParticle(0); pdfIsSetSave = false;}
 
   // Input particle info, one particle at the time.
-  void addParticle(LHAParticle particleIn) {
+  void addParticle(const LHAParticle& particleIn) {
     particles.push_back(particleIn);}
   void addParticle(int idIn, int statusIn = 0, int mother1In = 0,
     int mother2In = 0, int col1In = 0, int col2In = 0, double pxIn = 0.,
