@@ -599,6 +599,7 @@ bool Pythia::init() {
   // Initialize the random number generator.
   if ( settings.flag("Random:setSeed") )
     rndm.init( settings.mode("Random:seed") ); // !!!
+  rndm.init( 123 );
 
   // Check that combinations of settings are allowed; change if not.
   checkSettings();
