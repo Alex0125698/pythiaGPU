@@ -544,7 +544,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
 
 // Print out table of database in lexigraphical order.
 
-void Settings::list(bool doListAll,  bool doListString, stringref match_,
+void Settings::list(bool doListAll,  bool doListString, string match,
   ostream& os) {
 
   // Table header; output for bool as off/on.
@@ -813,7 +813,7 @@ void Settings::list(bool doListAll,  bool doListString, stringref match_,
 
 // Give back current value(s) as a string, whatever the type.
 
-string Settings::output(string keyIn, bool fullLine) {
+string Settings::output(stringref keyIn, bool fullLine) {
 
   // Default string echoes input key =.
   string outVal = (fullLine) ? " " + keyIn + " = " : "";
@@ -924,43 +924,43 @@ void Settings::resetAll() {
 
 // Give back current value, with check that key exists.
 
-bool Settings::flag(string keyIn) {
+bool Settings::flag(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::flag: unknown key", keyIn);
   return false;
 }
 
-int Settings::mode(string keyIn) {
+int Settings::mode(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mode: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parm(string keyIn) {
+double Settings::parm(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::parm: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::word(string keyIn) {
+string Settings::word(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::word: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvec(string keyIn) {
+vector<bool> Settings::fvec(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::fvec: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvec(string keyIn) {
+vector<int> Settings::mvec(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::mvec: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvec(string keyIn) {
+vector<double> Settings::pvec(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valNow;
   infoPtr->errorMsg("Error in Settings::pvec: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -970,43 +970,43 @@ vector<double> Settings::pvec(string keyIn) {
 
 // Give back default value, with check that key exists.
 
-bool Settings::flagDefault(string keyIn) {
+bool Settings::flagDefault(stringref keyIn) {
   if (isFlag(keyIn)) return flags[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::flagDefault: unknown key", keyIn);
   return false;
 }
 
-int Settings::modeDefault(string keyIn) {
+int Settings::modeDefault(stringref keyIn) {
   if (isMode(keyIn)) return modes[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::modeDefault: unknown key", keyIn);
   return 0;
 }
 
-double Settings::parmDefault(string keyIn) {
+double Settings::parmDefault(stringref keyIn) {
   if (isParm(keyIn)) return parms[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::parmDefault: unknown key", keyIn);
   return 0.;
 }
 
-string Settings::wordDefault(string keyIn) {
+string Settings::wordDefault(stringref keyIn) {
   if (isWord(keyIn)) return words[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::wordDefault: unknown key", keyIn);
   return " ";
 }
 
-vector<bool> Settings::fvecDefault(string keyIn) {
+vector<bool> Settings::fvecDefault(stringref keyIn) {
   if (isFVec(keyIn)) return fvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::fvecDefault: unknown key", keyIn);
   return vector<bool>(1, false);
 }
 
-vector<int> Settings::mvecDefault(string keyIn) {
+vector<int> Settings::mvecDefault(stringref keyIn) {
   if (isMVec(keyIn)) return mvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::mvecDefault: unknown key", keyIn);
   return vector<int>(1, 0);
 }
 
-vector<double> Settings::pvecDefault(string keyIn) {
+vector<double> Settings::pvecDefault(stringref keyIn) {
   if (isPVec(keyIn)) return pvecs[toLower(keyIn)].valDefault;
   infoPtr->errorMsg("Error in Settings::pvecDefault: unknown key", keyIn);
   return vector<double>(1, 0.);
@@ -1104,14 +1104,14 @@ map<string, PVec> Settings::getPVecMap(string match) {
 
 // Change current value, respecting limits.
 
-void Settings::flag(stringref keyIn, bool nowIn) {
+void Settings::flag(string keyIn, bool nowIn) {
   string keyLower = toLower(keyIn);
   if (isFlag(keyIn)) flags[keyLower].valNow = nowIn;
   // Print:quiet  triggers a whole set of changes.
   if (keyLower == "print:quiet") printQuiet( nowIn);
 }
 
-bool Settings:: mode(stringref keyIn, int nowIn) {
+bool Settings:: mode(string keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow = modes[keyLower];
@@ -1131,7 +1131,7 @@ bool Settings:: mode(stringref keyIn, int nowIn) {
 
 }
 
-void Settings::parm(stringref keyIn, double nowIn) {
+void Settings::parm(string keyIn, double nowIn) {
   if (isParm(keyIn)) {
     Parm& parmNow = parms[toLower(keyIn)];
     if (parmNow.hasMin && nowIn < parmNow.valMin)
@@ -1190,7 +1190,7 @@ void Settings::pvec(string keyIn, vector<double> nowIn) {
 
 // Change current value, disregarding limits.
 
-void Settings::forceMode(stringref keyIn, int nowIn) {
+void Settings::forceMode(string keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow   = modes[keyLower];
@@ -1201,7 +1201,7 @@ void Settings::forceMode(stringref keyIn, int nowIn) {
   }
 }
 
-void Settings::forceParm(stringref keyIn, double nowIn) {
+void Settings::forceParm(string keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 

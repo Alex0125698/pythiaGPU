@@ -98,7 +98,7 @@ void LHAscales::print(ostream & file) const {
 
 // Construct from an XML-tag
 
-LHAgenerator::LHAgenerator(const XMLTag & tag, string defname)
+LHAgenerator::LHAgenerator(const XMLTag & tag, stringref defname)
   : name(defname), version(defname), contents(defname) {
   for ( map<string,string>::const_iterator it = tag.attr.begin();
         it != tag.attr.end(); ++it ) {

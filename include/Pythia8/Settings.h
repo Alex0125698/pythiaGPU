@@ -270,13 +270,13 @@ public:
   vector<double> pvecDefault(stringref keyIn);
 
   // Give back a map of all entries whose names match the string "match".
-  map<string, Flag> getFlagMap(stringref match);
-  map<string, Mode> getModeMap(stringref match);
-  map<string, Parm> getParmMap(stringref match);
-  map<string, Word> getWordMap(stringref match);
-  map<string, FVec> getFVecMap(stringref match);
-  map<string, MVec> getMVecMap(stringref match);
-  map<string, PVec> getPVecMap(stringref match);
+  map<string, Flag> getFlagMap(string match);
+  map<string, Mode> getModeMap(string match);
+  map<string, Parm> getParmMap(string match);
+  map<string, Word> getWordMap(string match);
+  map<string, FVec> getFVecMap(string match);
+  map<string, MVec> getMVecMap(string match);
+  map<string, PVec> getPVecMap(string match);
 
   // Change current value, respecting limits.
   void flag(string keyIn, bool nowIn);
@@ -332,7 +332,7 @@ private:
   bool isInit, readingFailedSave;
 
   // Print out table of database, called from listAll and listChanged.
-  void list(bool doListAll, bool doListString, stringref match,
+  void list(bool doListAll, bool doListString, string match,
     ostream& os = cout);
 
   // Master switch for program printout.

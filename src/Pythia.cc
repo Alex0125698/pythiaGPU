@@ -2292,7 +2292,7 @@ bool Pythia::check(ostream& os) {
 // Routine to set up a PDF pointer.
 
 // done
-PDF* Pythia::getPDFPtr(int idIn, int sequence, string beam) {
+PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
 
   // Temporary pointer to be returned.
   PDF* tempPDFPtr = 0;

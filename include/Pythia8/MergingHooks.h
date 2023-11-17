@@ -92,13 +92,13 @@ public:
   }
 
   // Constructor with core process input
-  void initOnProcess( string process, ParticleData* particleData);
+  void initOnProcess( stringref process, ParticleData* particleData);
 
   // Constructor with path to LHE file input
-  void initOnLHEF( string LHEfile, ParticleData* particleData);
+  void initOnLHEF( stringref LHEfile, ParticleData* particleData);
 
   // Function to access the LHE file and read relevant information
-  void translateLHEFString( string LHEpath);
+  void translateLHEFString( stringref LHEpath);
 
   // Function to translate the process string (in MG/ME notation)
   void translateProcessString( stringref process);

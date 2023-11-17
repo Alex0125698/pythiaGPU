@@ -147,7 +147,7 @@ public:
     { return xPosIn * pPos + xNegIn * pNeg + pxIn * eX + pyIn * eY; }
 
   // Project a four-momentum onto (x+, x-, px, py). Read out projection.
-  void project(Vec4 pIn);
+  void project(Vec4ref pIn);
   void project( double pxIn, double pyIn, double pzIn, double eIn)
     { project( Vec4( pxIn, pyIn, pzIn, eIn) ); }
   double xPos() const {return xPosProj;}
