@@ -34,7 +34,7 @@ void HelicityMatrixElement::initPointers(ParticleData* particleDataPtrIn,
 // Initialize the channel for the helicity matrix element.
 
 HelicityMatrixElement* HelicityMatrixElement::initChannel(
-      vector<HelicityParticle>& p) {
+      const vector<HelicityParticle>& p) {
 
   pID.clear();
   pM.clear();

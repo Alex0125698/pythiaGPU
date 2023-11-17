@@ -279,17 +279,17 @@ public:
   map<string, PVec> getPVecMap(string match);
 
   // Change current value, respecting limits.
-  void flag(stringref keyIn, bool nowIn);
-  bool mode(stringref keyIn, int nowIn);
-  void parm(stringref keyIn, double nowIn);
+  void flag(string keyIn, bool nowIn);
+  bool mode(string keyIn, int nowIn);
+  void parm(string keyIn, double nowIn);
   void word(stringref keyIn, stringref nowIn);
   void fvec(stringref keyIn, const vector<bool>& nowIn);
   void mvec(stringref keyIn, const vector<int>& nowIn);
   void pvec(stringref keyIn, const vector<double>& nowIn);
 
   // Change current value, disregarding limits.
-  void forceMode(stringref keyIn, int nowIn);
-  void forceParm(stringref keyIn, double nowIn);
+  void forceMode(string keyIn, int nowIn);
+  void forceParm(string keyIn, double nowIn);
   void forceMVec(stringref keyIn, const vector<int>& nowIn);
   void forcePVec(stringref keyIn, const vector<double>& nowIn);
 
