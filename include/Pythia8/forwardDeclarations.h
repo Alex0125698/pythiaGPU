@@ -452,16 +452,6 @@ class RHadrons;
 
 // (Settings.h)
 
-// classes for each type of setting
-class Flag;
-class Mode;
-class Parm;
-class Word;
-
-// classes for arrays of settings
-class FVec;
-class MVec;
-class PVec;
 
 // This class holds info on flags (bool), modes (int), parms (double),
 // words (string), fvecs (vector of bool), mvecs (vector of int) and pvecs
@@ -476,16 +466,6 @@ class InBeam;
 class InPair;
 // base class for cross section calculations
 class SigmaProcess;
-// base class for unresolved and minimum-bias processes
-class Sigma0Process; // : public SigmaProcess;
-// base class for 2 -> 1 processes
-class Sigma1Process; // : public SigmaProcess;
-// base class for 2 -> 2 processes
-class Sigma2Process; // : public SigmaProcess;
-// base class for 2 -> 3 processes
-class Sigma3Process; // : public SigmaProcess;
-// wrapper class for Les Houches Accord external input
-class SigmaLHAProcess; // : public SigmaProcess;
 
 // (SigmaTotal.h)
 
@@ -615,5 +595,10 @@ class SuppressSmallPT; // : public UserHooks; - just an example
 
 // provides ME's needed for W/Z emission in ISR or FSR
 class WeakShowerMEs;
+
+
+
+struct PythiaState;
+
 
 }

@@ -43,7 +43,7 @@ public:
   ~ProcessLevel();
 
   // Initialization.
-  bool init( Info* infoPtrIn, Settings& settings,
+  bool init(PythiaState* pState,  Info* infoPtrIn, Settings& settings,
     ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
     BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
     Couplings* couplingsPtrIn, SigmaTotal* sigmaTotPtrIn, bool doLHAin,

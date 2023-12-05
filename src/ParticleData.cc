@@ -952,7 +952,7 @@ void ParticleData::listXML(stringref outFile) {
         os << " products=\"";
         for (int j = 0; j < mult; ++j) {
           os << channel.product(j);
-          if (j < mult - 1) os << " ";
+          if (j < mult - 1) os << ' ';
         }
 
         // Finish off line and loop over allowed decay channels.
@@ -1095,15 +1095,15 @@ void ParticleData::listFF(stringref outFile) {
 
     // Print particle properties.
     os << "\n" << setw(8) << particlePtr->id() << "  "
-       << left << setw(16) << particlePtr->name() << " "
+       << left << setw(16) << particlePtr->name() << ' '
        << setw(16) << particlePtr->name(-1) << "  "
        << right << setw(2) << particlePtr->spinType() << "  "
        << setw(2) << particlePtr->chargeType() << "  "
-       << setw(2) << particlePtr->colType() << " "
-       << setw(10) << particlePtr->m0() << " "
-       << setw(10) << particlePtr->mWidth() << " "
-       << setw(10) << particlePtr->mMin() << " "
-       << setw(10) << particlePtr->mMax() << " "
+       << setw(2) << particlePtr->colType() << ' '
+       << setw(10) << particlePtr->m0() << ' '
+       << setw(10) << particlePtr->mWidth() << ' '
+       << setw(10) << particlePtr->mMin() << ' '
+       << setw(10) << particlePtr->mMax() << ' '
        << scientific << setprecision(5)
        << setw(12) << particlePtr->tau0() << "\n";
 
@@ -1114,9 +1114,9 @@ void ParticleData::listFF(stringref outFile) {
         os << "               " << setw(6) << channel.onMode()
            << "  " << fixed << setprecision(7) << setw(10)
            << channel.bRatio() << "  "
-           << setw(3) << channel.meMode() << " ";
+           << setw(3) << channel.meMode() << ' ';
         for (int j = 0; j < channel.multiplicity(); ++j)
-          os << setw(8) << channel.product(j) << " ";
+          os << setw(8) << channel.product(j) << ' ';
         os << "\n";
       }
     }
@@ -1510,15 +1510,15 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
       os << "\n" << setw(8) << particlePtr->id() << "  " << left;
       if (particlePtr->name(-1) == "void")
         os << setw(33) << particlePtr->name() << "  ";
-      else os << setw(16) << particlePtr->name() << " "
+      else os << setw(16) << particlePtr->name() << ' '
          << setw(16) << particlePtr->name(-1) << "  ";
       os << right << setw(2) << particlePtr->spinType() << "  "
          << setw(2) << particlePtr->chargeType() << "  "
-         << setw(2) << particlePtr->colType() << " "
-         << setw(10) << particlePtr->m0() << " "
-         << setw(10) << particlePtr->mWidth() << " "
-         << setw(10) << particlePtr->mMin() << " "
-         << setw(10) << particlePtr->mMax() << " "
+         << setw(2) << particlePtr->colType() << ' '
+         << setw(10) << particlePtr->m0() << ' '
+         << setw(10) << particlePtr->mWidth() << ' '
+         << setw(10) << particlePtr->mMin() << ' '
+         << setw(10) << particlePtr->mMax() << ' '
          << scientific << setprecision(5)
          << setw(12) << particlePtr->tau0() << "  " << setw(2)
          << particlePtr->isResonance() << "  " << setw(2)
@@ -1535,9 +1535,9 @@ void ParticleData::list(bool changedOnly, bool changedRes, ostream& os) {
              << setw(5) << i
              << setw(6) << channel.onMode()
              << fixed<< setw(12) << channel.bRatio()
-             << setw(5) << channel.meMode() << " ";
+             << setw(5) << channel.meMode() << ' ';
           for (int j = 0; j < channel.multiplicity(); ++j)
-            os << setw(8) << channel.product(j) << " ";
+            os << setw(8) << channel.product(j) << ' ';
           os << "\n";
         }
       }
@@ -1582,15 +1582,15 @@ void ParticleData::list(const vector<int>& idList, ostream& os) {
     os << "\n" << setw(8) << particlePtr->id() << "  " << left;
     if (particlePtr->name(-1) == "void")
       os << setw(33) << particlePtr->name() << "  ";
-    else os << setw(16) << particlePtr->name() << " "
+    else os << setw(16) << particlePtr->name() << ' '
        << setw(16) << particlePtr->name(-1) << "  ";
     os << right << setw(2) << particlePtr->spinType() << "  "
        << setw(2) << particlePtr->chargeType() << "  "
-       << setw(2) << particlePtr->colType() << " "
-       << setw(10) << particlePtr->m0() << " "
-       << setw(10) << particlePtr->mWidth() << " "
-       << setw(10) << particlePtr->mMin() << " "
-       << setw(10) << particlePtr->mMax() << " "
+       << setw(2) << particlePtr->colType() << ' '
+       << setw(10) << particlePtr->m0() << ' '
+       << setw(10) << particlePtr->mWidth() << ' '
+       << setw(10) << particlePtr->mMin() << ' '
+       << setw(10) << particlePtr->mMax() << ' '
        << scientific << setprecision(5)
        << setw(12) << particlePtr->tau0() << "  " << setw(2)
        << particlePtr->isResonance() << "  " << setw(2)
@@ -1607,9 +1607,9 @@ void ParticleData::list(const vector<int>& idList, ostream& os) {
            << setw(5) << j
            << setw(6) << channel.onMode()
            << fixed<< setw(12) << channel.bRatio()
-           << setw(5) << channel.meMode() << " ";
+           << setw(5) << channel.meMode() << ' ';
         for (int k = 0; k < channel.multiplicity(); ++k)
-          os << setw(8) << channel.product(k) << " ";
+          os << setw(8) << channel.product(k) << ' ';
         os << "\n";
       }
     }
@@ -1787,7 +1787,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if (mult == 0 || mult != nLast) {
           os << " Error: corrupted decay product list for "
              <<  particlePtr->id() << " -> ";
-          for (int j = 0; j < 8; ++j) os << prod[j] << " ";
+          for (int j = 0; j < 8; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1814,7 +1814,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if (chargeTypeSum != 0 && canHandle) {
           os << " Error: 3*charge changed by " << chargeTypeSum
              << " in " << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1823,7 +1823,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if ( baryonTypeSum != 0 && canHandle && particlePtr->isHadron() ) {
           os << " Error: 3*baryon number changed by " << baryonTypeSum
              << " in " << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1934,7 +1934,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
         if ( !correctME ) {
           os << " Warning: meMode " << meMode << " used for "
              << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;
@@ -1947,7 +1947,7 @@ void ParticleData::checkTable(int verbosity, ostream& os) {
             os << " Error: decay never possible for ";
           else  os << " Warning: decay sometimes not possible for ";
           os << idNow << " -> ";
-          for (int j = 0; j < mult; ++j) os << prod[j] << " ";
+          for (int j = 0; j < mult; ++j) os << prod[j] << ' ';
           os << "\n";
           hasPrinted = true;
           ++nErr;

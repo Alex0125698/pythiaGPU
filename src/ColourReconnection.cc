@@ -140,11 +140,11 @@ void ColourParticle::print() {
 
   cout << "---   Particle   ---" << endl;
   for (int i = 0; i < int(dips.size()); ++i) {
-    cout << "(" <<colEndIncluded[i] << ") ";
+    cout << '(' <<colEndIncluded[i] << ") ";
     for (int j = 0; j < int(dips[i].size()); ++j) {
       cout << dips[i][j]->iCol << " (" << dips[i][j]->col << ") ";
       if (j == int(dips[i].size() - 1))
-        cout << dips[i][j]->iAcol << " (" << acolEndIncluded[i] << ")" << endl;
+        cout << dips[i][j]->iAcol << " (" << acolEndIncluded[i] << ')' << endl;
     }
   }
 
