@@ -633,7 +633,8 @@ public:
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class
-  void toLower(string& name);
+  // !@!@
+  // void toLower(string& name);
 
   //***************************** SLHA PRIVATE *****************************//
 private:
