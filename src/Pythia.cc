@@ -72,7 +72,7 @@ Pythia::Pythia(stringref xmlDir_, bool printBanner) {
   pState.lhaUp        = 0;
 
   //Initial value for couplings pointer
-  pState.couplings    = new Couplings; // !!!!
+  pState.couplings    = &couplings; // !!!!
 
   // Initial value for pointer to external decay handler.
   decayHandlePtr  = 0;
@@ -2238,7 +2238,7 @@ bool Pythia::check(ostream& os) {
   // Done for sensible events.
   if (physical) return true;
 
-  // Print (the first few) flawed events: local pState.info.
+  // Print (the first few) flawed events: local info.
   if (nErrEvent < nErrList) {
     os << "\n PYTHIA erroneous event info: \n";
     if (iErrId.size() > 0) {

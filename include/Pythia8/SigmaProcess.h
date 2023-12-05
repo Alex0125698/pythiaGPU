@@ -150,7 +150,7 @@ public: // private data
   // Store Q2 renormalization and factorization scales, and related values.
   double x1Save=0., x2Save=0.; // incoming parton momentum fractions
   
-  // change to alpha
+  // change to alpha -> alphaEMRen, alphaSRen
   double alpEM=0., alpS=0.; // electromagnetic and strong coupling constants
   double Q2RenSave=0., Q2FacSave=0., pdf1Save=0., pdf2Save=0., sigmaSumSave=0.;
 
@@ -161,9 +161,10 @@ public: // private data
   int acolSave[12]; // anti-color of first 12 particles
   double   mSave[12] = {0,0,0,0, 0,0,0,0, 0,0,0,0}; // mass of first 12 particles
   double cosTheta, sinTheta, phi, sHMass, sHBeta, pT2Mass, pTFin;
-  // TODO: is phi the same as phiMPI?
-  // TODO: is pTFin the same as pTMIPFin?
-  // TODO: is sHBeta the same as sHBetaMPI?
+  // phiMPI, sHBetaMPI, pT2MPI, pTMPIFin
+  // TODO: is phi the same as phiMPI? -> yes
+  // TODO: is pTFin the same as pTMIPFin? -> yes
+  // TODO: is sHBeta the same as sHBetaMPI? -> yes
   Particle parton[12]; // i guess this just sotres the complete info. but why do we need the cached versions?
 
   // Minimal set of saved kinematics for trial interactions when
