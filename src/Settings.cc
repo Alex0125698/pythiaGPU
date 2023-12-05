@@ -544,7 +544,7 @@ bool Settings::writeFile(ostream& os, bool writeAll) {
 
 // Print out table of database in lexigraphical order.
 
-void Settings::list(bool doListAll,  bool doListString, stringref match_,
+void Settings::list(bool doListAll,  bool doListString, string match,
   ostream& os) {
 
   // Table header; output for bool as off/on.
@@ -1104,14 +1104,14 @@ map<string, PVec> Settings::getPVecMap(string match) {
 
 // Change current value, respecting limits.
 
-void Settings::flag(stringref keyIn, bool nowIn) {
+void Settings::flag(string keyIn, bool nowIn) {
   string keyLower = toLower(keyIn);
   if (isFlag(keyIn)) flags[keyLower].valNow = nowIn;
   // Print:quiet  triggers a whole set of changes.
   if (keyLower == "print:quiet") printQuiet( nowIn);
 }
 
-bool Settings:: mode(stringref keyIn, int nowIn) {
+bool Settings:: mode(string keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow = modes[keyLower];
@@ -1131,7 +1131,7 @@ bool Settings:: mode(stringref keyIn, int nowIn) {
 
 }
 
-void Settings::parm(stringref keyIn, double nowIn) {
+void Settings::parm(string keyIn, double nowIn) {
   if (isParm(keyIn)) {
     Parm& parmNow = parms[toLower(keyIn)];
     if (parmNow.hasMin && nowIn < parmNow.valMin)
@@ -1190,7 +1190,7 @@ void Settings::pvec(stringref keyIn, const vector<double>& nowIn) {
 
 // Change current value, disregarding limits.
 
-void Settings::forceMode(stringref keyIn, int nowIn) {
+void Settings::forceMode(string keyIn, int nowIn) {
   if (isMode(keyIn)) {
     string keyLower = toLower(keyIn);
     Mode& modeNow   = modes[keyLower];
@@ -1201,7 +1201,7 @@ void Settings::forceMode(stringref keyIn, int nowIn) {
   }
 }
 
-void Settings::forceParm(stringref keyIn, double nowIn) {
+void Settings::forceParm(string keyIn, double nowIn) {
   if (isParm(keyIn)) parms[toLower(keyIn)].valNow = nowIn;
 }
 
@@ -2387,19 +2387,19 @@ void Settings::initTunePP( int ppTune) {
 // Convert string to lowercase for case-insensitive comparisons.
 // Also remove initial and trailing blanks, if any.
 
-string Settings::toLower(stringref name) {
+// string Settings::toLower(stringref name) {
 
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+//   // Copy string without initial and trailing blanks.
+//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
+//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  return temp;
+//   // Convert to lowercase letter by letter.
+//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+//   return temp;
 
-}
+// }
 
 //--------------------------------------------------------------------------
 

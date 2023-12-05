@@ -172,7 +172,7 @@ private:
          xx[65], qq[49], c[13][64][48][5][5];
 
   // Initialization of data array.
-  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
+  void init( int iFitIn, string xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int , double x, double Q2);
@@ -226,7 +226,7 @@ private:
          tConst[9], xConst[9], xLast, qLast;
 
   // Initialization of data array.
-  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
+  void init( int iFitIn, string xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double Q2);
@@ -345,7 +345,7 @@ private:
   double quarkGrid[100][30];
 
   // Initialization of data array.
-  void init( int iFit, stringref xmlPath, Info* infoPtr);
+  void init( int iFit, string xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int , double x, double );
@@ -379,7 +379,7 @@ private:
   double charmGrid[100][88];
 
   // Initialization of data array.
-  void init( stringref xmlPath, Info* infoPtr);
+  void init( string xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double );
@@ -507,7 +507,7 @@ private:
   double *fRes;
 
   // Initialization of data array.
-  void init( int iFitIn, stringref xmlPath, Info* infoPtr);
+  void init( int iFitIn, string xmlPath, Info* infoPtr);
 
   // Update PDF values.
   void xfUpdate(int id, double x, double Q2);

@@ -34,7 +34,7 @@ void HelicityMatrixElement::initPointers(ParticleData* particleDataPtrIn,
 // Initialize the channel for the helicity matrix element.
 
 HelicityMatrixElement* HelicityMatrixElement::initChannel(
-  const vector<HelicityParticle>& p) {
+      const vector<HelicityParticle>& p) {
 
   pID.clear();
   pM.clear();
@@ -918,7 +918,7 @@ void HMETau2Meson::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2Meson::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2Meson::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
   pMap[2] = 2;
@@ -2446,7 +2446,7 @@ void HMETau2FivePions::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2FivePions::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2FivePions::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
 

@@ -65,7 +65,7 @@ public:
 
   // Constructor. (See Pythia.cc file.)
   // @@@ MAIN
-  Pythia(stringref xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
+  Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
@@ -146,13 +146,13 @@ public:
   // Generate only a single timelike shower as in a decay.
   int forceTimeShower( int iBeg, int iEnd, double pTmax, int nBranchMax = 0)
     { pState.info.setScalup( 0, pTmax);
-    return timesDecPtr->shower( iBeg, iEnd, pState.event, pTmax, nBranchMax); }
+    return timesDecPtr->shower( iBeg, iEnd, event, pTmax, nBranchMax); }
 
   // Generate only the hadronization/decay stage.
   bool forceHadronLevel( bool findJunctions = true);
 
   // Special routine to allow more decays if on/off switches changed.
-  bool moreDecays() {return hadronLevel.moreDecays(pState.event);}
+  bool moreDecays() {return hadronLevel.moreDecays(event);}
 
   // Special routine to force R-hadron decay when not done before.
   bool forceRHadronDecays() {return doRHadronDecays();}
