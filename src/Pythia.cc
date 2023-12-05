@@ -615,9 +615,9 @@ bool Pythia::init() {
     mergingHooksPtr->init( pState.settings, &pState.info, &pState.particleData, &partonSystems );
 
   // Initialize the random number generator.
-  // if ( pState.settings.flag("Random:setSeed") )
-    // rndm.init( 123 ); // !!!
-    // rndm.init( pState.settings.mode("Random:seed") ); // !!!
+  if ( pState.settings.flag("Random:setSeed") )
+    pState.rndm.init( pState.settings.mode("Random:seed") ); // !!!
+  pState.rndm.init( 123 );
 
   // Check that combinations of settings are allowed; change if not.
   checkSettings();

@@ -441,7 +441,7 @@ public:
 
     // Set and Get comment
     void setComment(stringref comment) {commentP=comment;}
-    void getComment(string comment) {comment=commentP;}
+    void getComment(string& comment) {comment=commentP;} // !@!@
 
     // Generic functions to get value
     bool get(int& val) {val=n; return isIntP;}
@@ -633,7 +633,8 @@ public:
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class
-  void toLower(string& name);
+  // !@!@
+  // void toLower(string& name);
 
   //***************************** SLHA PRIVATE *****************************//
 private:

@@ -252,7 +252,7 @@ private:
   //                       multiplicity and check and enforce
   //                       ordering
   // NO OUTPUT
-  void setScales(const vector<int>& index, bool forward);
+  void setScales(vector<int> index, bool forward);
 
   // Function to find a particle in all higher multiplicity events
   // along the history path and set its production scale to the input
@@ -568,7 +568,7 @@ private:
   // IN  Event       : Reference event
   // IN  vector<int> : Positions of the partons in the set
   // OUT bool        : Is a colour singlet / is not
-  bool isColSinglet( const Event& event, const vector<int>& system);
+  bool isColSinglet( const Event& event, vector<int> system);
   // Function to check that a set of partons forms a flavour singlet
   // IN  Event       : Reference event
   // IN  vector<int> : Positions of the partons in the set
@@ -576,7 +576,7 @@ private:
   //                   all quarks in a set should have a fixed flavour
   // OUT bool        : Is a flavour singlet / is not
   bool isFlavSinglet( const Event& event,
-    const vector<int>& system, int flav=0);
+    vector<int> system, int flav=0);
 
   // Function to properly colour-connect the radiator to the rest of
   // the event, as needed during clustering

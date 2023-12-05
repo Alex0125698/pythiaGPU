@@ -65,7 +65,7 @@ public:
 
   // Constructor. (See Pythia.cc file.)
   // @@@ MAIN
-  Pythia(stringref xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
+  Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
