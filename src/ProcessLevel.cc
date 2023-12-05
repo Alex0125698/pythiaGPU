@@ -143,7 +143,7 @@ bool ProcessLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings
 
   // Append single container for Les Houches processes, if any.
   if (doLHA) {
-    SigmaProcess* sigmaPtr = new SigmaLHAProcess();
+    SigmaProcess* sigmaPtr = new SigmaProcess(ProcessType::LHA);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
 
     // Store location of this container, and send in LHA pointer.
