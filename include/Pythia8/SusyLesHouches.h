@@ -441,7 +441,7 @@ public:
 
     // Set and Get comment
     void setComment(stringref comment) {commentP=comment;}
-    void getComment(string comment) {comment=commentP;}
+    void getComment(string& comment) {comment=commentP;} // !@!@
 
     // Generic functions to get value
     bool get(int& val) {val=n; return isIntP;}
