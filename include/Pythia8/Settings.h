@@ -303,6 +303,7 @@ public:
   void resetPVec(stringref keyIn);
 
 private:
+public:
 
   // Pointer to various information on the generation.
   Info* infoPtr;
