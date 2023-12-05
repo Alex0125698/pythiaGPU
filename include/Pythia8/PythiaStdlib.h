@@ -120,9 +120,9 @@ using stringbuf = std::string;
 // Powers of small integers - for balance speed/code clarity.
 inline double pow2(const double& x) {return x*x;}
 inline double pow3(const double& x) {return x*x*x;}
-inline double pow4(const double& x) {return x*x*x*x;}
-inline double pow5(const double& x) {return x*x*x*x*x;}
-inline double pow6(const double& x) {return x*x*x*x*x*x;}
+inline double pow4(const double& x) {return pow2(pow2(x));}
+inline double pow5(const double& x) {return pow4(x)*x;}
+inline double pow6(const double& x) {return pow2(pow3(x));}
 
 // Avoid problem with negative square root argument (from roundoff).
 inline double sqrtpos(const double& x) {return sqrt( max( 0., x));}
