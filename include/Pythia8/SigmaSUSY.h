@@ -21,12 +21,12 @@ namespace Pythia8 {
 
 // An intermediate class for SUSY 2 -> 2 with nontrivial decay angles.
 
-class Sigma2SUSY : public Sigma2Process {
+class Sigma2SUSY : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2SUSY() { };
+  Sigma2SUSY() : SigmaProcess(ProcessType::P2to2) { };
 
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
@@ -50,7 +50,10 @@ public:
     // Save ordering indices and process code
     id3chi   = id3chiIn;
     id4chi   = id4chiIn;
-    codeSave = codeIn;
+    code = codeIn;
+    fluxType = FluxType::FF;
+    resonanceA = 23;
+    isSUSY = true;
 
 
     // Construct id codes from ordering indices.
@@ -64,6 +67,9 @@ public:
     if (id4chi == 3) id4 = 1000025;
     if (id4chi == 4) id4 = 1000035;
     if (id4chi == 5) id4 = 1000045;
+
+    id3Mass = abs(id3);
+    id4Mass = abs(id4);
 
   }
 
@@ -83,20 +89,12 @@ public:
   //  virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
-  virtual int    id3Mass() const {return abs(id3);}
-  virtual int    id4Mass() const {return abs(id4);}
-  virtual int    resonanceA() const {return 23;}
-  virtual bool   isSUSY()  const {return true;}
   virtual double getSigma0() const {return sigma0;}
 
  protected:
 
   // Basic process information
-  int     id3chi, id4chi, codeSave;
-  string  nameSave;
+  int     id3chi, id4chi;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -120,7 +118,8 @@ public:
     // Save ordering indices and process code
     id3chi   = id3chiIn;
     id4chi   = id4chiIn;
-    codeSave = codeIn;
+    code = codeIn;
+    resonanceA = 24;
 
     // Construct id codes from ordering indices.
     id3 = (abs(id3chi) == 2) ? 1000037 : 1000024;
@@ -139,8 +138,6 @@ public:
 
   // Evaluate d(sigmaHat)/d(tHat).
   virtual double sigmaHat();
-
-  virtual int    resonanceA() const {return 24;}
 
 protected :
 
@@ -162,7 +159,7 @@ public:
     // Save ordering indices and process code
     id3chi   = id3chiIn;
     id4chi   = id4chiIn;
-    codeSave = codeIn;
+    code = codeIn;
 
     // Construct id codes from ordering indices.
     id3 = (abs(id3chi) == 2) ?  1000037 :  1000024;
@@ -182,20 +179,22 @@ public:
 
 // A derived class for q g -> neutralino_i squark_j (and cc)
 
-class Sigma2qg2chi0squark : public Sigma2Process {
+class Sigma2qg2chi0squark : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qg2chi0squark() { };
+  Sigma2qg2chi0squark()  : SigmaProcess(ProcessType::P2to2) { };
 
   // Constructor.
-  Sigma2qg2chi0squark(int id3chiIn, int id4sqIn, bool isUp, int codeIn) {
+  Sigma2qg2chi0squark(int id3chiIn, int id4sqIn, bool isUp, int codeIn)  : SigmaProcess(ProcessType::P2to2) {
 
     // Save ordering indices and process code
     id3chi   = id3chiIn;
     id4sq    = id4sqIn;
-    codeSave = codeIn;
+    code = codeIn;
+    fluxType = FluxType::QG;
+    isSUSY = true;
 
     // Construct id codes from ordering indices.
     id3                  = 1000022;
@@ -209,6 +208,9 @@ public:
     if (id4sq  == 4) id4 = 2000001 + (isUp ? 1 : 0);
     if (id4sq  == 5) id4 = 2000003 + (isUp ? 1 : 0);
     if (id4sq  == 6) id4 = 2000005 + (isUp ? 1 : 0);
+
+    id3Mass = abs(id3);
+    id4Mass = abs(id4);
 
   }
 
@@ -224,19 +226,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return abs(id3);}
-  virtual int    id4Mass() const {return abs(id4);}
-  virtual bool   isSUSY()  const {return true;}
-
  protected:
 
   // Basic process information
-  int     id3chi, id4sq, codeSave;
-  string  nameSave;
+  int     id3chi, id4sq;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -260,7 +253,9 @@ public:
     // Save ordering indices and process code
     id3chi   = id3chiIn;
     id4sq    = id4sqIn;
-    codeSave = codeIn;
+    code = codeIn;
+    fluxType = FluxType::QG;
+    isSUSY = true;
 
     // Construct id codes from ordering indices.
     id3Sav                       = 1000024;
@@ -276,6 +271,9 @@ public:
     // Initial values, can be swapped to charge conjugates event by event.
     id3 = id3Sav;
     id4 = id4Sav;
+
+    id3Mass = abs(id3);
+    id4Mass = abs(id4);
 
   }
 
@@ -302,23 +300,28 @@ public:
 
 // A derived class for q q' -> ~q_i ~q_j
 
-class Sigma2qq2squarksquark : public Sigma2Process {
+class Sigma2qq2squarksquark : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qq2squarksquark() {}
+  // Sigma2qq2squarksquark() {}
 
   // Constructor.
-  Sigma2qq2squarksquark(int id3In, int id4In, int codeIn) {
+  Sigma2qq2squarksquark(int id3In, int id4In, int codeIn) : SigmaProcess(ProcessType::P2to2) {
 
     // Save ordering indices and process code
     id3Sav = id3In;
     id4Sav = id4In;
-    codeSave = codeIn;
+    code = codeIn;
     // Initial values (flipped for c.c.)
     id3    = id3Sav;
     id4    = id4Sav;
+    fluxType = FluxType::QQ;
+    isSUSY = true;
+
+    id3Mass = abs(id3Sav);
+    id4Mass = abs(id4Sav);
 
   }
 
@@ -334,19 +337,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qq";}
-  virtual int    id3Mass() const {return abs(id3Sav);}
-  virtual int    id4Mass() const {return abs(id4Sav);}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Basic process information
-  int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  string  nameSave;
+  int     id3Sav, id4Sav, iGen3, iGen4, nNeut;
   bool    isUD, onlyQCD;
 
   // Storage of mass squares
@@ -371,25 +365,29 @@ private:
 
 // A derived class for q qbar' -> ~q_i ~q*_j
 
-class Sigma2qqbar2squarkantisquark : public Sigma2Process {
+class Sigma2qqbar2squarkantisquark : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qqbar2squarkantisquark() {}
+  Sigma2qqbar2squarkantisquark() : SigmaProcess(ProcessType::P2to2) {}
 
   // Constructor.
-  Sigma2qqbar2squarkantisquark(int id3In, int id4In, int codeIn) {
+  Sigma2qqbar2squarkantisquark(int id3In, int id4In, int codeIn) : SigmaProcess(ProcessType::P2to2) {
 
     // Save ordering indices and process code
     // (always store squark first, antisquark second)
     id3Sav = abs(id3In);
     id4Sav = -abs(id4In);
-    codeSave = codeIn;
+    code = codeIn;
     // Initial values
     id3    = id3Sav;
     id4    = id4Sav;
+    fluxType = FluxType::QQ;
+    isSUSY = true;
 
+    id3Mass = abs(id3Sav);
+    id4Mass = abs(id4Sav);
   }
 
   // Initialize process.
@@ -404,19 +402,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qq";}
-  virtual int    id3Mass() const {return abs(id3Sav);}
-  virtual int    id4Mass() const {return abs(id4Sav);}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Basic process information
-  int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  string  nameSave;
+  int     id3Sav, id4Sav, iGen3, iGen4, nNeut;
   bool    isUD, isCC, onlyQCD;
 
   // Storage of mass squares
@@ -443,25 +432,29 @@ private:
 
 // A derived class for g g -> ~q ~q*
 
-class Sigma2gg2squarkantisquark : public Sigma2Process {
+class Sigma2gg2squarkantisquark : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2gg2squarkantisquark() {
-  }
+  // Sigma2gg2squarkantisquark() {
+  // }
 
   // Constructor.
-  Sigma2gg2squarkantisquark(int id34In, int codeIn) {
+  Sigma2gg2squarkantisquark(int id34In, int codeIn) : SigmaProcess(ProcessType::P2to2) {
 
     // Save ordering indices and process code
     // (always store squark first, antisquark second)
     id3Sav = abs(id34In);
     id4Sav = -abs(id34In);
-    codeSave = codeIn;
+    code = codeIn;
     // Initial values
     id3    = id3Sav;
     id4    = id4Sav;
+    fluxType = FluxType::GG;
+    isSUSY = true;
+    id3Mass = abs(id3Sav);
+    id4Mass = abs(id4Sav);
 
   }
 
@@ -477,19 +470,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return abs(id3Sav);}
-  virtual int    id4Mass() const {return abs(id4Sav);}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Basic process information
-  int     id3Sav, id4Sav, codeSave;
-  string  nameSave;
+  int     id3Sav, id4Sav;
   double sigma, m2Sq, openFracPair;
 
   //SUSY couplings
@@ -501,23 +485,26 @@ private:
 
 // A derived class for q g -> ~q ~g
 
-class Sigma2qg2squarkgluino : public Sigma2Process {
+class Sigma2qg2squarkgluino : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qg2squarkgluino() {}
+  // Sigma2qg2squarkgluino() {}
 
   // Constructor.
-  Sigma2qg2squarkgluino(int id3In, int codeIn) {
+  Sigma2qg2squarkgluino(int id3In, int codeIn) : SigmaProcess(ProcessType::P2to2) {
 
     // Save ordering indices and process code
     id3Sav = abs(id3In);
-    codeSave = codeIn;
+    code = codeIn;
     // Initial values
     id3    = id3Sav;
     id4    = 1000021;
-
+    fluxType = FluxType::QG;
+    isSUSY = true;
+    id4Mass= 1000021;
+    id3Mass = abs(id3Sav);
   }
 
   // Initialize process.
@@ -532,19 +519,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return abs(id3Sav);}
-  virtual int    id4Mass() const {return 1000021;}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Basic process information
-  int     id3Sav, codeSave;
-  string  nameSave;
+  int     id3Sav;
   double sigmaA, sigmaB, comFacHat, m2Glu, m2Sq, openFracPair;
 
   //SUSY couplings
@@ -556,12 +534,19 @@ private:
 
 // A derived class for g g -> gluino gluino.
 
-class Sigma2gg2gluinogluino : public Sigma2Process {
+class Sigma2gg2gluinogluino : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2gg2gluinogluino() {
+  Sigma2gg2gluinogluino() : SigmaProcess(ProcessType::P2to2)
+  {
+    name = "g g -> gluino gluino";
+    code = 1201;
+    fluxType = FluxType::GG;
+    id3Mass = 1000021;
+    id4Mass = 1000021;
+    isSUSY = true;
   }
 
   // Initialize process.
@@ -575,14 +560,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()    const {return "g g -> gluino gluino";}
-  virtual int    code()    const {return 1201;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return 1000021;}
-  virtual int    id4Mass() const {return 1000021;}
-  virtual bool   isSUSY()  const {return true;}
 
 private:
 
@@ -598,14 +575,20 @@ private:
 
 // A derived class for q qbar -> gluino gluino.
 
-class Sigma2qqbar2gluinogluino : public Sigma2Process {
+class Sigma2qqbar2gluinogluino : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qqbar2gluinogluino() {
-
-}
+  Sigma2qqbar2gluinogluino() : SigmaProcess(ProcessType::P2to2)
+  {
+    name = "q qbar -> gluino gluino";
+    code = 1202;
+    fluxType = FluxType::QQ;
+    id3Mass = 1000021;
+    id4Mass = 1000021;
+    isSUSY = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -619,14 +602,6 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return "q qbar -> gluino gluino";}
-  virtual int    code()    const {return 1202;}
-  virtual string inFlux()  const {return "qq";}
-  virtual int    id3Mass() const {return 1000021;}
-  virtual int    id4Mass() const {return 1000021;}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Values stored for process type and colour flow selection.
@@ -639,16 +614,20 @@ private:
 
 //==========================================================================
 
-class Sigma1qq2antisquark : public Sigma1Process {
+class Sigma1qq2antisquark : public SigmaProcess {
 public:
 
   // Constructor.
-  Sigma1qq2antisquark() {}
+  // Sigma1qq2antisquark() {}
 
 
-  Sigma1qq2antisquark(int id3In) {
+  Sigma1qq2antisquark(int id3In) : SigmaProcess(ProcessType::P2to1) 
+  {
 
     idRes = id3In;
+    fluxType = FluxType::QQ;
+    isSUSY = true;
+    resonanceA = idRes;
 
   }
 
@@ -665,19 +644,13 @@ public:
   virtual void setIdColAcol();
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qq";}
-  virtual bool   isSUSY()  const {return true;}
   virtual bool   isRPV()   const {return true;}
-  virtual int    resonanceA() const {return idRes;}
 
 private:
 
   // Values stored for process type and colour flow selection.
   double mRes, GammaRes, m2Res, sigBW, widthOut;
-  int    codeSave, idRes;
-  string nameSave;
+  int    idRes;
 
   //SUSY couplings
   CoupSUSY* coupSUSYPtr;
@@ -702,7 +675,7 @@ public:
     // Save ordering indices and process code
     id3   = 1000021;
     id4chi   = id4chiIn;
-    codeSave = codeIn;
+    code = codeIn;
 
 
     // Construct id codes from ordering indices.
@@ -712,6 +685,12 @@ public:
     if (id4chi == 4) id4 = 1000035;
     if (id4chi == 5) id4 = 1000045;
 
+    fluxType = FluxType::FF;
+    resonanceA = 23;
+    isSUSY = true;
+
+    id3Mass = abs(id3);
+    id4Mass = abs(id4);
   }
 
   // Initialize process.
@@ -730,20 +709,12 @@ public:
   //  virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
-  virtual int    id3Mass() const {return abs(id3);}
-  virtual int    id4Mass() const {return abs(id4);}
-  virtual int    resonanceA() const {return 23;}
-  virtual bool   isSUSY()  const {return true;}
   virtual double getSigma0() const {return sigma0;}
 
  protected:
 
   // Basic process information
-  int     id3chi, id4chi, codeSave;
-  string  nameSave;
+  int     id3chi, id4chi;
 
   // Values stored for later use
   double  sigma0, ui, uj, ti, tj, openFracPair;
@@ -766,11 +737,15 @@ public:
     // Save ordering indices and process code
     id3   = 1000021;
     id4chi   = id4chiIn;
-    codeSave = codeIn;
+    code = codeIn;
 
     // Construct id codes from ordering indices.
     id4 = (abs(id4chi) == 2) ? 1000037 : 1000024;
     if (id4chi < 0)  id4 = -id4;
+
+    fluxType = FluxType::FF;
+    resonanceA = 24;
+    isSUSY = true;
   }
 
   // Initialize process.
@@ -784,8 +759,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  virtual int    resonanceA() const {return 24;}
 
 protected :
 
@@ -802,7 +775,7 @@ class Sigma2qqbar2sleptonantislepton : public Sigma2qqbar2squarkantisquark {
 public:
 
   // Constructor.
-  Sigma2qqbar2sleptonantislepton() {}
+  // Sigma2qqbar2sleptonantislepton() {}
 
   // Constructor.
   Sigma2qqbar2sleptonantislepton(int id3In, int id4In, int codeIn) {
@@ -811,10 +784,17 @@ public:
     // (always store squark first, antisquark second)
     id3Sav = abs(id3In);
     id4Sav = -abs(id4In);
-    codeSave = codeIn;
+    code = codeIn;
     // Initial values
     id3    = id3Sav;
     id4    = id4Sav;
+
+    fluxType = FluxType::QQ;
+    isSUSY = true;
+
+    id3Mass = abs(id3Sav);
+    id4Mass = abs(id4Sav);
+    
   }
 
   // Initialize process.
@@ -829,19 +809,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qq";}
-  virtual int    id3Mass() const {return abs(id3Sav);}
-  virtual int    id4Mass() const {return abs(id4Sav);}
-  virtual bool   isSUSY()  const {return true;}
-
 private:
 
   // Basic process information
-  int     id3Sav, id4Sav, codeSave, iGen3, iGen4, nNeut;
-  string  nameSave;
+  int     id3Sav, id4Sav, iGen3, iGen4, nNeut;
   bool    isUD;
 
   // Storage of mass squares

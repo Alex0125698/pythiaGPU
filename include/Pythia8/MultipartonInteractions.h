@@ -43,7 +43,7 @@ public:
     for (int i = 0; i < int(sigmaU.size()); ++i) delete sigmaU[i];}
 
   // Initialize list of processes.
-  bool init(int inState, int processLevel, Info* infoPtr,
+  bool init(PythiaState* pState, int inState, int processLevel, Info* infoPtr,
     Settings* settingsPtr, ParticleData* particleDataPtr, Rndm* rndmPtrIn,
     BeamParticle* beamAPtr, BeamParticle* beamBPtr, Couplings* couplingsPtr);
 
@@ -61,8 +61,8 @@ public:
 
   // Return code or name of a specified process, for statistics table.
   int    nProc() const {return nChan;}
-  int    codeProc(int iProc) const {return sigmaT[iProc]->code();}
-  string nameProc(int iProc) const {return sigmaT[iProc]->name();}
+  int    codeProc(int iProc) const {return sigmaT[iProc]->code;}
+  string nameProc(int iProc) const {return sigmaT[iProc]->name;}
 
 private:
 
@@ -100,7 +100,7 @@ public:
   MultipartonInteractions() : bIsSet(false) {}
 
   // Initialize the generation process for given beams.
-  bool init( bool doMPIinit, int iDiffSysIn, Info* infoPtrIn,
+  bool init(PythiaState* pState,  bool doMPIinit, int iDiffSysIn, Info* infoPtrIn,
     Settings& settings, ParticleData* particleDataPtr, Rndm* rndmPtrIn,
     BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
     Couplings* couplingsPtrIn, PartonSystems* partonSystemsPtrIn,

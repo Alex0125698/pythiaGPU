@@ -34,7 +34,7 @@ double Sigma2SUSY::weightDecay( Event& process, int iResBeg, int iResEnd) {
     return weightTopDecay( process, iResBeg, iResEnd);
 
   // For Neutralino(i) decay hand over to standard routine.
-  if ( settingsPtr->flag("SUSYResonance:3BodyMatrixElement")
+  if ( pState->settings.flag("SUSYResonance:3BodyMatrixElement")
     && (idMother == 1000023 || idMother == 1000025 || idMother == 1000035) ) {
 
     // Nj -> Ni f fbar
@@ -66,9 +66,9 @@ double Sigma2SUSY::weightDecay( Event& process, int iResBeg, int iResEnd) {
       }
       if( idmo<0 || iddau<0 ) return(1.0);
 
+      // @overhead
       Sigma2qqbar2chi0chi0 localDecay(idmo,iddau,0);
-      localDecay.init(infoPtr, settingsPtr, particleDataPtr,NULL,NULL,
-                      NULL,couplingsPtr);
+      localDecay.init(pState);
       localDecay.initProc();
       localDecay.alpEM = 1;
       localDecay.id1 = process[iF].id();
@@ -124,14 +124,14 @@ double Sigma2SUSY::weightDecay( Event& process, int iResBeg, int iResEnd) {
 void Sigma2qqbar2chi0chi0::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Construct name of process.
-  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
-    + particleDataPtr->name(id4);
+  name = "q qbar' -> " + pState->particleData.name(id3) + " "
+    + pState->particleData.name(id4);
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3, id4);
+  openFracPair = pState->particleData.resOpenFrac(id3, id4);
 
 }
 
@@ -239,7 +239,7 @@ double Sigma2qqbar2chi0chi0::sigmaHat() {
     idsq=((ksq+2)/3)*1000000 + 2*((ksq-1) % 3) + (idAbs1+1) % 2 + 1;
     idsq+=iAdd;
 
-    double msq2    = pow(particleDataPtr->m0(idsq),2);
+    double msq2    = pow(pState->particleData.m0(idsq),2);
     double usq     = uH - msq2;
     double tsq     = tH - msq2;
 
@@ -446,8 +446,8 @@ double Sigma2qqbar2charchi0::sigmaHat() {
 
     int idsu=((jsq+2)/3)*1000000 + 2*((jsq-1) % 3) + 2 +iAdd;
     int idsd=((jsq+2)/3)*1000000 + 2*((jsq-1) % 3) + 1 +iAdd;
-    double msd2 = pow(particleDataPtr->m0(idsd),2);
-    double msu2 = pow(particleDataPtr->m0(idsu),2);
+    double msd2 = pow(pState->particleData.m0(idsd),2);
+    double msu2 = pow(pState->particleData.m0(idsu),2);
     double tsq  = tH - msd2;
     double usq  = uH - msu2;
 
@@ -594,7 +594,7 @@ double Sigma2qqbar2charchar::sigmaHat() {
     if (i3 == i4) {
 
       // Charge of in-particles
-      double q    = particleDataPtr->chargeType(idAbs1)/3.0;
+      double q    = pState->particleData.chargeType(idAbs1)/3.0;
       QuLL += q * coupSUSYPtr->sin2W / sH;
       QuRR += q * coupSUSYPtr->sin2W / sH;
       QtLL += q * coupSUSYPtr->sin2W / sH;
@@ -616,7 +616,7 @@ double Sigma2qqbar2charchar::sigmaHat() {
 
       int idsd    = ((ksq+2)/3)*1000000 + 2*((ksq-1) % 3) + 1;
       idsd       +=iShift;
-      double msq  = particleDataPtr->m0(idsd);
+      double msq  = pState->particleData.m0(idsd);
       double ufac = 2.0 * (uH - pow2(msq));
 
       //u-ubar -> chi-chi+
@@ -635,7 +635,7 @@ double Sigma2qqbar2charchar::sigmaHat() {
 
       int idsu    = ((ksq+2)/3)*1000000 + 2*((ksq-1) % 3) + 2;
       idsu       += iShift;
-      double msq  = particleDataPtr->m0(idsu);
+      double msq  = pState->particleData.m0(idsu);
       double tfac = 2.0 * (tH - pow2(msq));
 
       //d-dbar -> chi-chi+
@@ -689,20 +689,20 @@ double Sigma2qqbar2charchar::sigmaHat() {
 void Sigma2qg2chi0squark::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Construct name of process.
   if (id4 % 2 == 0) {
-    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
-      + particleDataPtr->name(id4) + " + c.c. (q=u,c)";
+    name = "q g -> " + pState->particleData.name(id3) + " "
+      + pState->particleData.name(id4) + " + c.c. (q=u,c)";
   }
   else {
-    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
-      + particleDataPtr->name(id4) + " + c.c. (q=d,s,b)";
+    name = "q g -> " + pState->particleData.name(id3) + " "
+      + pState->particleData.name(id4) + " + c.c. (q=d,s,b)";
   }
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3, id4);
+  openFracPair = pState->particleData.resOpenFrac(id3, id4);
 
 }
 
@@ -750,7 +750,7 @@ double Sigma2qg2chi0squark::sigmaHat() {
   int iGq = (abs(idq)+1)/2;
 
   // Only accept u(bar) -> ~u(bar) and d(bar) -> ~d(bar)
-  if (particleDataPtr->chargeType(idq) != particleDataPtr->chargeType(id4))
+  if (pState->particleData.chargeType(idq) != pState->particleData.chargeType(id4))
     return 0.0;
 
   // Couplings
@@ -823,20 +823,20 @@ void Sigma2qg2chi0squark::setIdColAcol() {
 void Sigma2qg2charsquark::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Construct name of process.
   if (id4 % 2 == 0) {
-    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
-      + particleDataPtr->name(id4) + " + c.c. (q=d,s,b)";
+    name = "q g -> " + pState->particleData.name(id3) + " "
+      + pState->particleData.name(id4) + " + c.c. (q=d,s,b)";
   }
   else {
-    nameSave = "q g -> " + particleDataPtr->name(id3) + " "
-      + particleDataPtr->name(id4) + " + c.c. (q=u,c)";
+    name = "q g -> " + pState->particleData.name(id3) + " "
+      + pState->particleData.name(id4) + " + c.c. (q=u,c)";
   }
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, id4Sav);
 
 }
 
@@ -877,7 +877,7 @@ double Sigma2qg2charsquark::sigmaHat() {
   }
 
   // Only accept u(bar) -> ~d(bar) and d(bar) -> ~u(bar)
-  if (particleDataPtr->chargeType(idq) == particleDataPtr->chargeType(id4))
+  if (pState->particleData.chargeType(idq) == pState->particleData.chargeType(id4))
     return 0.0;
 
   // Generation index
@@ -957,7 +957,7 @@ void Sigma2qg2charsquark::setIdColAcol() {
 void Sigma2qq2squarksquark::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Extract mass-ordering indices
   iGen3 = 3*(abs(id3Sav)/2000000) + (abs(id3Sav)%10+1)/2;
@@ -968,21 +968,21 @@ void Sigma2qq2squarksquark::initProc() {
   else isUD = true;
 
   // Derive name
-  nameSave = "q q' -> "+particleDataPtr->name(abs(id3Sav))+" "
-    +particleDataPtr->name(abs(id4Sav))+" + c.c.";
+  name = "q q' -> "+pState->particleData.name(abs(id3Sav))+" "
+    +pState->particleData.name(abs(id4Sav))+" + c.c.";
 
   // Count 5 neutralinos in NMSSM
   nNeut = (coupSUSYPtr->isNMSSM ? 5 : 4);
 
   // Store mass squares of all possible internal propagator lines
-  m2Glu     = pow2(particleDataPtr->m0(1000021));
+  m2Glu     = pow2(pState->particleData.m0(1000021));
   m2Neut.resize(nNeut+1);
   for (int iNeut=1;iNeut<=nNeut;iNeut++) {
-    m2Neut[iNeut] = pow2(particleDataPtr->m0(coupSUSYPtr->idNeut(iNeut)));
+    m2Neut[iNeut] = pow2(pState->particleData.m0(coupSUSYPtr->idNeut(iNeut)));
   }
   m2Char.resize(3);
-  m2Char[1] = pow2(particleDataPtr->m0(coupSUSYPtr->idChar(1)));
-  m2Char[2] = pow2(particleDataPtr->m0(coupSUSYPtr->idChar(2)));
+  m2Char[1] = pow2(pState->particleData.m0(coupSUSYPtr->idChar(1)));
+  m2Char[2] = pow2(pState->particleData.m0(coupSUSYPtr->idChar(2)));
 
   // Set sizes of some arrays to be used below
   tNeut.resize(nNeut+1);
@@ -991,10 +991,10 @@ void Sigma2qq2squarksquark::initProc() {
   uChar.resize(3);
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, id4Sav);
 
   // Selection of interference terms
-  onlyQCD = settingsPtr->flag("SUSY:qq2squarksquark:onlyQCD");
+  onlyQCD = pState->settings.flag("SUSY:qq2squarksquark:onlyQCD");
 }
 
 //--------------------------------------------------------------------------
@@ -1269,8 +1269,8 @@ double Sigma2qq2squarksquark::sigmaHat() {
           for (int l=1;l<=nNeut;l++) {
 
             // kl-dependent factor for LL and RR contributions
-            double facMS = sH * particleDataPtr->m0(coupSUSYPtr->idNeut(k))
-              * particleDataPtr->m0(coupSUSYPtr->idNeut(l));
+            double facMS = sH * pState->particleData.m0(coupSUSYPtr->idNeut(k))
+              * pState->particleData.m0(coupSUSYPtr->idNeut(l));
 
             // Note: Nxkl defined as in [Boz07] with sigmaNeut factored out
             // [1][1] = LL, [1][2] = LR, [2][1] = RL, [2][2] = RR
@@ -1349,8 +1349,8 @@ double Sigma2qq2squarksquark::sigmaHat() {
           // Neutralino / Gluino interference
 
           // k-dependent factor for LL and RR contributions
-          double facMS = sH * particleDataPtr->m0(coupSUSYPtr->idNeut(k))
-            * particleDataPtr->m0(1000021);
+          double facMS = sH * pState->particleData.m0(coupSUSYPtr->idNeut(k))
+            * pState->particleData.m0(1000021);
 
           // Note: Nxkl defined as in [Boz07] with sigmaNeutGlu factored out
           // [1][1] = LL, [1][2] = LR, [2][1] = RL, [2][2] = RR
@@ -1510,7 +1510,7 @@ void Sigma2qq2squarksquark::setIdColAcol() {
   if (swapTU) sumA = sumAB - sumA;
   setColAcol( 1, 0, 2, 0, 1, 0, 2, 0);
   // B: t-channel gluino or u-channel neutralino
-  if (rndmPtr->flat()*sumAB > sumA) setColAcol( 1, 0, 2, 0, 2, 0, 1, 0);
+  if (pState->rndm.flat()*sumAB > sumA) setColAcol( 1, 0, 2, 0, 2, 0, 1, 0);
 
   // Switch to anti-colors if antiquarks
   if (id1 < 0 || id2 < 0) swapColAcol();
@@ -1529,7 +1529,7 @@ void Sigma2qq2squarksquark::setIdColAcol() {
 void Sigma2qqbar2squarkantisquark::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Is this a ~u_i ~d*_j, ~d_i ~u*_j final state or ~d_i ~d*_j, ~u_i ~u*_j
   if (abs(id3Sav) % 2 == abs(id4Sav) % 2) isUD = false;
@@ -1546,18 +1546,18 @@ void Sigma2qqbar2squarkantisquark::initProc() {
   }
 
   // Derive name
-  nameSave = "q qbar' -> "+particleDataPtr->name(abs(id3Sav))+" "+
-    particleDataPtr->name(-abs(id4Sav));
-  if (isUD && abs(id3Sav) != abs(id4Sav)) nameSave +=" + c.c.";
+  name = "q qbar' -> "+pState->particleData.name(abs(id3Sav))+" "+
+    pState->particleData.name(-abs(id4Sav));
+  if (isUD && abs(id3Sav) != abs(id4Sav)) name +=" + c.c.";
 
   // Count 5 neutralinos in NMSSM
   nNeut = (coupSUSYPtr->isNMSSM ? 5 : 4);
 
   // Store mass squares of all possible internal propagator lines
-  m2Glu     = pow2(particleDataPtr->m0(1000021));
+  m2Glu     = pow2(pState->particleData.m0(1000021));
   m2Neut.resize(nNeut+1);
   for (int iNeut=1;iNeut<=nNeut;iNeut++)
-    m2Neut[iNeut] = pow2(particleDataPtr->m0(coupSUSYPtr->idNeut(iNeut)));
+    m2Neut[iNeut] = pow2(pState->particleData.m0(coupSUSYPtr->idNeut(iNeut)));
 
   // Set sizes of some arrays to be used below
   tNeut.resize(nNeut+1);
@@ -1567,10 +1567,10 @@ void Sigma2qqbar2squarkantisquark::initProc() {
   xW = coupSUSYPtr->sin2W;
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, id4Sav);
 
   // Select interference terms
-  onlyQCD = settingsPtr->flag("SUSY:qqbar2squarkantisquark:onlyQCD");
+  onlyQCD = pState->settings.flag("SUSY:qqbar2squarkantisquark:onlyQCD");
 }
 
 //--------------------------------------------------------------------------
@@ -1837,7 +1837,7 @@ void Sigma2qqbar2squarkantisquark::setIdColAcol() {
   // Select colour flow topology
   // Recompute individual contributions to this in-out flavour combination
   sigmaHat();
-  double R = rndmPtr->flat();
+  double R = pState->rndm.flat();
   double fracS = sumColS / (sumColS + sumColT) ;
   // S: color flow as in S-channel singlet
   if (R < fracS) {
@@ -1866,17 +1866,17 @@ void Sigma2qqbar2squarkantisquark::setIdColAcol() {
 void Sigma2gg2squarkantisquark::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Process Name
-  nameSave = "g g -> "+particleDataPtr->name(abs(id3Sav))+" "
-    +particleDataPtr->name(-abs(id4Sav));
+  name = "g g -> "+pState->particleData.name(abs(id3Sav))+" "
+    +pState->particleData.name(-abs(id4Sav));
 
   // Squark pole mass
-  m2Sq = pow2(particleDataPtr->m0(id3Sav));
+  m2Sq = pow2(pState->particleData.m0(id3Sav));
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, id4Sav);
 
 }
 
@@ -1922,7 +1922,7 @@ void Sigma2gg2squarkantisquark::setIdColAcol() {
   setId( id1, id2, id3Sav, id4Sav);
 
   // Set color flow (random for now)
-  double R = rndmPtr->flat();
+  double R = pState->rndm.flat();
   if (R < 0.5) setColAcol( 1, 2, 2, 3, 1, 0, 0, 3);
   else setColAcol( 1, 2, 3, 1, 3, 0, 0, 2);
 
@@ -1940,17 +1940,17 @@ void Sigma2gg2squarkantisquark::setIdColAcol() {
 void Sigma2qg2squarkgluino::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Derive name
-  nameSave = "q g -> "+particleDataPtr->name(abs(id3Sav))+" gluino + c.c.";
+  name = "q g -> "+pState->particleData.name(abs(id3Sav))+" gluino + c.c.";
 
   // Final-state mass squares
-  m2Glu     = pow2(particleDataPtr->m0(1000021));
-  m2Sq      = pow2(particleDataPtr->m0(id3Sav));
+  m2Glu     = pow2(pState->particleData.m0(1000021));
+  m2Sq      = pow2(pState->particleData.m0(id3Sav));
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, 1000021);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, 1000021);
 
 }
 
@@ -2027,7 +2027,7 @@ void Sigma2qg2squarkgluino::setIdColAcol() {
   // Select color flow A or B (see above)
   // Recompute individual contributions to this in-out flavour combination
   sigmaHat();
-  double R = rndmPtr->flat()*(sigmaA+sigmaB);
+  double R = pState->rndm.flat()*(sigmaA+sigmaB);
   if (idQ == id1) {
     setColAcol(1,0,2,1,3,0,2,3);
     if (R > sigmaA) setColAcol(1,0,2,3,2,0,1,3);
@@ -2055,10 +2055,10 @@ void Sigma2qg2squarkgluino::setIdColAcol() {
 void Sigma2gg2gluinogluino::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(1000021, 1000021);
+  openFracPair = pState->particleData.resOpenFrac(1000021, 1000021);
 
 }
 
@@ -2101,12 +2101,12 @@ void Sigma2gg2gluinogluino::setIdColAcol() {
   setId( id1, id2, 1000021, 1000021);
 
   // Three colour flow topologies, each with two orientations.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 4, 4, 3);
   else if (sigRand < sigTS + sigUS)
                        setColAcol( 1, 2, 3, 1, 3, 4, 4, 2);
   else                 setColAcol( 1, 2, 3, 4, 1, 4, 3, 2);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
 
 }
 
@@ -2123,10 +2123,10 @@ void Sigma2gg2gluinogluino::setIdColAcol() {
 void Sigma2qqbar2gluinogluino::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(1000021, 1000021);
+  openFracPair = pState->particleData.resOpenFrac(1000021, 1000021);
 
 }
 
@@ -2201,7 +2201,7 @@ double Sigma2qqbar2gluinogluino::sigmaHat() {
   // T, U, and S/T/U interferences
   for (int iSq=1; iSq<=6; ++iSq) {
     int    idSq = ((iSq+2)/3)*1000000 + 2*((iSq-1)%3) + abs(id1-1) % 2 + 1;
-    double mSq2 = pow2(particleDataPtr->m0(idSq));
+    double mSq2 = pow2(pState->particleData.m0(idSq));
     // Modified Mandelstam variables for massive kinematics with m3 = m4.
     // tHG = tHat - m_gluino^2; uHG = uHat - m_gluino^2.
     double tHsq = tHG + s34Avg - mSq2;
@@ -2224,7 +2224,7 @@ double Sigma2qqbar2gluinogluino::sigmaHat() {
     // T, U, and TU interferences
     for (int jSq=1; jSq<=6; ++jSq) {
       int    idSqJ = ((jSq+2)/3)*1000000 + 2*((jSq-1)%3) + abs(id1-1) % 2 + 1;
-      double mSqJ2 = pow2(particleDataPtr->m0(idSqJ));
+      double mSqJ2 = pow2(pState->particleData.m0(idSqJ));
       // Modified Mandelstam variables for massive kinematics with m3 = m4.
       // tHG = tHat - m_gluino^2; uHG = uHat - m_gluino^2.
       double tHsqJ = tHG + s34Avg - mSqJ2;
@@ -2294,7 +2294,7 @@ void Sigma2qqbar2gluinogluino::setIdColAcol() {
   setId( id1, id2, 1000021, 1000021);
 
   // Two colour flow topologies. Swap if first is antiquark.
-  if (rndmPtr->flat() < 0.5) setColAcol( 1, 0, 0, 2, 1, 3, 3, 2);
+  if (pState->rndm.flat() < 0.5) setColAcol( 1, 0, 0, 2, 1, 3, 3, 2);
   else                    setColAcol( 1, 0, 0, 2, 3, 2, 1, 3);
   if (id1 < 0) swapColAcol();
 
@@ -2312,12 +2312,12 @@ void Sigma2qqbar2gluinogluino::setIdColAcol() {
 void Sigma1qq2antisquark::initProc(){
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   //Construct name of the process from lambda'' couplings
 
-  nameSave = "q q' -> " + particleDataPtr->name(-idRes)+" + c.c";
-  codeSave = 2000 + 10*abs(idRes)/1000000 + abs(idRes)%10;
+  name = "q q' -> " + pState->particleData.name(-idRes)+" + c.c";
+  code = 2000 + 10*abs(idRes)/1000000 + abs(idRes)%10;
 }
 
 //--------------------------------------------------------------------------
@@ -2332,15 +2332,15 @@ void Sigma1qq2antisquark::sigmaKin() {
     return;
   }
 
-  mRes = particleDataPtr->m0(abs(idRes));
-  GammaRes = particleDataPtr->mWidth(abs(idRes));
+  mRes = pState->particleData.m0(abs(idRes));
+  GammaRes = pState->particleData.mWidth(abs(idRes));
   m2Res = pow2(mRes);
 
   sigBW        = sH * GammaRes/ ( pow2(sH - m2Res) + pow2(mRes * GammaRes) );
   sigBW       *= 2.0/3.0/mRes;
 
   // Width out only includes open channels.
-  widthOut     = GammaRes * particleDataPtr->resOpenFrac(id3);
+  widthOut     = GammaRes * pState->particleData.resOpenFrac(id3);
 }
 
 //--------------------------------------------------------------------------
@@ -2427,14 +2427,14 @@ void Sigma1qq2antisquark::setIdColAcol() {
 void Sigma2qqbar2chi0gluino::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Construct name of process.
-  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
-    + particleDataPtr->name(id4);
+  name = "q qbar' -> " + pState->particleData.name(id3) + " "
+    + pState->particleData.name(id4);
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3, id4);
+  openFracPair = pState->particleData.resOpenFrac(id3, id4);
 
 }
 
@@ -2501,7 +2501,7 @@ double Sigma2qqbar2chi0gluino::sigmaHat() {
     int idsq;
     idsq=((ksq+2)/3)*1000000 + 2*((ksq-1) % 3) + (idAbs1+1) % 2 + 1;
 
-    double msq2    = pow(particleDataPtr->m0(idsq),2);
+    double msq2    = pow(pState->particleData.m0(idsq),2);
     double usq     = uH - msq2;
     double tsq     = tH - msq2;
 
@@ -2609,14 +2609,14 @@ void Sigma2qqbar2chi0gluino::setIdColAcol() {
 void Sigma2qqbar2chargluino::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Construct name of process.
-  nameSave = "q qbar' -> " + particleDataPtr->name(id3) + " "
-    + particleDataPtr->name(id4) + " + c.c";
+  name = "q qbar' -> " + pState->particleData.name(id3) + " "
+    + pState->particleData.name(id4) + " + c.c";
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3, id4);
+  openFracPair = pState->particleData.resOpenFrac(id3, id4);
 
 }
 
@@ -2697,8 +2697,8 @@ double Sigma2qqbar2chargluino::sigmaHat() {
     LsuuGl = coupSUSYPtr->LsuuG[jsq][iGu];
     RsuuGl = coupSUSYPtr->RsuuG[jsq][iGu];
 
-    double msd2 = pow(particleDataPtr->m0(idsd),2);
-    double msu2 = pow(particleDataPtr->m0(idsu),2);
+    double msd2 = pow(pState->particleData.m0(idsd),2);
+    double msu2 = pow(pState->particleData.m0(idsu),2);
     double tsq  = tH - msd2;
     double usq  = uH - msu2;
 
@@ -2764,16 +2764,16 @@ void Sigma2qqbar2chargluino::setIdColAcol() {
 void Sigma2qqbar2sleptonantislepton::initProc() {
 
   //Typecast to the correct couplings
-  coupSUSYPtr = (CoupSUSY*) couplingsPtr;
+  coupSUSYPtr = (CoupSUSY*) pState->couplings;
 
   // Is this a ~e_i ~nu*_j, ~nu_i ~e*_j final state or ~e_i ~e*_j, ~nu_i ~nu*_j
   if (abs(id3Sav) % 2 == abs(id4Sav) % 2) isUD = false;
   else isUD = true;
 
   // Derive name
-  nameSave = "q qbar' -> "+particleDataPtr->name(abs(id3Sav))+" "+
-    particleDataPtr->name(-abs(id4Sav));
-  if (isUD) nameSave +=" + c.c.";
+  name = "q qbar' -> "+pState->particleData.name(abs(id3Sav))+" "+
+    pState->particleData.name(-abs(id4Sav));
+  if (isUD) name +=" + c.c.";
 
   // Extract isospin and mass-ordering indices
 
@@ -2794,7 +2794,7 @@ void Sigma2qqbar2sleptonantislepton::initProc() {
   // retained for future extension to leptonic initial states
   m2Neut.resize(nNeut+1);
   for (int iNeut=1;iNeut<=nNeut;iNeut++)
-    m2Neut[iNeut] = pow2(particleDataPtr->m0(coupSUSYPtr->idNeut(iNeut)));
+    m2Neut[iNeut] = pow2(pState->particleData.m0(coupSUSYPtr->idNeut(iNeut)));
 
   // Set sizes of some arrays to be used below
   tNeut.resize(nNeut+1);
@@ -2804,7 +2804,7 @@ void Sigma2qqbar2sleptonantislepton::initProc() {
   xW = coupSUSYPtr->sin2W;
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
+  openFracPair = pState->particleData.resOpenFrac(id3Sav, id4Sav);
 
 }
 

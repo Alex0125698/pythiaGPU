@@ -41,7 +41,7 @@ ProcessLevel::~ProcessLevel() {
 
 // Main routine to initialize generation process.
 
-bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
+bool ProcessLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings,
   ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
   BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
   Couplings* couplingsPtrIn, SigmaTotal* sigmaTotPtrIn, bool doLHA,
@@ -202,7 +202,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     if (containerPtrs[i]->init(true, infoPtr, settings, particleDataPtr,
       rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
-      &resonanceDecays, slhaInterfacePtr, userHooksPtr)) ++numberOn;
+      &resonanceDecays, slhaInterfacePtr, userHooksPtr, pState)) ++numberOn;
 
   // Sum maxima for Monte Carlo choice.
   sigmaMaxSum = 0.;
@@ -224,7 +224,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       if (container2Ptrs[i2]->init(false, infoPtr, settings, particleDataPtr,
         rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
-        &resonanceDecays, slhaInterfacePtr, userHooksPtr)) ++number2On;
+        &resonanceDecays, slhaInterfacePtr, userHooksPtr, pState)) ++number2On;
     sigma2MaxSum = 0.;
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       sigma2MaxSum += container2Ptrs[i2]->sigmaMax();
