@@ -26,7 +26,7 @@ const int PartonLevel::NTRY = 10;
 
 // Main routine to initialize the parton-level generation process.
 
-bool PartonLevel::init( Info* infoPtrIn, Settings& settings,
+bool PartonLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings,
   ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
   BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
   BeamParticle* beamPomAPtrIn, BeamParticle* beamPomBPtrIn,
@@ -174,16 +174,16 @@ bool PartonLevel::init( Info* infoPtrIn, Settings& settings,
   // Set info and initialize the respective program elements.
   timesPtr->init( beamAPtr, beamBPtr);
   if (doISR) spacePtr->init( beamAPtr, beamBPtr);
-  doMPIMB  =  multiMB.init( doMPIinit, 0, infoPtr, settings, particleDataPtr,
+  doMPIMB  =  multiMB.init(pState, doMPIinit, 0, infoPtr, settings, particleDataPtr,
     rndmPtr, beamAPtr, beamBPtr, couplingsPtr, partonSystemsPtr, sigmaTotPtr,
     userHooksPtr);
-  if (doSD || doDD || doSQ || doHardDiff) doMPISDA = multiSDA.init( doMPIinit,
+  if (doSD || doDD || doSQ || doHardDiff) doMPISDA = multiSDA.init(pState, doMPIinit,
     1, infoPtr, settings, particleDataPtr, rndmPtr, beamAPtr, beamPomBPtr,
     couplingsPtr, partonSystemsPtr, sigmaTotPtr, userHooksPtr);
-  if (doSD || doDD || doSQ || doHardDiff) doMPISDB = multiSDB.init( doMPIinit,
+  if (doSD || doDD || doSQ || doHardDiff) doMPISDB = multiSDB.init(pState, doMPIinit,
     2, infoPtr, settings, particleDataPtr, rndmPtr, beamPomAPtr, beamBPtr,
     couplingsPtr, partonSystemsPtr, sigmaTotPtr, userHooksPtr);
-  if (doCD || doSQ) doMPICD = multiCD.init( doMPIinit, 3, infoPtr, settings,
+  if (doCD || doSQ) doMPICD = multiCD.init(pState, doMPIinit, 3, infoPtr, settings,
     particleDataPtr, rndmPtr, beamPomAPtr, beamPomBPtr, couplingsPtr,
     partonSystemsPtr, sigmaTotPtr, userHooksPtr);
   if (!remnants.init( infoPtr, settings, rndmPtr, beamAPtr, beamBPtr,

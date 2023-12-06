@@ -72,7 +72,7 @@ Pythia::Pythia(stringref xmlDir_, bool printBanner) {
   pState.lhaUp        = 0;
 
   //Initial value for couplings pointer
-  pState.couplings    = new Couplings; // !!!!
+  pState.couplings    = &couplings; // !!!!
 
   // Initial value for pointer to external decay handler.
   decayHandlePtr  = 0;
@@ -615,9 +615,9 @@ bool Pythia::init() {
     mergingHooksPtr->init( pState.settings, &pState.info, &pState.particleData, &partonSystems );
 
   // Initialize the random number generator.
-  // if ( pState.settings.flag("Random:setSeed") )
-    // rndm.init( 123 ); // !!!
-    // rndm.init( pState.settings.mode("Random:seed") ); // !!!
+  if ( pState.settings.flag("Random:setSeed") )
+    pState.rndm.init( pState.settings.mode("Random:seed") ); // !!!
+  pState.rndm.init( 123 );
 
   // Check that combinations of settings are allowed; change if not.
   checkSettings();
@@ -2238,7 +2238,7 @@ bool Pythia::check(ostream& os) {
   // Done for sensible events.
   if (physical) return true;
 
-  // Print (the first few) flawed events: local pState.info.
+  // Print (the first few) flawed events: local info.
   if (nErrEvent < nErrList) {
     os << "\n PYTHIA erroneous event info: \n";
     if (iErrId.size() > 0) {

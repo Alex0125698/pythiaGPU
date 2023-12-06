@@ -78,6 +78,7 @@ int SusyLesHouches::readFile(istream& is, int verboseIn,
 
     //Rewrite string in lowercase, removing initial and tralining blanks
     //as well as garbage characters
+    // !@!@
     toLower(line);
 
     //Detect whether read-in is from a Les Houches Event File (LHEF).
@@ -1865,23 +1866,24 @@ void SusyLesHouches::message(int level, stringref place,stringref themessage,
 // (eg removes DOS line break characters and similar)
 // Adapted from PYTHIA 8 Settings::toLower() method.
 
-void SusyLesHouches::toLower(string& name) {
+// // !@!@
+// void SusyLesHouches::toLower(string& name) {
 
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
-    name = "";
-    return;
-  }
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+//   // Copy string without initial and trailing blanks.
+//   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
+//     name = "";
+//     return;
+//   }
+//   int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+//   int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+//   string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
 
-  // Convert to lowercase letter by letter.
-  for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-  // Copy to input string and return
-  name=temp;
+//   // Convert to lowercase letter by letter.
+//   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+//   // Copy to input string and return
+//   name=temp;
 
-}
+// }
 
 //==========================================================================
 

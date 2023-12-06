@@ -270,26 +270,26 @@ public:
   vector<double> pvecDefault(stringref keyIn);
 
   // Give back a map of all entries whose names match the string "match".
-  map<string, Flag> getFlagMap(stringref match);
-  map<string, Mode> getModeMap(stringref match);
-  map<string, Parm> getParmMap(stringref match);
-  map<string, Word> getWordMap(stringref match);
-  map<string, FVec> getFVecMap(stringref match);
-  map<string, MVec> getMVecMap(stringref match);
-  map<string, PVec> getPVecMap(stringref match);
+  map<string, Flag> getFlagMap(string match);
+  map<string, Mode> getModeMap(string match);
+  map<string, Parm> getParmMap(string match);
+  map<string, Word> getWordMap(string match);
+  map<string, FVec> getFVecMap(string match);
+  map<string, MVec> getMVecMap(string match);
+  map<string, PVec> getPVecMap(string match);
 
   // Change current value, respecting limits.
-  void flag(stringref keyIn, bool nowIn);
-  bool mode(stringref keyIn, int nowIn);
-  void parm(stringref keyIn, double nowIn);
+  void flag(string keyIn, bool nowIn);
+  bool mode(string keyIn, int nowIn);
+  void parm(string keyIn, double nowIn);
   void word(stringref keyIn, stringref nowIn);
   void fvec(stringref keyIn, const vector<bool>& nowIn);
   void mvec(stringref keyIn, const vector<int>& nowIn);
   void pvec(stringref keyIn, const vector<double>& nowIn);
 
   // Change current value, disregarding limits.
-  void forceMode(stringref keyIn, int nowIn);
-  void forceParm(stringref keyIn, double nowIn);
+  void forceMode(string keyIn, int nowIn);
+  void forceParm(string keyIn, double nowIn);
   void forceMVec(stringref keyIn, const vector<int>& nowIn);
   void forcePVec(stringref keyIn, const vector<double>& nowIn);
 
@@ -303,6 +303,7 @@ public:
   void resetPVec(stringref keyIn);
 
 private:
+public:
 
   // Pointer to various information on the generation.
   Info* infoPtr;
@@ -332,7 +333,7 @@ private:
   bool isInit, readingFailedSave;
 
   // Print out table of database, called from listAll and listChanged.
-  void list(bool doListAll, bool doListString, stringref match,
+  void list(bool doListAll, bool doListString, string match,
     ostream& os = cout);
 
   // Master switch for program printout.
@@ -347,7 +348,7 @@ private:
   void initTunePP(int ppTune);
 
   // Useful functions for string handling.
-  string toLower(stringref name);
+  // string toLower(stringref name);
   bool   boolString(stringref tag);
   string attributeValue(stringref line, stringref attribute);
   bool   boolAttributeValue(stringref line, stringref attribute);
