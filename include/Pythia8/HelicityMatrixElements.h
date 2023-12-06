@@ -131,11 +131,11 @@ class HMETwoFermions2W2TwoFermions : public HelicityMatrixElement {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 private:
 
@@ -155,19 +155,16 @@ public:
 
   void initConstants();
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  // !@!@
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 private:
 
   // Return gamma element for the helicity matrix element.
-  // !@!@
   complex calculateGammaME(const vector<int>&);
 
   // Return Z/Z' element for helicity matrix element.
-  // !@!@
   complex calculateZME(const vector<int>&, double, double, double, double,
     double, double);
 
@@ -196,7 +193,7 @@ class HMEX2TwoFermions : public HelicityMatrixElement {
 
 public:
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
 };
 
@@ -208,10 +205,9 @@ class HMEW2TwoFermions : public HMEX2TwoFermions {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  // !@!@
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 private:
 
@@ -228,8 +224,7 @@ class HMEGamma2TwoFermions : public HMEX2TwoFermions {
 
 public:
 
-  // !@!@
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 };
 
@@ -241,9 +236,9 @@ class HMEZ2TwoFermions : public HMEX2TwoFermions {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 private:
 
@@ -269,9 +264,9 @@ public:
 
   void initConstants();
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 private:
 
@@ -288,11 +283,11 @@ class HMETauDecay : public HelicityMatrixElement {
 
 public:
 
-  virtual void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  virtual complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
-  virtual double decayWeightMax(const vector<HelicityParticle>&);
+  virtual double decayWeightMax(const vector<HelicityParticle>&) override;
 
 protected:
 
@@ -311,9 +306,9 @@ class HMETau2Meson : public HMETauDecay {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initHadronicCurrent(vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&) override;
 
 };
 
@@ -327,9 +322,9 @@ public:
 
   void initConstants();
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 };
 
@@ -344,7 +339,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(const vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&) override;
 
 private:
 
@@ -363,9 +358,9 @@ class HMETau2TwoMesonsViaVectorScalar : public HMETauDecay {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initHadronicCurrent(const vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&) override;
 
 private:
 
@@ -388,7 +383,7 @@ public:
 
   void initConstants();
 
-  void initHadronicCurrent(const vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&) override;
 
 protected:
 
@@ -436,7 +431,7 @@ class HMETau2ThreePions : public HMETau2ThreeMesons {
 
 private:
 
-  void initResonances();
+  void initResonances() override;
 
   // Resonance masses, widths, and weights.
   vector<double>  rhoM, rhoG, rhoPp, rhoAp, rhoPd, rhoAd;
@@ -446,13 +441,13 @@ private:
   complex         f0W, f2W, sigW;
 
   // Form factors.
-  complex F1();
-  complex F2();
-  complex F3();
+  virtual complex F1() override;
+  virtual complex F2() override;
+  virtual complex F3() override;
 
   // Running width and Breit-Wigner for the a1.
-  double  a1PhaseSpace(double);
-  complex a1BreitWigner(double);
+  double  a1PhaseSpace(double) override;
+  complex a1BreitWigner(double) override;
 
 };
 
@@ -464,7 +459,7 @@ class HMETau2ThreeMesonsWithKaons : public HMETau2ThreeMesons {
 
 private:
 
-  void initResonances();
+  void initResonances() override;
 
   // Resonance masses, widths, and weights.
   vector<double> rhoMa, rhoGa, rhoWa, rhoMv, rhoGv, rhoWv;
@@ -488,7 +483,7 @@ class HMETau2ThreeMesonsGeneric : public HMETau2ThreeMesons {
 
 private:
 
-  void initResonances();
+  void initResonances() override;
 
   // Resonance masses, widths, and weights.
   vector<double> rhoMa, rhoGa, rhoWa, rhoMv, rhoGv, rhoWv;
@@ -510,11 +505,11 @@ class HMETau2TwoPionsGamma : public HMETauDecay {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initWaves(const vector<HelicityParticle>&);
+  virtual void initWaves(const vector<HelicityParticle>&) override;
 
-  complex calculateME(const vector<int>&);
+  virtual complex calculateME(const vector<int>&) override;
 
 protected:
 
@@ -535,9 +530,9 @@ class HMETau2FourPions : public HMETauDecay {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initHadronicCurrent(const vector<HelicityParticle>& p);
+  void initHadronicCurrent(const vector<HelicityParticle>& p) override;
 
 private:
 
@@ -584,9 +579,9 @@ class HMETau2FivePions : public HMETauDecay {
 
 public:
 
-  void initConstants();
+  void initConstants() override;
 
-  void initHadronicCurrent(vector<HelicityParticle>&);
+  void initHadronicCurrent(const vector<HelicityParticle>&) override;
 
 private:
 
@@ -595,7 +590,7 @@ private:
   Wave4 Jb(const Wave4& q, const Wave4& q1, const Wave4& q2, const Wave4& q3, const Wave4& q4, const Wave4& q5);
 
   // Simplified s-wave Breit-Wigner assuming massless products.
-  complex breitWigner(double s, double M, double G);
+  complex breitWigner(double s, double M, double G) override;
 
   // Masses and widths of intermediates.
   double a1M, a1G, rhoM, rhoG, omegaM, omegaG, omegaW, sigmaM, sigmaG, sigmaW;
@@ -610,17 +605,17 @@ class HMETau2PhaseSpace : public HMETauDecay {
 
 public:
 
-  void initWaves(const vector<HelicityParticle>&) {};
+  virtual void initWaves(const vector<HelicityParticle>&) override {};
 
-  complex calculateME(const vector<int>&) {return 1;}
+  virtual complex calculateME(const vector<int>&) override {return 1;}
 
-  void calculateD(const vector<HelicityParticle>&) {};
+  virtual void calculateD(vector<HelicityParticle>&) override {};
 
-  void calculateRho(unsigned int, const vector<HelicityParticle>&) {};
+  virtual void calculateRho(unsigned int, vector<HelicityParticle>&) override {};
 
-  double decayWeight(const vector<HelicityParticle>&) {return 1.0;}
+  virtual double decayWeight(const vector<HelicityParticle>&) override {return 1.0;}
 
-  double decayWeightMax(const vector<HelicityParticle>&) {return 1.0;}
+  virtual double decayWeightMax(const vector<HelicityParticle>&) override {return 1.0;}
 
 };
 

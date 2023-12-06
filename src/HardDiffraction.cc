@@ -41,8 +41,8 @@ void HardDiffraction::init(Info* infoPtrIn, Settings& settingsPtrIn,
   beamPomBPtr = beamPomBPtrIn;
 
   // Set diffraction parameters.
-  pomSet      = settings.mode("PDF:PomSet");
-  pomFlux     = settings.mode("Diffraction:PomFlux");
+  pomSet      = settings.get(Mode::PDF_PomSet);
+  pomFlux     = settings.get(Mode::Diffraction_PomFlux);
 
   // Read out some properties of beams to allow shorthand.
   idA = (beamAPtr != 0) ? beamAPtr->id() : 0;
@@ -52,7 +52,7 @@ void HardDiffraction::init(Info* infoPtrIn, Settings& settingsPtrIn,
 
   // Set up Pomeron flux constants.
   if (pomFlux == 1) {
-    double sigmaRefPomP = settings.parm("Diffraction:sigmaRefPomP");
+    double sigmaRefPomP = settings.get(Param::Diffraction_sigmaRefPomP);
     normPom = pow2(sigmaRefPomP) * 0.02;
     b0      = 2.3;
     ap      = 0.25;

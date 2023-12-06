@@ -242,15 +242,15 @@ EvtGenDecays::EvtGenDecays(Pythia *pythiaPtrIn, string decayFile,
 
   // Get the Pythia decay limits.
   if (!pythiaPtr) return;
-  limitTau0     = pythiaPtr->settings.flag("ParticleDecays:limitTau0");
-  tau0Max       = pythiaPtr->settings.parm("ParticleDecays:tau0Max");
-  limitTau      = pythiaPtr->settings.flag("ParticleDecays:limitTau");
-  tauMax        = pythiaPtr->settings.parm("ParticleDecays:tauMax");
-  limitRadius   = pythiaPtr->settings.flag("ParticleDecays:limitRadius");
-  rMax          = pythiaPtr->settings.parm("ParticleDecays:rMax");
-  limitCylinder = pythiaPtr->settings.flag("ParticleDecays:limitCylinder");
-  xyMax         = pythiaPtr->settings.parm("ParticleDecays:xyMax");
-  zMax          = pythiaPtr->settings.parm("ParticleDecays:zMax");
+  limitTau0     = pythiaPtr->settings.get(Flag::ParticleDecays_limitTau0);
+  tau0Max       = pythiaPtr->settings.get(Param::ParticleDecays_tau0Max);
+  limitTau      = pythiaPtr->settings.get(Flag::ParticleDecays_limitTau);
+  tauMax        = pythiaPtr->settings.get(Param::ParticleDecays_tauMax);
+  limitRadius   = pythiaPtr->settings.get(Flag::ParticleDecays_limitRadius);
+  rMax          = pythiaPtr->settings.get(Param::ParticleDecays_rMax);
+  limitCylinder = pythiaPtr->settings.get(Flag::ParticleDecays_limitCylinder);
+  xyMax         = pythiaPtr->settings.get(Param::ParticleDecays_xyMax);
+  zMax          = pythiaPtr->settings.get(Param::ParticleDecays_zMax);
   limitDecay    = limit && (limitTau0 || limitTau ||
                             limitRadius || limitCylinder);
 

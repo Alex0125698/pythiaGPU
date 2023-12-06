@@ -366,8 +366,8 @@ void AlphaEM::init(int orderIn, Settings* settingsPtr) {
 
   // Order. Read in alpha_EM value at 0 and m_Z, and mass of Z.
   order     = orderIn;
-  alpEM0    = settingsPtr->parm("StandardModel:alphaEM0");
-  alpEMmZ   = settingsPtr->parm("StandardModel:alphaEMmZ");
+  alpEM0    = settingsPtr->get(Param::StandardModel_alphaEM0);
+  alpEMmZ   = settingsPtr->get(Param::StandardModel_alphaEMmZ);
   mZ2       = MZ * MZ;
 
   // AlphaEM values at matching scales and matching b value.
@@ -433,20 +433,20 @@ void CoupSM::init(Settings& settings, Rndm* rndmPtrIn) {
   rndmPtr = rndmPtrIn;
 
   // Initialize the local AlphaStrong instance.
-  double alphaSvalue  = settings.parm("SigmaProcess:alphaSvalue");
-  int    alphaSorder  = settings.mode("SigmaProcess:alphaSorder");
-  int    alphaSnfmax  = settings.mode("StandardModel:alphaSnfmax");
+  double alphaSvalue  = settings.get(Param::SigmaProcess_alphaSvalue);
+  int    alphaSorder  = settings.get(Mode::SigmaProcess_alphaSorder);
+  int    alphaSnfmax  = settings.get(Mode::StandardModel_alphaSnfmax);
   alphaSlocal.init( alphaSvalue, alphaSorder, alphaSnfmax, false);
 
   // Initialize the local AlphaEM instance.
-  int order = settings.mode("SigmaProcess:alphaEMorder");
+  int order = settings.get(Mode::SigmaProcess_alphaEMorder);
   alphaEMlocal.init( order, &settings);
 
   // Read in electroweak mixing angle and the Fermi constant.
-  s2tW    = settings.parm("StandardModel:sin2thetaW");
+  s2tW    = settings.get(Param::StandardModel_sin2thetaW);
   c2tW    = 1. - s2tW;
-  s2tWbar = settings.parm("StandardModel:sin2thetaWbar");
-  GFermi  = settings.parm("StandardModel:GF");
+  s2tWbar = settings.get(Param::StandardModel_sin2thetaWbar);
+  GFermi  = settings.get(Param::StandardModel_GF);
 
   // Initialize electroweak couplings.
   for (int i = 0; i < 20; ++i) {
@@ -461,24 +461,24 @@ void CoupSM::init(Settings& settings, Rndm* rndmPtrIn) {
   }
 
   // Read in CKM matrix element values and store them.
-  VCKMsave[1][1] = settings.parm("StandardModel:Vud");
-  VCKMsave[1][2] = settings.parm("StandardModel:Vus");
-  VCKMsave[1][3] = settings.parm("StandardModel:Vub");
-  VCKMsave[2][1] = settings.parm("StandardModel:Vcd");
-  VCKMsave[2][2] = settings.parm("StandardModel:Vcs");
-  VCKMsave[2][3] = settings.parm("StandardModel:Vcb");
-  VCKMsave[3][1] = settings.parm("StandardModel:Vtd");
-  VCKMsave[3][2] = settings.parm("StandardModel:Vts");
-  VCKMsave[3][3] = settings.parm("StandardModel:Vtb");
+  VCKMsave[1][1] = settings.get(Param::StandardModel_Vud);
+  VCKMsave[1][2] = settings.get(Param::StandardModel_Vus);
+  VCKMsave[1][3] = settings.get(Param::StandardModel_Vub);
+  VCKMsave[2][1] = settings.get(Param::StandardModel_Vcd);
+  VCKMsave[2][2] = settings.get(Param::StandardModel_Vcs);
+  VCKMsave[2][3] = settings.get(Param::StandardModel_Vcb);
+  VCKMsave[3][1] = settings.get(Param::StandardModel_Vtd);
+  VCKMsave[3][2] = settings.get(Param::StandardModel_Vts);
+  VCKMsave[3][3] = settings.get(Param::StandardModel_Vtb);
 
   // Also allow for the potential existence of a fourth generation.
-  VCKMsave[1][4] = settings.parm("FourthGeneration:VubPrime");
-  VCKMsave[2][4] = settings.parm("FourthGeneration:VcbPrime");
-  VCKMsave[3][4] = settings.parm("FourthGeneration:VtbPrime");
-  VCKMsave[4][1] = settings.parm("FourthGeneration:VtPrimed");
-  VCKMsave[4][2] = settings.parm("FourthGeneration:VtPrimes");
-  VCKMsave[4][3] = settings.parm("FourthGeneration:VtPrimeb");
-  VCKMsave[4][4] = settings.parm("FourthGeneration:VtPrimebPrime");
+  VCKMsave[1][4] = settings.get(Param::FourthGeneration_VubPrime);
+  VCKMsave[2][4] = settings.get(Param::FourthGeneration_VcbPrime);
+  VCKMsave[3][4] = settings.get(Param::FourthGeneration_VtbPrime);
+  VCKMsave[4][1] = settings.get(Param::FourthGeneration_VtPrimed);
+  VCKMsave[4][2] = settings.get(Param::FourthGeneration_VtPrimes);
+  VCKMsave[4][3] = settings.get(Param::FourthGeneration_VtPrimeb);
+  VCKMsave[4][4] = settings.get(Param::FourthGeneration_VtPrimebPrime);
 
   // Calculate squares of matrix elements.
   for(int i = 1; i < 5; ++i) for(int j = 1; j < 5; ++j)

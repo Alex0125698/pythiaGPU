@@ -104,8 +104,8 @@ int main() {
 
     // Mode 1: hardcoded here. Use settings.parm for non-string input.
     if (mode == 1) {
-      settings.parm("PhaseSpace:pTHatMin", pTlimit[iBin]);
-      settings.parm("PhaseSpace:pTHatMax", pTlimit[iBin + 1]);
+      settings.set(Param::PhaseSpace_pTHatMin, pTlimit[iBin]);
+      settings.set(Param::PhaseSpace_pTHatMax, pTlimit[iBin + 1]);
     }
 
     // Mode 2: subruns stored in the main08.cmnd file.
@@ -113,8 +113,8 @@ int main() {
 
     // Mode 3: The whole range in one step, but pT-weighted.
     else if (mode == 3) {
-      settings.parm("PhaseSpace:pTHatMin", pTlimit[0]);
-      settings.parm("PhaseSpace:pTHatMax", 0.);
+      settings.set(Param::PhaseSpace_pTHatMin, pTlimit[0]);
+      settings.set(Param::PhaseSpace_pTHatMax, 0.);
       pythia.readString("PhaseSpace:bias2Selection = on");
       pythia.readString("PhaseSpace:bias2SelectionPow = 4.");
       pythia.readString("PhaseSpace:bias2SelectionRef = 100.");
@@ -122,15 +122,15 @@ int main() {
 
     // Mode 4: hardcoded here. Use settings.parm for non-string input.
     else if (mode == 4) {
-      settings.parm("PhaseSpace:pTHatMin", pTlimitLow[iBin]);
-      settings.parm("PhaseSpace:pTHatMax", pTlimitLow[iBin + 1]);
+      settings.set(Param::PhaseSpace_pTHatMin, pTlimitLow[iBin]);
+      settings.set(Param::PhaseSpace_pTHatMax, pTlimitLow[iBin + 1]);
     }
 
     // Mode 5: hardcoded here. Use settings.parm for non-string input.
     // Hard processes in one step, but pT-weighted.
     else if (mode == 5) {
-      settings.parm("PhaseSpace:pTHatMin", pTlimitTwo[iBin]);
-      settings.parm("PhaseSpace:pTHatMax", pTlimitTwo[iBin + 1]);
+      settings.set(Param::PhaseSpace_pTHatMin, pTlimitTwo[iBin]);
+      settings.set(Param::PhaseSpace_pTHatMax, pTlimitTwo[iBin + 1]);
       if (iBin == 1) {
         pythia.readString("PhaseSpace:bias2Selection = on");
         pythia.readString("PhaseSpace:bias2SelectionPow = 4.");

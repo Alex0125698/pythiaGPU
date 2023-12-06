@@ -248,7 +248,7 @@ private:
 
   // Store standard factors.
   double mZS, prefac, sigma1, sigma2, openFrac, coup2Z;
-  int    higgsType, codeSave, idRes;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -290,7 +290,7 @@ private:
 
   // Store standard prefactor.
   double mWS, prefac, sigma0, openFrac, coup2W;
-  int    higgsType, codeSave, idRes;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -331,7 +331,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
-  int    idNew, higgsType, codeSave, idRes;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -373,7 +373,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
-  int    idNew, higgsType, codeSave, idRes;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -412,7 +412,7 @@ private:
 
   // Store flavour-specific process information and standard prefactor.
   double m2W, thetaWRat, sigma, openFrac;
-  int    idNew, higgsType, codeSave, idRes;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -450,7 +450,7 @@ private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -487,7 +487,7 @@ private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -524,7 +524,7 @@ private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -603,7 +603,7 @@ public:
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    idNew, codeSave, idOld, idUp, idDn;
+  int    idNew, idOld, idUp, idDn;
   double m2W, thetaWRat, tan2Beta, sigma, openFracPos, openFracNeg;
 
 };
@@ -641,7 +641,7 @@ public:
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    higgsType, higgs12, codeSave;
+  int    higgsType, higgs12;
   double coupZA3H12, m2Z, mGammaZ, thetaWRat, openFrac, sigma0;
 
 };
@@ -679,7 +679,7 @@ public:
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    higgsType, higgs12, codeSave;
+  int    higgsType, higgs12;
   double coupWHchgH12, m2W, mGammaW, thetaWRat, openFracPos, openFracNeg,
          sigma0;
 

@@ -236,9 +236,9 @@ double SuppressSmallPT::multiplySigmaBy( const SigmaProcess* sigmaProcessPtr,
     // Calculate pT0 as for multiparton interactions.
     // Fudge factor allows offset relative to MPI framework.
     double eCM    = phaseSpacePtr->ecm();
-    double pT0Ref = settingsPtr->parm("MultipartonInteractions:pT0Ref");
-    double ecmRef = settingsPtr->parm("MultipartonInteractions:ecmRef");
-    double ecmPow = settingsPtr->parm("MultipartonInteractions:ecmPow");
+    double pT0Ref = settingsPtr->get(Param::MultipartonInteractions_pT0Ref);
+    double ecmRef = settingsPtr->get(Param::MultipartonInteractions_ecmRef);
+    double ecmPow = settingsPtr->get(Param::MultipartonInteractions_ecmPow);
     double pT0    = pT0timesMPI * pT0Ref * pow(eCM / ecmRef, ecmPow);
     pT20          = pT0 * pT0;
 
@@ -246,13 +246,13 @@ double SuppressSmallPT::multiplySigmaBy( const SigmaProcess* sigmaProcessPtr,
     // alternatively as for hard processes.
     double alphaSvalue;
     int    alphaSorder;
-    int    alphaSnfmax = settingsPtr->mode("StandardModel:alphaSnfmax");
+    int    alphaSnfmax = settingsPtr->get(Mode::StandardModel_alphaSnfmax);
     if (useSameAlphaSasMPI) {
-      alphaSvalue = settingsPtr->parm("MultipartonInteractions:alphaSvalue");
-      alphaSorder = settingsPtr->mode("MultipartonInteractions:alphaSorder");
+      alphaSvalue = settingsPtr->get(Param::MultipartonInteractions_alphaSvalue);
+      alphaSorder = settingsPtr->get(Mode::MultipartonInteractions_alphaSorder);
     } else {
-      alphaSvalue = settingsPtr->parm("SigmaProcess:alphaSvalue");
-      alphaSorder = settingsPtr->mode("SigmaProcess:alphaSorder");
+      alphaSvalue = settingsPtr->get(Param::SigmaProcess_alphaSvalue);
+      alphaSorder = settingsPtr->get(Mode::SigmaProcess_alphaSorder);
     }
     alphaS.init( alphaSvalue, alphaSorder, alphaSnfmax, false);
 

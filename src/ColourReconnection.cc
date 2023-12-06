@@ -197,43 +197,43 @@ bool ColourReconnection::init( Info* infoPtrIn, Settings& settings,
   sCM                 = eCM * eCM;
 
   // Choice of reconnection model.
-  reconnectMode       = settings.mode("ColourReconnection:mode");
+  reconnectMode       = settings.get(Mode::ColourReconnection_mode);
 
   // pT0 scale of MPI; used in the MPI-based reconnection model.
-  pT0Ref              = settings.parm("MultipartonInteractions:pT0Ref");
-  ecmRef              = settings.parm("MultipartonInteractions:ecmRef");
-  ecmPow              = settings.parm("MultipartonInteractions:ecmPow");
+  pT0Ref              = settings.get(Param::MultipartonInteractions_pT0Ref);
+  ecmRef              = settings.get(Param::MultipartonInteractions_ecmRef);
+  ecmPow              = settings.get(Param::MultipartonInteractions_ecmPow);
   pT0                 = pT0Ref * pow(eCM / ecmRef, ecmPow);
 
   // Parameter of the MPI-based reconnection model.
-  reconnectRange      = settings.parm("ColourReconnection:range");
+  reconnectRange      = settings.get(Param::ColourReconnection_range);
   pT20Rec             = pow2(reconnectRange * pT0);
 
   // Parameters of the new reconnection model.
-  m0                  = settings.parm("ColourReconnection:m0");
+  m0                  = settings.get(Param::ColourReconnection_m0);
   m0sqr               = pow2(m0);
-  allowJunctions      = settings.flag("ColourReconnection:allowJunctions");
-  nReconCols          = settings.mode("ColourReconnection:nColours");
-  sameNeighbourCol  = settings.flag("ColourReconnection:sameNeighbourColours");
+  allowJunctions      = settings.get(Flag::ColourReconnection_allowJunctions);
+  nReconCols          = settings.get(Mode::ColourReconnection_nColours);
+  sameNeighbourCol  = settings.get(Flag::ColourReconnection_sameNeighbourColours);
 
-  timeDilationMode    = settings.mode("ColourReconnection:timeDilationMode");
-  timeDilationPar     = settings.parm("ColourReconnection:timeDilationPar");
+  timeDilationMode    = settings.get(Mode::ColourReconnection_timeDilationMode);
+  timeDilationPar     = settings.get(Param::ColourReconnection_timeDilationPar);
   timeDilationParGeV  = timeDilationPar / HBAR;
 
   // Parameters of gluon-move model.
-  m2Lambda            = settings.parm("ColourReconnection:m2Lambda");
-  fracGluon           = settings.parm("ColourReconnection:fracGluon");
-  dLambdaCut          = settings.parm("ColourReconnection:dLambdaCut");
-  flipMode            = settings.mode("ColourReconnection:flipMode");
+  m2Lambda            = settings.get(Param::ColourReconnection_m2Lambda);
+  fracGluon           = settings.get(Param::ColourReconnection_fracGluon);
+  dLambdaCut          = settings.get(Param::ColourReconnection_dLambdaCut);
+  flipMode            = settings.get(Mode::ColourReconnection_flipMode);
 
   // Parameters of the e+e- CR models.
-  singleReconOnly     = settings.flag("ColourReconnection:singleReconnection");
-  lowerLambdaOnly     = settings.flag("ColourReconnection:lowerLambdaOnly");
-  tfrag               = settings.parm("ColourReconnection:fragmentationTime");
-  blowR               = settings.parm("ColourReconnection:blowR");
-  blowT               = settings.parm("ColourReconnection:blowT");
-  rHadron             = settings.parm("ColourReconnection:rHadron");
-  kI                  = settings.parm("ColourReconnection:kI");
+  singleReconOnly     = settings.get(Flag::ColourReconnection_singleReconnection);
+  lowerLambdaOnly     = settings.get(Flag::ColourReconnection_lowerLambdaOnly);
+  tfrag               = settings.get(Param::ColourReconnection_fragmentationTime);
+  blowR               = settings.get(Param::ColourReconnection_blowR);
+  blowT               = settings.get(Param::ColourReconnection_blowT);
+  rHadron             = settings.get(Param::ColourReconnection_rHadron);
+  kI                  = settings.get(Param::ColourReconnection_kI);
 
   // Initialize StringLength class.
   stringLength.init(infoPtr, settings);

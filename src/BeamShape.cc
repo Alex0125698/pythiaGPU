@@ -23,34 +23,34 @@ namespace Pythia8 {
   rndmPtr             = rndmPtrIn;
 
   // Main flags.
-  allowMomentumSpread = settings.flag("Beams:allowMomentumSpread");
-  allowVertexSpread   = settings.flag("Beams:allowVertexSpread");
+  allowMomentumSpread = settings.get(Flag::Beams_allowMomentumSpread);
+  allowVertexSpread   = settings.get(Flag::Beams_allowVertexSpread);
 
   // Parameters for beam A momentum spread.
-  sigmaPxA            = settings.parm("Beams:sigmaPxA");
-  sigmaPyA            = settings.parm("Beams:sigmaPyA");
-  sigmaPzA            = settings.parm("Beams:sigmaPzA");
-  maxDevA             = settings.parm("Beams:maxDevA");
+  sigmaPxA            = settings.get(Param::Beams_sigmaPxA);
+  sigmaPyA            = settings.get(Param::Beams_sigmaPyA);
+  sigmaPzA            = settings.get(Param::Beams_sigmaPzA);
+  maxDevA             = settings.get(Param::Beams_maxDevA);
 
   // Parameters for beam B momentum spread.
-  sigmaPxB            = settings.parm("Beams:sigmaPxB");
-  sigmaPyB            = settings.parm("Beams:sigmaPyB");
-  sigmaPzB            = settings.parm("Beams:sigmaPzB");
-  maxDevB             = settings.parm("Beams:maxDevB");
+  sigmaPxB            = settings.get(Param::Beams_sigmaPxB);
+  sigmaPyB            = settings.get(Param::Beams_sigmaPyB);
+  sigmaPzB            = settings.get(Param::Beams_sigmaPzB);
+  maxDevB             = settings.get(Param::Beams_maxDevB);
 
   // Parameters for beam vertex spread.
-  sigmaVertexX        = settings.parm("Beams:sigmaVertexX");
-  sigmaVertexY        = settings.parm("Beams:sigmaVertexY");
-  sigmaVertexZ        = settings.parm("Beams:sigmaVertexZ");
-  maxDevVertex        = settings.parm("Beams:maxDevVertex");
-  sigmaTime           = settings.parm("Beams:sigmaTime");
-  maxDevTime          = settings.parm("Beams:maxDevTime");
+  sigmaVertexX        = settings.get(Param::Beams_sigmaVertexX);
+  sigmaVertexY        = settings.get(Param::Beams_sigmaVertexY);
+  sigmaVertexZ        = settings.get(Param::Beams_sigmaVertexZ);
+  maxDevVertex        = settings.get(Param::Beams_maxDevVertex);
+  sigmaTime           = settings.get(Param::Beams_sigmaTime);
+  maxDevTime          = settings.get(Param::Beams_maxDevTime);
 
   // Parameters for beam vertex offset.
-  offsetX             = settings.parm("Beams:offsetVertexX");
-  offsetY             = settings.parm("Beams:offsetVertexY");
-  offsetZ             = settings.parm("Beams:offsetVertexZ");
-  offsetT             = settings.parm("Beams:offsetTime");
+  offsetX             = settings.get(Param::Beams_offsetVertexX);
+  offsetY             = settings.get(Param::Beams_offsetVertexY);
+  offsetZ             = settings.get(Param::Beams_offsetVertexZ);
+  offsetT             = settings.get(Param::Beams_offsetTime);
 
 }
 

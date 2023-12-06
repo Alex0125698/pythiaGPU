@@ -34,7 +34,7 @@ void HelicityMatrixElement::initPointers(ParticleData* particleDataPtrIn,
 // Initialize the channel for the helicity matrix element.
 
 HelicityMatrixElement* HelicityMatrixElement::initChannel(
-  const vector<HelicityParticle>& p) {
+      const vector<HelicityParticle>& p) {
 
   pID.clear();
   pM.clear();
@@ -325,18 +325,18 @@ void HMETwoFermions2W2TwoFermions::initConstants() {
   // Set the constants for the W'.
   if (abs(pID[4]) == 34 && settingsPtr) {
     if (abs(pID[0]) < 11) {
-      p0CA = settingsPtr->parm("Wprime:aq");
-      p0CV = settingsPtr->parm("Wprime:vq");
+      p0CA = settingsPtr->get(Param::Wprime_aq);
+      p0CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p0CA = settingsPtr->parm("Wprime:al");
-      p0CV = settingsPtr->parm("Wprime:vl");
+      p0CA = settingsPtr->get(Param::Wprime_al);
+      p0CV = settingsPtr->get(Param::Wprime_vl);
     }
     if (abs(pID[2]) < 11) {
-      p2CA = settingsPtr->parm("Wprime:aq");
-      p2CV = settingsPtr->parm("Wprime:vq");
+      p2CA = settingsPtr->get(Param::Wprime_aq);
+      p2CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p2CA = settingsPtr->parm("Wprime:al");
-      p2CV = settingsPtr->parm("Wprime:vl");
+      p2CA = settingsPtr->get(Param::Wprime_al);
+      p2CV = settingsPtr->get(Param::Wprime_vl);
     }
 
   // The default constants (SM W).
@@ -431,12 +431,12 @@ void HMETwoFermions2GammaZ2TwoFermions::initConstants() {
     if (abs(pID[4]) == 22) {
       includeGamma = true;
     } else if (abs(pID[4]) == 23) {
-      int mode = settingsPtr->mode("WeakZ0:gmZmode");
+      int mode = settingsPtr->get(Mode::WeakZ0_gmZmode);
       if (mode == 0) {includeGamma = true; includeZ = true;}
       else if (mode == 1) includeGamma = true;
       else if (mode == 2) includeZ = true;
     } else if (abs(pID[4]) == 32) {
-      int mode = settingsPtr->mode("Zprime:gmZmode");
+      int mode = settingsPtr->get(Mode::Zprime_gmZmode);
       if (mode == 0) {includeGamma = true; includeZ = true; includeZp = true;}
       else if (mode == 1) includeGamma = true;
       else if (mode == 2) includeZ = true;
@@ -548,23 +548,41 @@ double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
-  if      (id == 1)  name = "d";
-  else if (id == 2)  name = "u";
-  else if (id == 3)  name = "s";
-  else if (id == 4)  name = "c";
-  else if (id == 5)  name = "b";
-  else if (id == 6)  name = "t";
-  else if (id == 7)  name = "b'";
-  else if (id == 8)  name = "t'";
-  else if (id == 11) name = "e";
-  else if (id == 12) name = "nue";
-  else if (id == 13) name = "mu";
-  else if (id == 14) name = "numu";
-  else if (id == 15) name = "tau";
-  else if (id == 16) name = "nutau";
-  else return 0;
-  return settingsPtr->parm("Zprime:" + type + name);
+  if (type == "a")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_ad);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_au);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_as);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_ac);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_ab);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_at);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_abPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_atPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ae);
+    if (id == 12) return settingsPtr->get(Param::Zprime_anue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_amu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_anumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_atau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_anutau);
+  }
+  if (type == "v")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_vd);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_vu);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_vs);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_vc);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_vb);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_vt);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_vbPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_vtPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ve);
+    if (id == 12) return settingsPtr->get(Param::Zprime_vnue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_vmu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_vnumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_vtau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_vnutau);
+  }
+  return 0;
 
 }
 
@@ -610,11 +628,11 @@ void HMEW2TwoFermions::initConstants() {
   // Set the constants for the W'.
   if (abs(pID[0]) == 34 && settingsPtr) {
     if (abs(pID[2]) < 11) {
-      p2CA = settingsPtr->parm("Wprime:aq");
-      p2CV = settingsPtr->parm("Wprime:vq");
+      p2CA = settingsPtr->get(Param::Wprime_aq);
+      p2CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p2CA = settingsPtr->parm("Wprime:al");
-      p2CV = settingsPtr->parm("Wprime:vl");
+      p2CA = settingsPtr->get(Param::Wprime_al);
+      p2CV = settingsPtr->get(Param::Wprime_vl);
     }
 
   // The default constants (SM W).
@@ -710,24 +728,41 @@ double HMEZ2TwoFermions::zpCoupling(int id, stringref type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
-  if      (id == 1)  name = "d";
-  else if (id == 2)  name = "u";
-  else if (id == 3)  name = "s";
-  else if (id == 4)  name = "c";
-  else if (id == 5)  name = "b";
-  else if (id == 6)  name = "t";
-  else if (id == 7)  name = "b'";
-  else if (id == 8)  name = "t'";
-  else if (id == 11) name = "e";
-  else if (id == 12) name = "nue";
-  else if (id == 13) name = "mu";
-  else if (id == 14) name = "numu";
-  else if (id == 15) name = "tau";
-  else if (id == 16) name = "nutau";
-  else return 0;
-  return settingsPtr->parm("Zprime:" + type + name);
-
+  if (type == "a")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_ad);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_au);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_as);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_ac);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_ab);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_at);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_abPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_atPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ae);
+    if (id == 12) return settingsPtr->get(Param::Zprime_anue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_amu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_anumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_atau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_anutau);
+  }
+  if (type == "v")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_vd);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_vu);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_vs);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_vc);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_vb);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_vt);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_vbPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_vtPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ve);
+    if (id == 12) return settingsPtr->get(Param::Zprime_vnue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_vmu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_vnumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_vtau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_vnutau);
+  }
+  return 0;
 }
 
 //==========================================================================
@@ -773,27 +808,27 @@ void HMEHiggs2TwoFermions::initConstants() {
     double eta, phi;
     // Set the H1 mixing.
     if (abs(pID[1]) == 25) {
-      mode = settingsPtr->mode("HiggsH1:parity");
-      eta  = settingsPtr->parm("HiggsH1:etaParity");
-      phi  = settingsPtr->parm("HiggsH1:phiParity");
+      mode = settingsPtr->get(Mode::HiggsH1_parity);
+      eta  = settingsPtr->get(Param::HiggsH1_etaParity);
+      phi  = settingsPtr->get(Param::HiggsH1_phiParity);
       if      (mode == 2) {p2CA = 1;        p2CV = 0;}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}
       else                {p2CA = 0;        p2CV = complex(0, 1);}
     // Set the H2 mixing.
     } else if (abs(pID[1]) == 35) {
-      mode = settingsPtr->mode("HiggsH2:parity");
-      eta  = settingsPtr->parm("HiggsH2:etaParity");
-      phi  = settingsPtr->parm("HiggsH2:phiParity");
+      mode = settingsPtr->get(Mode::HiggsH2_parity);
+      eta  = settingsPtr->get(Param::HiggsH2_etaParity);
+      phi  = settingsPtr->get(Param::HiggsH2_phiParity);
       if      (mode == 2) {p2CA = 1;        p2CV = 0;}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}
       else                {p2CA = 0;        p2CV = complex(0, 1);}
     // Set the A3 mixing.
     } else if (abs(pID[1]) == 36) {
-      mode = settingsPtr->mode("HiggsA3:parity");
-      eta  = settingsPtr->parm("HiggsA3:etaParity");
-      phi  = settingsPtr->parm("HiggsA3:phiParity");
+      mode = settingsPtr->get(Mode::HiggsA3_parity);
+      eta  = settingsPtr->get(Param::HiggsA3_etaParity);
+      phi  = settingsPtr->get(Param::HiggsA3_phiParity);
       if      (mode == 1) {p2CA = 0;        p2CV = complex(0, 1);}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}
@@ -918,7 +953,7 @@ void HMETau2Meson::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2Meson::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2Meson::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
   pMap[2] = 2;
@@ -2446,7 +2481,7 @@ void HMETau2FivePions::initConstants() {
 
 // Initialize the hadronic current for the helicity matrix element.
 
-void HMETau2FivePions::initHadronicCurrent(vector<HelicityParticle>& p) {
+void HMETau2FivePions::initHadronicCurrent(const vector<HelicityParticle>& p) {
 
   vector< Wave4 > u2;
 

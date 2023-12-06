@@ -146,13 +146,13 @@ public:
   // Generate only a single timelike shower as in a decay.
   int forceTimeShower( int iBeg, int iEnd, double pTmax, int nBranchMax = 0)
     { pState.info.setScalup( 0, pTmax);
-    return timesDecPtr->shower( iBeg, iEnd, pState.event, pTmax, nBranchMax); }
+    return timesDecPtr->shower( iBeg, iEnd, event, pTmax, nBranchMax); }
 
   // Generate only the hadronization/decay stage.
   bool forceHadronLevel( bool findJunctions = true);
 
   // Special routine to allow more decays if on/off switches changed.
-  bool moreDecays() {return hadronLevel.moreDecays(pState.event);}
+  bool moreDecays() {return hadronLevel.moreDecays(event);}
 
   // Special routine to force R-hadron decay when not done before.
   bool forceRHadronDecays() {return doRHadronDecays();}
@@ -187,24 +187,8 @@ public:
   // The event record for the complete event history.
   Event          event;
 
-  // Information on the generation: current subprocess and error statistics.
-  // Info           info;
-
-  // Settings: databases of flags/modes/parms/words to control run.
-  // Settings       settings;
-
-  // ParticleData: the particle data table/database.
-  // ParticleData   particleData;
-
-  // Random number generator.
-  // Rndm           rndm;
-
-  // // Standard Model couplings, including alphaS and alphaEM.
-  // Couplings      couplings;
-  // Couplings*     couplingsPtr;
-
-  // SLHA Interface
-  // SLHAinterface slhaInterface;
+  // Standard Model couplings, including alphaS and alphaEM.
+  Couplings      couplings;
 
   // The partonic content of each subcollision system (auxiliary to event).
   PartonSystems  partonSystems;
@@ -268,17 +252,12 @@ private:
 
   PythiaState pState;
 
-  // The two incoming beams.
-  // BeamParticle beamA;
-  // BeamParticle beamB;
-
   // Alternative Pomeron beam-inside-beam.
   BeamParticle beamPomA;
   BeamParticle beamPomB;
 
   // LHAup object for generating external events.
   bool   doLHA, useNewLHA;
-  // LHAup* lhaUpPtr;
 
   // Pointer to external decay handler and list of particles it handles.
   DecayHandler* decayHandlePtr;

@@ -95,14 +95,14 @@ int main() {
   // Initialize generator for signal processes.
   pythiaSignal.readString("HardQCD:all = on");
   pythiaSignal.readString("PhaseSpace:pTHatMin = 50.");
-  pythiaSignal.settings.parm("Beams:eCM", 2. * eBeam);
+  pythiaSignal.settings.set(Param::Beams_eCM, 2. * eBeam);
   pythiaSignal.init();
 
   // Initialize generator for pileup (background) processes.
   pythiaPileup.readString("Random:setSeed = on");
   pythiaPileup.readString("Random:seed = 10000002");
   pythiaPileup.readString("SoftQCD:all = on");
-  pythiaPileup.settings.parm("Beams:eCM", 2. * eBeam);
+  pythiaPileup.settings.set(Param::Beams_eCM, 2. * eBeam);
   pythiaPileup.init();
 
   // Initialize generators for beam A - gas (background) processes.
@@ -110,8 +110,8 @@ int main() {
   pythiaBeamAGas.readString("Random:seed = 10000003");
   pythiaBeamAGas.readString("SoftQCD:all = on");
   pythiaBeamAGas.readString("Beams:frameType = 2");
-  pythiaBeamAGas.settings.parm("Beams:eA", eBeam);
-  pythiaBeamAGas.settings.parm("Beams:eB", 0.);
+  pythiaBeamAGas.settings.set(Param::Beams_eA, eBeam);
+  pythiaBeamAGas.settings.set(Param::Beams_eB, 0.);
   pythiaBeamAGas.init();
 
   // Initialize generators for beam B - gas (background) processes.
@@ -119,8 +119,8 @@ int main() {
   pythiaBeamBGas.readString("Random:seed = 10000004");
   pythiaBeamBGas.readString("SoftQCD:all = on");
   pythiaBeamBGas.readString("Beams:frameType = 2");
-  pythiaBeamBGas.settings.parm("Beams:eA", 0.);
-  pythiaBeamBGas.settings.parm("Beams:eB", eBeam);
+  pythiaBeamBGas.settings.set(Param::Beams_eA, 0.);
+  pythiaBeamBGas.settings.set(Param::Beams_eB, eBeam);
   pythiaBeamBGas.init();
 
   // Histograms: number of pileups, total charged multiplicity.
