@@ -318,10 +318,6 @@ private:
   // Set constituent mass.
   void setConstituentMass();
 
-  // Useful functions for string handling.
-  string toLower(stringref nameConv) { string temp(nameConv);
-    for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-    return temp; }
 
 };
 
@@ -593,10 +589,6 @@ private:
   // Method for common setting of particle-specific info.
   void   initCommon();
 
-  // Useful functions for string handling.
-  string toLower(stringref nameConv) { string temp(nameConv);
-    for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
-    return temp; }
   bool   boolString(stringref tag) { string tagLow = toLower(tag);
     return ( tagLow == "true" || tagLow == "1" || tagLow == "on"
     || tagLow == "yes" || tagLow == "ok" ); }
