@@ -33,7 +33,7 @@ void SLHAinterface::init( Settings& settings, Rndm* rndmPtr,
   string line;
   string warnPref = "Warning in SLHAinterface::init: ";
   while (getline(particleDataBuffer, line)
-    && settings.flag("SLHA:allowUserOverride")) {
+    && settings.get(Flag::SLHA_allowUserOverride)) {
     bool pass = particleDataPtr->readString(line, true);
     if (!pass) infoPtr->errorMsg(warnPref + "Unable to process line " + line);
     else infoPtr->errorMsg(warnPref + "Overwriting SLHA by " + line);
@@ -67,17 +67,17 @@ bool SLHAinterface::initSLHA(Settings& settings,
   // Initial and settings values.
   int    ifailLHE    = 1;
   int    ifailSpc    = 1;
-  int    readFrom    = settings.mode("SLHA:readFrom");
-  string lhefFile    = settings.word("Beams:LHEF");
-  string lhefHeader  = settings.word("Beams:LHEFheader");
-  string slhaFile    = settings.word("SLHA:file");
-  int    verboseSLHA = settings.mode("SLHA:verbose");
-  bool   slhaUseDec  = settings.flag("SLHA:useDecayTable");
+  int    readFrom    = settings.get(Mode::SLHA_readFrom);
+  string lhefFile    = settings.get(Word::Beams_LHEF);
+  string lhefHeader  = settings.get(Word::Beams_LHEFheader);
+  string slhaFile    = settings.get(Word::SLHA_file);
+  int    verboseSLHA = settings.get(Mode::SLHA_verbose);
+  bool   slhaUseDec  = settings.get(Flag::SLHA_useDecayTable);
   bool   noSLHAFile  = ( slhaFile == "none" || slhaFile == "void"
                       || slhaFile == ""     || slhaFile == " " );
 
   // Set internal data members
-  meMode      = settings.mode("SLHA:meMode");
+  meMode      = settings.get(Mode::SLHA_meMode);
 
   // No SUSY by default
   couplingsPtr->isSUSY = false;
@@ -143,7 +143,7 @@ bool SLHAinterface::initSLHA(Settings& settings,
   else if (ifailSpc < 0) {
     infoPtr->errorMsg(warnPref + "Problem with SLHA spectrum.",
       "\n Only using masses and switching off SUSY.");
-    settings.flag("SUSY:all", false);
+    settings.set(Flag::SUSY_all, false);
     couplingsPtr->isSUSY = false;
     slha.printSpectrum(ifailSpc);
   }
@@ -370,8 +370,8 @@ bool SLHAinterface::initSLHA(Settings& settings,
       + "using QNUMBERS for id codes < 1000000 may clash with SM.");
 
   // Import mass spectrum.
-  bool   keepSM            = settings.flag("SLHA:keepSM");
-  double minMassSM         = settings.parm("SLHA:minMassSM");
+  bool   keepSM            = settings.get(Flag::SLHA_keepSM);
+  double minMassSM         = settings.get(Param::SLHA_minMassSM);
   vector<int> idModified;
   if (ifailSpc == 1 || ifailSpc == 0) {
 
@@ -478,7 +478,7 @@ bool SLHAinterface::initSLHA(Settings& settings,
 
     // Extract and store total width (absolute value, neg -> switch off)
     double widRes         = abs(slhaTable->getWidth());
-    double pythiaMinWidth = settings.parm("ResonanceWidths:minWidth");
+    double pythiaMinWidth = settings.get(Param::ResonanceWidths_minWidth);
     if (widRes > 0. && widRes < pythiaMinWidth) {
       infoPtr->errorMsg(warnPref + "forcing width = 0 ","for id = "
         + idCode.str() + " (width < ResonanceWidths:minWidth)" , true);

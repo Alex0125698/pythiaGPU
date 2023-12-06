@@ -92,9 +92,9 @@ LHAupPowheg::LHAupPowheg(Pythia *pythiaIn) : dir("./") {
 
   pythia = pythiaIn;
   if (pythia && pythia->settings.isWord("POWHEG:dir"))
-    dir = pythia->settings.word("POWHEG:dir");
+    dir = pythia->settings.get(Word::POWHEG_dir);
   if (pythia && pythia->settings.isFlag("POWHEG:pythiaRandom"))
-    random = pythia->settings.flag("POWHEG:pythiaRandom");
+    random = pythia->settings.get(Flag::POWHEG_pythiaRandom);
   mkdir(dir.c_str(), 0777);
 
 }

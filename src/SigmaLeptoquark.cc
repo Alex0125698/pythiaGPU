@@ -28,7 +28,7 @@
 //   GamMRat  = GammaRes / mRes;
 
 //   // Yukawa coupling strength.
-//   kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
+//   kCoup    = settingsPtr->get(Param::LeptoQuark_kCoup);
 
 //   // Set pointer to particle properties and decay table.
 //   LQPtr    = particleDataPtr->particleDataEntryPtr(42);
@@ -108,7 +108,7 @@
 //   GamMRat  = GammaRes / mRes;
 
 //   // Yukawa coupling strength.
-//   kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
+//   kCoup    = settingsPtr->get(Param::LeptoQuark_kCoup);
 
 //   // Read out quark and lepton the LQ couples to.
 //   ParticleDataEntry* LQPtr = particleDataPtr->particleDataEntryPtr(42);
@@ -248,7 +248,7 @@
 //   GamMRat  = GammaRes / mRes;
 
 //   // Yukawa coupling strength.
-//   kCoup    = settingsPtr->parm("LeptoQuark:kCoup");
+//   kCoup    = settingsPtr->get(Param::LeptoQuark_kCoup);
 
 //   // Read out quark and lepton the LQ couples to.
 //   ParticleDataEntry* LQPtr = particleDataPtr->particleDataEntryPtr(42);

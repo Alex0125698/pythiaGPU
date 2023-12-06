@@ -61,10 +61,10 @@ int main( int argc, char* argv[] ){
   ToHepMC.set_store_xsec(false);
 
   // Check if jet matching should be applied.
-  bool doMatch   = pythia.settings.flag("JetMatching:merge");
+  bool doMatch   = pythia.settings.get(Flag::JetMatching_merge);
 
   // Check if internal merging should be applied.
-  bool doMerge   = !(pythia.settings.word("Merging:Process").compare("void")
+  bool doMerge   = !(pythia.settings.get(Word::Merging_Process).compare("void")
     == 0);
 
   // Currently, only one scheme at a time is allowed.
@@ -78,7 +78,7 @@ int main( int argc, char* argv[] ){
 
   // Number of events. Negative numbers mean all events in the LHEF will be
   // used.
-  long nEvent = pythia.settings.mode("Main:numberOfEvents");
+  long nEvent = pythia.settings.get(Mode::Main_numberOfEvents);
   if (nEvent < 1) nEvent = 1000000000000000;
 
   // For jet matching, initialise the respective user hooks code.
@@ -89,13 +89,13 @@ int main( int argc, char* argv[] ){
   amcnlo_unitarised_interface* setting = NULL;
   if ( doMerge ) {
     // Store merging scheme.
-    int scheme = ( pythia.settings.flag("Merging:doUMEPSTree")
-                || pythia.settings.flag("Merging:doUMEPSSubt")) ?
+    int scheme = ( pythia.settings.get(Flag::Merging_doUMEPSTree)
+                || pythia.settings.get(Flag::Merging_doUMEPSSubt)) ?
                 1 :
-                 ( ( pythia.settings.flag("Merging:doUNLOPSTree")
-                || pythia.settings.flag("Merging:doUNLOPSSubt")
-                || pythia.settings.flag("Merging:doUNLOPSLoop")
-                || pythia.settings.flag("Merging:doUNLOPSSubtNLO")) ?
+                 ( ( pythia.settings.get(Flag::Merging_doUNLOPSTree)
+                || pythia.settings.get(Flag::Merging_doUNLOPSSubt)
+                || pythia.settings.get(Flag::Merging_doUNLOPSLoop)
+                || pythia.settings.get(Flag::Merging_doUNLOPSSubtNLO)) ?
                 2 :
                 0 );
     setting = new amcnlo_unitarised_interface(scheme);

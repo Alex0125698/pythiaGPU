@@ -35,8 +35,8 @@ void Sigma1qg2qStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = pState->settings.parm("ExcitedFermion:Lambda");
-  coupFcol      = pState->settings.parm("ExcitedFermion:coupFcol");
+  Lambda        = pState->settings.get(Param::ExcitedFermion_Lambda);
+  coupFcol      = pState->settings.get(Param::ExcitedFermion_coupFcol);
 
   // Set pointer to particle properties and decay table.
   qStarPtr      = pState->particleData.particleDataEntryPtr(resonanceA);
@@ -147,9 +147,9 @@ void Sigma1lgm2lStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = pState->settings.parm("ExcitedFermion:Lambda");
-  double coupF  = pState->settings.parm("ExcitedFermion:coupF");
-  double coupFp = pState->settings.parm("ExcitedFermion:coupFprime");
+  Lambda        = pState->settings.get(Param::ExcitedFermion_Lambda);
+  double coupF  = pState->settings.get(Param::ExcitedFermion_coupF);
+  double coupFp = pState->settings.get(Param::ExcitedFermion_coupFprime);
   coupChg       = -0.5 * coupF - 0.5 * coupFp;
 
   // Set pointer to particle properties and decay table.
@@ -256,7 +256,7 @@ void Sigma2qq2qStarq::initProc() {
   else               name = "q q -> b^* q";
 
   // Locally stored properties and couplings.
-  Lambda        = pState->settings.parm("ExcitedFermion:Lambda");
+  Lambda        = pState->settings.get(Param::ExcitedFermion_Lambda);
   preFac        = M_PI / pow4(Lambda);
 
   // Secondary open width fractions.
@@ -410,7 +410,7 @@ void Sigma2qqbar2lStarlbar::initProc() {
   openFracNeg = pState->particleData.resOpenFrac(-resonanceA);
 
   // Locally stored properties and couplings.
-  Lambda        = pState->settings.parm("ExcitedFermion:Lambda");
+  Lambda        = pState->settings.get(Param::ExcitedFermion_Lambda);
   preFac        = (M_PI / pow4(Lambda)) * (openFracPos + openFracNeg) / 3.;
 
 }
@@ -507,7 +507,7 @@ void Sigma2qqbar2lStarlStarBar::initProc() {
   openFracNeg = pState->particleData.resOpenFrac(-resonanceA);
 
   // Locally stored properties and couplings.
-  Lambda        = pState->settings.parm("ExcitedFermion:Lambda");
+  Lambda        = pState->settings.get(Param::ExcitedFermion_Lambda);
   preFac        = (M_PI / pow4(Lambda)) * openFracPos * openFracNeg / 12.;
 
 }
@@ -585,10 +585,10 @@ double Sigma2qqbar2lStarlStarBar::weightDecay( Event& process, int iResBeg,
 
 void Sigma2QCqq2qq::initProc() {
 
-  qCLambda2  = pState->settings.parm("ContactInteractions:Lambda");
-  qCetaLL    = pState->settings.mode("ContactInteractions:etaLL");
-  qCetaRR    = pState->settings.mode("ContactInteractions:etaRR");
-  qCetaLR    = pState->settings.mode("ContactInteractions:etaLR");
+  qCLambda2  = pState->settings.get(Param::ContactInteractions_Lambda);
+  qCetaLL    = pState->settings.get(Mode::ContactInteractions_etaLL);
+  qCetaRR    = pState->settings.get(Mode::ContactInteractions_etaRR);
+  qCetaLR    = pState->settings.get(Mode::ContactInteractions_etaLR);
   qCLambda2 *= qCLambda2;
 
 }
@@ -698,11 +698,11 @@ void Sigma2QCqq2qq::setIdColAcol() {
 
 void Sigma2QCqqbar2qqbar::initProc() {
 
-  qCnQuarkNew = pState->settings.mode("ContactInteractions:nQuarkNew");
-  qCLambda2   = pState->settings.parm("ContactInteractions:Lambda");
-  qCetaLL     = pState->settings.mode("ContactInteractions:etaLL");
-  qCetaRR     = pState->settings.mode("ContactInteractions:etaRR");
-  qCetaLR     = pState->settings.mode("ContactInteractions:etaLR");
+  qCnQuarkNew = pState->settings.get(Mode::ContactInteractions_nQuarkNew);
+  qCLambda2   = pState->settings.get(Param::ContactInteractions_Lambda);
+  qCetaLL     = pState->settings.get(Mode::ContactInteractions_etaLL);
+  qCetaRR     = pState->settings.get(Mode::ContactInteractions_etaRR);
+  qCetaLR     = pState->settings.get(Mode::ContactInteractions_etaLR);
   qCLambda2  *= qCLambda2;
 
 }
@@ -754,10 +754,10 @@ void Sigma2QCqqbar2qqbar::setIdColAcol() {
 
 void Sigma2QCffbar2llbar::initProc() {
 
-  qCLambda2   = pState->settings.parm("ContactInteractions:Lambda");
-  qCetaLL     = pState->settings.mode("ContactInteractions:etaLL");
-  qCetaRR     = pState->settings.mode("ContactInteractions:etaRR");
-  qCetaLR     = pState->settings.mode("ContactInteractions:etaLR");
+  qCLambda2   = pState->settings.get(Param::ContactInteractions_Lambda);
+  qCetaLL     = pState->settings.get(Mode::ContactInteractions_etaLL);
+  qCetaRR     = pState->settings.get(Mode::ContactInteractions_etaRR);
+  qCetaLR     = pState->settings.get(Mode::ContactInteractions_etaLR);
   qCLambda2  *= qCLambda2;
 
   // Process name.

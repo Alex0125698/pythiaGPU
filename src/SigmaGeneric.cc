@@ -30,8 +30,8 @@ namespace Pythia8 {
 void Sigma2gg2qGqGbar::initProc() {
 
   // Number of colours. Anomalous coupling kappa - 1 used for vector state.
-  nCHV         = pState->settings.mode("HiddenValley:Ngauge");
-  kappam1      = pState->settings.parm("HiddenValley:kappa") - 1.;
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappam1      = pState->settings.get(Param::HiddenValley_kappa) - 1.;
   hasKappa     = (abs(kappam1) > 1e-8);
 
   // Secondary open width fraction.
@@ -150,8 +150,8 @@ void Sigma2gg2qGqGbar::setIdColAcol() {
 void Sigma2qqbar2qGqGbar::initProc() {
 
   // Number of colours. Coupling kappa used for vector state.
-  nCHV         = pState->settings.mode("HiddenValley:Ngauge");
-  kappa        = pState->settings.parm("HiddenValley:kappa");
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappa        = pState->settings.get(Param::HiddenValley_kappa);
 
    // Secondary open width fraction.
   openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
@@ -230,12 +230,12 @@ void Sigma2qqbar2qGqGbar::setIdColAcol() {
 void Sigma2ffbar2fGfGbar::initProc() {
 
   // Charge and number of colours. Coupling kappa used for vector state.
-  if (pState->settings.flag("HiddenValley:doKinMix"))
-    eQHV2      = pow2(pState->settings.parm("HiddenValley:kinMix"));
+  if (pState->settings.get(Flag::HiddenValley_doKinMix))
+    eQHV2      = pow2(pState->settings.get(Param::HiddenValley_kinMix));
   else
     eQHV2      = pow2( pState->particleData.charge(idNew) );
-  nCHV         = pState->settings.mode("HiddenValley:Ngauge");
-  kappa        = pState->settings.parm("HiddenValley:kappa");
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappa        = pState->settings.get(Param::HiddenValley_kappa);
 
   // Coloured or uncoloured particle.
   hasColour    = (pState->particleData.colType(idNew) != 0);

@@ -21,11 +21,11 @@ int main() {
   pythia.readFile("main31.cmnd");
 
   // Read in main settings
-  int nEvent      = pythia.settings.mode("Main:numberOfEvents");
-  int nError      = pythia.settings.mode("Main:timesAllowErrors");
+  int nEvent      = pythia.settings.get(Mode::Main_numberOfEvents);
+  int nError      = pythia.settings.get(Mode::Main_timesAllowErrors);
   // Read in key POWHEG merging settings
-  int vetoMode    = pythia.settings.mode("POWHEG:veto");
-  int MPIvetoMode = pythia.settings.mode("POWHEG:MPIveto");
+  int vetoMode    = pythia.settings.get(Mode::POWHEG_veto);
+  int MPIvetoMode = pythia.settings.get(Mode::POWHEG_MPIveto);
   bool loadHooks  = (vetoMode > 0 || MPIvetoMode > 0);
 
   // Add in user hooks for shower vetoing

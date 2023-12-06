@@ -68,14 +68,14 @@ int main( int argc, char* argv[] ){
   bool isr = pythia.flag("PartonLevel:ISR");
   bool mpi = pythia.flag("PartonLevel:MPI");
   bool had = pythia.flag("HadronLevel:all");
-  pythia.settings.flag("PartonLevel:FSR",false);
-  pythia.settings.flag("PartonLevel:ISR",false);
-  pythia.settings.flag("HadronLevel:all",false);
-  pythia.settings.flag("PartonLevel:MPI",false);
+  pythia.settings.set(Flag::PartonLevel_FSR, false);
+  pythia.settings.set(Flag::PartonLevel_ISR, false);
+  pythia.settings.set(Flag::HadronLevel_all, false);
+  pythia.settings.set(Flag::PartonLevel_MPI, false);
 
   // Switch on cross section estimation procedure.
-  pythia.settings.flag("Merging:doXSectionEstimate", true);
-  pythia.settings.flag("Merging:doUMEPSTree",true);
+  pythia.settings.set(Flag::Merging_doXSectionEstimate, true);
+  pythia.settings.set(Flag::Merging_doUMEPSTree, true);
 
   int njetcounterLO = nMaxLO;
   string iPathTree  = iPath + "_tree";
@@ -97,9 +97,9 @@ int main( int argc, char* argv[] ){
 #endif
     string LHEfile = iPathTree + in.str();
 
-    pythia.settings.mode("Merging:nRequested", njetcounterLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Start generation loop
@@ -129,13 +129,13 @@ int main( int argc, char* argv[] ){
 
 
   // Switch off cross section estimation.
-  pythia.settings.flag("Merging:doXSectionEstimate", false);
+  pythia.settings.set(Flag::Merging_doXSectionEstimate, false);
 
   // Switch showering and multiple interaction back on.
-  pythia.settings.flag("PartonLevel:FSR",fsr);
-  pythia.settings.flag("PartonLevel:ISR",isr);
-  pythia.settings.flag("HadronLevel:all",had);
-  pythia.settings.flag("PartonLevel:MPI",mpi);
+  pythia.settings.set(Flag::PartonLevel_FSR, fsr);
+  pythia.settings.set(Flag::PartonLevel_ISR, isr);
+  pythia.settings.set(Flag::HadronLevel_all, had);
+  pythia.settings.set(Flag::PartonLevel_MPI, mpi);
 
   // Declare sample cross section for output.
   double sigmaTemp  = 0.;
@@ -159,17 +159,17 @@ int main( int argc, char* argv[] ){
 #endif
     string LHEfile = iPathTree + in.str();
 
-    pythia.settings.flag("Merging:doUMEPSTree",true);
-    pythia.settings.flag("Merging:doUMEPSSubt",false);
-    pythia.settings.mode("Merging:nRecluster",0);
+    pythia.settings.set(Flag::Merging_doUMEPSTree, true);
+    pythia.settings.set(Flag::Merging_doUMEPSSubt, false);
+    pythia.settings.set(Mode::Merging_nRecluster, 0);
 
     cout << endl << endl << endl
          << "Start tree level treatment for " << njetcounterLO << " jets"
          << endl;
 
-    pythia.settings.mode("Merging:nRequested", njetcounterLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Remember position in vector of cross section estimates.
@@ -243,17 +243,17 @@ int main( int argc, char* argv[] ){
 #endif
     string LHEfile = iPathSubt + in.str();
 
-    pythia.settings.flag("Merging:doUMEPSTree",false);
-    pythia.settings.flag("Merging:doUMEPSSubt",true);
-    pythia.settings.mode("Merging:nRecluster",1);
+    pythia.settings.set(Flag::Merging_doUMEPSTree, false);
+    pythia.settings.set(Flag::Merging_doUMEPSSubt, true);
+    pythia.settings.set(Mode::Merging_nRecluster, 1);
 
     cout << endl << endl << endl
          << "Start subtractive treatment for " << njetcounterLS << " jets"
          << endl;
 
-    pythia.settings.mode("Merging:nRequested", njetcounterLS);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterLS);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Remember position in vector of cross section estimates.

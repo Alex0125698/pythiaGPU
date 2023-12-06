@@ -116,7 +116,7 @@
 // void Sigma1ffbar2gmZZprime::initProc() {
 
 //   // Allow to pick only parts of full gamma*/Z0/Z'0 expression.
-//   gmZmode     = settingsPtr->mode("Zprime:gmZmode");
+//   gmZmode     = settingsPtr->get(Mode::Zprime_gmZmode);
 
 //   // Store Z'0 mass and width for propagator.
 //   mRes        = particleDataPtr->m0(32);
@@ -138,23 +138,23 @@
 //   for (int i = 0; i < 20; ++i) vfZp[i] = 0.;
 
 //   // Store first-generation axial and vector couplings.
-//   afZp[1]     = settingsPtr->parm("Zprime:ad");
-//   afZp[2]     = settingsPtr->parm("Zprime:au");
-//   afZp[11]    = settingsPtr->parm("Zprime:ae");
-//   afZp[12]    = settingsPtr->parm("Zprime:anue");
-//   vfZp[1]     = settingsPtr->parm("Zprime:vd");
-//   vfZp[2]     = settingsPtr->parm("Zprime:vu");
-//   vfZp[11]    = settingsPtr->parm("Zprime:ve");
-//   vfZp[12]    = settingsPtr->parm("Zprime:vnue");
+//   afZp[1]     = settingsPtr->get(Param::Zprime_ad);
+//   afZp[2]     = settingsPtr->get(Param::Zprime_au);
+//   afZp[11]    = settingsPtr->get(Param::Zprime_ae);
+//   afZp[12]    = settingsPtr->get(Param::Zprime_anue);
+//   vfZp[1]     = settingsPtr->get(Param::Zprime_vd);
+//   vfZp[2]     = settingsPtr->get(Param::Zprime_vu);
+//   vfZp[11]    = settingsPtr->get(Param::Zprime_ve);
+//   vfZp[12]    = settingsPtr->get(Param::Zprime_vnue);
 
 //   // Determine if the 4th generation should be included
-//   bool coupZp2gen4    = settingsPtr->flag("Zprime:coup2gen4");
+//   bool coupZp2gen4    = settingsPtr->get(Flag::Zprime_coup2gen4);
 
 //   maxZpGen = (coupZp2gen4) ? 8 : 6;
 
 //   // Second and third (and possibly 4th) generation could be carbon copy
 //   // of this...
-//   if (settingsPtr->flag("Zprime:universality")) {
+//   if (settingsPtr->get(Flag::Zprime_universality)) {
 //     for (int i = 3; i <= maxZpGen; ++i) {
 //       afZp[i]    = afZp[i-2];
 //       vfZp[i]    = vfZp[i-2];
@@ -164,37 +164,37 @@
 
 //   // ... or could have different couplings.
 //   } else {
-//     afZp[3]   = settingsPtr->parm("Zprime:as");
-//     afZp[4]   = settingsPtr->parm("Zprime:ac");
-//     afZp[5]   = settingsPtr->parm("Zprime:ab");
-//     afZp[6]   = settingsPtr->parm("Zprime:at");
-//     afZp[13]  = settingsPtr->parm("Zprime:amu");
-//     afZp[14]  = settingsPtr->parm("Zprime:anumu");
-//     afZp[15]  = settingsPtr->parm("Zprime:atau");
-//     afZp[16]  = settingsPtr->parm("Zprime:anutau");
-//     vfZp[3]   = settingsPtr->parm("Zprime:vs");
-//     vfZp[4]   = settingsPtr->parm("Zprime:vc");
-//     vfZp[5]   = settingsPtr->parm("Zprime:vb");
-//     vfZp[6]   = settingsPtr->parm("Zprime:vt");
-//     vfZp[13]  = settingsPtr->parm("Zprime:vmu");
-//     vfZp[14]  = settingsPtr->parm("Zprime:vnumu");
-//     vfZp[15]  = settingsPtr->parm("Zprime:vtau");
-//     vfZp[16]  = settingsPtr->parm("Zprime:vnutau");
+//     afZp[3]   = settingsPtr->get(Param::Zprime_as);
+//     afZp[4]   = settingsPtr->get(Param::Zprime_ac);
+//     afZp[5]   = settingsPtr->get(Param::Zprime_ab);
+//     afZp[6]   = settingsPtr->get(Param::Zprime_at);
+//     afZp[13]  = settingsPtr->get(Param::Zprime_amu);
+//     afZp[14]  = settingsPtr->get(Param::Zprime_anumu);
+//     afZp[15]  = settingsPtr->get(Param::Zprime_atau);
+//     afZp[16]  = settingsPtr->get(Param::Zprime_anutau);
+//     vfZp[3]   = settingsPtr->get(Param::Zprime_vs);
+//     vfZp[4]   = settingsPtr->get(Param::Zprime_vc);
+//     vfZp[5]   = settingsPtr->get(Param::Zprime_vb);
+//     vfZp[6]   = settingsPtr->get(Param::Zprime_vt);
+//     vfZp[13]  = settingsPtr->get(Param::Zprime_vmu);
+//     vfZp[14]  = settingsPtr->get(Param::Zprime_vnumu);
+//     vfZp[15]  = settingsPtr->get(Param::Zprime_vtau);
+//     vfZp[16]  = settingsPtr->get(Param::Zprime_vnutau);
 //     if( coupZp2gen4 ) {
-//       afZp[7]   = settingsPtr->parm("Zprime:abPrime");
-//       afZp[8]   = settingsPtr->parm("Zprime:atPrime");
-//       vfZp[7]   = settingsPtr->parm("Zprime:vbPrime");
-//       vfZp[8]   = settingsPtr->parm("Zprime:vtPrime");
-//       afZp[17]  = settingsPtr->parm("Zprime:atauPrime");
-//       afZp[18]  = settingsPtr->parm("Zprime:anutauPrime");
-//       vfZp[17]  = settingsPtr->parm("Zprime:vtauPrime");
-//       vfZp[18]  = settingsPtr->parm("Zprime:vnutauPrime");
+//       afZp[7]   = settingsPtr->get(Param::Zprime_abPrime);
+//       afZp[8]   = settingsPtr->get(Param::Zprime_atPrime);
+//       vfZp[7]   = settingsPtr->get(Param::Zprime_vbPrime);
+//       vfZp[8]   = settingsPtr->get(Param::Zprime_vtPrime);
+//       afZp[17]  = settingsPtr->get(Param::Zprime_atauPrime);
+//       afZp[18]  = settingsPtr->get(Param::Zprime_anutauPrime);
+//       vfZp[17]  = settingsPtr->get(Param::Zprime_vtauPrime);
+//       vfZp[18]  = settingsPtr->get(Param::Zprime_vnutauPrime);
 //     }
 //   }
 
 //   // Coupling for Z' -> W+ W- and decay angular admixture.
-//   coupZpWW    = settingsPtr->parm("Zprime:coup2WW");
-//   anglesZpWW  = settingsPtr->parm("Zprime:anglesWW");
+//   coupZpWW    = settingsPtr->get(Param::Zprime_coup2WW);
+//   anglesZpWW  = settingsPtr->get(Param::Zprime_anglesWW);
 
 //   // Set pointer to particle properties and decay table.
 //   particlePtr = particleDataPtr->particleDataEntryPtr(32);
@@ -518,14 +518,14 @@
 //   thetaWRat = 1. / (12. * couplingsPtr->sin2thetaW());
 
 //   // Axial and vector couplings of fermions.
-//   aqWp      = settingsPtr->parm("Wprime:aq");
-//   vqWp      = settingsPtr->parm("Wprime:vq");
-//   alWp      = settingsPtr->parm("Wprime:al");
-//   vlWp      = settingsPtr->parm("Wprime:vl");
+//   aqWp      = settingsPtr->get(Param::Wprime_aq);
+//   vqWp      = settingsPtr->get(Param::Wprime_vq);
+//   alWp      = settingsPtr->get(Param::Wprime_al);
+//   vlWp      = settingsPtr->get(Param::Wprime_vl);
 
 //   // Coupling for W' -> W Z and decay angular admixture.
-//   coupWpWZ    = settingsPtr->parm("Wprime:coup2WZ");
-//   anglesWpWZ  = settingsPtr->parm("Wprime:anglesWZ");
+//   coupWpWZ    = settingsPtr->get(Param::Wprime_coup2WZ);
+//   anglesWpWZ  = settingsPtr->get(Param::Wprime_anglesWZ);
 
 //   // Set pointer to particle properties and decay table.
 //   particlePtr = particleDataPtr->particleDataEntryPtr(34);

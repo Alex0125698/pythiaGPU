@@ -125,37 +125,37 @@ void PhaseSpace::init(bool isFirst, SigmaProcess* sigmaProcessPtrIn,
   hasTwoPointLeptons  = hasTwoLeptonBeams && hasPointLepton;
 
   // Standard phase space cuts.
-  if (isFirst || settingsPtr->flag("PhaseSpace:sameForSecond")) {
-    mHatGlobalMin      = settingsPtr->parm("PhaseSpace:mHatMin");
-    mHatGlobalMax      = settingsPtr->parm("PhaseSpace:mHatMax");
-    pTHatGlobalMin     = settingsPtr->parm("PhaseSpace:pTHatMin");
-    pTHatGlobalMax     = settingsPtr->parm("PhaseSpace:pTHatMax");
+  if (isFirst || settingsPtr->get(Flag::PhaseSpace_sameForSecond)) {
+    mHatGlobalMin      = settingsPtr->get(Param::PhaseSpace_mHatMin);
+    mHatGlobalMax      = settingsPtr->get(Param::PhaseSpace_mHatMax);
+    pTHatGlobalMin     = settingsPtr->get(Param::PhaseSpace_pTHatMin);
+    pTHatGlobalMax     = settingsPtr->get(Param::PhaseSpace_pTHatMax);
 
   // Optionally separate phase space cuts for second hard process.
   } else {
-    mHatGlobalMin      = settingsPtr->parm("PhaseSpace:mHatMinSecond");
-    mHatGlobalMax      = settingsPtr->parm("PhaseSpace:mHatMaxSecond");
-    pTHatGlobalMin     = settingsPtr->parm("PhaseSpace:pTHatMinSecond");
-    pTHatGlobalMax     = settingsPtr->parm("PhaseSpace:pTHatMaxSecond");
+    mHatGlobalMin      = settingsPtr->get(Param::PhaseSpace_mHatMinSecond);
+    mHatGlobalMax      = settingsPtr->get(Param::PhaseSpace_mHatMaxSecond);
+    pTHatGlobalMin     = settingsPtr->get(Param::PhaseSpace_pTHatMinSecond);
+    pTHatGlobalMax     = settingsPtr->get(Param::PhaseSpace_pTHatMaxSecond);
   }
 
   // Cutoff against divergences at pT -> 0.
-  pTHatMinDiverge      = settingsPtr->parm("PhaseSpace:pTHatMinDiverge");
+  pTHatMinDiverge      = settingsPtr->get(Param::PhaseSpace_pTHatMinDiverge);
 
   // When to use Breit-Wigners.
-  useBreitWigners      = settingsPtr->flag("PhaseSpace:useBreitWigners");
-  minWidthBreitWigners = settingsPtr->parm("PhaseSpace:minWidthBreitWigners");
+  useBreitWigners      = settingsPtr->get(Flag::PhaseSpace_useBreitWigners);
+  minWidthBreitWigners = settingsPtr->get(Param::PhaseSpace_minWidthBreitWigners);
 
   // Whether generation is with variable energy.
-  doEnergySpread       = settingsPtr->flag("Beams:allowMomentumSpread");
+  doEnergySpread       = settingsPtr->get(Flag::Beams_allowMomentumSpread);
 
   // Flags for maximization information and violation handling.
-  showSearch           = settingsPtr->flag("PhaseSpace:showSearch");
-  showViolation        = settingsPtr->flag("PhaseSpace:showViolation");
-  increaseMaximum      = settingsPtr->flag("PhaseSpace:increaseMaximum");
+  showSearch           = settingsPtr->get(Flag::PhaseSpace_showSearch);
+  showViolation        = settingsPtr->get(Flag::PhaseSpace_showViolation);
+  increaseMaximum      = settingsPtr->get(Flag::PhaseSpace_increaseMaximum);
 
   // Know whether a Z0 is pure Z0 or admixed with gamma*.
-  gmZmodeGlobal        = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmodeGlobal        = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Flags if user should be allowed to reweight cross section.
   canModifySigma   = (userHooksPtr != 0)
@@ -164,9 +164,9 @@ void PhaseSpace::init(bool isFirst, SigmaProcess* sigmaProcessPtrIn,
                    ? userHooksPtr->canBiasSelection() : false;
 
   // Parameters for simplified reweighting of 2 -> 2 processes.
-  canBias2Sel      = settingsPtr->flag("PhaseSpace:bias2Selection");
-  bias2SelPow      = settingsPtr->parm("PhaseSpace:bias2SelectionPow");
-  bias2SelRef      = settingsPtr->parm("PhaseSpace:bias2SelectionRef");
+  canBias2Sel      = settingsPtr->get(Flag::PhaseSpace_bias2Selection);
+  bias2SelPow      = settingsPtr->get(Param::PhaseSpace_bias2SelectionPow);
+  bias2SelRef      = settingsPtr->get(Param::PhaseSpace_bias2SelectionRef);
 
   // Default event-specific kinematics properties.
   x1H             = 1.;
@@ -2372,15 +2372,15 @@ bool PhaseSpace2to2elastic::setupSampling() {
   tUpp       = 0.;
 
   // Production model with Coulomb corrections need more parameters.
-  useCoulomb =  settingsPtr->flag("SigmaTotal:setOwn")
-             && settingsPtr->flag("SigmaElastic:setOwn");
+  useCoulomb =  settingsPtr->get(Flag::SigmaTotal_setOwn)
+             && settingsPtr->get(Flag::SigmaElastic_setOwn);
   if (useCoulomb) {
     sigmaTot = sigmaTotPtr->sigmaTot();
-    rho      = settingsPtr->parm("SigmaElastic:rho");
-    lambda   = settingsPtr->parm("SigmaElastic:lambda");
-    tAbsMin  = settingsPtr->parm("SigmaElastic:tAbsMin");
-    phaseCst = settingsPtr->parm("SigmaElastic:phaseConst");
-    alphaEM0 = settingsPtr->parm("StandardModel:alphaEM0");
+    rho      = settingsPtr->get(Param::SigmaElastic_rho);
+    lambda   = settingsPtr->get(Param::SigmaElastic_lambda);
+    tAbsMin  = settingsPtr->get(Param::SigmaElastic_tAbsMin);
+    phaseCst = settingsPtr->get(Param::SigmaElastic_phaseConst);
+    alphaEM0 = settingsPtr->get(Param::StandardModel_alphaEM0);
 
     // Relative rate of nuclear and Coulombic parts in trials.
     tUpp     = -tAbsMin;
@@ -2521,9 +2521,9 @@ const double PhaseSpace2to2diffractive::DIFFMASSMARGIN = 0.2;
 bool PhaseSpace2to2diffractive::setupSampling() {
 
   // Pomeron flux parametrization, and parameters of some options.
-  PomFlux      = settingsPtr->mode("Diffraction:PomFlux");
-  epsilonPF    = settingsPtr->parm("Diffraction:PomFluxEpsilon");
-  alphaPrimePF = settingsPtr->parm("Diffraction:PomFluxAlphaPrime");
+  PomFlux      = settingsPtr->get(Mode::Diffraction_PomFlux);
+  epsilonPF    = settingsPtr->get(Param::Diffraction_PomFluxEpsilon);
+  alphaPrimePF = settingsPtr->get(Param::Diffraction_PomFluxAlphaPrime);
 
   // Find maximum = value of cross section.
   sigmaNw = sigmaProcessPtr->sigmaHatWrap();
@@ -2598,14 +2598,14 @@ bool PhaseSpace2to2diffractive::setupSampling() {
 
   // MBR model.
   } else if (PomFlux == 5) {
-    eps        = settingsPtr->parm("Diffraction:MBRepsilon");
-    alph       = settingsPtr->parm("Diffraction:MBRalpha");
+    eps        = settingsPtr->get(Param::Diffraction_MBRepsilon);
+    alph       = settingsPtr->get(Param::Diffraction_MBRalpha);
     alph2      = alph * alph;
-    m2min      = settingsPtr->parm("Diffraction:MBRm2Min");
-    dyminSD    = settingsPtr->parm("Diffraction:MBRdyminSD");
-    dyminDD    = settingsPtr->parm("Diffraction:MBRdyminDD");
-    dyminSigSD = settingsPtr->parm("Diffraction:MBRdyminSigSD");
-    dyminSigDD = settingsPtr->parm("Diffraction:MBRdyminSigDD");
+    m2min      = settingsPtr->get(Param::Diffraction_MBRm2Min);
+    dyminSD    = settingsPtr->get(Param::Diffraction_MBRdyminSD);
+    dyminDD    = settingsPtr->get(Param::Diffraction_MBRdyminDD);
+    dyminSigSD = settingsPtr->get(Param::Diffraction_MBRdyminSigSD);
+    dyminSigDD = settingsPtr->get(Param::Diffraction_MBRdyminSigDD);
 
     // Max f(dy) for Von Neumann method, from SigmaTot.
     sdpmax= sigmaTotPtr->sdpMax();
@@ -2968,9 +2968,9 @@ const double PhaseSpace2to3diffractive::DIFFMASSMARGIN = 0.2;
 bool PhaseSpace2to3diffractive::setupSampling() {
 
   // Pomeron flux parametrization, and parameters of some options.
-  PomFlux      = settingsPtr->mode("Diffraction:PomFlux");
-  epsilonPF    = settingsPtr->parm("Diffraction:PomFluxEpsilon");
-  alphaPrimePF = settingsPtr->parm("Diffraction:PomFluxAlphaPrime");
+  PomFlux      = settingsPtr->get(Mode::Diffraction_PomFlux);
+  epsilonPF    = settingsPtr->get(Param::Diffraction_PomFluxEpsilon);
+  alphaPrimePF = settingsPtr->get(Param::Diffraction_PomFluxAlphaPrime);
 
   // Find maximum = value of cross section.
   sigmaNw      = sigmaProcessPtr->sigmaHatWrap();
@@ -3053,11 +3053,11 @@ bool PhaseSpace2to3diffractive::setupSampling() {
 
   // Setup for the MBR model.
   } else if (PomFlux == 5) {
-    epsMBR        = settingsPtr->parm("Diffraction:MBRepsilon");
-    alphMBR       = settingsPtr->parm("Diffraction:MBRalpha");
-    m2minMBR      = settingsPtr->parm("Diffraction:MBRm2Min");
-    dyminMBR      = settingsPtr->parm("Diffraction:MBRdyminCD");
-    dyminSigMBR   = settingsPtr->parm("Diffraction:MBRdyminSigCD");
+    epsMBR        = settingsPtr->get(Param::Diffraction_MBRepsilon);
+    alphMBR       = settingsPtr->get(Param::Diffraction_MBRalpha);
+    m2minMBR      = settingsPtr->get(Param::Diffraction_MBRm2Min);
+    dyminMBR      = settingsPtr->get(Param::Diffraction_MBRdyminCD);
+    dyminSigMBR   = settingsPtr->get(Param::Diffraction_MBRdyminSigCD);
     dyminInvMBR   = sqrt(2.) / dyminSigMBR;
     // Max f(dy) for Von Neumann method, dpepmax from SigmaTot.
     dpepmax       = sigmaTotPtr->dpepMax();
@@ -3637,11 +3637,11 @@ bool PhaseSpace2to3tauycyl::finalKin() {
 bool PhaseSpace2to3yyycyl::setupSampling() {
 
   // Phase space cuts specifically for 2 -> 3 QCD processes.
-  pTHat3Min            = settingsPtr->parm("PhaseSpace:pTHat3Min");
-  pTHat3Max            = settingsPtr->parm("PhaseSpace:pTHat3Max");
-  pTHat5Min            = settingsPtr->parm("PhaseSpace:pTHat5Min");
-  pTHat5Max            = settingsPtr->parm("PhaseSpace:pTHat5Max");
-  RsepMin              = settingsPtr->parm("PhaseSpace:RsepMin");
+  pTHat3Min            = settingsPtr->get(Param::PhaseSpace_pTHat3Min);
+  pTHat3Max            = settingsPtr->get(Param::PhaseSpace_pTHat3Max);
+  pTHat5Min            = settingsPtr->get(Param::PhaseSpace_pTHat5Min);
+  pTHat5Max            = settingsPtr->get(Param::PhaseSpace_pTHat5Max);
+  RsepMin              = settingsPtr->get(Param::PhaseSpace_RsepMin);
   R2sepMin             = pow2(RsepMin);
 
   // If both beams are baryons then softer PDF's than for mesons/Pomerons.

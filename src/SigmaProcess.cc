@@ -82,50 +82,50 @@ void SigmaProcess::init(PythiaState* pState_)
   // TODO: these need to be deleted
 
   // K factor, multiplying resolved processes. (But not here for MPI.)
-  Kfactor         = pState->settings.parm("SigmaProcess:Kfactor");
+  Kfactor         = pState->settings.get(Param::SigmaProcess_Kfactor);
 
   // Maximum incoming quark flavour.
-  nQuarkIn        = pState->settings.mode("PDFinProcess:nQuarkIn");
+  nQuarkIn        = pState->settings.get(Mode::PDFinProcess_nQuarkIn);
 
   // Medium heavy fermion masses set massless or not in ME expressions.
-  mcME            = (pState->settings.flag("SigmaProcess:cMassiveME"))
+  mcME            = (pState->settings.get(Flag::SigmaProcess_cMassiveME))
                   ? pState->particleData.m0(4)  : 0.;
-  mbME            = (pState->settings.flag("SigmaProcess:bMassiveME"))
+  mbME            = (pState->settings.get(Flag::SigmaProcess_bMassiveME))
                   ? pState->particleData.m0(5)  : 0.;
-  mmuME           = (pState->settings.flag("SigmaProcess:muMassiveME"))
+  mmuME           = (pState->settings.get(Flag::SigmaProcess_muMassiveME))
                   ? pState->particleData.m0(13) : 0.;
-  mtauME          = (pState->settings.flag("SigmaProcess:tauMassiveME"))
+  mtauME          = (pState->settings.get(Flag::SigmaProcess_tauMassiveME))
                   ? pState->particleData.m0(15) : 0.;
 
   // Renormalization scale choice.
-  renormScale1    = pState->settings.mode("SigmaProcess:renormScale1");
-  renormScale2    = pState->settings.mode("SigmaProcess:renormScale2");
-  renormScale3    = pState->settings.mode("SigmaProcess:renormScale3");
-  renormScale3VV  = pState->settings.mode("SigmaProcess:renormScale3VV");
-  renormMultFac   = pState->settings.parm("SigmaProcess:renormMultFac");
-  renormFixScale  = pState->settings.parm("SigmaProcess:renormFixScale");
+  renormScale1    = pState->settings.get(Mode::SigmaProcess_renormScale1);
+  renormScale2    = pState->settings.get(Mode::SigmaProcess_renormScale2);
+  renormScale3    = pState->settings.get(Mode::SigmaProcess_renormScale3);
+  renormScale3VV  = pState->settings.get(Mode::SigmaProcess_renormScale3VV);
+  renormMultFac   = pState->settings.get(Param::SigmaProcess_renormMultFac);
+  renormFixScale  = pState->settings.get(Param::SigmaProcess_renormFixScale);
 
   // Factorization scale choice.
-  factorScale1    = pState->settings.mode("SigmaProcess:factorScale1");
-  factorScale2    = pState->settings.mode("SigmaProcess:factorScale2");
-  factorScale3    = pState->settings.mode("SigmaProcess:factorScale3");
-  factorScale3VV  = pState->settings.mode("SigmaProcess:factorScale3VV");
-  factorMultFac   = pState->settings.parm("SigmaProcess:factorMultFac");
-  factorFixScale  = pState->settings.parm("SigmaProcess:factorFixScale");
+  factorScale1    = pState->settings.get(Mode::SigmaProcess_factorScale1);
+  factorScale2    = pState->settings.get(Mode::SigmaProcess_factorScale2);
+  factorScale3    = pState->settings.get(Mode::SigmaProcess_factorScale3);
+  factorScale3VV  = pState->settings.get(Mode::SigmaProcess_factorScale3VV);
+  factorMultFac   = pState->settings.get(Param::SigmaProcess_factorMultFac);
+  factorFixScale  = pState->settings.get(Param::SigmaProcess_factorFixScale);
 
   // CP violation parameters for the BSM Higgs sector.
-  higgsH1parity   = pState->settings.mode("HiggsH1:parity");
-  higgsH1eta      = pState->settings.parm("HiggsH1:etaParity");
-  higgsH1phi      = pState->settings.parm("HiggsH1:phiParity");
-  higgsH2parity   = pState->settings.mode("HiggsH2:parity");
-  higgsH2eta      = pState->settings.parm("HiggsH2:etaParity");
-  higgsH2phi      = pState->settings.parm("HiggsH2:phiParity");
-  higgsA3parity   = pState->settings.mode("HiggsA3:parity");
-  higgsA3eta      = pState->settings.parm("HiggsA3:etaParity");
-  higgsA3phi      = pState->settings.parm("HiggsA3:phiParity");
+  higgsH1parity   = pState->settings.get(Mode::HiggsH1_parity);
+  higgsH1eta      = pState->settings.get(Param::HiggsH1_etaParity);
+  higgsH1phi      = pState->settings.get(Param::HiggsH1_phiParity);
+  higgsH2parity   = pState->settings.get(Mode::HiggsH2_parity);
+  higgsH2eta      = pState->settings.get(Param::HiggsH2_etaParity);
+  higgsH2phi      = pState->settings.get(Param::HiggsH2_phiParity);
+  higgsA3parity   = pState->settings.get(Mode::HiggsA3_parity);
+  higgsA3eta      = pState->settings.get(Param::HiggsA3_etaParity);
+  higgsA3phi      = pState->settings.get(Param::HiggsA3_phiParity);
 
   // If BSM not switched on then H1 should have SM properties.
-  if (!pState->settings.flag("Higgs:useBSM"))
+  if (!pState->settings.get(Flag::Higgs_useBSM))
   {
     higgsH1parity = 1;
     higgsH1eta    = 0.;

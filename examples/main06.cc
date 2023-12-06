@@ -27,7 +27,7 @@ int main() {
   pythia.readString("Beams:idA =  11");
   pythia.readString("Beams:idB = -11");
   double mZ = pythia.particleData.m0(23);
-  pythia.settings.parm("Beams:eCM", mZ);
+  pythia.settings.set(Param::Beams_eCM, mZ);
   pythia.init();
 
   // Histograms.
