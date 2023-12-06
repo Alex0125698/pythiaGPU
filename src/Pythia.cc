@@ -393,7 +393,7 @@ bool Pythia::init() {
   }
 
   // Early readout, if return false or changed when no beams.
-  doProcessLevel = pState.settings.flag("ProcessLevel:all");
+  doProcessLevel = pState.settings.get(Flag::ProcessLevel_all);
 
   // Check that changes in Settings and ParticleData have worked.
   if (pState.settings.readingFailed()) {
@@ -492,24 +492,24 @@ bool Pythia::init() {
     if (frameType == 4 || frameType == 5) {
 
       // Set up values related to CKKW-L merging.
-      bool doUserMerging     = pState.settings.flag("Merging:doUserMerging");
-      bool doMGMerging       = pState.settings.flag("Merging:doMGMerging");
-      bool doKTMerging       = pState.settings.flag("Merging:doKTMerging");
-      bool doPTLundMerging   = pState.settings.flag("Merging:doPTLundMerging");
-      bool doCutBasedMerging = pState.settings.flag("Merging:doCutBasedMerging");
+      bool doUserMerging     = pState.settings.get(Flag::Merging_doUserMerging);
+      bool doMGMerging       = pState.settings.get(Flag::Merging_doMGMerging);
+      bool doKTMerging       = pState.settings.get(Flag::Merging_doKTMerging);
+      bool doPTLundMerging   = pState.settings.get(Flag::Merging_doPTLundMerging);
+      bool doCutBasedMerging = pState.settings.get(Flag::Merging_doCutBasedMerging);
       // Set up values related to unitarised CKKW merging
-      bool doUMEPSTree       = pState.settings.flag("Merging:doUMEPSTree");
-      bool doUMEPSSubt       = pState.settings.flag("Merging:doUMEPSSubt");
+      bool doUMEPSTree       = pState.settings.get(Flag::Merging_doUMEPSTree);
+      bool doUMEPSSubt       = pState.settings.get(Flag::Merging_doUMEPSSubt);
       // Set up values related to NL3 NLO merging
-      bool doNL3Tree         = pState.settings.flag("Merging:doNL3Tree");
-      bool doNL3Loop         = pState.settings.flag("Merging:doNL3Loop");
-      bool doNL3Subt         = pState.settings.flag("Merging:doNL3Subt");
+      bool doNL3Tree         = pState.settings.get(Flag::Merging_doNL3Tree);
+      bool doNL3Loop         = pState.settings.get(Flag::Merging_doNL3Loop);
+      bool doNL3Subt         = pState.settings.get(Flag::Merging_doNL3Subt);
       // Set up values related to unitarised NLO merging
-      bool doUNLOPSTree      = pState.settings.flag("Merging:doUNLOPSTree");
-      bool doUNLOPSLoop      = pState.settings.flag("Merging:doUNLOPSLoop");
-      bool doUNLOPSSubt      = pState.settings.flag("Merging:doUNLOPSSubt");
-      bool doUNLOPSSubtNLO   = pState.settings.flag("Merging:doUNLOPSSubtNLO");
-      bool doXSectionEst     = pState.settings.flag("Merging:doXSectionEstimate");
+      bool doUNLOPSTree      = pState.settings.get(Flag::Merging_doUNLOPSTree);
+      bool doUNLOPSLoop      = pState.settings.get(Flag::Merging_doUNLOPSLoop);
+      bool doUNLOPSSubt      = pState.settings.get(Flag::Merging_doUNLOPSSubt);
+      bool doUNLOPSSubtNLO   = pState.settings.get(Flag::Merging_doUNLOPSSubtNLO);
+      bool doXSectionEst     = pState.settings.get(Flag::Merging_doXSectionEstimate);
       doMerging = doUserMerging || doMGMerging || doKTMerging
         || doPTLundMerging || doCutBasedMerging || doUMEPSTree || doUMEPSSubt
         || doNL3Tree || doNL3Loop || doNL3Subt || doUNLOPSTree
@@ -550,7 +550,7 @@ bool Pythia::init() {
     // Extract beams from values set in an LHAinit object.
     idA = pState.lhaUp->idBeamA();
     idB = pState.lhaUp->idBeamB();
-    int idRenameBeams = pState.settings.mode("LesHouches:idRenameBeams");
+    int idRenameBeams = pState.settings.get(Mode::LesHouches_idRenameBeams);
     if (abs(idA) == idRenameBeams) idA = 16;
     if (abs(idB) == idRenameBeams) idB = -16;
     if (idA == 0 || idB == 0) doProcessLevel = false;
@@ -587,36 +587,36 @@ bool Pythia::init() {
   pState.info.sigmaReset();
 
   // Initialize data members extracted from database.
-  doPartonLevel    = pState.settings.flag("PartonLevel:all");
-  doHadronLevel    = pState.settings.flag("HadronLevel:all");
-  doDiffraction    = pState.settings.flag("SoftQCD:all")
-                  || pState.settings.flag("SoftQCD:singleDiffractive")
-                  || pState.settings.flag("SoftQCD:doubleDiffractive")
-                  || pState.settings.flag("SoftQCD:centralDiffractive")
-                  || pState.settings.flag("SoftQCD:inelastic");
-  doHardDiff       = pState.settings.flag("Diffraction:doHard");
-  doResDec         = pState.settings.flag("ProcessLevel:resonanceDecays");
-  doFSRinRes       = doPartonLevel && pState.settings.flag("PartonLevel:FSR")
-                  && pState.settings.flag("PartonLevel:FSRinResonances");
-  decayRHadrons    = pState.settings.flag("RHadrons:allowDecay");
-  doMomentumSpread = pState.settings.flag("Beams:allowMomentumSpread");
-  doVertexSpread   = pState.settings.flag("Beams:allowVertexSpread");
-  abortIfVeto      = pState.settings.flag("Check:abortIfVeto");
-  checkEvent       = pState.settings.flag("Check:event");
-  checkHistory     = pState.settings.flag("Check:history");
-  nErrList         = pState.settings.mode("Check:nErrList");
-  epTolErr         = pState.settings.parm("Check:epTolErr");
-  epTolWarn        = pState.settings.parm("Check:epTolWarn");
-  mTolErr          = pState.settings.parm("Check:mTolErr");
-  mTolWarn         = pState.settings.parm("Check:mTolWarn");
+  doPartonLevel    = pState.settings.get(Flag::PartonLevel_all);
+  doHadronLevel    = pState.settings.get(Flag::HadronLevel_all);
+  doDiffraction    = pState.settings.get(Flag::SoftQCD_all)
+                  || pState.settings.get(Flag::SoftQCD_singleDiffractive)
+                  || pState.settings.get(Flag::SoftQCD_doubleDiffractive)
+                  || pState.settings.get(Flag::SoftQCD_centralDiffractive)
+                  || pState.settings.get(Flag::SoftQCD_inelastic);
+  doHardDiff       = pState.settings.get(Flag::Diffraction_doHard);
+  doResDec         = pState.settings.get(Flag::ProcessLevel_resonanceDecays);
+  doFSRinRes       = doPartonLevel && pState.settings.get(Flag::PartonLevel_FSR)
+                  && pState.settings.get(Flag::PartonLevel_FSRinResonances);
+  decayRHadrons    = pState.settings.get(Flag::RHadrons_allowDecay);
+  doMomentumSpread = pState.settings.get(Flag::Beams_allowMomentumSpread);
+  doVertexSpread   = pState.settings.get(Flag::Beams_allowVertexSpread);
+  abortIfVeto      = pState.settings.get(Flag::Check_abortIfVeto);
+  checkEvent       = pState.settings.get(Flag::Check_event);
+  checkHistory     = pState.settings.get(Flag::Check_history);
+  nErrList         = pState.settings.get(Mode::Check_nErrList);
+  epTolErr         = pState.settings.get(Param::Check_epTolErr);
+  epTolWarn        = pState.settings.get(Param::Check_epTolWarn);
+  mTolErr          = pState.settings.get(Param::Check_mTolErr);
+  mTolWarn         = pState.settings.get(Param::Check_mTolWarn);
 
   // Initialise merging hooks.
   if ( doMerging && (hasMergingHooks || hasOwnMergingHooks) )
     mergingHooksPtr->init( pState.settings, &pState.info, &pState.particleData, &partonSystems );
 
   // Initialize the random number generator.
-  if ( pState.settings.flag("Random:setSeed") )
-    pState.rndm.init( pState.settings.mode("Random:seed") ); // !!!
+  if ( pState.settings.get(Flag::Random_setSeed) )
+    pState.rndm.init( pState.settings.get(Mode::Random_seed) ); // !!!
   pState.rndm.init( 123 );
 
   // Check that combinations of settings are allowed; change if not.
@@ -651,7 +651,7 @@ bool Pythia::init() {
 
   // Set headers to distinguish the two event listing kinds.
   // (nothing major here; just setting the Event headers)
-  int startColTag = pState.settings.mode("Event:startColTag");
+  int startColTag = pState.settings.get(Mode::Event_startColTag);
   process.init("(hard process)", &pState.particleData, startColTag);
   event.init("(complete event)", &pState.particleData, startColTag);
 
@@ -835,17 +835,17 @@ bool Pythia::init() {
   Benchmark_start(Pythia0init_getMoreOptions);
 
   // Optionally check particle data table for inconsistencies.
-  if ( pState.settings.flag("Check:particleData") )
-    pState.particleData.checkTable( pState.settings.mode("Check:levelParticleData") );
+  if ( pState.settings.get(Flag::Check_particleData) )
+    pState.particleData.checkTable( pState.settings.get(Mode::Check_levelParticleData) );
 
   // Optionally show settings and particle data, changed or all.
-  bool showCS  = pState.settings.flag("Init:showChangedSettings");
-  bool showAS  = pState.settings.flag("Init:showAllSettings");
-  bool showCPD = pState.settings.flag("Init:showChangedParticleData");
-  bool showCRD = pState.settings.flag("Init:showChangedResonanceData");
-  bool showAPD = pState.settings.flag("Init:showAllParticleData");
-  int  show1PD = pState.settings.mode("Init:showOneParticleData");
-  bool showPro = pState.settings.flag("Init:showProcesses");
+  bool showCS  = pState.settings.get(Flag::Init_showChangedSettings);
+  bool showAS  = pState.settings.get(Flag::Init_showAllSettings);
+  bool showCPD = pState.settings.get(Flag::Init_showChangedParticleData);
+  bool showCRD = pState.settings.get(Flag::Init_showChangedResonanceData);
+  bool showAPD = pState.settings.get(Flag::Init_showAllParticleData);
+  int  show1PD = pState.settings.get(Mode::Init_showOneParticleData);
+  bool showPro = pState.settings.get(Flag::Init_showProcesses);
   if (showCS)      pState.settings.listChanged();
   if (showAS)      pState.settings.listAll();
   if (show1PD > 0) pState.particleData.list(show1PD);
@@ -853,13 +853,13 @@ bool Pythia::init() {
   if (showAPD)     pState.particleData.listAll();
 
   // Listing options for the next() routine.
-  nCount       = pState.settings.mode("Next:numberCount");
-  nShowLHA     = pState.settings.mode("Next:numberShowLHA");
-  nShowInfo    = pState.settings.mode("Next:numberShowInfo");
-  nShowProc    = pState.settings.mode("Next:numberShowProcess");
-  nShowEvt     = pState.settings.mode("Next:numberShowEvent");
-  showSaV      = pState.settings.flag("Next:showScaleAndVertex");
-  showMaD      = pState.settings.flag("Next:showMothersAndDaughters");
+  nCount       = pState.settings.get(Mode::Next_numberCount);
+  nShowLHA     = pState.settings.get(Mode::Next_numberShowLHA);
+  nShowInfo    = pState.settings.get(Mode::Next_numberShowInfo);
+  nShowProc    = pState.settings.get(Mode::Next_numberShowProcess);
+  nShowEvt     = pState.settings.get(Mode::Next_numberShowEvent);
+  showSaV      = pState.settings.get(Flag::Next_showScaleAndVertex);
+  showMaD      = pState.settings.get(Flag::Next_showMothersAndDaughters);
 
   Benchmark_stop(Pythia0init_getMoreOptions);
   Benchmark_start(Pythia0init_initCOlorReconnection);
@@ -874,9 +874,9 @@ bool Pythia::init() {
   junctionSplitting.init(&pState.info, pState.settings, &pState.rndm, &pState.particleData);
 
   // Flags for colour reconnection.
-  doReconnect        = pState.settings.flag("ColourReconnection:reconnect");
-  reconnectMode      = pState.settings.mode("ColourReconnection:mode");
-  forceHadronLevelCR = pState.settings.flag("ColourReconnection:forceHadronLevelCR");
+  doReconnect        = pState.settings.get(Flag::ColourReconnection_reconnect);
+  reconnectMode      = pState.settings.get(Mode::ColourReconnection_mode);
+  forceHadronLevelCR = pState.settings.get(Flag::ColourReconnection_forceHadronLevelCR);
 
   // Succeeded.
   isInit = true;
@@ -894,11 +894,11 @@ bool Pythia::init() {
 void Pythia::checkSettings() {
 
   // Double rescattering not allowed if ISR or FSR.
-  if ((pState.settings.flag("PartonLevel:ISR") || pState.settings.flag("PartonLevel:FSR"))
-    && pState.settings.flag("MultipartonInteractions:allowDoubleRescatter")) {
+  if ((pState.settings.get(Flag::PartonLevel_ISR) || pState.settings.get(Flag::PartonLevel_FSR))
+    && pState.settings.get(Flag::MultipartonInteractions_allowDoubleRescatter)) {
     pState.info.errorMsg("Warning in Pythia::checkSettings: "
         "double rescattering switched off since showering is on");
-    pState.settings.flag("MultipartonInteractions:allowDoubleRescatter", false);
+    pState.settings.set(Flag::MultipartonInteractions_allowDoubleRescatter, false);
   }
 
 }
@@ -918,7 +918,7 @@ bool Pythia::checkBeams() {
   // Neutrino beams always unresolved, charged lepton ones conditionally.
   bool isLeptonA  = (idAabs > 10 && idAabs < 17);
   bool isLeptonB  = (idBabs > 10 && idBabs < 17);
-  bool isUnresLep = !pState.settings.flag("PDF:lepton");
+  bool isUnresLep = !pState.settings.get(Flag::PDF_lepton);
   isUnresolvedA   = isLeptonA && (idAabs%2 == 0 || isUnresLep);
   isUnresolvedB   = isLeptonB && (idBabs%2 == 0 || isUnresLep);
 
@@ -930,7 +930,7 @@ bool Pythia::checkBeams() {
   if (isLeptonA && isLeptonB && isUnresolvedA == isUnresolvedB) return true;
 
   // MBR model only implemented for pp/ppbar/pbarp collisions.
-  int PomFlux     = pState.settings.mode("Diffraction:PomFlux");
+  int PomFlux     = pState.settings.get(Mode::Diffraction_PomFlux);
   if (PomFlux == 5) {
     bool ispp       = (idAabs == 2212 && idBabs == 2212);
     bool ispbarpbar = (idA == -2212 && idB == -2212);
@@ -950,9 +950,9 @@ bool Pythia::checkBeams() {
   // Lepton-hadron collisions OK for DIS processes or LHEF input,
   // although still primitive.
   if ( (isLeptonA && isHadronB) || (isHadronA && isLeptonB) ) {
-    bool doDIS = pState.settings.flag("WeakBosonExchange:all")
-              || pState.settings.flag("WeakBosonExchange:ff2ff(t:gmZ)")
-              || pState.settings.flag("WeakBosonExchange:ff2ff(t:W)")
+    bool doDIS = pState.settings.get(Flag::WeakBosonExchange_all)
+              || pState.settings.get(Flag::WeakBosonExchange_ff2ff_t_gmZ_)
+              || pState.settings.get(Flag::WeakBosonExchange_ff2ff_t_W_)
               || (frameType == 4);
     if (doDIS) return true;
   }
@@ -1105,7 +1105,7 @@ bool Pythia::initPDFs() {
   }
 
   // Optionally set up separate PDF's for hard process.
-  if (pState.settings.flag("PDF:useHard") && useNewPdfA && useNewPdfB) {
+  if (pState.settings.get(Flag::PDF_useHard) && useNewPdfA && useNewPdfB) {
     pdfHardAPtr = getPDFPtr(idA, 2);
     if (!pdfHardAPtr->isSetup()) return false;
     pdfHardBPtr = getPDFPtr(idB, 2, "B");
@@ -1739,10 +1739,10 @@ bool Pythia::doRHadronDecays( ) {
 void Pythia::stat() {
 
   // Read out settings for what to include.
-  bool showPrL = pState.settings.flag("Stat:showProcessLevel");
-  bool showPaL = pState.settings.flag("Stat:showPartonLevel");
-  bool showErr = pState.settings.flag("Stat:showErrors");
-  bool reset   = pState.settings.flag("Stat:reset");
+  bool showPrL = pState.settings.get(Flag::Stat_showProcessLevel);
+  bool showPaL = pState.settings.get(Flag::Stat_showPartonLevel);
+  bool showErr = pState.settings.get(Flag::Stat_showErrors);
+  bool reset   = pState.settings.get(Flag::Stat_reset);
 
   // Statistics on cross section and number of events.
   if (doProcessLevel) {
@@ -1771,8 +1771,8 @@ void Pythia::stat() {
 void Pythia::banner(ostream& os) {
 
   // Read in version number and last date of change.
-  double versionNumber = pState.settings.parm("Pythia:versionNumber");
-  int versionDate = pState.settings.mode("Pythia:versionDate");
+  double versionNumber = pState.settings.get(Param::Pythia_versionNumber);
+  int versionDate = pState.settings.get(Mode::Pythia_versionDate);
   string month[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
@@ -2317,15 +2317,24 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
   PDF* tempPDFPtr = 0;
 
   // One option is to treat a Pomeron like a pi0.
-  if (idIn == 990 && pState.settings.mode("PDF:PomSet") == 2) idIn = 111;
+  if (idIn == 990 && pState.settings.get(Mode::PDF_PomSet) == 2) idIn = 111;
 
   // Proton beam, normal or hard choice. Also used for neutron.
   if (abs(idIn) == 2212 || abs(idIn) == 2112) {
-    string pSet = pState.settings.word("PDF:p"
-      + string(sequence == 1 ? "" : "Hard") + "Set" + beam);
+    string pSet;
+    if (beam == "")
+    {
+      if (sequence == 1) pSet = pState.settings.get(Word::PDF_pSet);
+      if (sequence != 1) pSet = pState.settings.get(Word::PDF_pHardSet);
+    }
+    else if (beam == "B")
+    {
+      if (sequence == 1) pSet = pState.settings.get(Word::PDF_pSetB);
+      if (sequence != 1) pSet = pState.settings.get(Word::PDF_pHardSetB);
+    }
     if (pSet == "void" && sequence != 1 && beam == "B")
-      pSet = pState.settings.word("PDF:pHardSet");
-    if (pSet == "void") pSet = pState.settings.word("PDF:pSet");
+      pSet = pState.settings.get(Word::PDF_pHardSet);
+    if (pSet == "void") pSet = pState.settings.get(Word::PDF_pSet);
     istringstream pSetStream(pSet);
     int pSetInt(0);
     pSetStream >> pSetInt;
@@ -2348,7 +2357,9 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
 
   // Pion beam (or, in one option, Pomeron beam).
   else if (abs(idIn) == 211 || idIn == 111) {
-    string pSet = pState.settings.word("PDF:piSet" + beam);
+    string pSet;
+    if (beam == "") pSet = pState.settings.get(Word::PDF_piSet);
+    if (beam == "B") pSet = pState.settings.get(Word::PDF_piSetB);
     istringstream pSetStream(pSet);
     int pSetInt(0);
     pSetStream >> pSetInt;
@@ -2364,17 +2375,17 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
 
   // Pomeron beam, if not treated like a pi0 beam.
   else if (idIn == 990) {
-    int    pomSet  = pState.settings.mode("PDF:PomSet");
-    double rescale = pState.settings.parm("PDF:PomRescale");
+    int    pomSet  = pState.settings.get(Mode::PDF_PomSet);
+    double rescale = pState.settings.get(Param::PDF_PomRescale);
 
     // A generic Q2-independent parametrization.
     if (pomSet == 1) {
-      double gluonA      = pState.settings.parm("PDF:PomGluonA");
-      double gluonB      = pState.settings.parm("PDF:PomGluonB");
-      double quarkA      = pState.settings.parm("PDF:PomQuarkA");
-      double quarkB      = pState.settings.parm("PDF:PomQuarkB");
-      double quarkFrac   = pState.settings.parm("PDF:PomQuarkFrac");
-      double strangeSupp = pState.settings.parm("PDF:PomStrangeSupp");
+      double gluonA      = pState.settings.get(Param::PDF_PomGluonA);
+      double gluonB      = pState.settings.get(Param::PDF_PomGluonB);
+      double quarkA      = pState.settings.get(Param::PDF_PomQuarkA);
+      double quarkB      = pState.settings.get(Param::PDF_PomQuarkB);
+      double quarkFrac   = pState.settings.get(Param::PDF_PomQuarkFrac);
+      double strangeSupp = pState.settings.get(Param::PDF_PomStrangeSupp);
       tempPDFPtr = new PomFix( 990, gluonA, gluonB, quarkA, quarkB,
         quarkFrac, strangeSupp);
     }
@@ -2391,13 +2402,13 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, stringref beam) {
   // Lepton beam: neutrino, resolved charged lepton or unresolved ditto.
   else if (abs(idIn) > 10 && abs(idIn) < 17) {
     if (abs(idIn)%2 == 0) tempPDFPtr = new NeutrinoPoint(idIn);
-    else if (pState.settings.flag("PDF:lepton")) tempPDFPtr = new Lepton(idIn);
+    else if (pState.settings.get(Flag::PDF_lepton)) tempPDFPtr = new Lepton(idIn);
     else tempPDFPtr = new LeptonPoint(idIn);
   }
 
   // Optionally allow extrapolation beyond x and Q2 limits.
   if (tempPDFPtr)
-    tempPDFPtr->setExtrapolate( pState.settings.flag("PDF:extrapolate") );
+    tempPDFPtr->setExtrapolate( pState.settings.get(Flag::PDF_extrapolate) );
 
   // Done.
   return tempPDFPtr;
