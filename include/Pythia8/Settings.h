@@ -4,13 +4,6 @@
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for the settings database.
-// Flag: helper class with bool flags.
-// Mode: helper class with int modes.
-// Parm: (short for parameter) helper class with double parameters.
-// Word: helper class with string words.
-// MVec: vector of Modes (integers).
-// PVec: vector of Parms (doubles).
-// Settings: maps of flags, modes, parms and words with input/output.
 
 #ifndef Pythia8_Settings_H
 #define Pythia8_Settings_H
@@ -1277,9 +1270,7 @@ enum class ParamList
   END,
 };
 
-// This class holds info on flags (bool), modes (int), parms (double),
-// words (string), fvecs (vector of bool), mvecs (vector of int) and pvecs
-// (vector of double).
+// class to store and access all settings
 
 class Settings
 {
@@ -1311,8 +1302,7 @@ public: // private data
 
 public: // public functions
 
-  // direct access to any setting. 
-  // WARNING: modifying these will ignore limits
+  // direct access to setting. WARNING: will ignore limits
   
   std::vector<bool>::reference operator[](const Flag flag);
   int& operator[](const Mode mode);
@@ -1363,52 +1353,10 @@ public: // public functions
   void restoreDefault(ParamList paramList);
 
   // restore default values for all settings
+
   void restoreDefault();
 
-public: // setup functions
-
-  // load all settings from a file
-
-  bool init(stringref startFile = "../xmldoc/Index.xml", bool append = false, bool reinit = false, ostream& os = cout);
-
-  // Read in updates from a character string, like a line of a file.
-  // Is used by readString (and readFile) in Pythia.
-  
-  bool readString(stringref line, bool warn, ostream& os = cout);
-
-
-  bool writeFile(ostream& os, bool writeAll);
-
-  // Set the values related to a tune of e+e- data,
-  // i.e. mainly for final-state radiation and hadronization.
-
-  // Restore settings used in tunes to e+e- and pp/ppbar data.
-  void resetTuneEE();
-  void resetTunePP();
-
-  // Initialize tunes to e+e- and pp/ppbar data.
-
-  void initTuneEE();
-  void initTunePP();
-
-  // load setting from a single line of a file
-  // ???
-
 public: // private functions
-
-  // convert XML boolean string to bool
-
-  bool stringToBool(stringref tag);
-
-  // Extract appropiate XML value following XML attribute.
-
-  string getAttributeValue(stringref line, stringref attribute);
-  bool getBoolAttributeValue(stringref line, stringref attribute);
-  int getIntAttributeValue(stringref line, stringref attribute);
-  double getDoubleAttributeValue(stringref line, stringref attribute);
-  vector<bool> getBoolVectorAttributeValue(stringref line, stringref attribute);
-  vector<int> getIntVectorAttributeValue(stringref line, stringref attribute);
-  vector<double> getDoubleVectorAttributeValue(stringref line, stringref attribute);
 
   // adds the appropriate setting using string (default,min,max)
 
@@ -1420,8 +1368,41 @@ public: // private functions
   void addModeList(stringref name, const vector<int>& defaultVal, bool hasMin, bool hasMax, int min, int max);
   void addParamList(stringref name, const vector<double>& defaultVal, bool hasMin, bool hasMax, double min, double max);
 
-};
+public: // more functions
 
+  // load all settings from XML database
+  bool init(stringref startFile = "../xmldoc/Index.xml", bool append = false, bool reinit = false, ostream& os = cout);
+
+  // update setting using a string (Format: name = value)
+  bool readString(stringref line, bool warn = true, ostream& os = cout);
+
+  // regulate level of printout by change of various settings
+  void printQuiet(bool quiet);
+
+  // write changed/all seting values to a file
+  bool writeFile(stringref toFile, bool writeAll = false) ;
+
+  // write changed/all seting values to stream
+  bool writeFile(ostream& os=cout, bool writeAll = false);
+
+  // wrtie table of settings (value|default|min|max) in lexigraphical order.
+  void list(bool onlyChanged=true, string filter="", ostream& os=cout);
+
+  // Restore all e+e- settings to their original values.
+  void resetTuneEE();
+
+  // Restore all pp settings to their original values.
+  void resetTunePP();
+
+  // Set the values related to a tune of e+e- data,
+  // i.e. mainly for final-state radiation and hadronization.
+  void initTuneEE();
+
+  // Set the values related to a tune of pp/ppbar data,
+  // i.e. mainly for initial-state radiation and multiparton interactions.
+  void initTunePP();
+
+};
 
 } // end namespace Pythia8
 

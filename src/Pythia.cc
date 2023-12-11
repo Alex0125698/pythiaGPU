@@ -120,7 +120,7 @@ Pythia::Pythia(stringref xmlDir_, bool printBanner) {
   if (xmlPath[ xmlPath.length() - 1 ] != '/') xmlPath += "/";
 
   // Read in files with all flags, modes, parms and words.
-  pState.settings.initPtr( &pState.info);
+  // pState.settings.initPtr( &pState.info);
   string initFile = xmlPath + "Index.xml";
   isConstructed = pState.settings.init( initFile); // !!!
   if (!isConstructed) {
@@ -396,11 +396,11 @@ bool Pythia::init() {
   doProcessLevel = pState.settings.get(Flag::ProcessLevel_all);
 
   // Check that changes in Settings and ParticleData have worked.
-  if (pState.settings.readingFailed()) {
-    pState.info.errorMsg("Abort from Pythia::init: some user settings "
-      "did not make sense");
-    return false;
-  }
+  // if (pState.settings.readingFailed()) {
+  //   pState.info.errorMsg("Abort from Pythia::init: some user settings "
+  //     "did not make sense");
+  //   return false;
+  // }
   if (pState.particleData.readingFailed()) {
     pState.info.errorMsg("Abort from Pythia::init: some user particle data "
       "did not make sense");
@@ -846,8 +846,8 @@ bool Pythia::init() {
   bool showAPD = pState.settings.get(Flag::Init_showAllParticleData);
   int  show1PD = pState.settings.get(Mode::Init_showOneParticleData);
   bool showPro = pState.settings.get(Flag::Init_showProcesses);
-  if (showCS)      pState.settings.listChanged();
-  if (showAS)      pState.settings.listAll();
+  if (showCS)      pState.settings.list(true);
+  if (showAS)      pState.settings.list(false);
   if (show1PD > 0) pState.particleData.list(show1PD);
   if (showCPD)     pState.particleData.listChanged(showCRD);
   if (showAPD)     pState.particleData.listAll();

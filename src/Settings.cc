@@ -9,9 +9,13 @@
 
 // Allow string and character manipulation.
 #include <cctype>
+#include <regex>
+#include <exception>
 
 namespace Pythia8 {
 
+
+// ----- name->index maps -----
 
 const map<string, Flag> FlagMap = 
 {
@@ -1261,6 +1265,155 @@ const map<string, ParamList> ParamListMap =
   { "StringFlav:probQQ1toQQ0join", ParamList::StringFlav_probQQ1toQQ0join },
 };
 
+enum class Setting
+{
+  FLAG,
+  MODE,
+  PARAM,
+  WORD,
+  FLAGLIST,
+  MODELIST,
+  PARAMLIST
+};
+
+static map<string,Setting> settings;
+
+// ----- helper functions -----
+
+// neatly format a floating-point number
+string format(double x)
+{
+  stringstream tmp;
+  if ( x == 0. )
+    tmp << fixed << setprecision(1) << setw(12) << x;
+  else if ( abs(x) < 0.001 )
+    tmp << scientific << setprecision(4) << setw(12) << x;
+  else if ( abs(x) < 0.1 )
+    tmp << fixed << setprecision(7) << setw(12) << x;
+  else if ( abs(x) < 1000. )
+    tmp << fixed << setprecision(5) << setw(12) << x;
+  else if ( abs(x) < 1000000. )
+    tmp << fixed << setprecision(3) << setw(12) << x;
+  else
+    tmp << scientific << setprecision(4) << setw(12) << x;
+  return tmp.str();
+}
+
+// @OVERHEAD
+// convert string to bool
+bool stringToBool(stringref tag)
+{
+  string tagLow = toLower(tag);
+  return ( tagLow == "true" || tagLow == "1" || tagLow == "on" || tagLow == "yes" || tagLow == "ok" );
+}
+
+// @OVERHEAD
+// Extract XML value string following XML attribute.
+// Format: attribute..."..."
+string getAttributeValue(stringref line, stringref attribute)
+{
+  if (line.find(attribute) == string::npos) return "";
+  int iBegAttri = line.find(attribute);
+  int iBegQuote = line.find("\"", iBegAttri + 1);
+  int iEndQuote = line.find("\"", iBegQuote + 1);
+  return line.substr(iBegQuote + 1, iEndQuote - iBegQuote - 1);
+}
+
+// @OVERHEAD
+// Extract XML bool value following XML attribute.
+bool getBoolAttributeValue(stringref line, stringref attribute) 
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return false;
+  return stringToBool(valString);
+}
+
+// @OVERHEAD
+// Extract XML int value following XML attribute.
+int getIntAttributeValue(stringref line, stringref attribute)
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return 0;
+  istringstream valStream(valString);
+  int intVal;
+  valStream >> intVal;
+  return intVal;
+}
+
+// @OVERHEAD
+// Extract XML double value following XML attribute.
+double getDoubleAttributeValue(stringref line, stringref attribute) 
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return 0.;
+  istringstream valStream(valString);
+  double doubleVal;
+  valStream >> doubleVal;
+  return doubleVal;
+}
+
+// @OVERHEAD
+// Extract XML bool vector value following XML attribute.
+// Format: 
+vector<bool> getBoolVectorAttributeValue(stringref line, stringref attribute)
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return vector<bool>(1, false);
+  vector<bool> vectorVal;
+  size_t       stringPos(0);
+  while (stringPos != string::npos) 
+  {
+    stringPos = valString.find(",");
+    istringstream  valStream(valString.substr(0, stringPos));
+    valString = valString.substr(stringPos + 1);
+    vectorVal.push_back(stringToBool(valStream.str()));
+  }
+  return vectorVal;
+}
+
+// @OVERHEAD
+// Extract XML int vector value following XML attribute.
+vector<int> getIntVectorAttributeValue(stringref line, stringref attribute)
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return vector<int>(1, 0);
+  int         intVal;
+  vector<int> vectorVal;
+  size_t      stringPos(0);
+  while (stringPos != string::npos) 
+  {
+    stringPos = valString.find(",");
+    istringstream  valStream(valString.substr(0, stringPos));
+    valString = valString.substr(stringPos + 1);
+    valStream >> intVal;
+    vectorVal.push_back(intVal);
+  }
+  return vectorVal;
+
+}
+
+// @OVERHEAD
+// Extract XML double vector value following XML attribute.
+vector<double> getDoubleVectorAttributeValue(stringref line, stringref attribute)
+{
+  string valString = getAttributeValue(line, attribute);
+  if (valString == "") return vector<double>(1, 0.);
+  double         doubleVal;
+  vector<double> vectorVal;
+  size_t         stringPos(0);
+  while (stringPos != string::npos) 
+  {
+    stringPos = valString.find(",");
+    istringstream  valStream(valString.substr(0, stringPos));
+    valString = valString.substr(stringPos + 1);
+    valStream >> doubleVal;
+    vectorVal.push_back(doubleVal);
+  }
+  return vectorVal;
+}
+
+// ----- public functions -----
+
 std::vector<bool>::reference Settings::operator[](const Flag flag)
 {
   return flagValue[(int)flag];
@@ -1296,7 +1449,6 @@ vector<double>& Settings::operator[](const ParamList paramList)
   return paramListValue[(int)paramList];
 }
 
-// standard getters (const access only)
 
 bool Settings::get(const Flag flag)
 {
@@ -1333,7 +1485,6 @@ const vector<double>& Settings::get(const ParamList paramList)
   return paramListValue[(int)paramList];
 }
 
-// functions to get the default value (read only)
 
 bool Settings::getDefault(const Flag flag)
 {
@@ -1370,7 +1521,6 @@ const vector<double>& Settings::getDefault(const ParamList paramList)
   return paramListDefault[(int)paramList];
 }
 
-// modify any setting but respect the limits
 
 void Settings::set(Flag flag, bool value)
 {
@@ -1388,6 +1538,9 @@ void Settings::set(Mode mode, int value)
   modeValue[(int)mode] = value;
   modeValue[(int)mode] = min(modeValue[(int)mode], maxx);
   modeValue[(int)mode] = max(modeValue[(int)mode], minn);
+  // Tune:ee and Tune:pp each trigger a whole set of changes.
+  if (mode == Mode::Tune_ee) initTuneEE();
+  if (mode == Mode::Tune_pp) initTunePP();
 }
 
 void Settings::set(Param param, double value)
@@ -1427,120 +1580,56 @@ void Settings::set(ParamList paramList, const vector<double>& value)
   }
 }
 
-// helper functions for parsing xml files
-
-// @OVERHEAD
-// convert string to bool
-bool Settings::stringToBool(stringref tag)
+void Settings::restoreDefault(Flag flag)
 {
-  string tagLow = toLower(tag);
-  return ( tagLow == "true" || tagLow == "1" || tagLow == "on" || tagLow == "yes" || tagLow == "ok" );
+  flagValue[(int)flag] = flagDefault[(int)flag];
 }
 
-// @OVERHEAD
-// Extract XML value string following XML attribute.
-string Settings::getAttributeValue(stringref line, stringref attribute)
+void Settings::restoreDefault(Mode mode)
 {
-  if (line.find(attribute) == string::npos) return "";
-  int iBegAttri = line.find(attribute);
-  int iBegQuote = line.find("\"", iBegAttri + 1);
-  int iEndQuote = line.find("\"", iBegQuote + 1);
-  return line.substr(iBegQuote + 1, iEndQuote - iBegQuote - 1);
+  modeValue[(int)mode] = modeDefault[(int)mode];
+  // Tune:ee and Tune:pp each trigger a whole set of changes.
+  if (mode == Mode::Tune_ee) initTuneEE();
+  if (mode == Mode::Tune_pp) initTunePP();
 }
 
-// @OVERHEAD
-// Extract XML bool value following XML attribute.
-bool Settings::getBoolAttributeValue(stringref line, stringref attribute) 
+void Settings::restoreDefault(Param param)
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return false;
-  return stringToBool(valString);
+  paramValue[(int)param] = paramDefault[(int)param];
 }
 
-// @OVERHEAD
-// Extract XML int value following XML attribute.
-int Settings::getIntAttributeValue(stringref line, stringref attribute)
+void Settings::restoreDefault(Word word)
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return 0;
-  istringstream valStream(valString);
-  int intVal;
-  valStream >> intVal;
-  return intVal;
+  wordValue[(int)word] = wordDefault[(int)word];
 }
 
-// @OVERHEAD
-// Extract XML double value following XML attribute.
-double Settings::getDoubleAttributeValue(stringref line, stringref attribute) 
+void Settings::restoreDefault(FlagList flagList)
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return 0.;
-  istringstream valStream(valString);
-  double doubleVal;
-  valStream >> doubleVal;
-  return doubleVal;
+  flagListValue[(int)flagList] = flagListDefault[(int)flagList];
 }
 
-// @OVERHEAD
-// Extract XML bool vector value following XML attribute.
-vector<bool> Settings::getBoolVectorAttributeValue(stringref line, stringref attribute)
+void Settings::restoreDefault(ModeList modeList)
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return vector<bool>(1, false);
-  vector<bool> vectorVal;
-  size_t       stringPos(0);
-  while (stringPos != string::npos) 
-  {
-    stringPos = valString.find(",");
-    istringstream  valStream(valString.substr(0, stringPos));
-    valString = valString.substr(stringPos + 1);
-    vectorVal.push_back(stringToBool(valStream.str()));
-  }
-  return vectorVal;
+  modeListValue[(int)modeList] = modeListDefault[(int)modeList];
 }
 
-// @OVERHEAD
-// Extract XML int vector value following XML attribute.
-vector<int> Settings::getIntVectorAttributeValue(stringref line, stringref attribute)
+void Settings::restoreDefault(ParamList paramList)
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return vector<int>(1, 0);
-  int         intVal;
-  vector<int> vectorVal;
-  size_t      stringPos(0);
-  while (stringPos != string::npos) 
-  {
-    stringPos = valString.find(",");
-    istringstream  valStream(valString.substr(0, stringPos));
-    valString = valString.substr(stringPos + 1);
-    valStream >> intVal;
-    vectorVal.push_back(intVal);
-  }
-  return vectorVal;
-
+  paramListValue[(int)paramList] = paramListDefault[(int)paramList];
 }
 
-// @OVERHEAD
-// Extract XML double vector value following XML attribute.
-vector<double> Settings::getDoubleVectorAttributeValue(stringref line, stringref attribute)
+void Settings::restoreDefault()
 {
-  string valString = getAttributeValue(line, attribute);
-  if (valString == "") return vector<double>(1, 0.);
-  double         doubleVal;
-  vector<double> vectorVal;
-  size_t         stringPos(0);
-  while (stringPos != string::npos) 
-  {
-    stringPos = valString.find(",");
-    istringstream  valStream(valString.substr(0, stringPos));
-    valString = valString.substr(stringPos + 1);
-    valStream >> doubleVal;
-    vectorVal.push_back(doubleVal);
-  }
-  return vectorVal;
+  for (size_t i=0; i<(int)Flag::END; ++i) restoreDefault((Flag)i);
+  for (size_t i=0; i<(int)Mode::END; ++i) restoreDefault((Mode)i);
+  for (size_t i=0; i<(int)Param::END; ++i) restoreDefault((Param)i);
+  for (size_t i=0; i<(int)Word::END; ++i) restoreDefault((Word)i);
+  for (size_t i=0; i<(int)FlagList::END; ++i) restoreDefault((FlagList)i);
+  for (size_t i=0; i<(int)ModeList::END; ++i) restoreDefault((ModeList)i);
+  for (size_t i=0; i<(int)ParamList::END; ++i) restoreDefault((ParamList)i);
 }
 
-// these helper functions are needed for translating the strings to an index
+// ----- private functions -----
 
 void Settings::addFlag(stringref name, bool defaultVal)
 {
@@ -1586,13 +1675,26 @@ void Settings::addParamList(stringref name, const vector<double>& defaultVal, bo
   paramListMax[int(ParamListMap.at(name))] = hasMax ? max : std::numeric_limits<double>::max();
 }
 
-// load all settings from a file
+// ----- more functions -----
+
 bool Settings::init(stringref startFile = "../xmldoc/Index.xml", bool append = false, bool reinit = false, ostream& os = cout)
 {
   static bool initialized = false;
   if (reinit) initialized = false;
   if (initialized) return true;
   int nError = 0;
+
+  // fill in full array of settings
+  if (settings.empty())
+  {
+    for (auto& i : FlagMap) settings[i.first] = Setting::FLAG;
+    for (auto& i : ModeMap) settings[i.first] = Setting::MODE;
+    for (auto& i : ParamMap) settings[i.first] = Setting::PARAM;
+    for (auto& i : WordMap) settings[i.first] = Setting::WORD;
+    for (auto& i : FlagListMap) settings[i.first] = Setting::FLAGLIST;
+    for (auto& i : ModeListMap) settings[i.first] = Setting::MODELIST;
+    for (auto& i : ParamListMap) settings[i.first] = Setting::PARAMLIST;
+  }
 
   // clear setting lists
   flagValue.clear();
@@ -1807,184 +1909,112 @@ bool Settings::init(stringref startFile = "../xmldoc/Index.xml", bool append = f
   return true;
 }
 
-// Read in updates from a character string, like a line of a file.
-// Is used by readString (and readFile) in Pythia.
 bool Settings::readString(stringref line, bool warn, ostream& os) 
 {
-  // i think we should just copy the code from init
-  // but return errors if nothing got read
-
-  // actually i think the format might be different.
-  // might want to check the pythia paper
-
-  // \s*[a-zA-Z][^\s]*=[^\s]*
-  // lists are separated by a single sapce
-  // if if starts with a non alpha then assume a comment
-
-  // I really hate the istringstream formatting/parsing
-  // and also the lack of exceptions, which is making this code much longer than it needs to be
-
-  // perhaps we should just figure out the proper format and use regex matches to find it
-  // and then write our own float/int parser functions that throw exceptions
-
-  // If empty line then done.
-  if (line.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return true;
+  // grab name and value strings
+  std::smatch match;
+  if (!std::regex_match(line, match, std::regex("\\s*(.*?)\\s*=\\s*(.*)"))) return true;
+  string name = match[1].str();
+  string value = match[2].str();
 
   // If first character is not a letter, then taken to be a comment line.
-  string lineNow = line;
-  int firstChar = lineNow.find_first_not_of(" \n\t\v\b\r\f\a");
-  if (!isalpha(lineNow[firstChar])) return true;
+  if (!isalpha(name[0])) return true;
 
-  // Replace an equal sign by a blank to make parsing simpler.
-  while (lineNow.find("=") != string::npos) {
-    int firstEqual = lineNow.find_first_of("=");
-    lineNow.replace(firstEqual, 1, " ");
+  // get the setting type
+  auto setting = settings.find(name);
+
+  // check if no such setting
+  if (setting == settings.end())
+  {
+    os << "\n PYTHIA Error: variable not regocnized:\n   " << line << endl;
+    return false;
   }
 
-  // Get first word of a line.
-  istringstream splitLine(lineNow);
-  string name;
-  splitLine >> name;
+  // missing: mode with illegal value
+  // missing: name recognised but value not meaningful
+  // missing: value is ?
 
-  // Find value. Warn if none found.
-  string valueString;
-  splitLine >> valueString;
-  
-  if (!splitLine) {
+  try
+  {
+    // update the appropriate setting
+    if (setting->second == Setting::FLAG) set(FlagMap.at(name), stringToBool(value));
+    if (setting->second == Setting::MODE) set(ModeMap.at(name), std::stoi(value));
+    if (setting->second == Setting::PARAM) set(ParamMap.at(name), std::stod(value));
+    if (setting->second == Setting::WORD) set(WordMap.at(name), value);
+
+    if (setting->second == Setting::FLAGLIST)
+    {
+      set(FlagListMap.at(name), getBoolVectorAttributeValue("value=\"" + value + "\"", "value="));
+    }
+    if (setting->second == Setting::MODELIST)
+    {
+      set(ModeListMap.at(name), getIntVectorAttributeValue("value=\"" + value + "\"", "value="));
+    }
+    if (setting->second == Setting::PARAMLIST)
+    {
+      set(ParamListMap.at(name), getDoubleVectorAttributeValue("value=\"" + value + "\"", "value="));
+    }
+  }
+  catch(std::exception& e)
+  {
     if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
       << " not meaningful:\n   " << line << endl;
-    readingFailedSave = true;
     return false;
   }
-
-  // If value is a ? then echo the current value.
-  if (valueString == "?") {
-    os << output(name);
-    return true;
-  }
-
-  if (auto it = FlagMap.find(name); it != FlagMap.end())
-  {
-    set(it->second, stringToBool(valueString));
-  }
-  else if (auto it = ModeMap.find(name); it != ModeMap.end())
-  {
-    
-  }
-  else if (auto it = ParamMap.find(name); it != ParamMap.end())
-  {
-    istringstream parmData(valueString);
-    double value;
-    parmData >> value;
-
-    if (!parmData) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " not meaningful:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-    parm(name, value);
-  }
-  else if (auto it = WordMap.find(name); it != WordMap.end())
-  {
-
-  }
-  else if (auto it = FlagListMap.find(name); it != FlagListMap.end())
-  {
-
-  }
-  else if (auto it = ModeListMap.find(name); it != ModeListMap.end())
-  {
-
-  }
-  else if (auto it = ParamListMap.find(name); it != ParamListMap.end())
-  {
-
-  }
-  else
-  {
-    if (warn) os << "\n PYTHIA Error: input string not found in settings"
-      << " databases::\n   " << line << endl;
-    readingFailedSave = true;
-    return false;
-  }
-
-
-
-  // Update flag map; allow many ways to say yes.
-  if (inDataBase == 1) {
-
-
-  // Update mode map.
-  } else if (inDataBase == 2) {
-    istringstream modeData(valueString);
-    int value;
-    modeData >> value;
-    if (!modeData) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " not meaningful:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-    if (!mode(name, value)) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " non-existing option:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-
-  // Update parm map.
-  } else if (inDataBase == 3) {
-
-
-  // Update word map.
-  } else if (inDataBase == 4)  {
-    word(name, valueString);
-
-  // Update fvec map.
-  } else if (inDataBase == 5) {
-    istringstream fvecData(valueString);
-    vector<bool> value(boolVectorAttributeValue(
-      "value=\"" + valueString + "\"", "value="));
-    if (!fvecData) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " not meaningful:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-    fvec(name, value);
-
-  // Update mvec map.
-  } else if (inDataBase == 6) {
-    istringstream mvecData(valueString);
-    vector<int> value(intVectorAttributeValue(
-      "value=\"" + valueString + "\"", "value="));
-    if (!mvecData) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " not meaningful:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-    mvec(name, value);
-
-  // Update pvec map.
-  } else if (inDataBase == 7) {
-    istringstream pvecData(valueString);
-    vector<double> value(doubleVectorAttributeValue(
-      "value=\"" + valueString + "\"", "value="));
-    if (!pvecData) {
-      if (warn) os << "\n PYTHIA Error: variable recognized, but its value"
-        << " not meaningful:\n   " << line << endl;
-      readingFailedSave = true;
-      return false;
-    }
-    pvec(name, value);
-  }
-
-
+  
   return true;
 }
 
+void Settings::printQuiet(bool quiet)
+{
+  // Switch off as much output as possible.
+  if (quiet) {
+    set(Flag::Init_showProcesses,               false );
+    set(Flag::Init_showMultipartonInteractions, false );
+    set(Flag::Init_showChangedSettings,         false );
+    set(Flag::Init_showAllSettings,             false );
+    set(Flag::Init_showChangedParticleData,     false );
+    set(Flag::Init_showChangedResonanceData,    false );
+    set(Flag::Init_showAllParticleData,         false );
+    set(Mode::Init_showOneParticleData,             0 );
+    set(Mode::Next_numberCount,                     0 );
+    set(Mode::Next_numberShowLHA,                   0 );
+    set(Mode::Next_numberShowInfo,                  0 );
+    set(Mode::Next_numberShowProcess,               0 );
+    set(Mode::Next_numberShowEvent,                 0 );
+
+  // Restore ouput settings to default.
+  } else {
+    restoreDefault(Flag::Init_showProcesses);
+    restoreDefault(Flag::Init_showMultipartonInteractions);
+    restoreDefault(Flag::Init_showChangedSettings);
+    restoreDefault(Flag::Init_showAllSettings);
+    restoreDefault(Flag::Init_showChangedParticleData);
+    restoreDefault(Flag::Init_showChangedResonanceData);
+    restoreDefault(Flag::Init_showAllParticleData);
+    restoreDefault(Mode::Init_showOneParticleData);
+    restoreDefault(Mode::Next_numberCount);
+    restoreDefault(Mode::Next_numberShowLHA);
+    restoreDefault(Mode::Next_numberShowInfo);
+    restoreDefault(Mode::Next_numberShowProcess);
+    restoreDefault(Mode::Next_numberShowEvent);
+  }
+}
+
+bool Settings::writeFile(stringref toFile, bool writeAll) 
+{
+  // Open file for writing.
+  const char* cstring = toFile.c_str();
+  ofstream os(cstring);
+  if (!os) 
+  {
+    // Error in Settings::writeFile: could not open file
+    return false;
+  }
+
+  // Hand over real work to next method.
+  return writeFile( os, writeAll);
+}
 
 bool Settings::writeFile(ostream& os, bool writeAll)
 {
@@ -1998,61 +2028,235 @@ bool Settings::writeFile(ostream& os, bool writeAll)
   else          os << "! List of all modified PYTHIA ";
   os << fixed << setprecision(3) << (*this)[Param::Pythia_versionNumber] << " settings.\n";
 
-  // so it looks like it needs to be written in alphabetical order
-  // so setting names need to be merged somehow
-
-  // @overhead
-  // will borrow the same technique for now
-  auto flagEntry = FlagMap.begin();
-  auto modeEntry = ModeMap.begin();
-  auto parmEntry = ParamMap.begin();
-  auto wordEntry = WordMap.begin();
-  auto fvecEntry = FlagListMap.begin();
-  auto mvecEntry = ModeListMap.begin();
-  auto pvecEntry = ParamListMap.begin();
-
-  while (flagEntry != FlagMap.end() || modeEntry != ModeMap.end()
-      || parmEntry != ParamMap.end() || wordEntry != WordMap.end()
-      || fvecEntry != FlagListMap.end() || mvecEntry != ModeListMap.end()
-      || pvecEntry != ParamListMap.end() )
-
+  for (auto& i : settings)
   {
-
-    // warning: we need to use toLower for alphabetical order
-    
-    // Check if a flag is next in lexigraphical order; if so print it.
-    if ( flagEntry != FlagMap.end()
-      && ( modeEntry == ModeMap.end() || flagEntry->first < modeEntry->first )
-      && ( parmEntry == ParamMap.end() || flagEntry->first < parmEntry->first )
-      && ( wordEntry == WordMap.end() || flagEntry->first < wordEntry->first )
-      && ( fvecEntry == FlagListMap.end() || flagEntry->first < fvecEntry->first )
-      && ( mvecEntry == ModeListMap.end() || flagEntry->first < mvecEntry->first )
-      && ( pvecEntry == ParamListMap.end() || flagEntry->first < pvecEntry->first )
-      )
+    os << i.first << " = ";
+    static string state[2] = {"off", "on"};
+    if (i.second == Setting::FLAG)
     {
-      // TODO: what about the XML tag stuff
-      // i suppose this doesn't get printed...
-      string state[2] = {"off", "on"};
-      bool valNow = flagValue[(int)flagEntry->second];
-      bool valDefault = flagDefault[(int)flagEntry->second];
-      if ( writeAll || valNow != valDefault )
-        os << flagEntry->first << " = " << state[valNow] << "\n";
-      ++flagEntry;
-      
+      int index = int(FlagMap.at(i.first));
+      if (writeAll || flagValue[index] != flagDefault[index]) os << state[flagValue[index]];
+    }
+    if (i.second == Setting::MODE)
+    {
+      int index = int(ModeMap.at(i.first));
+      if (writeAll || modeValue[index] != modeDefault[index]) os << modeValue[index];
+    }
+    if (i.second == Setting::PARAM)
+    {
+      int index = int(ParamMap.at(i.first));
+      if (writeAll || paramValue[index] != paramDefault[index]) os << format(paramValue[index]);
+    }
+    if (i.second == Setting::FLAGLIST)
+    {
+      int index = int(FlagListMap.at(i.first));
+      auto& val = flagListValue[index];
+      if (writeAll || val != flagListDefault[index])
+      {
+        for (auto i = val.begin(); i != --val.end(); ++i) os << state[*i] << ",";
+        os << state[*(--val.end())];
+      }
+    }
+    if (i.second == Setting::MODELIST)
+    {
+      int index = int(ModeListMap.at(i.first));
+      auto& val = modeListValue[index];
+      if (writeAll || val != modeListDefault[index])
+      {
+        for (auto i = val.begin(); i != --val.end(); ++i) os << *i << ",";
+        os << *(--val.end());
+      }
+    }
+    if (i.second == Setting::PARAMLIST)
+    {
+      int index = int(ParamListMap.at(i.first));
+      auto& val = paramListValue[index];
+      if (writeAll || val != paramListDefault[index])
+      {
+        for (auto i = val.begin(); i != --val.end(); ++i) os << format(*i) << ",";
+        os << format(*(--val.end()));
+      }
+    }
+    os << "\n";
+  }
+}
+
+void Settings::list(bool onlyChanged, string filter, ostream& os) {
+
+  // Table header; output for bool as off/on.
+  if (!onlyChanged)
+    os << "\n *-------  PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec "
+       << "Settings (all)  ----------------------------------* \n";
+  else
+    os << "\n *-------  PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec "
+       << "Settings (changes only)  -------------------------* \n" ;
+  if (filter != "")
+    os << "Settings (with requested string) -----------------* \n" ;
+  os << " |                                                           "
+     << "                                                      | \n"
+     << " | Name                                          |           "
+     << "           Now |      Default         Min         Max | \n"
+     << " |                                               |           "
+     << "               |                                      | \n";
+
+  // Convert input string to lowercase for match.
+  filter = toLower(filter);
+
+  for (auto& i : settings)
+  {
+    static string state[2] = {"off", "on"};
+    string nameLower = toLower(i.first);
+    bool matches = (filter == "" || nameLower.find(filter) != string::npos);
+    if (!matches) continue;
+
+    os << " | " << setw(45) << left;
+    os << i.first << " | " << setw(24) << right;
+    
+    if (i.second == Setting::FLAG)
+    {
+      int index = int(FlagMap.at(i.first));
+      auto val = flagValue[index];
+      auto valDefault = flagDefault[index];
+
+      if (matches && (!onlyChanged || val != valDefault))
+      {
+        os << state[val] << " | " << setw(12) << state[valDefault];
+        os << "                         | \n";
+      }
     }
 
+    if (i.second == Setting::MODE)
+    {
+      int index = int(ModeMap.at(i.first));
+      auto val = modeValue[index];
+      auto valDefault = modeDefault[index];
+      auto valMin = modeMin[index];
+      auto valMax = modeMax[index];
+      if (!onlyChanged || val != valDefault)
+      {
+        os << val << " | " << setw(12) << valDefault;
+        if (valMin != std::numeric_limits<int>::min()) os << setw(12) << valMin;
+        else os << "            ";
+        if (valMax != std::numeric_limits<int>::max()) os << setw(12) << valMax;
+        else os << "            ";
+        os << " | \n";
+      }
+    }
 
+    if (i.second == Setting::PARAM)
+    {
+      int index = int(ParamMap.at(i.first));
+      auto val = paramValue[index];
+      auto valDefault = paramDefault[index];
+      auto valMin = paramMin[index];
+      auto valMax = paramMax[index];
+      if (!onlyChanged || val != valDefault)
+      {
+        os << format(val) << " | " << setw(12) << format(valDefault);
+        if (valMin != std::numeric_limits<double>::min()) os << setw(12) << format(valMin);
+        else os << "            ";
+        if (valMax != std::numeric_limits<double>::max()) os << setw(12) << format(valMax);
+        else os << "            ";
+        os << " | \n";
+      }
+    }
 
+    if (i.second == Setting::WORD)
+    {
+      int index = int(WordMap.at(i.first));
+      auto& val = wordValue[index];
+      auto& valDefault = wordDefault[index];
+      if (!onlyChanged || val != valDefault)
+      {
+        int blankLeft = max(0, 60 - max(24, int(val.length()) ) - max(12, int(valDefault.length()) ) );
+        string blankPad( blankLeft, ' ');
+        os << val << " | " << setw(12) << valDefault << blankPad << " | \n";
+      }
+    }
+
+    if (i.second == Setting::FLAGLIST)
+    {
+      int index = int(FlagMap.at(i.first));
+      auto& val = flagListValue[index];
+      auto& valDefault = flagListDefault[index];
+
+      if (!onlyChanged || val != valDefault)
+      {
+        for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
+        {
+          if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";
+          if (i < val.size() ) os << setw(12) << state[val[i]] << " | ";
+          else os << "            ";
+          if (i < valDefault.size() ) os << setw(12) << state[valDefault[i]];
+          else os << "            ";
+          os << "            " << "            " << " | \n";
+        }
+      }
+    }
+
+    if (i.second == Setting::MODELIST)
+    {
+      int index = int(ModeListMap.at(i.first));
+      auto& val = modeListValue[index];
+      auto& valDefault = modeListDefault[index];
+      auto valMin = modeListMin[index];
+      auto valMax = modeListMax[index];
+
+      if (!onlyChanged || val != valDefault)
+      {
+        for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
+        {
+          if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";
+          if (i < val.size() ) os << setw(12) << val[i] << " | ";
+          else os << "            ";
+          if (i < valDefault.size() ) os << setw(12) << valDefault[i];
+          else os << "            ";
+          if (valMin != std::numeric_limits<int>::min()) os << setw(12) << valMin;
+          else os << "            ";
+          if (valMax != std::numeric_limits<int>::max()) os << setw(12) << valMax;
+          else os << "            ";
+          os << " | \n";
+        }
+      }
+    }
+
+    if (i.second == Setting::PARAMLIST)
+    {
+      int index = int(ParamListMap.at(i.first));
+      auto& val = paramListValue[index];
+      auto& valDefault = paramListDefault[index];
+      auto valMin = paramListMin[index];
+      auto valMax = paramListMax[index];
+
+      if (!onlyChanged || val != valDefault)
+      {
+        for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
+        {
+          if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";
+          if (i < val.size() ) os << setw(12) << format(val[i]) << " | ";
+          else os << "            ";
+          if (i < valDefault.size() ) os << setw(12) << format(valDefault[i]);
+          else os << "            ";
+          if (valMin != std::numeric_limits<double>::min()) os << setw(12) << format(valMin);
+          else os << "            ";
+          if (valMax != std::numeric_limits<double>::max()) os << setw(12) << format(valMax);
+          else os << "            ";
+          os << " | \n";
+        }
+      }
+    }
   }
 
+  // End of loop over database contents.
+  os << " |                                                           "
+     << "                                                      | \n"
+     << " *-------  End PYTHIA Flag + Mode + Parm + Word + FVec + MVec + PVec "
+     << "Settings  ------------------------------------* " << endl;
 
 }
 
-
-// Restore all e+e- settings to their original values.
-
-void Settings::resetTuneEE() {
-
+void Settings::resetTuneEE() 
+{
   // Flavour composition.
   restoreDefault(Param::StringFlav_probStoUD);
   restoreDefault(Param::StringFlav_probQQtoQ);
@@ -2087,15 +2291,10 @@ void Settings::resetTuneEE() {
   restoreDefault(Flag::TimeShower_alphaSuseCMW);
   restoreDefault(Param::TimeShower_pTmin);
   restoreDefault(Param::TimeShower_pTminChgQ);
-
 }
 
-//--------------------------------------------------------------------------
-
-// Restore all pp settings to their original values.
-
-void Settings::resetTunePP() {
-
+void Settings::resetTunePP() 
+{
   // PDF set.
   restoreDefault(Word::PDF_pSet);
 
@@ -2146,11 +2345,7 @@ void Settings::resetTunePP() {
   // Colour reconnection parameters.
   restoreDefault(Mode::ColourReconnection_mode);
   restoreDefault(Param::ColourReconnection_range);
-
 }
-
-  // Set the values related to a tune of e+e- data,
-  // i.e. mainly for final-state radiation and hadronization.
 
 void Settings::initTuneEE() 
 {
@@ -3132,49 +3327,4 @@ void Settings::initTunePP()
 
 }
 
-// load setting from a single line of a file
-// ???
-
-// restore default for a particular setting
-void Settings::restoreDefault(Flag flag)
-{
-  flagValue[(int)flag] = flagDefault[(int)flag];
-}
-void Settings::restoreDefault(Mode mode)
-{
-  modeValue[(int)mode] = modeDefault[(int)mode];
-}
-void Settings::restoreDefault(Param param)
-{
-  paramValue[(int)param] = paramDefault[(int)param];
-}
-void Settings::restoreDefault(Word word)
-{
-  wordValue[(int)word] = wordDefault[(int)word];
-}
-void Settings::restoreDefault(FlagList flagList)
-{
-  flagListValue[(int)flagList] = flagListDefault[(int)flagList];
-}
-void Settings::restoreDefault(ModeList modeList)
-{
-  modeListValue[(int)modeList] = modeListDefault[(int)modeList];
-}
-void Settings::restoreDefault(ParamList paramList)
-{
-  paramListValue[(int)paramList] = paramListDefault[(int)paramList];
-}
-
-// restore default values for all settings
-void Settings::restoreDefault()
-{
-  for (size_t i=0; i<(int)Flag::END; ++i) restoreDefault((Flag)i);
-  for (size_t i=0; i<(int)Mode::END; ++i) restoreDefault((Mode)i);
-  for (size_t i=0; i<(int)Param::END; ++i) restoreDefault((Param)i);
-  for (size_t i=0; i<(int)Word::END; ++i) restoreDefault((Word)i);
-  for (size_t i=0; i<(int)FlagList::END; ++i) restoreDefault((FlagList)i);
-  for (size_t i=0; i<(int)ModeList::END; ++i) restoreDefault((ModeList)i);
-  for (size_t i=0; i<(int)ParamList::END; ++i) restoreDefault((ParamList)i);
-}
-
-}
+} // end namespace Pythia8
