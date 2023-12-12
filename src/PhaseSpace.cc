@@ -2660,7 +2660,8 @@ bool PhaseSpace2to2diffractive::trialKin( bool, bool ) {
   }
 
   // Loop over attempts to set up masses and t consistently.
-  for (int loop = 0; ; ++loop) {
+  for (int loop = 0; ; ++loop) 
+  {
     if (loop == NTRY) {
       infoPtr->errorMsg("Error in PhaseSpace2to2diffractive::trialKin: "
         " quit after repeated tries");

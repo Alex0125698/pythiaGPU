@@ -21,6 +21,8 @@ namespace Pythia8 {
 
 void Sigma0AB2AB::setIdColAcol() {
 
+  int idA = pState->beamA->id();
+  int idB = pState->beamB->id();
   // Flavours and colours are trivial.
   setId( idA, idB, idA, idB);
   setColAcol( 0, 0, 0, 0, 0, 0, 0, 0);
@@ -37,6 +39,8 @@ void Sigma0AB2AB::setIdColAcol() {
 
 void Sigma0AB2XB::setIdColAcol() {
 
+  int idA = pState->beamA->id();
+  int idB = pState->beamB->id();
   // Flavours and colours are trivial.
   int idX          = 10* (abs(idA) / 10) + 9900000;
   if (idA < 0) idX = -idX;
@@ -56,6 +60,8 @@ void Sigma0AB2XB::setIdColAcol() {
 
 void Sigma0AB2AX::setIdColAcol() {
 
+  int idA = pState->beamA->id();
+  int idB = pState->beamB->id();
   // Flavours and colours are trivial.
   int idX          = 10* (abs(idB) / 10) + 9900000;
   if (idB < 0) idX = -idX;
@@ -75,6 +81,8 @@ void Sigma0AB2AX::setIdColAcol() {
 
 void Sigma0AB2XX::setIdColAcol() {
 
+  int idA = pState->beamA->id();
+  int idB = pState->beamB->id();
   // Flavours and colours are trivial.
   int          idX1 = 10* (abs(idA) / 10) + 9900000;
   if (idA < 0) idX1 = -idX1;
@@ -96,6 +104,8 @@ void Sigma0AB2XX::setIdColAcol() {
 
 void Sigma0AB2AXB::setIdColAcol() {
 
+  int idA = pState->beamA->id();
+  int idB = pState->beamB->id();
   // Central diffractive state represented by rho_diffr0. Colours trivial.
   int idX = 9900110;
   setId( idA, idB, idA, idB,idX);

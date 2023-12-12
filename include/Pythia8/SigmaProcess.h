@@ -124,20 +124,22 @@ public: // private data
   // WARNING: alias of some settings / particleData
   int    nQuarkIn, renormScale1, renormScale2, renormScale3, renormScale3VV,
          factorScale1, factorScale2, factorScale3, factorScale3VV;
-  double Kfactor, mcME, mbME, mmuME, mtauME, renormMultFac, renormFixScale,
+  double mcME, mbME, mmuME, mtauME, renormMultFac, renormFixScale,
          factorMultFac, factorFixScale;
+  
+  // Kfactor, 
 
-  // WARNING: alias of some settings
-  // CP violation parameters for Higgs sector, normally only set once.
-  int    higgsH1parity, higgsH2parity, higgsA3parity;
-  double higgsH1eta, higgsH2eta, higgsA3eta, higgsH1phi, higgsH2phi,
-         higgsA3phi;
+  // // WARNING: alias of some settings
+  // // CP violation parameters for Higgs sector, normally only set once.
+  // int    higgsH1parity, higgsH2parity, higgsA3parity;
+  // double higgsH1eta, higgsH2eta, higgsA3eta, higgsH1phi, higgsH2phi,
+  //        higgsA3phi;
 
-  // Information on incoming beams.
-  // WARNING: alias of beam info
-  int    idA, idB;
-  double mA, mB;
-  bool   isLeptonA, isLeptonB, hasLeptonBeams;
+  // // Information on incoming beams.
+  // // WARNING: alias of beam info
+  // int    idA, idB;
+  // double mA, mB;
+  // bool   isLeptonA, isLeptonB, hasLeptonBeams;
 
   // Partons in beams, with PDF's.
   vector<InBeam> inBeamA;
@@ -185,6 +187,7 @@ public: // private data
   double mH, sH, sH2;
 
   // (Sigma2Process) Store subprocess kinematics quantities.
+  // The nominal Breit-Wigner factors with running width.
   double tH, uH, tH2, uH2, m3, s3, m4, s4, pT2, runBW3, runBW4;
 
   // (Sigma3Process) Store subprocess kinematics quantities.

@@ -59,30 +59,15 @@ SigmaProcess::~SigmaProcess()
   // TODO: should delete if nothing uses a destructor
 }
 
+// @OVERHEAD all these aliases should be removed
 // creates aliases of beam info and some settings
 void SigmaProcess::init(PythiaState* pState_)
 {
   // Store pointers.
   pState = pState_;
 
-  // --- alias of beam info
-  // TODO: these need to be deleted
-
-  // Read out some properties of beams to allow shorthand.
-  // TODO: how does this differ from the fluxType below?
-  idA             = (pState->beamA != 0) ? pState->beamA->id() : 0;
-  idB             = (pState->beamB != 0) ? pState->beamB->id() : 0;
-  mA              = (pState->beamA != 0) ? pState->beamA->m() : 0.;
-  mB              = (pState->beamB != 0) ? pState->beamB->m() : 0.;
-  isLeptonA       = (pState->beamA != 0) ? pState->beamA->isLepton() : false;
-  isLeptonB       = (pState->beamB != 0) ? pState->beamB->isLepton() : false;
-  hasLeptonBeams  = isLeptonA || isLeptonB;
-
   // --- alias of some settings / particleData
   // TODO: these need to be deleted
-
-  // K factor, multiplying resolved processes. (But not here for MPI.)
-  Kfactor         = pState->settings.get(Param::SigmaProcess_Kfactor);
 
   // Maximum incoming quark flavour.
   nQuarkIn        = pState->settings.get(Mode::PDFinProcess_nQuarkIn);
@@ -113,29 +98,25 @@ void SigmaProcess::init(PythiaState* pState_)
   factorMultFac   = pState->settings.get(Param::SigmaProcess_factorMultFac);
   factorFixScale  = pState->settings.get(Param::SigmaProcess_factorFixScale);
 
-  // CP violation parameters for the BSM Higgs sector.
-  higgsH1parity   = pState->settings.get(Mode::HiggsH1_parity);
-  higgsH1eta      = pState->settings.get(Param::HiggsH1_etaParity);
-  higgsH1phi      = pState->settings.get(Param::HiggsH1_phiParity);
-  higgsH2parity   = pState->settings.get(Mode::HiggsH2_parity);
-  higgsH2eta      = pState->settings.get(Param::HiggsH2_etaParity);
-  higgsH2phi      = pState->settings.get(Param::HiggsH2_phiParity);
-  higgsA3parity   = pState->settings.get(Mode::HiggsA3_parity);
-  higgsA3eta      = pState->settings.get(Param::HiggsA3_etaParity);
-  higgsA3phi      = pState->settings.get(Param::HiggsA3_phiParity);
-
-  // If BSM not switched on then H1 should have SM properties.
-  if (!pState->settings.get(Flag::Higgs_useBSM))
-  {
-    higgsH1parity = 1;
-    higgsH1eta    = 0.;
-    higgsH1phi    = M_PI / 2.;
-  }
 }
 
 // adds all the possible partons (based on fluxtype) to inBeamA, inBeamB, inPair arrays
 bool SigmaProcess::initFlux()
 {
+    // --- alias of beam info
+    // TODO: these need to be deleted
+
+    // Read out some properties of beams to allow shorthand.
+    // TODO: how does this differ from the fluxType below?
+    // it seems like these are mostly ignored except for lepton beams which are required to match the fluxType
+    int idA             = (pState->beamA != 0) ? pState->beamA->id() : 0;
+    int idB             = (pState->beamB != 0) ? pState->beamB->id() : 0;
+    double mA              = (pState->beamA != 0) ? pState->beamA->m() : 0.;
+    double mB              = (pState->beamB != 0) ? pState->beamB->m() : 0.;
+    bool isLeptonA       = (pState->beamA != 0) ? pState->beamA->isLepton() : false;
+    bool isLeptonB       = (pState->beamB != 0) ? pState->beamB->isLepton() : false;
+    bool hasLeptonBeams  = isLeptonA || isLeptonB;
+
     // set the incoming particles list based on the flux type
 
     // addBeam: set up PDF's that need to be evaluated for the two beams.
@@ -724,12 +705,17 @@ double SigmaProcess::sigmaPDF()
   // Since no PDF's there is no difference
   if (type == ProcessType::P2to0) return sigmaHat();
 
+  // K factor, multiplying resolved processes. (But not here for MPI.)
+  double Kfactor         = pState->settings.get(Param::SigmaProcess_Kfactor);
+
   // SigmaProcess
 
   // Evaluate and store the required parton densities.
   // TODO: do these actually change between different calls?
   //       maybe we should evaluate them in sigmaHatWrap
   // TODO: what are x1Save, Q2FacSave?
+
+  // x1Save is the momentum fraction
   for (int j = 0; j < inBeamA.size(); ++j)
     inBeamA[j].pdf = pState->beamA->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
   for (int j = 0; j < inBeamB.size(); ++j)
@@ -747,7 +733,7 @@ double SigmaProcess::sigmaPDF()
     inPair[i].pdfSigma = Kfactor * sigmaHatWrap(inPair[i].A.id, inPair[i].B.id);
 
     // Multiply by respective parton densities.
-    // @overhead: we are just sifting out the appropriate multiplier
+    // @OVERHEAD: we are just sifting out the appropriate multiplier
     for (int j = 0; j < inBeamA.size(); ++j)
     {
       if (inPair[i].A.id == inBeamA[j].id) 
@@ -1369,6 +1355,26 @@ double SigmaProcess::weightHiggsDecay(Event& process, int iResBeg, int iResEnd)
     double pgm5 = process[iZW1].p() * process[i5].p();
     double pgm6 = process[iZW1].p() * process[i6].p();
     return (pow2(pgm5) + pow2(pgm6)) / pow2(pgmZ);
+  }
+
+
+  // CP violation parameters for the BSM Higgs sector.
+  int higgsH1parity   = pState->settings.get(Mode::HiggsH1_parity);
+  double higgsH1eta      = pState->settings.get(Param::HiggsH1_etaParity);
+  double higgsH1phi      = pState->settings.get(Param::HiggsH1_phiParity);
+  int higgsH2parity   = pState->settings.get(Mode::HiggsH2_parity);
+  double higgsH2eta      = pState->settings.get(Param::HiggsH2_etaParity);
+  double higgsH2phi      = pState->settings.get(Param::HiggsH2_phiParity);
+  int higgsA3parity   = pState->settings.get(Mode::HiggsA3_parity);
+  double higgsA3eta      = pState->settings.get(Param::HiggsA3_etaParity);
+  double higgsA3phi      = pState->settings.get(Param::HiggsA3_phiParity);
+
+  // If BSM not switched on then H1 should have SM properties.
+  if (!pState->settings.get(Flag::Higgs_useBSM))
+  {
+    higgsH1parity = 1;
+    higgsH1eta    = 0.;
+    higgsH1phi    = M_PI / 2.;
   }
 
   // Parameters depend on Higgs type: H0(H_1), H^0(H_2) or A^0(H_3).
