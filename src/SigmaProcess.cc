@@ -726,7 +726,10 @@ double SigmaProcess::sigmaPDF()
 
   // SigmaProcess
 
+  Benchmark_start(sigmaPDF);
+
   // Evaluate and store the required parton densities.
+  Benchmark_start(sigmaPDF_xfHard);
   // TODO: do these actually change between different calls?
   //       maybe we should evaluate them in sigmaHatWrap
   // TODO: what are x1Save, Q2FacSave?
@@ -734,19 +737,26 @@ double SigmaProcess::sigmaPDF()
     inBeamA[j].pdf = pState->beamA->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
   for (int j = 0; j < inBeamB.size(); ++j)
     inBeamB[j].pdf = pState->beamB->xfHard( inBeamB[j].id, x2Save, Q2FacSave);
+  Benchmark_stop(sigmaPDF_xfHard);
 
+  Benchmark_loopStart(sigmaPDF_loopOverIncomingChannels);
   // store total ??Hadronic?? cross-section here; summed for all parton channels
   sigmaSumSave = 0.;
 
   // Loop over the allowed pairs incoming parton for this process
   for (int i = 0; i < inPair.size(); ++i) 
   {
+    Benchmark_loopCount(sigmaPDF_loopOverIncomingChannels);
+
     // Evaluate hard-scattering cross section. Include K factor.
+    Benchmark_start(sigmaPDF_sigmaHatWrap);
     // WARNING: Kfactor is an alias
     // Note: this is where sigmaHatWrap inputs setup; they are just the parton flavours!
     inPair[i].pdfSigma = Kfactor * sigmaHatWrap(inPair[i].A.id, inPair[i].B.id);
+    Benchmark_stop(sigmaPDF_sigmaHatWrap);
 
     // Multiply by respective parton densities.
+    Benchmark_start(sigmaPDF_multPartonDensity);
     // @overhead: we are just sifting out the appropriate multiplier
     for (int j = 0; j < inBeamA.size(); ++j)
     {
@@ -770,6 +780,10 @@ double SigmaProcess::sigmaPDF()
     // Sum for all channels.
     sigmaSumSave += inPair[i].pdfSigma;
   }
+
+  Benchmark_loopStop(sigmaPDF_loopOverIncomingChannels);
+
+  Benchmark_start(sigmaPDF_dummy);
 
     // Done.
   return sigmaSumSave;
