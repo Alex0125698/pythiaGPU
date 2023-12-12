@@ -125,37 +125,37 @@ void PhaseSpace::init(bool isFirst, SigmaProcess* sigmaProcessPtrIn,
   hasTwoPointLeptons  = hasTwoLeptonBeams && hasPointLepton;
 
   // Standard phase space cuts.
-  if (isFirst || settingsPtr->flag("PhaseSpace:sameForSecond")) {
-    mHatGlobalMin      = settingsPtr->parm("PhaseSpace:mHatMin");
-    mHatGlobalMax      = settingsPtr->parm("PhaseSpace:mHatMax");
-    pTHatGlobalMin     = settingsPtr->parm("PhaseSpace:pTHatMin");
-    pTHatGlobalMax     = settingsPtr->parm("PhaseSpace:pTHatMax");
+  if (isFirst || settingsPtr->get(Flag::PhaseSpace_sameForSecond)) {
+    mHatGlobalMin      = settingsPtr->get(Param::PhaseSpace_mHatMin);
+    mHatGlobalMax      = settingsPtr->get(Param::PhaseSpace_mHatMax);
+    pTHatGlobalMin     = settingsPtr->get(Param::PhaseSpace_pTHatMin);
+    pTHatGlobalMax     = settingsPtr->get(Param::PhaseSpace_pTHatMax);
 
   // Optionally separate phase space cuts for second hard process.
   } else {
-    mHatGlobalMin      = settingsPtr->parm("PhaseSpace:mHatMinSecond");
-    mHatGlobalMax      = settingsPtr->parm("PhaseSpace:mHatMaxSecond");
-    pTHatGlobalMin     = settingsPtr->parm("PhaseSpace:pTHatMinSecond");
-    pTHatGlobalMax     = settingsPtr->parm("PhaseSpace:pTHatMaxSecond");
+    mHatGlobalMin      = settingsPtr->get(Param::PhaseSpace_mHatMinSecond);
+    mHatGlobalMax      = settingsPtr->get(Param::PhaseSpace_mHatMaxSecond);
+    pTHatGlobalMin     = settingsPtr->get(Param::PhaseSpace_pTHatMinSecond);
+    pTHatGlobalMax     = settingsPtr->get(Param::PhaseSpace_pTHatMaxSecond);
   }
 
   // Cutoff against divergences at pT -> 0.
-  pTHatMinDiverge      = settingsPtr->parm("PhaseSpace:pTHatMinDiverge");
+  pTHatMinDiverge      = settingsPtr->get(Param::PhaseSpace_pTHatMinDiverge);
 
   // When to use Breit-Wigners.
-  useBreitWigners      = settingsPtr->flag("PhaseSpace:useBreitWigners");
-  minWidthBreitWigners = settingsPtr->parm("PhaseSpace:minWidthBreitWigners");
+  useBreitWigners      = settingsPtr->get(Flag::PhaseSpace_useBreitWigners);
+  minWidthBreitWigners = settingsPtr->get(Param::PhaseSpace_minWidthBreitWigners);
 
   // Whether generation is with variable energy.
-  doEnergySpread       = settingsPtr->flag("Beams:allowMomentumSpread");
+  doEnergySpread       = settingsPtr->get(Flag::Beams_allowMomentumSpread);
 
   // Flags for maximization information and violation handling.
-  showSearch           = settingsPtr->flag("PhaseSpace:showSearch");
-  showViolation        = settingsPtr->flag("PhaseSpace:showViolation");
-  increaseMaximum      = settingsPtr->flag("PhaseSpace:increaseMaximum");
+  showSearch           = settingsPtr->get(Flag::PhaseSpace_showSearch);
+  showViolation        = settingsPtr->get(Flag::PhaseSpace_showViolation);
+  increaseMaximum      = settingsPtr->get(Flag::PhaseSpace_increaseMaximum);
 
   // Know whether a Z0 is pure Z0 or admixed with gamma*.
-  gmZmodeGlobal        = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmodeGlobal        = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Flags if user should be allowed to reweight cross section.
   canModifySigma   = (userHooksPtr != 0)
@@ -164,9 +164,9 @@ void PhaseSpace::init(bool isFirst, SigmaProcess* sigmaProcessPtrIn,
                    ? userHooksPtr->canBiasSelection() : false;
 
   // Parameters for simplified reweighting of 2 -> 2 processes.
-  canBias2Sel      = settingsPtr->flag("PhaseSpace:bias2Selection");
-  bias2SelPow      = settingsPtr->parm("PhaseSpace:bias2SelectionPow");
-  bias2SelRef      = settingsPtr->parm("PhaseSpace:bias2SelectionRef");
+  canBias2Sel      = settingsPtr->get(Flag::PhaseSpace_bias2Selection);
+  bias2SelPow      = settingsPtr->get(Param::PhaseSpace_bias2SelectionPow);
+  bias2SelRef      = settingsPtr->get(Param::PhaseSpace_bias2SelectionRef);
 
   // Default event-specific kinematics properties.
   x1H             = 1.;
@@ -482,8 +482,8 @@ void PhaseSpace::decayKinematicsStep( Event& process, int iRes) {
 void PhaseSpace::setup3Body() {
 
   // Check for massive t-channel propagator particles.
-  int idTchan1    = abs( sigmaProcessPtr->idTchan1() );
-  int idTchan2    = abs( sigmaProcessPtr->idTchan2() );
+  int idTchan1    = abs( sigmaProcessPtr->idTchan1 );
+  int idTchan2    = abs( sigmaProcessPtr->idTchan2 );
   mTchan1         = (idTchan1 == 0) ? pTHatMinDiverge
                                     : particleDataPtr->m0(idTchan1);
   mTchan2         = (idTchan2 == 0) ? pTHatMinDiverge
@@ -492,10 +492,10 @@ void PhaseSpace::setup3Body() {
   sTchan2         = mTchan2 * mTchan2;
 
   // Find coefficients of different pT2 selection terms. Mirror choice.
-  frac3Pow1       = sigmaProcessPtr->tChanFracPow1();
-  frac3Pow2       = sigmaProcessPtr->tChanFracPow2();
+  frac3Pow1       = sigmaProcessPtr->tChanFracPow1;
+  frac3Pow2       = sigmaProcessPtr->tChanFracPow2;
   frac3Flat       = 1. - frac3Pow1 - frac3Pow2;
-  useMirrorWeight = sigmaProcessPtr->useMirrorWeight();
+  useMirrorWeight = sigmaProcessPtr->useMirrorWeight;
 
 }
 
@@ -510,7 +510,7 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
   // Optional printout.
   if (showSearch) os <<  "\n PYTHIA Optimization printout for "
-    << sigmaProcessPtr->name() << "\n \n" << scientific << setprecision(3);
+    << sigmaProcessPtr->name << "\n \n" << scientific << setprecision(3);
 
   // Check that open range in tau (+ set tauMin, tauMax).
   if (!limitTau(is2, is3)) return false;
@@ -546,14 +546,14 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   Benchmark_start(PhaseSpace0setupSampling123_identifyResonances);
 
   // Identify if any resonances contribute in s-channel.
-  idResA = sigmaProcessPtr->resonanceA();
+  idResA = sigmaProcessPtr->resonanceA;
   if (idResA != 0) {
      mResA = particleDataPtr->m0(idResA);
      GammaResA = particleDataPtr->mWidth(idResA);
      if (mHatMin > mResA + WIDTHMARGIN * GammaResA || (mHatMax > 0.
        && mHatMax < mResA - WIDTHMARGIN * GammaResA) ) idResA = 0;
   }
-  idResB = sigmaProcessPtr->resonanceB();
+  idResB = sigmaProcessPtr->resonanceB;
   if (idResB != 0) {
      mResB = particleDataPtr->m0(idResB);
      GammaResB = particleDataPtr->mWidth(idResB);
@@ -1151,7 +1151,7 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
       if (showViolation) {
         if (violFact < 9.99) os << fixed;
         else                 os << scientific;
-        os << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+        os << " PYTHIA Maximum for " << sigmaProcessPtr->name
            << " increased by factor " << setprecision(3) << violFact
            << " to " << scientific << sigmaMx << endl;
       }
@@ -1161,7 +1161,7 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
       double violFact = sigmaNw / sigmaMx;
       if (violFact < 9.99) os << fixed;
       else                 os << scientific;
-      os << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+      os << " PYTHIA Maximum for " << sigmaProcessPtr->name
          << " exceeded by factor " << setprecision(3) << violFact << endl;
       sigmaPos = sigmaNw;
     }
@@ -1172,12 +1172,12 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   Benchmark_start(trialKin123_McheckNegativeXsec);
   if (sigmaNw < sigmaNeg) {
     infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
     if (showViolation) os << " PYTHIA Negative minimum for "
-      << sigmaProcessPtr->name() << " changed to " << scientific
+      << sigmaProcessPtr->name << " changed to " << scientific
       << setprecision(3) << sigmaNeg << endl;
   }
   if (sigmaNw < 0.) sigmaNw = 0.;
@@ -1751,9 +1751,9 @@ void PhaseSpace::solveSys( int n, int bin[8], double vec[8],
 void PhaseSpace::setupMass1(int iM) {
 
   // Identity for mass seletion; is 0 also for light quarks (not yet selected).
-  if (iM == 3) idMass[iM] = abs(sigmaProcessPtr->id3Mass());
-  if (iM == 4) idMass[iM] = abs(sigmaProcessPtr->id4Mass());
-  if (iM == 5) idMass[iM] = abs(sigmaProcessPtr->id5Mass());
+  if (iM == 3) idMass[iM] = abs(sigmaProcessPtr->id3Mass);
+  if (iM == 4) idMass[iM] = abs(sigmaProcessPtr->id4Mass);
+  if (iM == 5) idMass[iM] = abs(sigmaProcessPtr->id5Mass);
 
   // Masses and widths of resonances.
   if (idMass[iM] == 0) {
@@ -1911,12 +1911,12 @@ bool PhaseSpace2to1tauy::setupMass() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Mass limits for current resonance.
-  int idRes = abs(sigmaProcessPtr->resonanceA());
-  int idTmp = abs(sigmaProcessPtr->resonanceB());
+  int idRes = abs(sigmaProcessPtr->resonanceA);
+  int idTmp = abs(sigmaProcessPtr->resonanceB);
   if (idTmp > 0) idRes = idTmp;
   double mResMin = (idRes == 0) ? 0. : particleDataPtr->mMin(idRes);
   double mResMax = (idRes == 0) ? 0. : particleDataPtr->mMax(idRes);
@@ -1970,7 +1970,7 @@ bool PhaseSpace2to2tauyz::setupMasses() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Set sHat limits - based on global limits only.
@@ -2078,13 +2078,13 @@ bool PhaseSpace2to2tauyz::trialMasses() {
 bool PhaseSpace2to2tauyz::finalKin() {
 
   // Assign masses to particles assumed massless in matrix elements.
-  int id3 = sigmaProcessPtr->id(3);
-  int id4 = sigmaProcessPtr->id(4);
+  int id3 = sigmaProcessPtr->idSave[3];
+  int id4 = sigmaProcessPtr->idSave[4];
   if (idMass[3] == 0) { m3 = particleDataPtr->m0(id3); s3 = m3*m3; }
   if (idMass[4] == 0) { m4 = particleDataPtr->m0(id4); s4 = m4*m4; }
 
   // Sometimes swap tHat <-> uHat to reflect chosen final-state order.
-  if (sigmaProcessPtr->swappedTU()) {
+  if (sigmaProcessPtr->swapTU) {
     swap(tH, uH);
     z = -z;
   }
@@ -2372,15 +2372,15 @@ bool PhaseSpace2to2elastic::setupSampling() {
   tUpp       = 0.;
 
   // Production model with Coulomb corrections need more parameters.
-  useCoulomb =  settingsPtr->flag("SigmaTotal:setOwn")
-             && settingsPtr->flag("SigmaElastic:setOwn");
+  useCoulomb =  settingsPtr->get(Flag::SigmaTotal_setOwn)
+             && settingsPtr->get(Flag::SigmaElastic_setOwn);
   if (useCoulomb) {
     sigmaTot = sigmaTotPtr->sigmaTot();
-    rho      = settingsPtr->parm("SigmaElastic:rho");
-    lambda   = settingsPtr->parm("SigmaElastic:lambda");
-    tAbsMin  = settingsPtr->parm("SigmaElastic:tAbsMin");
-    phaseCst = settingsPtr->parm("SigmaElastic:phaseConst");
-    alphaEM0 = settingsPtr->parm("StandardModel:alphaEM0");
+    rho      = settingsPtr->get(Param::SigmaElastic_rho);
+    lambda   = settingsPtr->get(Param::SigmaElastic_lambda);
+    tAbsMin  = settingsPtr->get(Param::SigmaElastic_tAbsMin);
+    phaseCst = settingsPtr->get(Param::SigmaElastic_phaseConst);
+    alphaEM0 = settingsPtr->get(Param::StandardModel_alphaEM0);
 
     // Relative rate of nuclear and Coulombic parts in trials.
     tUpp     = -tAbsMin;
@@ -2521,9 +2521,9 @@ const double PhaseSpace2to2diffractive::DIFFMASSMARGIN = 0.2;
 bool PhaseSpace2to2diffractive::setupSampling() {
 
   // Pomeron flux parametrization, and parameters of some options.
-  PomFlux      = settingsPtr->mode("Diffraction:PomFlux");
-  epsilonPF    = settingsPtr->parm("Diffraction:PomFluxEpsilon");
-  alphaPrimePF = settingsPtr->parm("Diffraction:PomFluxAlphaPrime");
+  PomFlux      = settingsPtr->get(Mode::Diffraction_PomFlux);
+  epsilonPF    = settingsPtr->get(Param::Diffraction_PomFluxEpsilon);
+  alphaPrimePF = settingsPtr->get(Param::Diffraction_PomFluxAlphaPrime);
 
   // Find maximum = value of cross section.
   sigmaNw = sigmaProcessPtr->sigmaHatWrap();
@@ -2598,14 +2598,14 @@ bool PhaseSpace2to2diffractive::setupSampling() {
 
   // MBR model.
   } else if (PomFlux == 5) {
-    eps        = settingsPtr->parm("Diffraction:MBRepsilon");
-    alph       = settingsPtr->parm("Diffraction:MBRalpha");
+    eps        = settingsPtr->get(Param::Diffraction_MBRepsilon);
+    alph       = settingsPtr->get(Param::Diffraction_MBRalpha);
     alph2      = alph * alph;
-    m2min      = settingsPtr->parm("Diffraction:MBRm2Min");
-    dyminSD    = settingsPtr->parm("Diffraction:MBRdyminSD");
-    dyminDD    = settingsPtr->parm("Diffraction:MBRdyminDD");
-    dyminSigSD = settingsPtr->parm("Diffraction:MBRdyminSigSD");
-    dyminSigDD = settingsPtr->parm("Diffraction:MBRdyminSigDD");
+    m2min      = settingsPtr->get(Param::Diffraction_MBRm2Min);
+    dyminSD    = settingsPtr->get(Param::Diffraction_MBRdyminSD);
+    dyminDD    = settingsPtr->get(Param::Diffraction_MBRdyminDD);
+    dyminSigSD = settingsPtr->get(Param::Diffraction_MBRdyminSigSD);
+    dyminSigDD = settingsPtr->get(Param::Diffraction_MBRdyminSigDD);
 
     // Max f(dy) for Von Neumann method, from SigmaTot.
     sdpmax= sigmaTotPtr->sdpMax();
@@ -2806,7 +2806,7 @@ bool PhaseSpace2to2diffractive::trialKin( bool, bool ) {
           if (P > ddpmax) {
             ostringstream osWarn;
             osWarn << "ddpmax = " << scientific << setprecision(3)
-                   << ddpmax << " " << P << " " << dy << endl;
+                   << ddpmax << ' ' << P << ' ' << dy << endl;
             infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
               "trialKin for double diffraction:", osWarn.str());
           }
@@ -2844,7 +2844,7 @@ bool PhaseSpace2to2diffractive::trialKin( bool, bool ) {
           if (P > sdpmax) {
             ostringstream osWarn;
             osWarn << "sdpmax = " << scientific << setprecision(3)
-                   << sdpmax << " " << P << " " << dy << endl;
+                   << sdpmax << ' ' << P << ' ' << dy << endl;
             infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
               "trialKin for single diffraction:", osWarn.str());
           }
@@ -2968,9 +2968,9 @@ const double PhaseSpace2to3diffractive::DIFFMASSMARGIN = 0.2;
 bool PhaseSpace2to3diffractive::setupSampling() {
 
   // Pomeron flux parametrization, and parameters of some options.
-  PomFlux      = settingsPtr->mode("Diffraction:PomFlux");
-  epsilonPF    = settingsPtr->parm("Diffraction:PomFluxEpsilon");
-  alphaPrimePF = settingsPtr->parm("Diffraction:PomFluxAlphaPrime");
+  PomFlux      = settingsPtr->get(Mode::Diffraction_PomFlux);
+  epsilonPF    = settingsPtr->get(Param::Diffraction_PomFluxEpsilon);
+  alphaPrimePF = settingsPtr->get(Param::Diffraction_PomFluxAlphaPrime);
 
   // Find maximum = value of cross section.
   sigmaNw      = sigmaProcessPtr->sigmaHatWrap();
@@ -3053,11 +3053,11 @@ bool PhaseSpace2to3diffractive::setupSampling() {
 
   // Setup for the MBR model.
   } else if (PomFlux == 5) {
-    epsMBR        = settingsPtr->parm("Diffraction:MBRepsilon");
-    alphMBR       = settingsPtr->parm("Diffraction:MBRalpha");
-    m2minMBR      = settingsPtr->parm("Diffraction:MBRm2Min");
-    dyminMBR      = settingsPtr->parm("Diffraction:MBRdyminCD");
-    dyminSigMBR   = settingsPtr->parm("Diffraction:MBRdyminSigCD");
+    epsMBR        = settingsPtr->get(Param::Diffraction_MBRepsilon);
+    alphMBR       = settingsPtr->get(Param::Diffraction_MBRalpha);
+    m2minMBR      = settingsPtr->get(Param::Diffraction_MBRm2Min);
+    dyminMBR      = settingsPtr->get(Param::Diffraction_MBRdyminCD);
+    dyminSigMBR   = settingsPtr->get(Param::Diffraction_MBRdyminSigCD);
     dyminInvMBR   = sqrt(2.) / dyminSigMBR;
     // Max f(dy) for Von Neumann method, dpepmax from SigmaTot.
     dpepmax       = sigmaTotPtr->dpepMax();
@@ -3429,7 +3429,7 @@ bool PhaseSpace2to3tauycyl::setupMasses() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Set sHat limits - based on global limits only.
@@ -3550,9 +3550,9 @@ bool PhaseSpace2to3tauycyl::trialMasses() {
 bool PhaseSpace2to3tauycyl::finalKin() {
 
   // Assign masses to particles assumed massless in matrix elements.
-  int id3 = sigmaProcessPtr->id(3);
-  int id4 = sigmaProcessPtr->id(4);
-  int id5 = sigmaProcessPtr->id(5);
+  int id3 = sigmaProcessPtr->idSave[3];
+  int id4 = sigmaProcessPtr->idSave[4];
+  int id5 = sigmaProcessPtr->idSave[5];
   if (idMass[3] == 0) { m3 = particleDataPtr->m0(id3); s3 = m3*m3; }
   if (idMass[4] == 0) { m4 = particleDataPtr->m0(id4); s4 = m4*m4; }
   if (idMass[5] == 0) { m5 = particleDataPtr->m0(id5); s5 = m5*m5; }
@@ -3637,11 +3637,11 @@ bool PhaseSpace2to3tauycyl::finalKin() {
 bool PhaseSpace2to3yyycyl::setupSampling() {
 
   // Phase space cuts specifically for 2 -> 3 QCD processes.
-  pTHat3Min            = settingsPtr->parm("PhaseSpace:pTHat3Min");
-  pTHat3Max            = settingsPtr->parm("PhaseSpace:pTHat3Max");
-  pTHat5Min            = settingsPtr->parm("PhaseSpace:pTHat5Min");
-  pTHat5Max            = settingsPtr->parm("PhaseSpace:pTHat5Max");
-  RsepMin              = settingsPtr->parm("PhaseSpace:RsepMin");
+  pTHat3Min            = settingsPtr->get(Param::PhaseSpace_pTHat3Min);
+  pTHat3Max            = settingsPtr->get(Param::PhaseSpace_pTHat3Max);
+  pTHat5Min            = settingsPtr->get(Param::PhaseSpace_pTHat5Min);
+  pTHat5Max            = settingsPtr->get(Param::PhaseSpace_pTHat5Max);
+  RsepMin              = settingsPtr->get(Param::PhaseSpace_RsepMin);
   R2sepMin             = pow2(RsepMin);
 
   // If both beams are baryons then softer PDF's than for mesons/Pomerons.
@@ -3855,7 +3855,7 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
       if (showViolation) {
         if (violFact < 9.99) cout << fixed;
         else                 cout << scientific;
-        cout << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+        cout << " PYTHIA Maximum for " << sigmaProcessPtr->name
              << " increased by factor " << setprecision(3) << violFact
              << " to " << scientific << sigmaMx << endl;
       }
@@ -3865,7 +3865,7 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
       double violFact = sigmaNw / sigmaMx;
       if (violFact < 9.99) cout << fixed;
       else                 cout << scientific;
-      cout << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+      cout << " PYTHIA Maximum for " << sigmaProcessPtr->name
            << " exceeded by factor " << setprecision(3) << violFact << endl;
       sigmaPos = sigmaNw;
     }
@@ -3874,12 +3874,12 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
   // Check if negative cross section.
   if (sigmaNw < sigmaNeg) {
     infoPtr->errorMsg("Warning in PhaseSpace2to3yyycyl::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
     if (showViolation) cout << " PYTHIA Negative minimum for "
-      << sigmaProcessPtr->name() << " changed to " << scientific
+      << sigmaProcessPtr->name << " changed to " << scientific
       << setprecision(3) << sigmaNeg << endl;
   }
   if (sigmaNw < 0.) sigmaNw = 0.;

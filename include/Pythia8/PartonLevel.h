@@ -47,7 +47,7 @@ public:
   PartonLevel() : userHooksPtr(0) {}
 
   // Initialization of all classes at the parton level.
-  bool init( Info* infoPtrIn, Settings& settings,
+  bool init(PythiaState* pState, Info* infoPtrIn, Settings& settings,
     ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
     BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
     BeamParticle* beamPomAPtrIn, BeamParticle* beamPomBPtrIn,

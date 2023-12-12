@@ -138,12 +138,12 @@ void Sigma2gg2gg::setIdColAcol() {
   setId( id1, id2, 21, 21);
 
   // Three colour flow topologies, each with two orientations.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 4, 4, 3);
   else if (sigRand < sigTS + sigUS)
                        setColAcol( 1, 2, 3, 1, 3, 4, 4, 2);
   else                 setColAcol( 1, 2, 3, 4, 1, 4, 3, 2);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
 
 }
 
@@ -159,7 +159,7 @@ void Sigma2gg2gg::setIdColAcol() {
 void Sigma2gg2qqbar::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -170,8 +170,8 @@ void Sigma2gg2qqbar::initProc() {
 void Sigma2gg2qqbar::sigmaKin() {
 
   // Pick new flavour.
-  idNew = 1 + int( nQuarkNew * rndmPtr->flat() );
-  mNew  = particleDataPtr->m0(idNew);
+  idNew = 1 + int( nQuarkNew * pState->rndm.flat() );
+  mNew  = pState->particleData.m0(idNew);
   m2New = mNew*mNew;
 
   // Calculate kinematics dependence.
@@ -198,7 +198,7 @@ void Sigma2gg2qqbar::setIdColAcol() {
   setId( id1, id2, idNew, -idNew);
 
   // Two colour flow topologies.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 0, 0, 3);
   else                 setColAcol( 1, 2, 3, 1, 3, 0, 0, 2);
 
@@ -235,7 +235,7 @@ void Sigma2qg2qg::setIdColAcol() {
   setId( id1, id2, id1, id2);
 
   // Two colour flow topologies. Swap if first is gluon, or when antiquark.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 0, 2, 1, 3, 0, 2, 3);
   else                 setColAcol( 1, 0, 2, 3, 2, 0, 1, 3);
   if (id1 == 21) swapCol1234();
@@ -294,7 +294,7 @@ void Sigma2qq2qq::setIdColAcol() {
   // Colour flow topologies. Swap when antiquarks.
   if (id1 * id2 > 0)  setColAcol( 1, 0, 2, 0, 2, 0, 1, 0);
   else                setColAcol( 1, 0, 0, 1, 2, 0, 0, 2);
-  if (id2 == id1 && (sigT + sigU) * rndmPtr->flat() > sigT)
+  if (id2 == id1 && (sigT + sigU) * pState->rndm.flat() > sigT)
                       setColAcol( 1, 0, 2, 0, 1, 0, 2, 0);
   if (id1 < 0) swapColAcol();
 
@@ -331,7 +331,7 @@ void Sigma2qqbar2gg::setIdColAcol() {
   setId( id1, id2, 21, 21);
 
   // Two colour flow topologies. Swap if first is antiquark.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 0, 0, 2, 1, 3, 3, 2);
   else                 setColAcol( 1, 0, 0, 2, 3, 2, 1, 3);
   if (id1 < 0) swapColAcol();
@@ -350,7 +350,7 @@ void Sigma2qqbar2gg::setIdColAcol() {
 void Sigma2qqbar2qqbarNew::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -361,8 +361,8 @@ void Sigma2qqbar2qqbarNew::initProc() {
 void Sigma2qqbar2qqbarNew::sigmaKin() {
 
   // Pick new flavour.
-  idNew = 1 + int( nQuarkNew * rndmPtr->flat() );
-  mNew  = particleDataPtr->m0(idNew);
+  idNew = 1 + int( nQuarkNew * pState->rndm.flat() );
+  mNew  = pState->particleData.m0(idNew);
   m2New = mNew*mNew;
 
   // Calculate kinematics dependence.
@@ -407,15 +407,15 @@ void Sigma2qqbar2qqbarNew::setIdColAcol() {
 void Sigma2gg2QQbar::initProc() {
 
   // Process name.
-  nameSave                 = "g g -> Q Qbar";
-  if (idNew == 4) nameSave = "g g -> c cbar";
-  if (idNew == 5) nameSave = "g g -> b bbar";
-  if (idNew == 6) nameSave = "g g -> t tbar";
-  if (idNew == 7) nameSave = "g g -> b' b'bar";
-  if (idNew == 8) nameSave = "g g -> t' t'bar";
+  name                 = "g g -> Q Qbar";
+  if (idNew == 4) name = "g g -> c cbar";
+  if (idNew == 5) name = "g g -> b bbar";
+  if (idNew == 6) name = "g g -> t tbar";
+  if (idNew == 7) name = "g g -> b' b'bar";
+  if (idNew == 8) name = "g g -> t' t'bar";
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+  openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
 
 }
 
@@ -457,7 +457,7 @@ void Sigma2gg2QQbar::setIdColAcol() {
   setId( id1, id2, idNew, -idNew);
 
   // Two colour flow topologies.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 0, 0, 3);
   else                 setColAcol( 1, 2, 3, 1, 3, 0, 0, 2);
 
@@ -494,15 +494,15 @@ double Sigma2gg2QQbar::weightDecay( Event& process, int iResBeg,
 void Sigma2qqbar2QQbar::initProc() {
 
   // Process name.
-  nameSave                 = "q qbar -> Q Qbar";
-  if (idNew == 4) nameSave = "q qbar -> c cbar";
-  if (idNew == 5) nameSave = "q qbar -> b bbar";
-  if (idNew == 6) nameSave = "q qbar -> t tbar";
-  if (idNew == 7) nameSave = "q qbar -> b' b'bar";
-  if (idNew == 8) nameSave = "q qbar -> t' t'bar";
+  name                 = "q qbar -> Q Qbar";
+  if (idNew == 4) name = "q qbar -> c cbar";
+  if (idNew == 5) name = "q qbar -> b bbar";
+  if (idNew == 6) name = "q qbar -> t tbar";
+  if (idNew == 7) name = "q qbar -> b' b'bar";
+  if (idNew == 8) name = "q qbar -> t' t'bar";
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+  openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
 
 }
 
@@ -614,12 +614,12 @@ void Sigma3gg2ggg::setIdColAcol() {
 
   // Three colour flow topologies, each with two orientations.
   /*
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 4, 4, 3);
   else if (sigRand < sigTS + sigUS)
                        setColAcol( 1, 2, 3, 1, 3, 4, 4, 2);
   else                 setColAcol( 1, 2, 3, 4, 1, 4, 3, 2);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
   */
 
   // Temporary solution.
@@ -814,7 +814,7 @@ void Sigma3qg2qgg::setIdColAcol(){
 void Sigma3gg2qqbarg::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -851,7 +851,7 @@ void Sigma3gg2qqbarg::sigmaKin() {
 void Sigma3gg2qqbarg::setIdColAcol(){
 
   // Pick new flavour
-  int idNew = 1 + int( nQuarkNew * rndmPtr->flat() );
+  int idNew = 1 + int( nQuarkNew * pState->rndm.flat() );
 
   // Outgoing flavours; easiest just to map by hand
   switch (config) {
@@ -1022,7 +1022,7 @@ inline void Sigma3qq2qqgDiff::mapFinal() {
 void Sigma3qqbar2qqbargDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -1066,7 +1066,7 @@ void Sigma3qqbar2qqbargDiff::sigmaKin() {
 void Sigma3qqbar2qqbargDiff::setIdColAcol(){
 
   // Pick new q qbar flavour with incoming flavour disallowed
-  int idNew = 1 + int( (nQuarkNew - 1) * rndmPtr->flat() );
+  int idNew = 1 + int( (nQuarkNew - 1) * pState->rndm.flat() );
   if (idNew >= abs(id1)) ++idNew;
   // For qbar q incoming, q+ is always mapped to q2
   // For q qbar incoming, q+ is always mapped to qbar2
@@ -1122,7 +1122,7 @@ void Sigma3qqbar2qqbargDiff::setIdColAcol(){
 void Sigma3qg2qqqbarDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = settingsPtr->mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -1175,7 +1175,7 @@ void Sigma3qg2qqqbarDiff::setIdColAcol(){
   // Pick new q qbar flavour with incoming flavour disallowed
   int sigmaIdx = (id1 == 21) ? 0 : 1;
   int idIn     = (id1 == 21) ? id2 : id1;
-  int idNew    = 1 + int( (nQuarkNew - 1) * rndmPtr->flat() );
+  int idNew    = 1 + int( (nQuarkNew - 1) * pState->rndm.flat() );
   if (idNew >= abs(idIn)) ++idNew;
 
   // qbar instead of q incoming means swap outgoing q/qbar pair

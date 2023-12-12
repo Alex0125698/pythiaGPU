@@ -97,20 +97,20 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   beamBPtr        = beamBPtrIn;
 
   // Main flags to switch on and off branchings.
-  doQCDshower     = settingsPtr->flag("SpaceShower:QCDshower");
-  doQEDshowerByQ  = settingsPtr->flag("SpaceShower:QEDshowerByQ");
-  doQEDshowerByL  = settingsPtr->flag("SpaceShower:QEDshowerByL");
-  doWeakShower    = settingsPtr->flag("SpaceShower:WeakShower");
+  doQCDshower     = settingsPtr->get(Flag::SpaceShower_QCDshower);
+  doQEDshowerByQ  = settingsPtr->get(Flag::SpaceShower_QEDshowerByQ);
+  doQEDshowerByL  = settingsPtr->get(Flag::SpaceShower_QEDshowerByL);
+  doWeakShower    = settingsPtr->get(Flag::SpaceShower_weakShower);
 
   // Matching in pT of hard interaction to shower evolution.
-  pTmaxMatch      = settingsPtr->mode("SpaceShower:pTmaxMatch");
-  pTdampMatch     = settingsPtr->mode("SpaceShower:pTdampMatch");
-  pTmaxFudge      = settingsPtr->parm("SpaceShower:pTmaxFudge");
-  pTmaxFudgeMPI   = settingsPtr->parm("SpaceShower:pTmaxFudgeMPI");
-  pTdampFudge     = settingsPtr->parm("SpaceShower:pTdampFudge");
+  pTmaxMatch      = settingsPtr->get(Mode::SpaceShower_pTmaxMatch);
+  pTdampMatch     = settingsPtr->get(Mode::SpaceShower_pTdampMatch);
+  pTmaxFudge      = settingsPtr->get(Param::SpaceShower_pTmaxFudge);
+  pTmaxFudgeMPI   = settingsPtr->get(Param::SpaceShower_pTmaxFudgeMPI);
+  pTdampFudge     = settingsPtr->get(Param::SpaceShower_pTdampFudge);
 
   // Optionally force emissions to be ordered in rapidity/angle.
-  doRapidityOrder = settingsPtr->flag("SpaceShower:rapidityOrder");
+  doRapidityOrder = settingsPtr->get(Flag::SpaceShower_rapidityOrder);
 
   // Charm, bottom and lepton mass thresholds.
   mc              = max( MCMIN, particleDataPtr->m0(4));
@@ -119,16 +119,16 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   m2b             = pow2(mb);
 
   // Parameters of scale choices.
-  renormMultFac     = settingsPtr->parm("SpaceShower:renormMultFac");
-  factorMultFac     = settingsPtr->parm("SpaceShower:factorMultFac");
-  useFixedFacScale  = settingsPtr->flag("SpaceShower:useFixedFacScale");
-  fixedFacScale2    = pow2(settingsPtr->parm("SpaceShower:fixedFacScale"));
+  renormMultFac     = settingsPtr->get(Param::SpaceShower_renormMultFac);
+  factorMultFac     = settingsPtr->get(Param::SpaceShower_factorMultFac);
+  useFixedFacScale  = settingsPtr->get(Flag::SpaceShower_useFixedFacScale);
+  fixedFacScale2    = pow2(settingsPtr->get(Param::SpaceShower_fixedFacScale));
 
   // Parameters of alphaStrong generation.
-  alphaSvalue     = settingsPtr->parm("SpaceShower:alphaSvalue");
-  alphaSorder     = settingsPtr->mode("SpaceShower:alphaSorder");
-  alphaSnfmax     = settingsPtr->mode("StandardModel:alphaSnfmax");
-  alphaSuseCMW    = settingsPtr->flag("SpaceShower:alphaSuseCMW");
+  alphaSvalue     = settingsPtr->get(Param::SpaceShower_alphaSvalue);
+  alphaSorder     = settingsPtr->get(Mode::SpaceShower_alphaSorder);
+  alphaSnfmax     = settingsPtr->get(Mode::StandardModel_alphaSnfmax);
+  alphaSuseCMW    = settingsPtr->get(Flag::SpaceShower_alphaSuseCMW);
   alphaS2pi       = 0.5 * alphaSvalue / M_PI;
 
   // Initialize alpha_strong generation.
@@ -144,17 +144,17 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
 
   // Regularization of QCD evolution for pT -> 0. Can be taken
   // same as for multiparton interactions, or be set separately.
-  useSamePTasMPI  = settingsPtr->flag("SpaceShower:samePTasMPI");
+  useSamePTasMPI  = settingsPtr->get(Flag::SpaceShower_samePTasMPI);
   if (useSamePTasMPI) {
-    pT0Ref        = settingsPtr->parm("MultipartonInteractions:pT0Ref");
-    ecmRef        = settingsPtr->parm("MultipartonInteractions:ecmRef");
-    ecmPow        = settingsPtr->parm("MultipartonInteractions:ecmPow");
-    pTmin         = settingsPtr->parm("MultipartonInteractions:pTmin");
+    pT0Ref        = settingsPtr->get(Param::MultipartonInteractions_pT0Ref);
+    ecmRef        = settingsPtr->get(Param::MultipartonInteractions_ecmRef);
+    ecmPow        = settingsPtr->get(Param::MultipartonInteractions_ecmPow);
+    pTmin         = settingsPtr->get(Param::MultipartonInteractions_pTmin);
   } else {
-    pT0Ref        = settingsPtr->parm("SpaceShower:pT0Ref");
-    ecmRef        = settingsPtr->parm("SpaceShower:ecmRef");
-    ecmPow        = settingsPtr->parm("SpaceShower:ecmPow");
-    pTmin         = settingsPtr->parm("SpaceShower:pTmin");
+    pT0Ref        = settingsPtr->get(Param::SpaceShower_pT0Ref);
+    ecmRef        = settingsPtr->get(Param::SpaceShower_ecmRef);
+    ecmPow        = settingsPtr->get(Param::SpaceShower_ecmPow);
+    pTmin         = settingsPtr->get(Param::SpaceShower_pTmin);
   }
 
   // Calculate nominal invariant mass of events. Set current pT0 scale.
@@ -175,14 +175,14 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   }
 
   // Parameters of alphaEM generation.
-  alphaEMorder    = settingsPtr->mode("SpaceShower:alphaEMorder");
+  alphaEMorder    = settingsPtr->get(Mode::SpaceShower_alphaEMorder);
 
   // Initialize alphaEM generation.
   alphaEM.init( alphaEMorder, settingsPtr);
 
   // Parameters of QED evolution.
-  pTminChgQ       = settingsPtr->parm("SpaceShower:pTminchgQ");
-  pTminChgL       = settingsPtr->parm("SpaceShower:pTminchgL");
+  pTminChgQ       = settingsPtr->get(Param::SpaceShower_pTminChgQ);
+  pTminChgL       = settingsPtr->get(Param::SpaceShower_pTminChgL);
 
   // Derived parameters of QCD evolution.
   pT20            = pow2(pT0);
@@ -191,21 +191,21 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   pT2minChgL      = pow2(pTminChgL);
 
   // Parameters of weak evolution.
-  weakMode           = settingsPtr->mode("SpaceShower:weakShowerMode");
-  pTweakCut          = settingsPtr->parm("SpaceShower:pTminWeak");
+  weakMode           = settingsPtr->get(Mode::SpaceShower_weakShowerMode);
+  pTweakCut          = settingsPtr->get(Param::SpaceShower_pTminWeak);
   pT2weakCut         = pow2(pTweakCut);
-  weakEnhancement    = settingsPtr->parm("WeakShower:enhancement");
-  singleWeakEmission = settingsPtr->flag("WeakShower:singleEmission");
-  vetoWeakJets       = settingsPtr->flag("WeakShower:vetoWeakJets");
-  vetoWeakDeltaR2    = pow2(settingsPtr->parm("weakShower:vetoWeakDeltaR"));
+  weakEnhancement    = settingsPtr->get(Param::WeakShower_enhancement);
+  singleWeakEmission = settingsPtr->get(Flag::WeakShower_singleEmission);
+  vetoWeakJets       = settingsPtr->get(Flag::WeakShower_vetoWeakJets);
+  vetoWeakDeltaR2    = pow2(settingsPtr->get(Param::WeakShower_vetoWeakDeltaR));
 
   // Various other parameters.
-  doMEcorrections    = settingsPtr->flag("SpaceShower:MEcorrections");
-  doMEafterFirst     = settingsPtr->flag("SpaceShower:MEafterFirst");
-  doPhiPolAsym       = settingsPtr->flag("SpaceShower:phiPolAsym");
-  doPhiIntAsym       = settingsPtr->flag("SpaceShower:phiIntAsym");
-  strengthIntAsym    = settingsPtr->parm("SpaceShower:strengthIntAsym");
-  nQuarkIn           = settingsPtr->mode("SpaceShower:nQuarkIn");
+  doMEcorrections    = settingsPtr->get(Flag::SpaceShower_MEcorrections);
+  doMEafterFirst     = settingsPtr->get(Flag::SpaceShower_MEafterFirst);
+  doPhiPolAsym       = settingsPtr->get(Flag::SpaceShower_phiPolAsym);
+  doPhiIntAsym       = settingsPtr->get(Flag::SpaceShower_phiIntAsym);
+  strengthIntAsym    = settingsPtr->get(Param::SpaceShower_strengthIntAsym);
+  nQuarkIn           = settingsPtr->get(Mode::SpaceShower_nQuarkIn);
 
   // Z0 and W+- properties needed for weak showers.
   mZ                 = particleDataPtr->m0(23);
@@ -216,11 +216,11 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   gammaW             = particleDataPtr->mWidth(24);
 
   // Possibility of two predetermined hard emissions in event.
-  doSecondHard       = settingsPtr->flag("SecondHard:generate");
+  doSecondHard       = settingsPtr->get(Flag::SecondHard_generate);
 
   // Optional dampening at small pT's when large multiplicities.
   enhanceScreening
-    = settingsPtr->mode("MultipartonInteractions:enhanceScreening");
+    = settingsPtr->get(Mode::MultipartonInteractions_enhanceScreening);
   if (!useSamePTasMPI) enhanceScreening = 0;
 
   // Possibility to allow user veto of emission step.

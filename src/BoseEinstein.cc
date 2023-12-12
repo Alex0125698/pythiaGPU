@@ -46,13 +46,13 @@ bool BoseEinstein::init(Info* infoPtrIn, Settings& settings,
   infoPtr         = infoPtrIn;
 
   // Main flags.
-  doPion   = settings.flag("BoseEinstein:Pion");
-  doKaon   = settings.flag("BoseEinstein:Kaon");
-  doEta    = settings.flag("BoseEinstein:Eta");
+  doPion   = settings.get(Flag::BoseEinstein_Pion);
+  doKaon   = settings.get(Flag::BoseEinstein_Kaon);
+  doEta    = settings.get(Flag::BoseEinstein_Eta);
 
   // Shape of Bose-Einstein enhancement/suppression.
-  lambda   = settings.parm("BoseEinstein:lambda");
-  QRef     = settings.parm("BoseEinstein:QRef");
+  lambda   = settings.get(Param::BoseEinstein_lambda);
+  QRef     = settings.get(Param::BoseEinstein_QRef);
 
   // Multiples and inverses (= "radii") of distance parameters in Q-space.
   QRef2    = 2. * QRef;

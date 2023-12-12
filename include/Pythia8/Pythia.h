@@ -42,6 +42,7 @@
 #include "Pythia8/SLHAinterface.h"
 #include "Pythia8/TimeShower.h"
 #include "Pythia8/UserHooks.h"
+#include "Pythia8/PythiaState.h"
 
 
 // looks like this gets defined by the Makefile somehow
@@ -64,7 +65,7 @@ public:
 
   // Constructor. (See Pythia.cc file.)
   // @@@ MAIN
-  Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
+  Pythia(stringref xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
@@ -91,7 +92,7 @@ public:
     PDF* pdfHardBPtrIn = 0, PDF* pdfPomAPtrIn = 0, PDF* pdfPomBPtrIn = 0);
 
   // Possibility to pass in pointer to external LHA-interfaced generator.
-  bool setLHAupPtr( LHAup* lhaUpPtrIn) {lhaUpPtr = lhaUpPtrIn; return true;}
+  bool setLHAupPtr( LHAup* lhaUpPtrIn) {pState.lhaUp = lhaUpPtrIn; return true;}
 
   // Possibility to pass in pointer for external handling of some decays.
   bool setDecayPtr( DecayHandler* decayHandlePtrIn,
@@ -102,7 +103,7 @@ public:
 
   // Possibility to pass in pointer for external random number generation.
   bool setRndmEnginePtr( RndmEngine* rndmEnginePtrIn)
-    { return rndm.rndmEnginePtr( rndmEnginePtrIn);}
+    { return pState.rndm.rndmEnginePtr( rndmEnginePtrIn);}
 
   // Possibility to pass in pointer for user hooks.
   bool setUserHooksPtr( UserHooks* userHooksPtrIn)
@@ -144,7 +145,7 @@ public:
 
   // Generate only a single timelike shower as in a decay.
   int forceTimeShower( int iBeg, int iEnd, double pTmax, int nBranchMax = 0)
-    { info.setScalup( 0, pTmax);
+    { pState.info.setScalup( 0, pTmax);
     return timesDecPtr->shower( iBeg, iEnd, event, pTmax, nBranchMax); }
 
   // Generate only the hadronization/decay stage.
@@ -158,11 +159,11 @@ public:
 
   // List the current Les Houches event.
   void LHAeventList(ostream& os = cout) {
-    if (lhaUpPtr != 0) lhaUpPtr->listEvent(os);}
+    if (pState.lhaUp != 0) pState.lhaUp->listEvent(os);}
 
   // Skip a number of Les Houches events at input.
   bool LHAeventSkip(int nSkip) {
-    if (lhaUpPtr != 0) return lhaUpPtr->skipEvent(nSkip); return false;}
+    if (pState.lhaUp != 0) return pState.lhaUp->skipEvent(nSkip); return false;}
 
   // Main routine to provide final statistics on generation.
   void stat();
@@ -170,10 +171,10 @@ public:
   // these wrappers should be removed
 
   // Read in settings values: shorthand, not new functionality.
-  bool   flag(stringref key) {return settings.flag(key);}
-  int    mode(stringref key) {return settings.mode(key);}
-  double parm(stringref key) {return settings.parm(key);}
-  string word(stringref key) {return settings.word(key);}
+  bool   flag(stringref key) {return pState.settings.flag(key);}
+  int    mode(stringref key) {return pState.settings.mode(key);}
+  double parm(stringref key) {return pState.settings.parm(key);}
+  string word(stringref key) {return pState.settings.word(key);}
 
   // @@@ DATA
 
@@ -186,24 +187,8 @@ public:
   // The event record for the complete event history.
   Event          event;
 
-  // Information on the generation: current subprocess and error statistics.
-  Info           info;
-
-  // Settings: databases of flags/modes/parms/words to control run.
-  Settings       settings;
-
-  // ParticleData: the particle data table/database.
-  ParticleData   particleData;
-
-  // Random number generator.
-  Rndm           rndm;
-
   // Standard Model couplings, including alphaS and alphaEM.
   Couplings      couplings;
-  Couplings*     couplingsPtr;
-
-  // SLHA Interface
-  SLHAinterface slhaInterface;
 
   // The partonic content of each subcollision system (auxiliary to event).
   PartonSystems  partonSystems;
@@ -216,6 +201,7 @@ public:
   MergingHooks*  mergingHooksPtr;
 
 private:
+public:
 
   // Copy and = constructors are made private so they cannot be used.
   Pythia(const Pythia&);
@@ -265,9 +251,7 @@ private:
   // Keep track when "new" has been used and needs a "delete" for PDF's.
   bool useNewPdfA, useNewPdfB, useNewPdfHard, useNewPdfPomA, useNewPdfPomB;
 
-  // The two incoming beams.
-  BeamParticle beamA;
-  BeamParticle beamB;
+  PythiaState pState;
 
   // Alternative Pomeron beam-inside-beam.
   BeamParticle beamPomA;
@@ -275,7 +259,6 @@ private:
 
   // LHAup object for generating external events.
   bool   doLHA, useNewLHA;
-  LHAup* lhaUpPtr;
 
   // Pointer to external decay handler and list of particles it handles.
   DecayHandler* decayHandlePtr;

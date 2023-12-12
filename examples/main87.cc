@@ -75,14 +75,14 @@ int main( int argc, char* argv[] ){
   bool isr = pythia.flag("PartonLevel:ISR");
   bool mpi = pythia.flag("PartonLevel:MPI");
   bool had = pythia.flag("HadronLevel:all");
-  pythia.settings.flag("PartonLevel:FSR",false);
-  pythia.settings.flag("PartonLevel:ISR",false);
-  pythia.settings.flag("HadronLevel:all",false);
-  pythia.settings.flag("PartonLevel:MPI",false);
+  pythia.settings.set(Flag::PartonLevel_FSR, false);
+  pythia.settings.set(Flag::PartonLevel_ISR, false);
+  pythia.settings.set(Flag::HadronLevel_all, false);
+  pythia.settings.set(Flag::PartonLevel_MPI, false);
 
   // Switch on cross section estimation procedure.
-  pythia.settings.flag("Merging:doXSectionEstimate", true);
-  pythia.settings.flag("Merging:doNL3Tree", true);
+  pythia.settings.set(Flag::Merging_doXSectionEstimate, true);
+  pythia.settings.set(Flag::Merging_doNL3Tree, true);
 
   int njetcounterLO = nMaxLO;
   string iPathTree     = iPath + "_tree";
@@ -104,9 +104,9 @@ int main( int argc, char* argv[] ){
 #endif
     string LHEfile = iPathTree + in.str();
 
-    pythia.settings.mode("Merging:nRequested", njetcounterLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Start generation loop
@@ -141,8 +141,8 @@ int main( int argc, char* argv[] ){
   cout << endl << endl << endl;
   cout << "Start estimating nl3 virtual corrections cross section" << endl;
 
-  pythia.settings.flag("Merging:doNL3Tree",false);
-  pythia.settings.flag("Merging:doNL3Loop",true);
+  pythia.settings.set(Flag::Merging_doNL3Tree, false);
+  pythia.settings.set(Flag::Merging_doNL3Loop, true);
 
   int njetcounterNLO = nMaxNLO;
   string iPathLoop= iPath + "_powheg";
@@ -162,9 +162,9 @@ int main( int argc, char* argv[] ){
 #endif
     string LHEfile = iPathLoop + in.str();
 
-    pythia.settings.mode("Merging:nRequested", njetcounterNLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterNLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Start generation loop
@@ -211,13 +211,13 @@ int main( int argc, char* argv[] ){
   cout << "k2 = " << k2 << endl;
 
   // Switch off cross section estimation.
-  pythia.settings.flag("Merging:doXSectionEstimate", false);
+  pythia.settings.set(Flag::Merging_doXSectionEstimate, false);
 
   // Switch showering and multiple interaction back on.
-  pythia.settings.flag("PartonLevel:FSR",fsr);
-  pythia.settings.flag("PartonLevel:ISR",isr);
-  pythia.settings.flag("HadronLevel:all",had);
-  pythia.settings.flag("PartonLevel:MPI",mpi);
+  pythia.settings.set(Flag::PartonLevel_FSR, fsr);
+  pythia.settings.set(Flag::PartonLevel_ISR, isr);
+  pythia.settings.set(Flag::HadronLevel_all, had);
+  pythia.settings.set(Flag::PartonLevel_MPI, mpi);
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -232,11 +232,11 @@ int main( int argc, char* argv[] ){
   double errorTotal  = 0.;
 
   // Switch on tree-level processing.
-  pythia.settings.flag("Merging:doNL3Tree",true);
-  pythia.settings.flag("Merging:doNL3Loop",false);
-  pythia.settings.flag("Merging:doNL3Subt",false);
-  pythia.settings.mode("Merging:nRecluster",0);
-  pythia.settings.mode("Merging:nRequested", -1);
+  pythia.settings.set(Flag::Merging_doNL3Tree, true);
+  pythia.settings.set(Flag::Merging_doNL3Loop, false);
+  pythia.settings.set(Flag::Merging_doNL3Subt, false);
+  pythia.settings.set(Mode::Merging_nRecluster, 0);
+  pythia.settings.set(Mode::Merging_nRequested, -1);
 
   njetcounterLO = nMaxLO;
   iPathTree     = iPath + "_tree";
@@ -244,9 +244,9 @@ int main( int argc, char* argv[] ){
   while(njetcounterLO >= 0){
 
     // Set k factors
-    pythia.settings.parm("Merging:kFactor0j", k0);
-    pythia.settings.parm("Merging:kFactor1j", k1);
-    pythia.settings.parm("Merging:kFactor2j", k2);
+    pythia.settings.set(Param::Merging_kFactor0j, k0);
+    pythia.settings.set(Param::Merging_kFactor1j, k1);
+    pythia.settings.set(Param::Merging_kFactor2j, k2);
 
     // From njetcounter, choose LHE file
     stringstream in;
@@ -260,9 +260,9 @@ int main( int argc, char* argv[] ){
          << "Start tree level treatment for " << njetcounterLO << " jets"
          << endl;
 
-    pythia.settings.mode("Merging:nRequested", njetcounterLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Remember position in vector of cross section estimates.
@@ -330,10 +330,10 @@ int main( int argc, char* argv[] ){
   cout << "Start nl3 virtual corrections part" << endl;
 
   // Switch on loop-level processing.
-  pythia.settings.flag("Merging:doNL3Tree",false);
-  pythia.settings.flag("Merging:doNL3Loop",true);
-  pythia.settings.flag("Merging:doNL3Subt",false);
-  pythia.settings.mode("Merging:nRecluster",0);
+  pythia.settings.set(Flag::Merging_doNL3Tree, false);
+  pythia.settings.set(Flag::Merging_doNL3Loop, true);
+  pythia.settings.set(Flag::Merging_doNL3Subt, false);
+  pythia.settings.set(Mode::Merging_nRecluster, 0);
 
   njetcounterNLO = nMaxNLO;
   iPathLoop      = iPath + "_powheg";
@@ -352,9 +352,9 @@ int main( int argc, char* argv[] ){
          << "Start loop level treatment for " << njetcounterNLO << " jets"
          << endl;
 
-    pythia.settings.mode("Merging:nRequested", njetcounterNLO);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterNLO);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Remember position in vector of cross section estimates.
@@ -422,11 +422,11 @@ int main( int argc, char* argv[] ){
   cout << "Shower subtractive events" << endl;
 
   // Switch on processing of counter-events.
-  pythia.settings.flag("Merging:doNL3Tree",false);
-  pythia.settings.flag("Merging:doNL3Loop",false);
-  pythia.settings.flag("Merging:doNL3Subt",true);
-  pythia.settings.mode("Merging:nRecluster",1);
-  pythia.settings.mode("Merging:nRequested", -1);
+  pythia.settings.set(Flag::Merging_doNL3Tree, false);
+  pythia.settings.set(Flag::Merging_doNL3Loop, false);
+  pythia.settings.set(Flag::Merging_doNL3Subt, true);
+  pythia.settings.set(Mode::Merging_nRecluster, 1);
+  pythia.settings.set(Mode::Merging_nRequested, -1);
 
   int nMaxCT        = nMaxNLO + 1;
   int njetcounterCT = nMaxCT;
@@ -446,9 +446,9 @@ int main( int argc, char* argv[] ){
          << "Start subtractive treatment for " << njetcounterCT << " jets"
          << endl;
 
-    pythia.settings.mode("Merging:nRequested", njetcounterCT);
-    pythia.settings.mode("Beams:frameType", 4);
-    pythia.settings.word("Beams:LHEF", LHEfile);
+    pythia.settings.set(Mode::Merging_nRequested, njetcounterCT);
+    pythia.settings.set(Mode::Beams_frameType, 4);
+    pythia.settings.set(Word::Beams_LHEF, LHEfile);
     pythia.init();
 
     // Remember position in vector of cross section estimates.

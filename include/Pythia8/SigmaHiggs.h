@@ -18,12 +18,15 @@ namespace Pythia8 {
 
 // A derived class for f fbar -> H0 (SM), H1, H2 or A3 (BSM).
 
-class Sigma1ffbar2H : public Sigma1Process {
+class Sigma1ffbar2H : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1ffbar2H(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma1ffbar2H(int higgsTypeIn) : SigmaProcess(ProcessType::P2to1), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FFBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -39,12 +42,6 @@ public:
 
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual int    resonanceA() const {return idRes;}
 
 private:
 
@@ -52,20 +49,22 @@ private:
   // and propagator expressions.
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigBW, widthOut;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType;
 };
 
 //==========================================================================
 
 // A derived class for g g -> H0 (SM), H1, H2 or A3 (BSM).
 
-class Sigma1gg2H : public Sigma1Process {
+class Sigma1gg2H : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1gg2H(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma1gg2H(int higgsTypeIn) : SigmaProcess(ProcessType::P2to1), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -82,32 +81,28 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "gg";}
-  virtual int    resonanceA() const {return idRes;}
-
 private:
 
   // A H0, H1, H2 or A3 resonance object provides coupling
   // and propagator expressions.
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigma;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType;
 };
 
 //==========================================================================
 
 // A derived class for gamma gamma -> H0 (SM Higgs), H1, H2 or A3 (BSM Higgs).
 
-class Sigma1gmgm2H : public Sigma1Process {
+class Sigma1gmgm2H : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1gmgm2H(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma1gmgm2H(int higgsTypeIn) :SigmaProcess(ProcessType::P2to1), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::GAMMAGAMMA;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -124,32 +119,32 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "gmgm";}
-  virtual int    resonanceA() const {return idRes;}
-
 private:
 
   // A H0, H1, H2 or A3 resonance object provides coupling
   // and propagator expressions.
   ParticleDataEntry* HResPtr;
   double mRes, GammaRes, m2Res, GamMRat, sigma;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType;
 };
 
 //==========================================================================
 
 // A derived class for f fbar -> H Z0.
 // (H can be H0 SM or H1, H2, A3 from BSM).
-class Sigma2ffbar2HZ : public Sigma2Process {
+class Sigma2ffbar2HZ : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2ffbar2HZ(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2ffbar2HZ(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FFBARSAME;
+    isSChannel = true;
+    id3Mass = 23;
+    id4Mass = 23;
+    gmZmode = 2;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -166,22 +161,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual bool   isSChannel() const {return true;}
-  virtual int    id3Mass()    const {return idRes;}
-  virtual int    id4Mass()    const {return 23;}
-  virtual int    resonanceA() const {return 23;}
-  virtual int    gmZmode()    const {return 2;}
-
 private:
 
   // Store Z0 mass and width.
   double mZ, widZ, mZS, mwZS, thetaWRat, sigma0, openFracPair, coup2Z;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType;
 };
 
 //==========================================================================
@@ -189,12 +173,18 @@ private:
 // A derived class for f fbar -> H W+- (Standard Model Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma2ffbar2HW : public Sigma2Process {
+class Sigma2ffbar2HW : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2ffbar2HW(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2ffbar2HW(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FFBARCHG;
+    isSChannel = true;
+    id4Mass = 24;
+    resonanceA = 24;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -211,22 +201,12 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarChg";}
-  virtual bool   isSChannel() const {return true;}
-  virtual int    id3Mass()    const {return idRes;}
-  virtual int    id4Mass()    const {return 24;}
-  virtual int    resonanceA() const {return 24;}
-
 private:
 
   // Store W+- mass and width, and couplings.
   double mW, widW, mWS, mwWS, thetaWRat, sigma0, openFracPairPos,
          openFracPairNeg, coup2W;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -234,12 +214,20 @@ private:
 // A derived class for f f' -> H f f' (Z0 Z0 fusion of SM or BSM Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma3ff2HfftZZ : public Sigma3Process {
+class Sigma3ff2HfftZZ : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma3ff2HfftZZ(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma3ff2HfftZZ(int higgsTypeIn) : SigmaProcess(ProcessType::P2to3), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FF;
+    idTchan1 = 23;
+    idTchan2 = 23;
+    tChanFracPow1 = 0.05;
+    tChanFracPow2 = 0.9;
+    useMirrorWeight = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -256,25 +244,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
-  virtual int    id3Mass() const {return idRes;}
-
-  // Instructions for 3-body phase space with t-channel propagators.
-  virtual int    idTchan1()        const {return 23;}
-  virtual int    idTchan2()        const {return 23;}
-  virtual double tChanFracPow1()   const {return 0.05;}
-  virtual double tChanFracPow2()   const {return 0.9;}
-  virtual bool   useMirrorWeight() const {return true;}
-
 private:
 
   // Store standard factors.
   double mZS, prefac, sigma1, sigma2, openFrac, coup2Z;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -282,12 +256,20 @@ private:
 // A derived class for f_1 f_2 -> H f_3 f_4 (W+ W- fusion of SM or BSM Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma3ff2HfftWW : public Sigma3Process {
+class Sigma3ff2HfftWW : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma3ff2HfftWW(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma3ff2HfftWW(int higgsTypeIn) : SigmaProcess(ProcessType::P2to3), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FF;
+    idTchan1 = 24;
+    idTchan2 = 24;
+    tChanFracPow1 = 0.05;
+    tChanFracPow2 = 0.9;
+    useMirrorWeight = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -304,25 +286,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ff";}
-  virtual int    id3Mass() const {return idRes;}
-
-  // Instructions for 3-body phase space with t-channel propagators.
-  virtual int    idTchan1()        const {return 24;}
-  virtual int    idTchan2()        const {return 24;}
-  virtual double tChanFracPow1()   const {return 0.05;}
-  virtual double tChanFracPow2()   const {return 0.9;}
-  virtual bool   useMirrorWeight() const {return true;}
-
 private:
 
   // Store standard prefactor.
   double mWS, prefac, sigma0, openFrac, coup2W;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -330,13 +298,19 @@ private:
 // A derived class for g g -> H Q Qbar (Q Qbar fusion of SM or BSM Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma3gg2HQQbar : public Sigma3Process {
+class Sigma3gg2HQQbar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma3gg2HQQbar(int idIn, int higgsTypeIn) : idNew(idIn),
-    higgsType(higgsTypeIn) {}
+  Sigma3gg2HQQbar(int idIn, int higgsTypeIn) : SigmaProcess(ProcessType::P2to3), idNew(idIn),
+    higgsType(higgsTypeIn)
+    {
+      fluxType = FluxType::GG;
+      tChanFracPow1 = 0.4;
+      tChanFracPow2 = 0.2;
+      useMirrorWeight = false;
+    }
 
   // Initialize process.
   virtual void initProc();
@@ -353,27 +327,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idRes;}
-  virtual int    id4Mass() const {return idNew;}
-  virtual int    id5Mass() const {return idNew;}
-
-  // Instructions for 3-body phase space with t-channel propagators.
-  virtual int    idTchan1()        const {return idNew;}
-  virtual int    idTchan2()        const {return idNew;}
-  virtual double tChanFracPow1()   const {return 0.4;}
-  virtual double tChanFracPow2()   const {return 0.2;}
-  virtual bool   useMirrorWeight() const {return false;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
-  int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -382,13 +340,19 @@ private:
 // A derived class for q qbar -> H Q Qbar (Q Qbar fusion of SM or BSM Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma3qqbar2HQQbar : public Sigma3Process {
+class Sigma3qqbar2HQQbar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma3qqbar2HQQbar(int idIn, int higgsTypeIn) : idNew(idIn),
-    higgsType(higgsTypeIn) {}
+  Sigma3qqbar2HQQbar(int idIn, int higgsTypeIn) : SigmaProcess(ProcessType::P2to3), idNew(idIn),
+    higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+    tChanFracPow1 = 0.4;
+    tChanFracPow2 = 0.2;
+    useMirrorWeight = false;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -405,27 +369,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idRes;}
-  virtual int    id4Mass() const {return idNew;}
-  virtual int    id5Mass() const {return idNew;}
-
-  // Instructions for 3-body phase space with t-channel propagators.
-  virtual int    idTchan1()        const {return idNew;}
-  virtual int    idTchan2()        const {return idNew;}
-  virtual double tChanFracPow1()   const {return 0.4;}
-  virtual double tChanFracPow2()   const {return 0.2;}
-  virtual bool   useMirrorWeight() const {return false;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
   double prefac, sigma, openFracTriplet, coup2Q;
-  int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -434,13 +382,16 @@ private:
 // A derived class for q g -> H q (SM or BSM Higgs).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma2qg2Hq : public Sigma2Process {
+class Sigma2qg2Hq : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qg2Hq(int idIn, int higgsTypeIn) : idNew(idIn),
-    higgsType(higgsTypeIn) {}
+  Sigma2qg2Hq(int idIn, int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), idNew(idIn),
+    higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::QG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -457,19 +408,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return idRes;}
-  virtual int    id4Mass() const {return idNew;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
   double m2W, thetaWRat, sigma, openFrac;
-  int    idNew, higgsType, codeSave, idRes;
-  string nameSave;
+  int    idNew, higgsType, idRes;
 
 };
 
@@ -478,12 +421,15 @@ private:
 // A derived class for g g -> H0 g (SM or BSM Higgs via heavy top loop).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma2gg2Hglt : public Sigma2Process {
+class Sigma2gg2Hglt : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2gg2Hglt(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2gg2Hglt(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -500,18 +446,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idRes;}
-
 private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -519,12 +458,15 @@ private:
 // A derived class for q g -> H q (SM or BSM Higgs via heavy top loop).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma2qg2Hqlt : public Sigma2Process {
+class Sigma2qg2Hqlt : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qg2Hqlt(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2qg2Hqlt(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::QG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -541,18 +483,11 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return idRes;}
-
 private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
@@ -560,12 +495,15 @@ private:
 // A derived class for q qbar -> H g (SM or BSM Higgs via heavy top loop).
 // (H can be H0 SM or H1, H2, A3 from BSM).
 
-class Sigma2qqbar2Hglt : public Sigma2Process {
+class Sigma2qqbar2Hglt : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qqbar2Hglt(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2qqbar2Hglt(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -582,30 +520,29 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idRes;}
-
 private:
 
   // Store standard prefactor.
   double widHgg, sigma, openFrac;
-  int    higgsType, codeSave, idRes;
-  string nameSave;
+  int    higgsType, idRes;
 };
 
 //==========================================================================
 
 // A derived class for f fbar' -> H+-.
 
-class Sigma1ffbar2Hchg : public Sigma1Process {
+class Sigma1ffbar2Hchg : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1ffbar2Hchg() {}
+  Sigma1ffbar2Hchg() : SigmaProcess(ProcessType::P2to1)
+  {
+    name = "f fbar' -> H+-";
+    code = 1061;
+    fluxType = FluxType::FFBARCHG;
+    resonanceA = 37;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -621,12 +558,6 @@ public:
 
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return "f fbar' -> H+-";}
-  virtual int    code()       const {return 1061;}
-  virtual string inFlux()     const {return "ffbarChg";}
-  virtual int    resonanceA() const {return 37;}
 
 private:
 
@@ -641,13 +572,18 @@ private:
 
 // A derived class for q g -> H+- q'.
 
-class Sigma2qg2Hchgq : public Sigma2Process {
+class Sigma2qg2Hchgq : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qg2Hchgq(int idIn, int codeIn, stringref nameIn) : idNew(idIn),
-    codeSave(codeIn), nameSave(nameIn) {}
+  Sigma2qg2Hchgq(int idIn, int codeIn, stringref nameIn) : SigmaProcess(ProcessType::P2to2), idNew(idIn)
+  {
+    code = codeIn;
+    name = nameIn;
+    fluxType = FluxType::QG;
+    id3Mass = 37;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -664,18 +600,10 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return 37;}
-  virtual int    id4Mass() const {return idNew;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    idNew, codeSave, idOld, idUp, idDn;
-  string nameSave;
+  int    idNew, idOld, idUp, idDn;
   double m2W, thetaWRat, tan2Beta, sigma, openFracPos, openFracNeg;
 
 };
@@ -684,12 +612,16 @@ private:
 
 // A derived class for f fbar -> A0(H_3) h0(H_1) or A0(H_3) H0(H_2).
 
-class Sigma2ffbar2A3H12 : public Sigma2Process {
+class Sigma2ffbar2A3H12 : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2ffbar2A3H12(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2ffbar2A3H12(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FFBARSAME;
+    id3Mass = 36;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -706,18 +638,10 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ffbarSame";}
-  virtual int    id3Mass() const {return 36;}
-  virtual int    id4Mass() const {return higgs12;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    higgsType, higgs12, codeSave;
-  string nameSave;
+  int    higgsType, higgs12;
   double coupZA3H12, m2Z, mGammaZ, thetaWRat, openFrac, sigma0;
 
 };
@@ -726,12 +650,16 @@ private:
 
 // A derived class for f fbar -> H+- h0(H_1) or H+- H0(H_2).
 
-class Sigma2ffbar2HchgH12 : public Sigma2Process {
+class Sigma2ffbar2HchgH12 : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2ffbar2HchgH12(int higgsTypeIn) : higgsType(higgsTypeIn) {}
+  Sigma2ffbar2HchgH12(int higgsTypeIn) : SigmaProcess(ProcessType::P2to2), higgsType(higgsTypeIn)
+  {
+    fluxType = FluxType::FFBARCHG;
+    id3Mass = 37;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -748,18 +676,10 @@ public:
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ffbarChg";}
-  virtual int    id3Mass() const {return 37;}
-  virtual int    id4Mass() const {return higgs12;}
-
 private:
 
   // Store flavour-specific process information and standard prefactor.
-  int    higgsType, higgs12, codeSave;
-  string nameSave;
+  int    higgsType, higgs12;
   double coupWHchgH12, m2W, mGammaW, thetaWRat, openFracPos, openFracNeg,
          sigma0;
 
@@ -769,12 +689,19 @@ private:
 
 // A derived class for f fbar -> H+ H-.
 
-class Sigma2ffbar2HposHneg : public Sigma2Process {
+class Sigma2ffbar2HposHneg : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2ffbar2HposHneg() {}
+  Sigma2ffbar2HposHneg() : SigmaProcess(ProcessType::P2to2)
+  {
+    name = "f fbar -> H+ H-";
+    code = 1085;
+    fluxType = FluxType::FFBARSAME;
+    id3Mass = 37;
+    id4Mass = 37;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -790,13 +717,6 @@ public:
 
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()    const {return "f fbar -> H+ H-";}
-  virtual int    code()    const {return 1085;}
-  virtual string inFlux()  const {return "ffbarSame";}
-  virtual int    id3Mass() const {return 37;}
-  virtual int    id4Mass() const {return 37;}
 
 private:
 

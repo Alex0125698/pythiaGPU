@@ -42,7 +42,7 @@ void CoupSUSY::initSUSY (SusyLesHouches* slhaPtrIn, Info* infoPtrIn,
 
   // Is NMSSM switched on?
   isNMSSM = (slhaPtr->modsel(3) != 1 ? false : true);
-  settingsPtr->flag("SLHA:NMSSM",isNMSSM);
+  settingsPtr->set(Flag::SLHA_NMSSM, isNMSSM);
   int nNeut = (isNMSSM ? 5 : 4);
   int nChar = 2;
 
@@ -58,11 +58,11 @@ void CoupSUSY::initSUSY (SusyLesHouches* slhaPtrIn, Info* infoPtrIn,
   mZ        = mZpole;
   sin2W     = sin2thetaW();
 
-  if (settingsPtr->mode("SUSY:sin2thetaWMode") == 3) {
+  if (settingsPtr->get(Mode::SUSY_sin2thetaWMode) == 3) {
     // Possibility to force on-shell sin2W definition, mostly intended for
     // cross-checks
     sin2W     = 1.0 - pow(mW/mZ,2);
-  } else if (settingsPtr->mode("SUSY:sin2thetaWMode") == 2){
+  } else if (settingsPtr->get(Mode::SUSY_sin2thetaWMode) == 2){
     // Possibility to use running sin2W definition, derived from gauge
     // couplings in running SLHA blocks (normally defined at SUSY scale)
     if(slhaPtr->gauge.exists(1) && slhaPtr->gauge.exists(2)
@@ -155,47 +155,47 @@ void CoupSUSY::initSUSY (SusyLesHouches* slhaPtrIn, Info* infoPtrIn,
   double sina = sin(alphaHiggs);
 
   // h0
-  settingsPtr->parm("HiggsH1:coup2d", -sina/cosb);
-  settingsPtr->parm("HiggsH1:coup2u",  cosa/sinb);
-  settingsPtr->parm("HiggsH1:coup2l", cosa/sinb);
-  settingsPtr->parm("HiggsH1:coup2Z", sba);
-  settingsPtr->parm("HiggsH1:coup2W", sba);
+  settingsPtr->set(Param::HiggsH1_coup2d, -sina/cosb);
+  settingsPtr->set(Param::HiggsH1_coup2u, cosa/sinb);
+  settingsPtr->set(Param::HiggsH1_coup2l, cosa/sinb);
+  settingsPtr->set(Param::HiggsH1_coup2Z, sba);
+  settingsPtr->set(Param::HiggsH1_coup2W, sba);
   // H0
-  settingsPtr->parm("HiggsH2:coup2d", cosa/cosb);
-  settingsPtr->parm("HiggsH2:coup2u", sina/sinb);
-  settingsPtr->parm("HiggsH2:coup2l", sina/sinb);
-  settingsPtr->parm("HiggsH2:coup2Z", cba);
-  settingsPtr->parm("HiggsH2:coup2W", cba);
-  settingsPtr->parm("HiggsH2:coup2H1Z", 0.0);
-  settingsPtr->parm("HiggsH2:coup2HchgW", sba);
+  settingsPtr->set(Param::HiggsH2_coup2d, cosa/cosb);
+  settingsPtr->set(Param::HiggsH2_coup2u, sina/sinb);
+  settingsPtr->set(Param::HiggsH2_coup2l, sina/sinb);
+  settingsPtr->set(Param::HiggsH2_coup2Z, cba);
+  settingsPtr->set(Param::HiggsH2_coup2W, cba);
+  settingsPtr->set(Param::HiggsH2_coup2H1Z, 0.0);
+  settingsPtr->set(Param::HiggsH2_coup2HchgW, sba);
   // A0
-  settingsPtr->parm("HiggsA3:coup2d", tanb);
-  settingsPtr->parm("HiggsA3:coup2u", cosb/sinb);
-  settingsPtr->parm("HiggsA3:coup2l", cosb/sinb);
-  settingsPtr->parm("HiggsA3:coup2Z", 0.0);
-  settingsPtr->parm("HiggsA3:coup2W", 0.0);
-  settingsPtr->parm("HiggsA3:coup2H1Z", cba);
-  settingsPtr->parm("HiggsA3:coup2H2Z", sba);
-  settingsPtr->parm("HiggsA3:coup2HchgW", 1.0);
+  settingsPtr->set(Param::HiggsA3_coup2d, tanb);
+  settingsPtr->set(Param::HiggsA3_coup2u, cosb/sinb);
+  settingsPtr->set(Param::HiggsA3_coup2l, cosb/sinb);
+  settingsPtr->set(Param::HiggsA3_coup2Z, 0.0);
+  settingsPtr->set(Param::HiggsA3_coup2W, 0.0);
+  settingsPtr->set(Param::HiggsA3_coup2H1Z, cba);
+  settingsPtr->set(Param::HiggsA3_coup2H2Z, sba);
+  settingsPtr->set(Param::HiggsA3_coup2HchgW, 1.0);
 
   // H^+
-  settingsPtr->parm("HiggsHchg:tanBeta", tanb);
-  settingsPtr->parm("HiggsHchg:coup2H1W", cba);
-  settingsPtr->parm("HiggsHchg:coup2H2W", sba);
+  settingsPtr->set(Param::HiggsHchg_tanBeta, tanb);
+  settingsPtr->set(Param::HiggsHchg_coup2H1W, cba);
+  settingsPtr->set(Param::HiggsHchg_coup2H2W, sba);
 
   // Triple higgs couplings
 
   double cbpa = cos(beta+alphaHiggs);
   double sbpa = sin(beta+alphaHiggs);
 
-  settingsPtr->parm("HiggsH1:coup2Hchg", cos(2*beta)*sbpa + 2*pow2(cosW)*sba);
-  settingsPtr->parm("HiggsH2:coup2Hchg", -cos(2*beta)*cbpa + 2*pow2(cosW)*cba);
-  settingsPtr->parm("HiggsH2:coup2H1H1", 2*sin(2*alphaHiggs)*sbpa
+  settingsPtr->set(Param::HiggsH1_coup2Hchg, cos(2*beta)*sbpa + 2*pow2(cosW)*sba);
+  settingsPtr->set(Param::HiggsH2_coup2Hchg, -cos(2*beta)*cbpa + 2*pow2(cosW)*cba);
+  settingsPtr->set(Param::HiggsH2_coup2H1H1, 2*sin(2*alphaHiggs)*sbpa
     - cos(2*alphaHiggs)*cbpa);
-  settingsPtr->parm("HiggsH2:coup2A3A3", -cos(2*beta)*cbpa);
-  settingsPtr->parm("HiggsH2:coup2A3H1", 0.0);
-  settingsPtr->parm("HiggsA3:coup2H1H1", 0.0);
-  settingsPtr->parm("HiggsA3:coup2Hchg", 0.0);
+  settingsPtr->set(Param::HiggsH2_coup2A3A3, -cos(2*beta)*cbpa);
+  settingsPtr->set(Param::HiggsH2_coup2A3H1, 0.0);
+  settingsPtr->set(Param::HiggsA3_coup2H1H1, 0.0);
+  settingsPtr->set(Param::HiggsA3_coup2Hchg, 0.0);
 
   // Shorthand for squark mixing matrices
   LHmatrixBlock<6> Ru(slhaPtr->usqmix);

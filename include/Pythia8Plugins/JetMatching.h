@@ -387,35 +387,35 @@ inline void JetMatchingAlpgen::sortTypeIdx(vector < int > &vecIn) {
 inline bool JetMatchingAlpgen::initAfterBeams() {
 
   // Read in parameters
-  doMerge         = settingsPtr->flag("JetMatching:merge");
-  jetAlgorithm    = settingsPtr->mode("JetMatching:jetAlgorithm");
-  nJet            = settingsPtr->mode("JetMatching:nJet");
-  nJetMax         = settingsPtr->mode("JetMatching:nJetMax");
-  eTjetMin        = settingsPtr->parm("JetMatching:eTjetMin");
-  coneRadius      = settingsPtr->parm("JetMatching:coneRadius");
-  etaJetMax       = settingsPtr->parm("JetMatching:etaJetMax");
-  doShowerKt      = settingsPtr->flag("JetMatching:doShowerKt");
+  doMerge         = settingsPtr->get(Flag::JetMatching_merge);
+  jetAlgorithm    = settingsPtr->get(Mode::JetMatching_jetAlgorithm);
+  nJet            = settingsPtr->get(Mode::JetMatching_nJet);
+  nJetMax         = settingsPtr->get(Mode::JetMatching_nJetMax);
+  eTjetMin        = settingsPtr->get(Param::JetMatching_eTjetMin);
+  coneRadius      = settingsPtr->get(Param::JetMatching_coneRadius);
+  etaJetMax       = settingsPtr->get(Param::JetMatching_etaJetMax);
+  doShowerKt      = settingsPtr->get(Flag::JetMatching_doShowerKt);
 
   // Use etaJetMax + coneRadius in input to jet algorithms
   etaJetMaxAlgo   = etaJetMax + coneRadius;
 
   // CellJet specific
-  nEta            = settingsPtr->mode("JetMatching:nEta");
-  nPhi            = settingsPtr->mode("JetMatching:nPhi");
-  eTseed          = settingsPtr->parm("JetMatching:eTseed");
-  eTthreshold     = settingsPtr->parm("JetMatching:eTthreshold");
+  nEta            = settingsPtr->get(Mode::JetMatching_nEta);
+  nPhi            = settingsPtr->get(Mode::JetMatching_nPhi);
+  eTseed          = settingsPtr->get(Param::JetMatching_eTseed);
+  eTthreshold     = settingsPtr->get(Param::JetMatching_eTthreshold);
 
   // SlowJet specific
-  slowJetPower    = settingsPtr->mode("JetMatching:slowJetPower");
-  coneMatchLight  = settingsPtr->parm("JetMatching:coneMatchLight");
-  coneRadiusHeavy = settingsPtr->parm("JetMatching:coneRadiusHeavy");
+  slowJetPower    = settingsPtr->get(Mode::JetMatching_slowJetPower);
+  coneMatchLight  = settingsPtr->get(Param::JetMatching_coneMatchLight);
+  coneRadiusHeavy = settingsPtr->get(Param::JetMatching_coneRadiusHeavy);
   if (coneRadiusHeavy < 0.) coneRadiusHeavy = coneRadius;
-  coneMatchHeavy  = settingsPtr->parm("JetMatching:coneMatchHeavy");
+  coneMatchHeavy  = settingsPtr->get(Param::JetMatching_coneMatchHeavy);
 
   // Matching procedure
-  jetAllow        = settingsPtr->mode("JetMatching:jetAllow");
-  jetMatch        = settingsPtr->mode("JetMatching:jetMatch");
-  exclusiveMode   = settingsPtr->mode("JetMatching:exclusive");
+  jetAllow        = settingsPtr->get(Mode::JetMatching_jetAllow);
+  jetMatch        = settingsPtr->get(Mode::JetMatching_jetMatch);
+  exclusiveMode   = settingsPtr->get(Mode::JetMatching_exclusive);
 
   // If not merging, then done
   if (!doMerge) return true;
@@ -896,7 +896,7 @@ inline int JetMatchingAlpgen::matchPartonsToJetsHeavy() {
 inline bool JetMatchingMadgraph::initAfterBeams() {
 
   // Read in Madgraph specific configuration variables
-  bool setMad    = settingsPtr->flag("JetMatching:setMad");
+  bool setMad    = settingsPtr->get(Flag::JetMatching_setMad);
 
   // If Madgraph parameters are present, then parse in MadgraphPar object
   MadgraphPar par(infoPtr);
@@ -910,8 +910,8 @@ inline bool JetMatchingMadgraph::initAfterBeams() {
   if (setMad) {
     if ( par.haveParam("xqcut")    && par.haveParam("maxjetflavor")
       && par.haveParam("alpsfact") && par.haveParam("ickkw") ) {
-      settingsPtr->flag("JetMatching:merge", par.getParam("ickkw"));
-      settingsPtr->parm("JetMatching:qCut", par.getParam("xqcut"));
+      settingsPtr->set(Flag::JetMatching_merge, par.getParam("ickkw"));
+      settingsPtr->set(Param::JetMatching_qCut, par.getParam("xqcut"));
       settingsPtr->mode("JetMatching:nQmatch",
         par.getParamAsInt("maxjetflavor"));
       settingsPtr->parm("JetMatching:clFact",
@@ -936,29 +936,29 @@ inline bool JetMatchingMadgraph::initAfterBeams() {
   }
 
   // Read in FxFx matching parameters
-  doFxFx       = settingsPtr->flag("JetMatching:doFxFx");
-  nPartonsNow  = settingsPtr->mode("JetMatching:nPartonsNow");
-  qCutME       = settingsPtr->parm("JetMatching:qCutME");
+  doFxFx       = settingsPtr->get(Flag::JetMatching_doFxFx);
+  nPartonsNow  = settingsPtr->get(Mode::JetMatching_nPartonsNow);
+  qCutME       = settingsPtr->get(Param::JetMatching_qCutME);
   qCutMESq     = pow(qCutME,2);
 
   // Read in Madgraph merging parameters
-  doMerge      = settingsPtr->flag("JetMatching:merge");
-  doShowerKt   = settingsPtr->flag("JetMatching:doShowerKt");
-  qCut         = settingsPtr->parm("JetMatching:qCut");
-  nQmatch      = settingsPtr->mode("JetMatching:nQmatch");
-  clFact       = settingsPtr->parm("JetMatching:clFact");
+  doMerge      = settingsPtr->get(Flag::JetMatching_merge);
+  doShowerKt   = settingsPtr->get(Flag::JetMatching_doShowerKt);
+  qCut         = settingsPtr->get(Param::JetMatching_qCut);
+  nQmatch      = settingsPtr->get(Mode::JetMatching_nQmatch);
+  clFact       = settingsPtr->get(Param::JetMatching_clFact);
 
   // Read in jet algorithm parameters
-  jetAlgorithm   = settingsPtr->mode("JetMatching:jetAlgorithm");
-  nJetMax        = settingsPtr->mode("JetMatching:nJetMax");
-  eTjetMin       = settingsPtr->parm("JetMatching:eTjetMin");
-  coneRadius     = settingsPtr->parm("JetMatching:coneRadius");
-  etaJetMax      = settingsPtr->parm("JetMatching:etaJetMax");
-  slowJetPower   = settingsPtr->mode("JetMatching:slowJetPower");
+  jetAlgorithm   = settingsPtr->get(Mode::JetMatching_jetAlgorithm);
+  nJetMax        = settingsPtr->get(Mode::JetMatching_nJetMax);
+  eTjetMin       = settingsPtr->get(Param::JetMatching_eTjetMin);
+  coneRadius     = settingsPtr->get(Param::JetMatching_coneRadius);
+  etaJetMax      = settingsPtr->get(Param::JetMatching_etaJetMax);
+  slowJetPower   = settingsPtr->get(Mode::JetMatching_slowJetPower);
 
   // Matching procedure
-  jetAllow       = settingsPtr->mode("JetMatching:jetAllow");
-  exclusiveMode  = settingsPtr->mode("JetMatching:exclusive");
+  jetAllow       = settingsPtr->get(Mode::JetMatching_jetAllow);
+  exclusiveMode  = settingsPtr->get(Mode::JetMatching_exclusive);
   qCutSq         = pow(qCut,2);
   etaJetMaxAlgo  = etaJetMax;
 

@@ -2017,64 +2017,64 @@ void MergingHooks::init( Settings settings, Info* infoPtrIn,
   showers               = 0;
 
   // Initialise AlphaS objects for reweighting
-  double alphaSvalueFSR = settings.parm("TimeShower:alphaSvalue");
-  int    alphaSorderFSR = settings.mode("TimeShower:alphaSorder");
-  int    alphaSnfmax    = settings.mode("StandardModel:alphaSnfmax");
-  int    alphaSuseCMWFSR= settings.flag("TimeShower:alphaSuseCMW");
+  double alphaSvalueFSR = settings.get(Param::TimeShower_alphaSvalue);
+  int    alphaSorderFSR = settings.get(Mode::TimeShower_alphaSorder);
+  int    alphaSnfmax    = settings.get(Mode::StandardModel_alphaSnfmax);
+  int    alphaSuseCMWFSR= settings.get(Flag::TimeShower_alphaSuseCMW);
   AlphaS_FSRSave.init(alphaSvalueFSR, alphaSorderFSR, alphaSnfmax,
     alphaSuseCMWFSR);
-  double alphaSvalueISR = settings.parm("SpaceShower:alphaSvalue");
-  int    alphaSorderISR = settings.mode("SpaceShower:alphaSorder");
-  int    alphaSuseCMWISR= settings.flag("SpaceShower:alphaSuseCMW");
+  double alphaSvalueISR = settings.get(Param::SpaceShower_alphaSvalue);
+  int    alphaSorderISR = settings.get(Mode::SpaceShower_alphaSorder);
+  int    alphaSuseCMWISR= settings.get(Flag::SpaceShower_alphaSuseCMW);
   AlphaS_ISRSave.init(alphaSvalueISR, alphaSorderISR, alphaSnfmax,
     alphaSuseCMWISR);
 
   // Initialise merging switches
-  doUserMergingSave      = settings.flag("Merging:doUserMerging");
+  doUserMergingSave      = settings.get(Flag::Merging_doUserMerging);
   // Initialise automated MadGraph kT merging
-  doMGMergingSave        = settings.flag("Merging:doMGMerging");
+  doMGMergingSave        = settings.get(Flag::Merging_doMGMerging);
   // Initialise kT merging
-  doKTMergingSave        = settings.flag("Merging:doKTMerging");
+  doKTMergingSave        = settings.get(Flag::Merging_doKTMerging);
   // Initialise evolution-pT merging
-  doPTLundMergingSave    = settings.flag("Merging:doPTLundMerging");
+  doPTLundMergingSave    = settings.get(Flag::Merging_doPTLundMerging);
   // Initialise \Delta_R_{ij}, pT_i Q_{ij} merging
-  doCutBasedMergingSave  = settings.flag("Merging:doCutBasedMerging");
+  doCutBasedMergingSave  = settings.get(Flag::Merging_doCutBasedMerging);
   // Initialise exact definition of kT
-  ktTypeSave             = settings.mode("Merging:ktType");
+  ktTypeSave             = settings.get(Mode::Merging_ktType);
 
   // Initialise NL3 switches.
-  doNL3TreeSave          = settings.flag("Merging:doNL3Tree");
-  doNL3LoopSave          = settings.flag("Merging:doNL3Loop");
-  doNL3SubtSave          = settings.flag("Merging:doNL3Subt");
+  doNL3TreeSave          = settings.get(Flag::Merging_doNL3Tree);
+  doNL3LoopSave          = settings.get(Flag::Merging_doNL3Loop);
+  doNL3SubtSave          = settings.get(Flag::Merging_doNL3Subt);
   bool doNL3             = doNL3TreeSave || doNL3LoopSave || doNL3SubtSave;
 
   // Initialise UNLOPS switches.
-  doUNLOPSTreeSave      =  settings.flag("Merging:doUNLOPSTree");
-  doUNLOPSLoopSave      =  settings.flag("Merging:doUNLOPSLoop");
-  doUNLOPSSubtSave      =  settings.flag("Merging:doUNLOPSSubt");
-  doUNLOPSSubtNLOSave   =  settings.flag("Merging:doUNLOPSSubtNLO");
+  doUNLOPSTreeSave      =  settings.get(Flag::Merging_doUNLOPSTree);
+  doUNLOPSLoopSave      =  settings.get(Flag::Merging_doUNLOPSLoop);
+  doUNLOPSSubtSave      =  settings.get(Flag::Merging_doUNLOPSSubt);
+  doUNLOPSSubtNLOSave   =  settings.get(Flag::Merging_doUNLOPSSubtNLO);
   bool doUNLOPS         = doUNLOPSTreeSave || doUNLOPSLoopSave
                        || doUNLOPSSubtSave || doUNLOPSSubtNLOSave;
 
   // Initialise UMEPS switches
-  doUMEPSTreeSave      =  settings.flag("Merging:doUMEPSTree");
-  doUMEPSSubtSave      =  settings.flag("Merging:doUMEPSSubt");
-  nReclusterSave       =  settings.mode("Merging:nRecluster");
-  nQuarksMergeSave     =  settings.mode("Merging:nQuarksMerge");
+  doUMEPSTreeSave      =  settings.get(Flag::Merging_doUMEPSTree);
+  doUMEPSSubtSave      =  settings.get(Flag::Merging_doUMEPSSubt);
+  nReclusterSave       =  settings.get(Mode::Merging_nRecluster);
+  nQuarksMergeSave     =  settings.get(Mode::Merging_nQuarksMerge);
   bool doUMEPS         =  doUMEPSTreeSave || doUMEPSSubtSave;
 
   // Flag to only do phase space cut.
-  doEstimateXSection   =  settings.flag("Merging:doXSectionEstimate");
+  doEstimateXSection   =  settings.get(Flag::Merging_doXSectionEstimate);
 
   // Get core process from user input
-  processSave           = settings.word("Merging:Process");
+  processSave           = settings.get(Word::Merging_Process);
 
   // Clear hard process
   hardProcess.clear();
 
   // Initialise input event.
   inputEvent.init("(hard process)", particleDataPtr);
-  doRemoveDecayProducts = settings.flag("Merging:mayRemoveDecayProducts");
+  doRemoveDecayProducts = settings.get(Flag::Merging_mayRemoveDecayProducts);
 
   // Initialise the hard process
   if ( doMGMergingSave )
@@ -2083,45 +2083,45 @@ void MergingHooks::init( Settings settings, Info* infoPtrIn,
     hardProcess.initOnProcess(processSave, particleDataPtr);
 
   // Parameters for reconstruction of evolution scales
-  includeMassiveSave        = settings.flag("Merging:includeMassive");
-  enforceStrongOrderingSave = settings.flag("Merging:enforceStrongOrdering");
-  scaleSeparationFactorSave = settings.parm("Merging:scaleSeparationFactor");
-  orderInRapiditySave       = settings.flag("Merging:orderInRapidity");
+  includeMassiveSave        = settings.get(Flag::Merging_includeMassive);
+  enforceStrongOrderingSave = settings.get(Flag::Merging_enforceStrongOrdering);
+  scaleSeparationFactorSave = settings.get(Param::Merging_scaleSeparationFactor);
+  orderInRapiditySave       = settings.get(Flag::Merging_orderInRapidity);
 
   // Parameters for choosing history probabilistically
-  nonJoinedNormSave     = settings.parm("Merging:nonJoinedNorm");
-  fsrInRecNormSave      = settings.parm("Merging:fsrInRecNorm");
-  pickByFullPSave       = settings.flag("Merging:pickByFullP");
-  pickByPoPT2Save       = settings.flag("Merging:pickByPoPT2");
-  includeRedundantSave  = settings.flag("Merging:includeRedundant");
+  nonJoinedNormSave     = settings.get(Param::Merging_nonJoinedNorm);
+  fsrInRecNormSave      = settings.get(Param::Merging_fsrInRecNorm);
+  pickByFullPSave       = settings.get(Flag::Merging_pickByFullP);
+  pickByPoPT2Save       = settings.get(Flag::Merging_pickByPoPT2);
+  includeRedundantSave  = settings.get(Flag::Merging_includeRedundant);
 
   // Parameters for scale choices
   unorderedScalePrescipSave   =
-    settings.mode("Merging:unorderedScalePrescrip");
+    settings.get(Mode::Merging_unorderedScalePrescrip);
   unorderedASscalePrescipSave =
-    settings.mode("Merging:unorderedASscalePrescrip");
+    settings.get(Mode::Merging_unorderedASscalePrescrip);
   unorderedPDFscalePrescipSave =
-    settings.mode("Merging:unorderedPDFscalePrescrip");
+    settings.get(Mode::Merging_unorderedPDFscalePrescrip);
   incompleteScalePrescipSave  =
-    settings.mode("Merging:incompleteScalePrescrip");
+    settings.get(Mode::Merging_incompleteScalePrescrip);
 
   // Parameter for allowing swapping of one colour index while reclustering
   allowColourShufflingSave  =
-    settings.flag("Merging:allowColourShuffling");
+    settings.get(Flag::Merging_allowColourShuffling);
 
   // Parameters to allow setting hard process scales to default (dynamical)
   // Pythia values.
-  resetHardQRenSave     =  settings.flag("Merging:usePythiaQRenHard");
-  resetHardQFacSave     =  settings.flag("Merging:usePythiaQFacHard");
+  resetHardQRenSave     =  settings.get(Flag::Merging_usePythiaQRenHard);
+  resetHardQFacSave     =  settings.get(Flag::Merging_usePythiaQFacHard);
 
   // Parameters for choosing history by sum(|pT|)
-  pickBySumPTSave       = settings.flag("Merging:pickBySumPT");
-  herwigAcollFSRSave    = settings.parm("Merging:aCollFSR");
-  herwigAcollISRSave    = settings.parm("Merging:aCollISR");
+  pickBySumPTSave       = settings.get(Flag::Merging_pickBySumPT);
+  herwigAcollFSRSave    = settings.get(Param::Merging_aCollFSR);
+  herwigAcollISRSave    = settings.get(Param::Merging_aCollISR);
 
   // Information on the shower cut-off scale
-  pT0ISRSave            = settings.parm("SpaceShower:pT0Ref");
-  pTcutSave             = settings.parm("SpaceShower:pTmin");
+  pT0ISRSave            = settings.get(Param::SpaceShower_pT0Ref);
+  pTcutSave             = settings.get(Param::SpaceShower_pTmin);
   pTcutSave             = max(pTcutSave,pT0ISRSave);
 
   // Initialise CKKWL weight
@@ -2134,42 +2134,42 @@ void MergingHooks::init( Settings settings, Info* infoPtrIn,
   tmsValueSave = 0.;
   tmsListSave.resize(0);
 
-  kFactor0jSave         = settings.parm("Merging:kFactor0j");
-  kFactor1jSave         = settings.parm("Merging:kFactor1j");
-  kFactor2jSave         = settings.parm("Merging:kFactor2j");
+  kFactor0jSave         = settings.get(Param::Merging_kFactor0j);
+  kFactor1jSave         = settings.get(Param::Merging_kFactor1j);
+  kFactor2jSave         = settings.get(Param::Merging_kFactor2j);
 
-  muFSave               = settings.parm("Merging:muFac");
-  muRSave               = settings.parm("Merging:muRen");
-  muFinMESave           = settings.parm("Merging:muFacInME");
-  muRinMESave           = settings.parm("Merging:muRenInME");
+  muFSave               = settings.get(Param::Merging_muFac);
+  muRSave               = settings.get(Param::Merging_muRen);
+  muFinMESave           = settings.get(Param::Merging_muFacInME);
+  muRinMESave           = settings.get(Param::Merging_muRenInME);
 
-  doWClusteringSave     = settings.flag("Merging:allowWClustering");
-  doSQCDClusteringSave  = settings.flag("Merging:allowSQCDClustering");
-  DparameterSave        = settings.parm("Merging:Dparameter");
+  doWClusteringSave     = settings.get(Flag::Merging_allowWClustering);
+  doSQCDClusteringSave  = settings.get(Flag::Merging_allowSQCDClustering);
+  DparameterSave        = settings.get(Param::Merging_Dparameter);
 
   // Save merging scale on maximal number of jets
   if (  doKTMergingSave || doUserMergingSave || doPTLundMergingSave
     || doUMEPS ) {
     // Read merging scale (defined in kT) from input parameter.
-    tmsValueSave    = settings.parm("Merging:TMS");
-    nJetMaxSave     = settings.mode("Merging:nJetMax");
+    tmsValueSave    = settings.get(Param::Merging_TMS);
+    nJetMaxSave     = settings.get(Mode::Merging_nJetMax);
     nJetMaxNLOSave  = -1;
   } else if (doMGMergingSave) {
     // Read merging scale (defined in kT) from LHE file.
     tmsValueSave    = hardProcess.tms;
-    nJetMaxSave     = settings.mode("Merging:nJetMax");
+    nJetMaxSave     = settings.get(Mode::Merging_nJetMax);
     nJetMaxNLOSave  = -1;
   } else if (doCutBasedMergingSave) {
 
     // Save list of cuts defining the merging scale.
-    nJetMaxSave     = settings.mode("Merging:nJetMax");
+    nJetMaxSave     = settings.get(Mode::Merging_nJetMax);
     nJetMaxNLOSave  = -1;
     // Write tms cut values to list of cut values,
     // ordered by DeltaR_{ij}, pT_{i}, Q_{ij}.
     tmsListSave.resize(0);
-    double drms     = settings.parm("Merging:dRijMS");
-    double ptms     = settings.parm("Merging:pTiMS");
-    double qms      = settings.parm("Merging:QijMS");
+    double drms     = settings.get(Param::Merging_dRijMS);
+    double ptms     = settings.get(Param::Merging_pTiMS);
+    double qms      = settings.get(Param::Merging_QijMS);
     tmsListSave.push_back(drms);
     tmsListSave.push_back(ptms);
     tmsListSave.push_back(qms);
@@ -2177,13 +2177,13 @@ void MergingHooks::init( Settings settings, Info* infoPtrIn,
   }
 
   if ( doNL3 || doUNLOPS || doEstimateXSection ) {
-    tmsValueSave    = settings.parm("Merging:TMS");
-    nJetMaxSave     = settings.mode("Merging:nJetMax");
-    nJetMaxNLOSave  = settings.mode("Merging:nJetMaxNLO");
+    tmsValueSave    = settings.get(Param::Merging_TMS);
+    nJetMaxSave     = settings.get(Mode::Merging_nJetMax);
+    nJetMaxNLOSave  = settings.get(Mode::Merging_nJetMaxNLO);
   }
 
   // Check if external shower plugin should be used.
-  useShowerPluginSave = settings.flag("Merging:useShowerPlugin");
+  useShowerPluginSave = settings.get(Flag::Merging_useShowerPlugin);
 
   bool writeBanner =  doKTMergingSave || doMGMergingSave
                    || doUserMergingSave

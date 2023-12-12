@@ -41,7 +41,7 @@ ProcessLevel::~ProcessLevel() {
 
 // Main routine to initialize generation process.
 
-bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
+bool ProcessLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings,
   ParticleData* particleDataPtrIn, Rndm* rndmPtrIn,
   BeamParticle* beamAPtrIn, BeamParticle* beamBPtrIn,
   Couplings* couplingsPtrIn, SigmaTotal* sigmaTotPtrIn, bool doLHA,
@@ -80,10 +80,10 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   sigmaND = sigmaTotPtr->sigmaND();
 
   // Options to allow second hard interaction and resonance decays.
-  doSecondHard  = settings.flag("SecondHard:generate");
-  doSameCuts    = settings.flag("PhaseSpace:sameForSecond");
-  doResDecays   = settings.flag("ProcessLevel:resonanceDecays");
-  startColTag   = settings.mode("Event:startColTag");
+  doSecondHard  = settings.get(Flag::SecondHard_generate);
+  doSameCuts    = settings.get(Flag::PhaseSpace_sameForSecond);
+  doResDecays   = settings.get(Flag::ProcessLevel_resonanceDecays);
+  startColTag   = settings.get(Mode::Event_startColTag);
 
   // Second interaction not to be combined with biased phase space.
   if (doSecondHard && userHooksPtr != 0
@@ -97,17 +97,17 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   Benchmark_start(ProcessLevel0init_getCuts); // trivial
 
   // Mass and pT cuts for two hard processes.
-  mHatMin1      = settings.parm("PhaseSpace:mHatMin");
-  mHatMax1      = settings.parm("PhaseSpace:mHatMax");
+  mHatMin1      = settings.get(Param::PhaseSpace_mHatMin);
+  mHatMax1      = settings.get(Param::PhaseSpace_mHatMax);
   if (mHatMax1 < mHatMin1) mHatMax1 = eCM;
-  pTHatMin1     = settings.parm("PhaseSpace:pTHatMin");
-  pTHatMax1     = settings.parm("PhaseSpace:pTHatMax");
+  pTHatMin1     = settings.get(Param::PhaseSpace_pTHatMin);
+  pTHatMax1     = settings.get(Param::PhaseSpace_pTHatMax);
   if (pTHatMax1 < pTHatMin1) pTHatMax1 = eCM;
-  mHatMin2      = settings.parm("PhaseSpace:mHatMinSecond");
-  mHatMax2      = settings.parm("PhaseSpace:mHatMaxSecond");
+  mHatMin2      = settings.get(Param::PhaseSpace_mHatMinSecond);
+  mHatMax2      = settings.get(Param::PhaseSpace_mHatMaxSecond);
   if (mHatMax2 < mHatMin2) mHatMax2 = eCM;
-  pTHatMin2     = settings.parm("PhaseSpace:pTHatMinSecond");
-  pTHatMax2     = settings.parm("PhaseSpace:pTHatMaxSecond");
+  pTHatMin2     = settings.get(Param::PhaseSpace_pTHatMinSecond);
+  pTHatMax2     = settings.get(Param::PhaseSpace_pTHatMaxSecond);
   if (pTHatMax2 < pTHatMin2) pTHatMax2 = eCM;
 
   // Check whether mass and pT ranges agree or overlap.
@@ -143,7 +143,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
   // Append single container for Les Houches processes, if any.
   if (doLHA) {
-    SigmaProcess* sigmaPtr = new SigmaLHAProcess();
+    SigmaProcess* sigmaPtr = new SigmaProcess(ProcessType::LHA);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
 
     // Store location of this container, and send in LHA pointer.
@@ -162,7 +162,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   Benchmark_start(ProcessLevel0init_addMissingSLHAblocks); // trivial
 
   // Check whether pT-based weighting in 2 -> 2 is requested.
-  if (settings.flag("PhaseSpace:bias2Selection")) {
+  if (settings.get(Flag::PhaseSpace_bias2Selection)) {
     bool bias2Sel = false;
     if (sigmaPtrs.size() == 0 && !doLHA && !doSecondHard) {
       bias2Sel = true;
@@ -202,7 +202,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     if (containerPtrs[i]->init(true, infoPtr, settings, particleDataPtr,
       rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
-      &resonanceDecays, slhaInterfacePtr, userHooksPtr)) ++numberOn;
+      &resonanceDecays, slhaInterfacePtr, userHooksPtr, pState)) ++numberOn;
 
   // Sum maxima for Monte Carlo choice.
   sigmaMaxSum = 0.;
@@ -224,7 +224,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       if (container2Ptrs[i2]->init(false, infoPtr, settings, particleDataPtr,
         rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
-        &resonanceDecays, slhaInterfacePtr, userHooksPtr)) ++number2On;
+        &resonanceDecays, slhaInterfacePtr, userHooksPtr, pState)) ++number2On;
     sigma2MaxSum = 0.;
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       sigma2MaxSum += container2Ptrs[i2]->sigmaMax();
@@ -234,7 +234,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   Benchmark_start(ProcessLevel0init_finalChecks); // trivial
 
   // Printout during initialization is optional.
-  if (settings.flag("Init:showProcesses")) {
+  if (settings.get(Flag::Init_showProcesses)) {
 
     // Construct string with incoming beams and for cm energy.
     string collision = "We collide " + particleDataPtr->name(idA)

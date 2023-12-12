@@ -30,12 +30,12 @@ namespace Pythia8 {
 void Sigma2gg2qGqGbar::initProc() {
 
   // Number of colours. Anomalous coupling kappa - 1 used for vector state.
-  nCHV         = settingsPtr->mode("HiddenValley:Ngauge");
-  kappam1      = settingsPtr->parm("HiddenValley:kappa") - 1.;
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappam1      = pState->settings.get(Param::HiddenValley_kappa) - 1.;
   hasKappa     = (abs(kappam1) > 1e-8);
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+  openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
 
 }
 
@@ -132,7 +132,7 @@ void Sigma2gg2qGqGbar::setIdColAcol() {
   setId( 21, 21, idNew, -idNew);
 
   // Two colour flow topologies.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 0, 0, 3);
   else                 setColAcol( 1, 2, 3, 1, 3, 0, 0, 2);
 
@@ -150,11 +150,11 @@ void Sigma2gg2qGqGbar::setIdColAcol() {
 void Sigma2qqbar2qGqGbar::initProc() {
 
   // Number of colours. Coupling kappa used for vector state.
-  nCHV         = settingsPtr->mode("HiddenValley:Ngauge");
-  kappa        = settingsPtr->parm("HiddenValley:kappa");
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappa        = pState->settings.get(Param::HiddenValley_kappa);
 
    // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+  openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
 
 }
 
@@ -230,19 +230,19 @@ void Sigma2qqbar2qGqGbar::setIdColAcol() {
 void Sigma2ffbar2fGfGbar::initProc() {
 
   // Charge and number of colours. Coupling kappa used for vector state.
-  if (settingsPtr->flag("HiddenValley:doKinMix"))
-    eQHV2      = pow2(settingsPtr->parm("HiddenValley:kinMix"));
+  if (pState->settings.get(Flag::HiddenValley_doKinMix))
+    eQHV2      = pow2(pState->settings.get(Param::HiddenValley_kinMix));
   else
-    eQHV2      = pow2( particleDataPtr->charge(idNew) );
-  nCHV         = settingsPtr->mode("HiddenValley:Ngauge");
-  kappa        = settingsPtr->parm("HiddenValley:kappa");
+    eQHV2      = pow2( pState->particleData.charge(idNew) );
+  nCHV         = pState->settings.get(Mode::HiddenValley_Ngauge);
+  kappa        = pState->settings.get(Param::HiddenValley_kappa);
 
   // Coloured or uncoloured particle.
-  hasColour    = (particleDataPtr->colType(idNew) != 0);
+  hasColour    = (pState->particleData.colType(idNew) != 0);
   colFac       = (hasColour) ? 3. : 1.;
 
    // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+  openFracPair = pState->particleData.resOpenFrac(idNew, -idNew);
 
 }
 
@@ -297,7 +297,7 @@ double Sigma2ffbar2fGfGbar::sigmaHat() {
   Benchmark_start(sigmaHat_gen_Sigma2ffbar2fGfGbar);
 
   // Charge and colour factors.
-  double eNow  = couplingsPtr->ef( abs(id1) );
+  double eNow  = pState->couplings->ef( abs(id1) );
   double sigma = sigma0 * pow2(eNow);
   if (abs(id1) < 9) sigma /= 3.;
 
@@ -345,13 +345,13 @@ void Sigma1ffbar2Zv::initProc() {
 
   // Store Zv mass and width for propagator.
   idZv     = 4900023;
-  mRes     = particleDataPtr->m0(idZv);
-  GammaRes = particleDataPtr->mWidth(idZv);
+  mRes     = pState->particleData.m0(idZv);
+  GammaRes = pState->particleData.mWidth(idZv);
   m2Res    = mRes*mRes;
   GamMRat  = GammaRes / mRes;
 
   // Set pointer to particle properties and decay table.
-  particlePtr = particleDataPtr->particleDataEntryPtr(idZv);
+  particlePtr = pState->particleData.particleDataEntryPtr(idZv);
 
 }
 

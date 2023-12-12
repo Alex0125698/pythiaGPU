@@ -83,7 +83,7 @@ int main() {
 
     // Tevatron/LHC initialization.
     double eCM =  (machine == 1) ? 1960. : 7000.;
-    pythia.settings.parm("Beams:eCM", eCM);
+    pythia.settings.set(Param::Beams_eCM, eCM);
     if (machine == 1) pythia.readString("Beams:idB = -2212");
     pythia.init();
 

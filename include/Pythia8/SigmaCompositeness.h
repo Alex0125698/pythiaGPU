@@ -17,12 +17,16 @@ namespace Pythia8 {
 
 // A derived class for q g -> q^* (excited quark state).
 
-class Sigma1qg2qStar : public Sigma1Process {
+class Sigma1qg2qStar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1qg2qStar(int idqIn) : idq(idqIn) {}
+  Sigma1qg2qStar(int idqIn) : SigmaProcess(ProcessType::P2to1)
+  {
+    idq = idqIn;
+    fluxType = FluxType::QG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -39,17 +43,10 @@ public:
   // Evaluate weight for q* decay angles (else inactive).
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "qg";}
-  virtual int    resonanceA() const {return idRes;}
-
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idq, idRes, codeSave;
-  string nameSave;
+  int    idq;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupFcol, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -61,12 +58,15 @@ private:
 
 // A derived class for l gamma -> l^* (excited lepton state).
 
-class Sigma1lgm2lStar : public Sigma1Process {
+class Sigma1lgm2lStar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma1lgm2lStar(int idlIn) : idl(idlIn) {}
+  Sigma1lgm2lStar(int idlIn) : SigmaProcess(ProcessType::P2to1), idl(idlIn)
+  {
+    fluxType = FluxType::FGAMMA;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -83,17 +83,10 @@ public:
   // Evaluate weight for l* decay angles (else inactive).
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "fgm";}
-  virtual int    resonanceA() const {return idRes;}
-
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  string nameSave;
+  int    idl;
   double mRes, GammaRes, m2Res, GamMRat, Lambda, coupChg, widthIn, sigBW;
 
   // Pointer to properties of the particle species, to access decay channels.
@@ -105,12 +98,15 @@ private:
 
 // A derived class for q q' -> q^* q' (excited quark state).
 
-class Sigma2qq2qStarq : public Sigma2Process {
+class Sigma2qq2qStarq : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qq2qStarq(int idqIn) : idq(idqIn) {}
+  Sigma2qq2qStarq(int idqIn) : SigmaProcess(ProcessType::P2to2), idq(idqIn)
+  {
+    fluxType = FluxType::QQ;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -128,16 +124,11 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "qq";}
-  virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idq, idRes, codeSave;
-  string nameSave;
+  int    idq;
   double Lambda, preFac, openFracPos, openFracNeg, sigmaA, sigmaB;
 
 };
@@ -146,12 +137,15 @@ private:
 
 // A derived class for q qbar -> l^* lbar (excited lepton state).
 
-class Sigma2qqbar2lStarlbar : public Sigma2Process {
+class Sigma2qqbar2lStarlbar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qqbar2lStarlbar(int idlIn) : idl(idlIn) {}
+  Sigma2qqbar2lStarlbar(int idlIn) : SigmaProcess(ProcessType::P2to2), idl(idlIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -169,16 +163,11 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "qqbarSame";}
-  virtual int    id3Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  string nameSave;
+  int    idl;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -188,12 +177,15 @@ private:
 // A derived class for q qbar -> lStar lStarBar.
 // Code contributed by Olga Igonkina.
 
-class Sigma2qqbar2lStarlStarBar: public Sigma2Process {
+class Sigma2qqbar2lStarlStarBar: public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2qqbar2lStarlStarBar(int idlIn) : idl(idlIn) {}
+  Sigma2qqbar2lStarlStarBar(int idlIn) : SigmaProcess(ProcessType::P2to2),  idl(idlIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   void initProc();
@@ -211,17 +203,11 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "qqbarSame";}
-  virtual int    id3Mass()    const {return idRes;}
-  virtual int    id4Mass()    const {return idRes;}
 
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl, idRes, codeSave;
-  string nameSave;
+  int    idl;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
@@ -231,12 +217,17 @@ private:
 // A derived class for q q -> q q (quark contact interactions).
 // Based on, Sigma2qq2qq (QCD).
 
-class Sigma2QCqq2qq : public Sigma2Process {
+class Sigma2QCqq2qq : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2QCqq2qq(){}
+  Sigma2QCqq2qq() : SigmaProcess(ProcessType::P2to2)
+  {
+    fluxType = FluxType::QQ;
+    name = "q q(bar)' -> (QC) -> q q(bar)'";
+    code = 4201;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -249,11 +240,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "q q(bar)' -> (QC) -> q q(bar)'";}
-  virtual int    code()   const {return 4201;}
-  virtual string inFlux() const {return "qq";}
 
  private:
 
@@ -272,12 +258,17 @@ public:
 // Based on, Sigma2qqbar2qqbarNew(QCD).
 // Note: This process give the same contributions for q == q' and q != q'.
 
-class Sigma2QCqqbar2qqbar : public Sigma2Process {
+class Sigma2QCqqbar2qqbar : public SigmaProcess {
 
 public:
 
   // Constructor.
-  Sigma2QCqqbar2qqbar(){}
+  Sigma2QCqqbar2qqbar() : SigmaProcess(ProcessType::P2to2)
+  {
+    fluxType = FluxType::QQBARSAME;
+    name = "q qbar -> (QC) -> q' qbar' (uds)";
+    code = 4202;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -290,11 +281,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "q qbar -> (QC) -> q' qbar' (uds)";}
-  virtual int    code()   const {return 4202;}
-  virtual string inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -318,12 +304,16 @@ public:
 // (contact interactions).
 // Does not include t-channel contributions relevant for e^+e^- to e^+e^-
 
-class Sigma2QCffbar2llbar : public Sigma2Process {
+class Sigma2QCffbar2llbar : public SigmaProcess {
 
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2QCffbar2llbar (int idIn, int codeIn) : idNew(idIn), codeNew(codeIn) {}
+  Sigma2QCffbar2llbar (int idIn, int codeIn) : SigmaProcess(ProcessType::P2to2), idNew(idIn)
+  {
+    code = codeIn;
+    fluxType = FluxType::FFBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -338,17 +328,12 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameNew;}
-  virtual int    code()       const {return codeNew;}
-  virtual string inFlux()     const {return "ffbarSame";}
   virtual bool   isSChannel() const {return true;}
 
 private:
 
   // Process values.
-  string nameNew;
-  int    idNew, codeNew;
+  int    idNew;
   double qCmNew, qCmNew2, qCmZ, qCmZ2, qCGZ, qCGZ2, sigma0;
 
   // Compositeness parameters.
