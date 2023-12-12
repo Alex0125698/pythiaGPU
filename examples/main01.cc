@@ -6,8 +6,6 @@
 // This is a simple test program. It fits on one slide in a talk.
 // It studies the charged multiplicity distribution at the LHC.
 
-#include <regex>
-
 #include "Pythia8/Pythia.h"
 #include "Pythia8/timings.h"
 using namespace Pythia8;
@@ -43,110 +41,7 @@ int main()
     
     t2.stop();
     std::cerr << "init " << t2.totalDuration << std::endl;
-
     
-    auto format = [&](std::string s)
-    {
-      // std::string tmp = std::regex_replace(s, std::regex("[\\(\\)\\[\\]\\:]"), "_");
-      return s;
-    };
-
-    {
-      auto& s = pythia.settings;
-
-      std::cout << "enum class Flag {\n";
-      for (auto& i : s.flags)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.valNow << std::endl;
-        // std::cout << i.second.valDefault << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class Mode {\n";
-      for (auto& i : s.modes)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.hasMax << std::endl;
-        // std::cout << i.second.hasMin << std::endl;
-        // std::cout << i.second.valMax << std::endl;
-        // std::cout << i.second.valMin << std::endl;
-        // std::cout << i.second.valNow << std::endl;
-        // std::cout << i.second.valDefault << std::endl;
-        // std::cout << i.second.optOnly << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class Param {\n";
-      for (auto& i : s.parms)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.hasMax << std::endl;
-        // std::cout << i.second.hasMin << std::endl;
-        // std::cout << i.second.valMax << std::endl;
-        // std::cout << i.second.valMin << std::endl;
-        // std::cout << i.second.valNow << std::endl;
-        // std::cout << i.second.valDefault << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class Word {\n";
-      for (auto& i : s.words)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.valNow << std::endl;
-        // std::cout << i.second.valDefault << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class FlagList {\n";
-      for (auto& i : s.fvecs)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // for (const auto& j : i.second.valDefault) std::cout << j << ' ';
-        // std::cout << std::endl;
-        // for (const auto& j : i.second.valNow) std::cout << j << ' ';
-        // std::cout << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class ModeList {\n";
-      for (auto& i : s.mvecs)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.hasMax << std::endl;
-        // std::cout << i.second.hasMin << std::endl;
-        // std::cout << i.second.valMax << std::endl;
-        // std::cout << i.second.valMin << std::endl;
-        // for (const auto& j : i.second.valDefault) std::cout << j << ' ';
-        // std::cout << std::endl;
-        // for (const auto& j : i.second.valNow) std::cout << j << ' ';
-        // std::cout << std::endl;
-      }
-      std::cout << "}\n\n";
-
-      std::cout << "enum class ParamList {\n";
-      for (auto& i : s.pvecs)
-      {
-        // std::cout << i.first << std::endl;
-        std::cout << "  " << format(i.second.name) << ',' << std::endl;
-        // std::cout << i.second.hasMax << std::endl;
-        // std::cout << i.second.hasMin << std::endl;
-        // std::cout << i.second.valMax << std::endl;
-        // std::cout << i.second.valMin << std::endl;
-        // for (const auto& j : i.second.valDefault) std::cout << j << ' ';
-        // std::cout << std::endl;
-        // for (const auto& j : i.second.valNow) std::cout << j << ' ';
-        // std::cout << std::endl;
-      }
-      std::cout << "}\n\n";
-    }
     
     Benchmark_stop(Everything_init);
     Benchmark_start(Everything_eventLoop);

@@ -65,7 +65,7 @@ public:
 
   // Constructor. (See Pythia.cc file.)
   // @@@ MAIN
-  Pythia(string xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
+  Pythia(stringref xmlDir = "../share/Pythia8/xmldoc", bool printBanner = true);
 
   // Destructor. (See Pythia.cc file.)
   ~Pythia();
@@ -201,6 +201,7 @@ public:
   MergingHooks*  mergingHooksPtr;
 
 private:
+public:
 
   // Copy and = constructors are made private so they cannot be used.
   Pythia(const Pythia&);
