@@ -37,7 +37,8 @@ SigmaOniaSetup::SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
   onia3S1     = settingsPtr->get(Flag::Onia_all_3S1_);
   onia3PJ     = settingsPtr->get(Flag::Onia_all_3PJ_);
   onia3DJ     = settingsPtr->get(Flag::Onia_all_3DJ_);
-  oniaFlavour = settingsPtr->flag(cat + ":all");
+  if (flavour == 4) oniaFlavour = settingsPtr->get(Flag::Charmonium_all);
+  else oniaFlavour = settingsPtr->get(Flag::Bottomonium_all);
 
   // Set the names of the matrix element settings.
   meNames3S1.push_back(cat + ":O(3S1)[3S1(1)]");
@@ -72,19 +73,22 @@ SigmaOniaSetup::SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
   qqNames3DJ.push_back(cat + ":qqbar2" + key + "(3DJ)[3PJ(8)]g");
 
   // Initialise and check all settings.
-  states3S1 = settingsPtr->mvec(cat + ":states(3S1)");
+  if (flavour == 4) states3S1 = settingsPtr->get(ModeList::Charmonium_states_3S1_);
+  else states3S1 = settingsPtr->get(ModeList::Bottomonium_states_3S1_);
   initStates("3S1", states3S1, spins3S1, valid3S1);
   initSettings("3S1", states3S1.size(), meNames3S1, mes3S1, valid3S1);
   initSettings("3S1", states3S1.size(), ggNames3S1, ggs3S1, valid3S1);
   initSettings("3S1", states3S1.size(), qgNames3S1, qgs3S1, valid3S1);
   initSettings("3S1", states3S1.size(), qqNames3S1, qqs3S1, valid3S1);
-  states3PJ = settingsPtr->mvec(cat + ":states(3PJ)");
+  if (flavour == 4) states3PJ = settingsPtr->get(ModeList::Charmonium_states_3PJ_);
+  else states3PJ = settingsPtr->get(ModeList::Bottomonium_states_3PJ_);
   initStates("3PJ", states3PJ, spins3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), meNames3PJ, mes3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), ggNames3PJ, ggs3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), qgNames3PJ, qgs3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), qqNames3PJ, qqs3PJ, valid3PJ);
-  states3DJ = settingsPtr->mvec(cat + ":states(3DJ)");
+  if (flavour == 4) states3DJ = settingsPtr->get(ModeList::Charmonium_states_3DJ_);
+  else states3DJ = settingsPtr->get(ModeList::Bottomonium_states_3DJ_);
   initStates("3DJ", states3DJ, spins3DJ, valid3DJ);
   initSettings("3DJ", states3DJ.size(), meNames3DJ, mes3DJ, valid3DJ);
   initSettings("3DJ", states3DJ.size(), ggNames3DJ, ggs3DJ, valid3DJ);
@@ -341,7 +345,7 @@ void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
-    pvecs.push_back(settingsPtr->pvec(names[i]));
+    pvecs.push_back(settingsPtr->lookupParamList(names[i]));
     if (pvecs.back().size() != size) {
       infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
                         + ":states(" + wave + ")", "is not the same size as"
@@ -361,7 +365,7 @@ void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
-    fvecs.push_back(settingsPtr->fvec(names[i]));
+    fvecs.push_back(settingsPtr->lookupFlagList(names[i]));
     if (fvecs.back().size() != size) {
       infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
                         + ":states(" + wave + ")", "is not the same size as"
@@ -384,8 +388,8 @@ void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
 void Sigma2gg2QQbar3S11g::initProc() {
 
   // Process name.
-  nameSave = "g g -> "
-    + string((codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar")
+  name = "g g -> "
+    + string((code - code%100)/100 == 4 ? "ccbar" : "bbbar")
     + "(3S1)[3S1(1)] g";
 
 }
@@ -419,7 +423,7 @@ void Sigma2gg2QQbar3S11g::setIdColAcol() {
 
   // Two orientations of colour flow.
   setColAcol( 1, 2, 2, 3, 0, 0, 1, 3);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
 
 }
 
@@ -436,10 +440,10 @@ void Sigma2gg2QQbar3PJ1g::initProc() {
 
   // Process name.
   if (jSave >= 0 && jSave <= 2)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3PJ)[3PJ(1)] "
+    name = namePrefix() + " -> " + nameMidfix() + "(3PJ)[3PJ(1)] "
       + namePostfix();
   else
-    nameSave = "illegal process";
+    name = "illegal process";
 
 }
 
@@ -502,7 +506,7 @@ void Sigma2gg2QQbar3PJ1g::setIdColAcol() {
 
   // Two orientations of colour flow.
   setColAcol( 1, 2, 2, 3, 0, 0, 1, 3);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
 
 }
 
@@ -614,10 +618,10 @@ void Sigma2gg2QQbar3DJ1g::initProc() {
 
   // Process name.
   if (jSave >= 1 && jSave <= 3)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3DJ)[3DJ(1)] "
+    name = namePrefix() + " -> " + nameMidfix() + "(3DJ)[3DJ(1)] "
       + namePostfix();
   else
-    nameSave = "illegal process";
+    name = "illegal process";
 
 }
 
@@ -787,7 +791,7 @@ void Sigma2gg2QQbarX8g::initProc() {
   // Return for illegal process.
   if (stateSave < 0 || stateSave > 2) {
     idHad = 0;
-    nameSave = "illegal process";
+    name = "illegal process";
     return;
   }
 
@@ -822,37 +826,37 @@ void Sigma2gg2QQbarX8g::initProc() {
   if (stateSave == 0) stateName = "[3S1(8)]";
   else if (stateSave == 1) stateName = "[1S0(8)]";
   else if (stateSave == 2) stateName = "[3PJ(8)]";
-  nameSave = namePrefix() + " -> " + (digits[1] == 4 ? "ccbar" : "bbbar")
+  name = namePrefix() + " -> " + (digits[1] == 4 ? "ccbar" : "bbbar")
     + "(" + sName.str() + lName + jName.str() + ")" + stateName
     + " " + namePostfix();
 
   // Ensure the dummy particle for the colour-octet state is valid.
   int idOct = 9900000 + digits[1]*10000 + stateSave*1000 + digits[5]*100
     + digits[4]*10 + digits[0];
-  double m0     = particleDataPtr->m0(idHad) + abs(mSplit);
+  double m0     = pState->particleData.m0(idHad) + abs(mSplit);
   double mWidth = 0.0;
-  if (!particleDataPtr->isParticle(idOct)) {
-    string nameOct    = particleDataPtr->name(idHad) + stateName;
+  if (!pState->particleData.isParticle(idOct)) {
+    string nameOct    = pState->particleData.name(idHad) + stateName;
     int    spinType   = stateSave == 1 ? 1 : 3;
-    int    chargeType = particleDataPtr->chargeType(idHad);
+    int    chargeType = pState->particleData.chargeType(idHad);
     int    colType    = 2;
-    particleDataPtr->addParticle(idOct, nameOct, spinType, chargeType, colType,
+    pState->particleData.addParticle(idOct, nameOct, spinType, chargeType, colType,
                                  m0, mWidth, m0, m0);
-    ParticleDataEntry* entry = particleDataPtr->particleDataEntryPtr(idOct);
+    ParticleDataEntry* entry = pState->particleData.particleDataEntryPtr(idOct);
     if (entry) entry->addChannel(1, 1.0, 0, idHad, 21);
-  } else if (mSplit > 0 && abs(particleDataPtr->m0(idOct) - m0) > 1E-5) {
-    particleDataPtr->m0(idOct, m0);
-    particleDataPtr->mWidth(idOct, mWidth);
-    particleDataPtr->mMin(idOct, m0);
-    particleDataPtr->mMax(idOct, m0);
-  } else if (particleDataPtr->m0(idOct) <= particleDataPtr->m0(idHad)) {
-    infoPtr->errorMsg("Warning in Sigma2gg2QQbarX8g::initProc: mass of "
+  } else if (mSplit > 0 && abs(pState->particleData.m0(idOct) - m0) > 1E-5) {
+    pState->particleData.m0(idOct, m0);
+    pState->particleData.mWidth(idOct, mWidth);
+    pState->particleData.mMin(idOct, m0);
+    pState->particleData.mMax(idOct, m0);
+  } else if (pState->particleData.m0(idOct) <= pState->particleData.m0(idHad)) {
+    pState->info.errorMsg("Warning in Sigma2gg2QQbarX8g::initProc: mass of "
                       "intermediate colour-octet state"
                       "increased to be greater than the physical state");
-    particleDataPtr->m0(idOct, m0);
-    particleDataPtr->mWidth(idOct, mWidth);
-    particleDataPtr->mMin(idOct, m0);
-    particleDataPtr->mMax(idOct, m0);
+    pState->particleData.m0(idOct, m0);
+    pState->particleData.mWidth(idOct, mWidth);
+    pState->particleData.mMin(idOct, m0);
+    pState->particleData.mMax(idOct, m0);
   }
   idHad = idOct;
 
@@ -938,12 +942,12 @@ void Sigma2gg2QQbarX8g::setIdColAcol() {
   double sigSum = sigTS + sigUS + sigTU;
 
   // Three colour flow topologies, each with two orientations.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 2, 2, 3, 1, 4, 4, 3);
   else if (sigRand < sigTS + sigUS)
                        setColAcol( 1, 2, 3, 1, 3, 4, 4, 2);
   else                 setColAcol( 1, 2, 3, 4, 1, 4, 3, 2);
-  if (rndmPtr->flat() > 0.5) swapColAcol();
+  if (pState->rndm.flat() > 0.5) swapColAcol();
 
 }
 
@@ -1004,7 +1008,7 @@ void Sigma2qg2QQbarX8q::setIdColAcol() {
   double sigSum = sigTS + sigTU;
 
   // Two colour flow topologies. Swap if first is gluon, or when antiquark.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 0, 2, 1, 2, 3, 3, 0);
   else                 setColAcol( 1, 0, 2, 3, 1, 3, 2, 0);
   if (id1 == 21) swapCol12();
@@ -1065,7 +1069,7 @@ void Sigma2qqbar2QQbarX8g::setIdColAcol() {
   double sigSum = sigTS + sigUS;
 
   // Two colour flow topologies. Swap if first is antiquark.
-  double sigRand = sigSum * rndmPtr->flat();
+  double sigRand = sigSum * pState->rndm.flat();
   if (sigRand < sigTS) setColAcol( 1, 0, 0, 2, 1, 3, 3, 2);
   else                 setColAcol( 1, 0, 0, 2, 3, 2, 1, 3);
   if (id1 < 0) swapColAcol();

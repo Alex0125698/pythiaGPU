@@ -1356,6 +1356,11 @@ public: // public functions
 
   void restoreDefault();
 
+public: // backwards compatibility
+
+  const vector<bool>& lookupFlagList(stringref name);
+  const vector<double>& lookupParamList(stringref name);
+
 public: // private functions
 
   // adds the appropriate setting using string (default,min,max)

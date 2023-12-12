@@ -1629,6 +1629,18 @@ void Settings::restoreDefault()
   for (size_t i=0; i<(int)ParamList::END; ++i) restoreDefault((ParamList)i);
 }
 
+// ----- backwards compatibility -----
+
+  const vector<bool>& Settings::lookupFlagList(stringref name)
+  {
+    return flagListValue[(int)FlagListMap.at(name)];
+  }
+
+  const vector<double>& Settings::lookupParamList(stringref name)
+  {
+    return paramListValue[(int)ParamListMap.at(name)];
+  }
+
 // ----- private functions -----
 
 void Settings::addFlag(stringref name, bool defaultVal)

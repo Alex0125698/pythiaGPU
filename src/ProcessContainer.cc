@@ -1316,20 +1316,20 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
-  // // Set up requested objects for onia production.
-  // charmonium = SigmaOniaSetup(infoPtr, &settings, particleDataPtr, 4);
-  // bottomonium = SigmaOniaSetup(infoPtr, &settings, particleDataPtr, 5);
-  // vector<SigmaProcess*> charmoniumSigmaPtrs, bottomoniumSigmaPtrs;
-  // charmonium.setupSigma2gg(charmoniumSigmaPtrs);
-  // charmonium.setupSigma2qg(charmoniumSigmaPtrs);
-  // charmonium.setupSigma2qq(charmoniumSigmaPtrs);
-  // bottomonium.setupSigma2gg(bottomoniumSigmaPtrs);
-  // bottomonium.setupSigma2qg(bottomoniumSigmaPtrs);
-  // bottomonium.setupSigma2qq(bottomoniumSigmaPtrs);
-  // for (unsigned int i = 0; i < charmoniumSigmaPtrs.size(); ++i)
-  //   containerPtrs.push_back( new ProcessContainer(charmoniumSigmaPtrs[i]) );
-  // for (unsigned int i = 0; i < bottomoniumSigmaPtrs.size(); ++i)
-  //   containerPtrs.push_back( new ProcessContainer(bottomoniumSigmaPtrs[i]) );
+  // Set up requested objects for onia production.
+  charmonium = SigmaOniaSetup(infoPtr, &settings, particleDataPtr, 4);
+  bottomonium = SigmaOniaSetup(infoPtr, &settings, particleDataPtr, 5);
+  vector<SigmaProcess*> charmoniumSigmaPtrs, bottomoniumSigmaPtrs;
+  charmonium.setupSigma2gg(charmoniumSigmaPtrs);
+  charmonium.setupSigma2qg(charmoniumSigmaPtrs);
+  charmonium.setupSigma2qq(charmoniumSigmaPtrs);
+  bottomonium.setupSigma2gg(bottomoniumSigmaPtrs);
+  bottomonium.setupSigma2qg(bottomoniumSigmaPtrs);
+  bottomonium.setupSigma2qq(bottomoniumSigmaPtrs);
+  for (unsigned int i = 0; i < charmoniumSigmaPtrs.size(); ++i)
+    containerPtrs.push_back( new ProcessContainer(charmoniumSigmaPtrs[i]) );
+  for (unsigned int i = 0; i < bottomoniumSigmaPtrs.size(); ++i)
+    containerPtrs.push_back( new ProcessContainer(bottomoniumSigmaPtrs[i]) );
 
   // Set up requested objects for top production.
   bool tops = settings.get(Flag::Top_all);
@@ -2624,25 +2624,25 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
-  // // Charmonium.
-  // if (settings.get(Flag::SecondHard_Charmonium)) {
-  //   vector<SigmaProcess*> charmoniumSigmaPtrs;
-  //   charmonium.setupSigma2gg(charmoniumSigmaPtrs, true);
-  //   charmonium.setupSigma2qg(charmoniumSigmaPtrs, true);
-  //   charmonium.setupSigma2qq(charmoniumSigmaPtrs, true);
-  //   for (unsigned int i = 0; i < charmoniumSigmaPtrs.size(); ++i)
-  //     container2Ptrs.push_back( new ProcessContainer(charmoniumSigmaPtrs[i]));
-  // }
+  // Charmonium.
+  if (settings.get(Flag::SecondHard_Charmonium)) {
+    vector<SigmaProcess*> charmoniumSigmaPtrs;
+    charmonium.setupSigma2gg(charmoniumSigmaPtrs, true);
+    charmonium.setupSigma2qg(charmoniumSigmaPtrs, true);
+    charmonium.setupSigma2qq(charmoniumSigmaPtrs, true);
+    for (unsigned int i = 0; i < charmoniumSigmaPtrs.size(); ++i)
+      container2Ptrs.push_back( new ProcessContainer(charmoniumSigmaPtrs[i]));
+  }
 
-  // // Bottomonium.
-  // if (settings.get(Flag::SecondHard_Bottomonium)) {
-  //   vector<SigmaProcess*> bottomoniumSigmaPtrs;
-  //   bottomonium.setupSigma2gg(bottomoniumSigmaPtrs, true);
-  //   bottomonium.setupSigma2qg(bottomoniumSigmaPtrs, true);
-  //   bottomonium.setupSigma2qq(bottomoniumSigmaPtrs, true);
-  //   for (unsigned int i = 0; i < bottomoniumSigmaPtrs.size(); ++i)
-  //     container2Ptrs.push_back( new ProcessContainer(bottomoniumSigmaPtrs[i]));
-  // }
+  // Bottomonium.
+  if (settings.get(Flag::SecondHard_Bottomonium)) {
+    vector<SigmaProcess*> bottomoniumSigmaPtrs;
+    bottomonium.setupSigma2gg(bottomoniumSigmaPtrs, true);
+    bottomonium.setupSigma2qg(bottomoniumSigmaPtrs, true);
+    bottomonium.setupSigma2qq(bottomoniumSigmaPtrs, true);
+    for (unsigned int i = 0; i < bottomoniumSigmaPtrs.size(); ++i)
+      container2Ptrs.push_back( new ProcessContainer(bottomoniumSigmaPtrs[i]));
+  }
 
   // A single gamma*/Z0.
   if (settings.get(Flag::SecondHard_SingleGmZ)) {
