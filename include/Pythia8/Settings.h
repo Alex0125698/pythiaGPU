@@ -303,6 +303,7 @@ public:
   void resetPVec(stringref keyIn);
 
 private:
+public:
 
   // Pointer to various information on the generation.
   Info* infoPtr;
@@ -347,7 +348,7 @@ private:
   void initTunePP(int ppTune);
 
   // Useful functions for string handling.
-  string toLower(stringref name);
+  // string toLower(stringref name);
   bool   boolString(stringref tag);
   string attributeValue(stringref line, stringref attribute);
   bool   boolAttributeValue(stringref line, stringref attribute);

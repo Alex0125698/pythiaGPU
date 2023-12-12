@@ -627,7 +627,7 @@ void ProcessLevel::statistics(bool reset, ostream& os) {
     int code = i->first;
     os << " | " << left << setw(45) << i->second
        << right << setw(5) << code << " | "
-       << setw(11) << nTryM[code] << " " << setw(10) << nSelM[code] << " "
+       << setw(11) << nTryM[code] << ' ' << setw(10) << nSelM[code] << ' '
        << setw(10) << nAccM[code] << " | " << scientific << setprecision(3)
        << setw(11) << sigmaM[code]
        << setw(11) << sqrtpos(delta2M[code]) << " |\n";
@@ -638,8 +638,8 @@ void ProcessLevel::statistics(bool reset, ostream& os) {
     ProcessContainer *ptr = lheContainerPtrs[i];
     os << " | " << left << setw(45) << ptr->name()
        << right << setw(5) << ptr->code() << " | "
-       << setw(11) << ptr->nTried() << " " << setw(10) << ptr->nSelected()
-       << " " << setw(10) << ptr->nAccepted() << " | " << scientific
+       << setw(11) << ptr->nTried() << ' ' << setw(10) << ptr->nSelected()
+       << ' ' << setw(10) << ptr->nAccepted() << " | " << scientific
        << setprecision(3) << setw(11) << ptr->sigmaMC() << setw(11)
        << ptr->deltaMC() << " |\n";
 
@@ -647,7 +647,7 @@ void ProcessLevel::statistics(bool reset, ostream& os) {
     for (int j = 0; j < ptr->codeLHASize(); ++j)
       os << " |    ... whereof user classification code " << setw(10)
          << ptr->subCodeLHA(j) << " | " << setw(11) << ptr->nTriedLHA(j)
-         << " " << setw(10) << ptr->nSelectedLHA(j) << " " << setw(10)
+         << ' ' << setw(10) << ptr->nSelectedLHA(j) << ' ' << setw(10)
          << ptr->nAcceptedLHA(j) << " |                        | \n";
   }
 
@@ -655,7 +655,7 @@ void ProcessLevel::statistics(bool reset, ostream& os) {
   os << " |                                                    |       "
      << "                            |                        |\n"
      << " | " << left << setw(50) << "sum" << right << " | " << setw(11)
-     << nTrySum << " " << setw(10) << nSelSum << " " << setw(10)
+     << nTrySum << ' ' << setw(10) << nSelSum << ' ' << setw(10)
      << nAccSum << " | " << scientific << setprecision(3) << setw(11)
      << sigmaSum << setw(11) << sqrtpos(delta2Sum) << " |\n";
 
@@ -1388,7 +1388,7 @@ void ProcessLevel::statistics2(bool reset, ostream& os) {
     int code = i->first;
     os << " | " << left << setw(40) << i->second
        << right << setw(5) << code << " | "
-       << setw(11) << nTryM[code] << " " << setw(10) << nSelM[code] << " "
+       << setw(11) << nTryM[code] << ' ' << setw(10) << nSelM[code] << ' '
        << setw(10) << nAccM[code] << " | " << scientific << setprecision(3)
        << setw(11) << sigmaM[code]
        << setw(11) << sqrtpos(delta2M[code]) << " |\n";
@@ -1399,7 +1399,7 @@ void ProcessLevel::statistics2(bool reset, ostream& os) {
   os << " |                                               |            "
      << "                       |                        |\n"
      << " | " << left << setw(45) << "sum" << right << " | " << setw(11)
-     << nTrySum << " " << setw(10) << nSelSum << " " << setw(10)
+     << nTrySum << ' ' << setw(10) << nSelSum << ' ' << setw(10)
      << nAccSum << " | " << scientific << setprecision(3) << setw(11)
      << sigmaSum << setw(11) << sqrtpos(delta2Sum) << " |\n";
 
@@ -1456,7 +1456,7 @@ void ProcessLevel::statistics2(bool reset, ostream& os) {
     int code = i2->first;
     os << " | " << left << setw(40) << i2->second
        << right << setw(5) << code << " | "
-       << setw(11) << nTryM[code] << " " << setw(10) << nSelM[code] << " "
+       << setw(11) << nTryM[code] << ' ' << setw(10) << nSelM[code] << ' '
        << setw(10) << nAccM[code] << " | " << scientific << setprecision(3)
        << setw(11) << sigmaM[code]
        << setw(11) << sqrtpos(delta2M[code]) << " |\n";
@@ -1467,7 +1467,7 @@ void ProcessLevel::statistics2(bool reset, ostream& os) {
   os << " |                                               |            "
      << "                       |                        |\n"
      << " | " << left << setw(45) << "sum" << right << " | " << setw(11)
-     << nTrySum << " " << setw(10) << nSelSum << " " << setw(10)
+     << nTrySum << ' ' << setw(10) << nSelSum << ' ' << setw(10)
      << nAccSum << " | " << scientific << setprecision(3) << setw(11)
      << sigmaSum << setw(11) << sqrtpos(delta2Sum) << " |\n";
 

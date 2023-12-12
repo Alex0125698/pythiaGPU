@@ -3257,7 +3257,7 @@ bool PhaseSpace2to3diffractive::trialKin( bool, bool ) {
         if (P > dpepmax) {
           ostringstream osWarn;
           osWarn << "dpepmax = " << scientific << setprecision(3)
-                 << dpepmax << " " << P << " " << dy << endl;
+                 << dpepmax << ' ' << P << ' ' << dy << endl;
           infoPtr->errorMsg("Warning in PhaseSpace2to2diffractive::"
             "trialKin for central diffraction:", osWarn.str());
         }

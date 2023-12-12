@@ -191,7 +191,7 @@ vector<int> Info::codesHard() {
 
   // Print message the first few times.
   if (times < TIMESTOPRINT || showAlways) os << " PYTHIA "
-    << messageIn << " " << extraIn << endl;
+    << messageIn << ' ' << extraIn << endl;
 
 }
 

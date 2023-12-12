@@ -559,8 +559,8 @@ double REtaPhi(Vec4ref v1, Vec4ref v2) {
 // Print a four-vector: also operator overloading with friend.
 
 ostream& operator<<(ostream& os, Vec4ref v) {
-  os << fixed << setprecision(3) << " " << setw(9) << v.xx << " "
-     << setw(9) << v.yy << " " << setw(9) << v.zz << " " << setw(9)
+  os << fixed << setprecision(3) << ' ' << setw(9) << v.xx << ' '
+     << setw(9) << v.yy << ' ' << setw(9) << v.zz << ' ' << setw(9)
      << v.tt << " (" << setw(9) << v.mCalc() << ")\n";
   return os;
 }
@@ -938,7 +938,7 @@ ostream& operator<<(ostream& os, const Hist& h) {
       for (int iCol = 0; iCol < nCol ; ++iCol) {
         if (iRow == row[iCol])                  os << NUMBER[frac[iCol]];
         else if (iRow * (row[iCol] - iRow) > 0) os << NUMBER[10];
-        else                                    os << " ";
+        else                                    os << ' ';
       } os << "\n";
     } os << "\n";
 
@@ -947,8 +947,8 @@ ostream& operator<<(ostream& os, const Hist& h) {
     int iPowBin = int(floor(maxim + 0.0001));
     os << "          Contents  ";
     for (int iCol = 0; iCol < nCol ; ++iCol) {
-      if (resCol[iCol] < - pow(10., iPowBin - 4)) os << "-";
-      else os << " ";
+      if (resCol[iCol] < - pow(10., iPowBin - 4)) os << '-';
+      else os << ' ';
       row[iCol] = int(abs(resCol[iCol]) * pow(10., 3 - iPowBin) + 0.5);
     } os << "\n";
     for (int iRow = 3; iRow >= 0; iRow--) {
@@ -964,8 +964,8 @@ ostream& operator<<(ostream& os, const Hist& h) {
     int iPowExp = int(floor(maxim + 0.0001));
     os << "          Low edge  ";
     for (int iCol = 0; iCol < nCol ; ++iCol) {
-      if (h.xMin + iCol * nGroup * h.dx < - pow(10., iPowExp - 3)) os << "-";
-      else os << " ";
+      if (h.xMin + iCol * nGroup * h.dx < - pow(10., iPowExp - 3)) os << '-';
+      else os << ' ';
       row[iCol] = int(abs(h.xMin + iCol * nGroup * h.dx)
         * pow(10., 2 - iPowExp) + 0.5);
     } os << "\n";

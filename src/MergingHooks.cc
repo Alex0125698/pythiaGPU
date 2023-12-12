@@ -1942,12 +1942,12 @@ void HardProcess::list() const {
   cout << " \t " << hardIncoming1 << " + " << hardIncoming2;
   cout << " \t -----> \t ";
   for(int i =0; i < int(hardIntermediate.size());++i)
-    cout << hardIntermediate[i] << " ";
+    cout << hardIntermediate[i] << ' ';
   cout << " \t -----> \t ";
   for(int i =0; i < int(hardOutgoing1.size());++i)
-    cout << hardOutgoing1[i] << " ";
+    cout << hardOutgoing1[i] << ' ';
   for(int i =0; i < int(hardOutgoing2.size());++i)
-    cout << hardOutgoing2[i] << " ";
+    cout << hardOutgoing2[i] << ' ';
   cout << endl;
 }
 
@@ -1961,12 +1961,12 @@ void HardProcess::listCandidates() const {
   cout << " \t " << hardIncoming1 << " + " << hardIncoming2;
   cout << " \t -----> \t ";
   for(int i =0; i < int(PosIntermediate.size());++i)
-    cout << PosIntermediate[i] << " ";
+    cout << PosIntermediate[i] << ' ';
   cout << " \t -----> \t ";
   for(int i =0; i < int(PosOutgoing1.size());++i)
-    cout << PosOutgoing1[i] << " ";
+    cout << PosOutgoing1[i] << ' ';
   for(int i =0; i < int(PosOutgoing2.size());++i)
-    cout << PosOutgoing2[i] << " ";
+    cout << PosOutgoing2[i] << ' ';
   cout << endl;
 }
 

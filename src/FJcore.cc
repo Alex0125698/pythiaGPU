@@ -749,8 +749,8 @@ public:
 			    const std::vector<Coord2D> & new_positions,
 			    std::vector<unsigned int> & new_IDs);
   inline void print_tree_depths(std::ostream & outdev) const {
-    outdev    << _trees[0]->max_depth() << " "
-	      << _trees[1]->max_depth() << " "
+    outdev    << _trees[0]->max_depth() << ' '
+	      << _trees[1]->max_depth() << ' '
 	      << _trees[2]->max_depth() << "\n";
   };
   unsigned int size();
@@ -1611,16 +1611,16 @@ vector<PseudoJet> ClusterSequence::constituents (const PseudoJet & jet) const {
 void ClusterSequence::print_jets_for_root(const std::vector<PseudoJet> & jets_in,
                                           ostream & ostr) const {
   for (unsigned i = 0; i < jets_in.size(); i++) {
-    ostr << i  << " "
-         << jets_in[i].px() << " "
-         << jets_in[i].py() << " "
-         << jets_in[i].pz() << " "
+    ostr << i  << ' '
+         << jets_in[i].px() << ' '
+         << jets_in[i].py() << ' '
+         << jets_in[i].pz() << ' '
          << jets_in[i].E() << endl;
     vector<PseudoJet> cst = constituents(jets_in[i]);
     for (unsigned j = 0; j < cst.size() ; j++) {
-      ostr << " " << j << " "
-           << cst[j].rap() << " "
-           << cst[j].phi() << " "
+      ostr << ' ' << j << ' '
+           << cst[j].rap() << ' '
+           << cst[j].phi() << ' '
            << cst[j].perp() << endl;
     }
     ostr << "#END" << endl;
@@ -3284,7 +3284,7 @@ double PseudoJet::operator () (int i) const {
     return e();
   default:
     ostringstream err;
-    err << "PseudoJet subscripting: bad index (" << i << ")";
+    err << "PseudoJet subscripting: bad index (" << i << ')';
     throw Error(err.str());
   }
   return 0.;
@@ -3772,7 +3772,7 @@ public:
   }
   virtual string description() const {
     ostringstream ostr;
-    ostr << "!(" << _s.description() << ")";
+    ostr << "!(" << _s.description() << ')';
     return ostr.str();
   }
   virtual bool is_geometric() const { return _s.is_geometric();}
@@ -3836,7 +3836,7 @@ public:
   }
   virtual string description() const {
     ostringstream ostr;
-    ostr << "(" << _s1.description() << " && " << _s2.description() << ")";
+    ostr << '(' << _s1.description() << " && " << _s2.description() << ')';
     return ostr.str();
   }
 };
@@ -3869,7 +3869,7 @@ public:
   }
   virtual string description() const {
     ostringstream ostr;
-    ostr << "(" << _s1.description() << " || " << _s2.description() << ")";
+    ostr << '(' << _s1.description() << " || " << _s2.description() << ')';
     return ostr.str();
   }
   virtual void get_rapidity_extent(double & rapmin, double & rapmax) const {
@@ -3897,7 +3897,7 @@ public:
   }
   virtual string description() const {
     ostringstream ostr;
-    ostr << "(" << _s1.description() << " * " << _s2.description() << ")";
+    ostr << '(' << _s1.description() << " * " << _s2.description() << ')';
     return ostr.str();
   }
 };
