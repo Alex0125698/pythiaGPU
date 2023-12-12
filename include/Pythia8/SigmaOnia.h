@@ -4,7 +4,7 @@
 // Please respect the MCnet Guidelines, see GUIDELINES for details.
 
 // Header file for charmonia/bottomonia process differential cross sections.
-// Contains classes derived from SigmaProcess via Sigma2Process.
+// Contains classes derived from SigmaProcess via SigmaProcess.
 
 #ifndef Pythia8_SigmaOnia_H
 #define Pythia8_SigmaOnia_H
@@ -70,13 +70,18 @@ private:
 
 // A derived class for g g -> QQbar[3S1(1)] g (Q = c or b).
 
-class Sigma2gg2QQbar3S11g : public Sigma2Process {
+class Sigma2gg2QQbar3S11g : public SigmaProcess {
 
 public:
 
   // Constructor.
   Sigma2gg2QQbar3S11g(int idHadIn, double oniumMEIn, int codeIn) :
-    idHad(abs(idHadIn)), codeSave(codeIn), oniumME(oniumMEIn) {}
+    idHad(abs(idHadIn)), oniumME(oniumMEIn), SigmaProcess(ProcessType::P2to2)
+  {
+    code = codeIn;
+    id3Mass = idHad;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -90,17 +95,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idHad;}
-
  private:
 
   // Values stored for process type and colour flow selection.
-  int    idHad, codeSave;
-  string nameSave;
+  int    idHad;
   double oniumME, sigma;
 
 };
@@ -109,13 +107,18 @@ public:
 
 // A derived class for g g -> QQbar[3PJ(1)] g (Q = c or b, J = 0, 1 or 2).
 
-class Sigma2gg2QQbar3PJ1g : public Sigma2Process {
+class Sigma2gg2QQbar3PJ1g : public SigmaProcess {
 
 public:
 
   // Constructor.
   Sigma2gg2QQbar3PJ1g(int idHadIn, double oniumMEIn, int jIn, int codeIn) :
-    idHad(idHadIn), jSave(jIn), codeSave(codeIn), oniumME(oniumMEIn) {}
+    idHad(idHadIn), jSave(jIn), oniumME(oniumMEIn), SigmaProcess(ProcessType::P2to2)
+  {
+    fluxType = FluxType::GG;
+    id3Mass = idHad;
+    code = codeIn;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -129,23 +132,16 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idHad;}
-
 protected:
 
   // Name pre-, post-, and mid-fix.
   virtual string namePrefix()  const {return "g g";}
   virtual string namePostfix() const {return "g";}
-  string nameMidfix() const {return (codeSave - codeSave%100)/100
+  string nameMidfix() const {return (code - code%100)/100
       == 4 ? "ccbar" : "bbbar";}
 
   // Values stored for process type and colour flow selection.
-  int    idHad, jSave, codeSave;
-  string nameSave;
+  int    idHad, jSave;
   double oniumME, sigma;
 
 };
@@ -160,16 +156,16 @@ public:
 
   // Constructor.
   Sigma2qg2QQbar3PJ1q(int idHadIn, double oniumMEIn, int jIn, int codeIn) :
-    Sigma2gg2QQbar3PJ1g(idHadIn, oniumMEIn, jIn, codeIn) {}
+    Sigma2gg2QQbar3PJ1g(idHadIn, oniumMEIn, jIn, codeIn)
+  {
+    fluxType = FluxType::QG;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string inFlux()  const {return "qg";}
 
 protected:
 
@@ -189,16 +185,16 @@ public:
 
   // Constructor.
   Sigma2qqbar2QQbar3PJ1g(int idHadIn, double oniumMEIn, int jIn, int codeIn) :
-    Sigma2gg2QQbar3PJ1g(idHadIn, oniumMEIn, jIn, codeIn) {}
+    Sigma2gg2QQbar3PJ1g(idHadIn, oniumMEIn, jIn, codeIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string inFlux()  const {return "qqbarSame";}
 
 protected:
 
@@ -232,14 +228,19 @@ public:
 
 // A derived class for g g -> QQbar[X(8)] g (Q = c or b, X = 3S1, 1S0 or 3PJ).
 
-class Sigma2gg2QQbarX8g : public Sigma2Process {
+class Sigma2gg2QQbarX8g : public SigmaProcess {
 
 public:
 
   // Constructor.
   Sigma2gg2QQbarX8g(int idHadIn, double oniumMEIn, int stateIn,
     double mSplitIn, int codeIn) : idHad(idHadIn), stateSave(stateIn),
-    codeSave(codeIn), oniumME(oniumMEIn), mSplit(mSplitIn) {}
+    oniumME(oniumMEIn), mSplit(mSplitIn), SigmaProcess(ProcessType::P2to2)
+  {
+    code = codeIn;
+    fluxType = FluxType::GG;
+    id3Mass = idHad;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -253,12 +254,6 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idHad;}
-
 protected:
 
   // Name pre- and post-fix.
@@ -266,8 +261,7 @@ protected:
   virtual string namePostfix() const {return "g";}
 
   // Values stored for process type and colour flow selection.
-  int    idHad, stateSave, codeSave;
-  string nameSave;
+  int    idHad, stateSave;
   double oniumME, sigma, mSplit;
 
 };
@@ -283,16 +277,16 @@ public:
   // Constructor.
   Sigma2qg2QQbarX8q(int idHadIn, double oniumMEIn, int stateIn,
     double mSplitIn, int codeIn) :
-    Sigma2gg2QQbarX8g(idHadIn, oniumMEIn, stateIn, mSplitIn, codeIn) {}
+    Sigma2gg2QQbarX8g(idHadIn, oniumMEIn, stateIn, mSplitIn, codeIn)
+  {
+    fluxType = FluxType::QG;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string inFlux()  const {return "qg";}
 
 protected:
 
@@ -314,16 +308,16 @@ public:
   // Constructor.
   Sigma2qqbar2QQbarX8g(int idHadIn, double oniumMEIn, int stateIn,
     double mSplitIn, int codeIn) :
-    Sigma2gg2QQbarX8g(idHadIn, oniumMEIn, stateIn, mSplitIn, codeIn) {}
+    Sigma2gg2QQbarX8g(idHadIn, oniumMEIn, stateIn, mSplitIn, codeIn)
+  {
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Calculate flavour-independent parts of cross section.
   virtual void sigmaKin();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string inFlux()  const {return "qqbarSame";}
 
 protected:
 

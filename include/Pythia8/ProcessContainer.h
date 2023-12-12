@@ -215,7 +215,7 @@ private:
   int nVecA, nVecB;
 
   // Helper class to setup onia production.
-  // SigmaOniaSetup charmonium, bottomonium;
+  SigmaOniaSetup charmonium, bottomonium;
 
 };
 
