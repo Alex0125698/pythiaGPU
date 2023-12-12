@@ -48,7 +48,7 @@ public:
     // Do not include resonance decay products in the counting.
     omitResonanceDecays(process);
     // Get the maximal quark flavour counted as "additional" parton.
-    int nQuarksMerge = settingsPtr->mode("Merging:nQuarksMerge");
+    int nQuarksMerge = settingsPtr->get(Mode::Merging_nQuarksMerge);
     // Loop through event and count.
     for(int i=0; i < int(workEvent.size()); ++i)
       if ( workEvent[i].isFinal()
@@ -66,24 +66,24 @@ public:
     string nps_lo  = infoPtr->getEventAttribute("npLO",true);
     int np_lo      = (nps_lo != "")  ? atoi((char*)nps_lo.c_str()) : -1;
 
-    if ( (settingsPtr->flag("Merging:doUNLOPSTree")
-       || settingsPtr->flag("Merging:doUNLOPSSubt")) && np_lo == 0)
+    if ( (settingsPtr->get(Flag::Merging_doUNLOPSTree)
+       || settingsPtr->get(Flag::Merging_doUNLOPSSubt)) && np_lo == 0)
        return true;
 
-    if (settingsPtr->word("Merging:process").compare("pp>aj") == 0)
+    if (settingsPtr->get(Word::Merging_process).compare("pp>aj") == 0)
       nPartons -= 1;
-    if (settingsPtr->word("Merging:process").compare("pp>jj") == 0)
+    if (settingsPtr->get(Word::Merging_process).compare("pp>jj") == 0)
       nPartons -= 2;
 
     // Set number of requested partons.
     if (np_nlo > -1){
-      settingsPtr->mode("Merging:nRequested", np_nlo);
+      settingsPtr->set(Mode::Merging_nRequested, np_nlo);
       np_lo = -1;
     } else if (np_lo > -1){
-      settingsPtr->mode("Merging:nRequested", np_lo);
+      settingsPtr->set(Mode::Merging_nRequested, np_lo);
       np_nlo = -1;
     } else {
-      settingsPtr->mode("Merging:nRequested", nPartons);
+      settingsPtr->set(Mode::Merging_nRequested, nPartons);
       np_nlo = -1;
       np_lo = nPartons;
     }
@@ -91,71 +91,71 @@ public:
     // Choose randomly if this event should be treated as subtraction or
     // as regular event. Put the correct settings accordingly.
     if (isunlops && np_nlo == 0 && np_lo == -1) {
-      settingsPtr->flag("Merging:doUNLOPSTree", false);
-      settingsPtr->flag("Merging:doUNLOPSSubt", false);
-      settingsPtr->flag("Merging:doUNLOPSLoop", true);
-      settingsPtr->flag("Merging:doUNLOPSSubtNLO", false);
-      settingsPtr->mode("Merging:nRecluster",0);
+      settingsPtr->set(Flag::Merging_doUNLOPSTree, false);
+      settingsPtr->set(Flag::Merging_doUNLOPSSubt, false);
+      settingsPtr->set(Flag::Merging_doUNLOPSLoop, true);
+      settingsPtr->set(Flag::Merging_doUNLOPSSubtNLO, false);
+      settingsPtr->set(Mode::Merging_nRecluster, 0);
       normFactor *= 1.;
     } else if (isunlops && np_nlo > 0 && np_lo == -1) {
       normFactor *= 2.;
       if (rndmPtr->flat() < 0.5) {
         normFactor *= -1.;
-        settingsPtr->flag("Merging:doUNLOPSTree", false);
-        settingsPtr->flag("Merging:doUNLOPSSubt", false);
-        settingsPtr->flag("Merging:doUNLOPSLoop", false);
-        settingsPtr->flag("Merging:doUNLOPSSubtNLO", true);
-        settingsPtr->mode("Merging:nRecluster",1);
+        settingsPtr->set(Flag::Merging_doUNLOPSTree, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubt, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSLoop, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubtNLO, true);
+        settingsPtr->set(Mode::Merging_nRecluster, 1);
       } else {
-        settingsPtr->flag("Merging:doUNLOPSTree", false);
-        settingsPtr->flag("Merging:doUNLOPSSubt", false);
-        settingsPtr->flag("Merging:doUNLOPSLoop", true);
-        settingsPtr->flag("Merging:doUNLOPSSubtNLO", false);
-        settingsPtr->mode("Merging:nRecluster",0);
+        settingsPtr->set(Flag::Merging_doUNLOPSTree, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubt, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSLoop, true);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubtNLO, false);
+        settingsPtr->set(Mode::Merging_nRecluster, 0);
       }
     } else if (isunlops && np_nlo == -1 && np_lo > -1) {
       normFactor *= 2.;
       if (rndmPtr->flat() < 0.5) {
         normFactor *= -1.;
-        settingsPtr->flag("Merging:doUNLOPSTree", false);
-        settingsPtr->flag("Merging:doUNLOPSSubt", true);
-        settingsPtr->flag("Merging:doUNLOPSLoop", false);
-        settingsPtr->flag("Merging:doUNLOPSSubtNLO", false);
-        settingsPtr->mode("Merging:nRecluster",1);
+        settingsPtr->set(Flag::Merging_doUNLOPSTree, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubt, true);
+        settingsPtr->set(Flag::Merging_doUNLOPSLoop, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubtNLO, false);
+        settingsPtr->set(Mode::Merging_nRecluster, 1);
 
         // Double reclustering for exclusive NLO cross sections.
-        bool isnlotilde = settingsPtr->flag("Merging:doUNLOPSTilde");
-        int nmaxNLO = settingsPtr->mode("Merging:nJetMaxNLO");
+        bool isnlotilde = settingsPtr->get(Flag::Merging_doUNLOPSTilde);
+        int nmaxNLO = settingsPtr->get(Mode::Merging_nJetMaxNLO);
         if ( isnlotilde
           && nmaxNLO > 0
           && np_lo <= nmaxNLO+1
           && np_lo > 1 ){
           normFactor *= 2.;
           if (rndmPtr->flat() < 0.5)
-            settingsPtr->mode("Merging:nRecluster",2);
+            settingsPtr->set(Mode::Merging_nRecluster, 2);
         }
       } else {
-        settingsPtr->flag("Merging:doUNLOPSTree", true);
-        settingsPtr->flag("Merging:doUNLOPSSubt", false);
-        settingsPtr->flag("Merging:doUNLOPSLoop", false);
-        settingsPtr->flag("Merging:doUNLOPSSubtNLO", false);
-        settingsPtr->mode("Merging:nRecluster",0);
+        settingsPtr->set(Flag::Merging_doUNLOPSTree, true);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubt, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSLoop, false);
+        settingsPtr->set(Flag::Merging_doUNLOPSSubtNLO, false);
+        settingsPtr->set(Mode::Merging_nRecluster, 0);
       }
     } else if (isumeps && np_lo == 0) {
-      settingsPtr->flag("Merging:doUMEPSTree", true);
-      settingsPtr->flag("Merging:doUMEPSSubt", false);
-      settingsPtr->mode("Merging:nRecluster",0);
+      settingsPtr->set(Flag::Merging_doUMEPSTree, true);
+      settingsPtr->set(Flag::Merging_doUMEPSSubt, false);
+      settingsPtr->set(Mode::Merging_nRecluster, 0);
     } else if (isumeps && np_lo > 0) {
       normFactor *= 2.;
       if (rndmPtr->flat() < 0.5) {
         normFactor *= -1.;
-        settingsPtr->flag("Merging:doUMEPSTree", false);
-        settingsPtr->flag("Merging:doUMEPSSubt", true);
-        settingsPtr->mode("Merging:nRecluster",1);
+        settingsPtr->set(Flag::Merging_doUMEPSTree, false);
+        settingsPtr->set(Flag::Merging_doUMEPSSubt, true);
+        settingsPtr->set(Mode::Merging_nRecluster, 1);
       } else {
-        settingsPtr->flag("Merging:doUMEPSTree", true);
-        settingsPtr->flag("Merging:doUMEPSSubt", false);
-        settingsPtr->mode("Merging:nRecluster",0);
+        settingsPtr->set(Flag::Merging_doUMEPSTree, true);
+        settingsPtr->set(Flag::Merging_doUMEPSSubt, false);
+        settingsPtr->set(Mode::Merging_nRecluster, 0);
       }
     }
 

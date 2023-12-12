@@ -159,6 +159,7 @@ inline const void trimInPlace(string& name)
 inline void toLowerInPlace(string& name)
 {
   // -- old version
+  // for now  this is just a copy of SusyLesHouches::toLower
   
   // Copy string without initial and trailing blanks.
   if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) {
@@ -190,12 +191,17 @@ inline void toLowerInPlace(string& name)
 inline string toLower(const string& name)
 {
   // -- old version
+  // this is the same as Settings::toLower
+  // there is also a ParticleData::toLower which does not
+  // include the trim
 
-  // Copy string without initial and trailing blanks.
-  if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
-  int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
-  int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
-  string temp   = name.substr( firstChar, lastChar + 1 - firstChar);
+  // Update: removed the trim since we no longer use toLower in Settings
+
+  // // Copy string without initial and trailing blanks.
+  // if (name.find_first_not_of(" \n\t\v\b\r\f\a") == string::npos) return "";
+  // int firstChar = name.find_first_not_of(" \n\t\v\b\r\f\a");
+  // int lastChar  = name.find_last_not_of(" \n\t\v\b\r\f\a");
+  string temp   = name; //.substr( firstChar, lastChar + 1 - firstChar);
 
   // Convert to lowercase letter by letter.
   for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);

@@ -24,8 +24,8 @@ void HVStringFlav::init(Settings& settings, Rndm* rndmPtrIn) {
   rndmPtr    = rndmPtrIn;
 
   // Read in data from Settings.
-  nFlav      = settings.mode("HiddenValley:nFlav");
-  probVector = settings.parm("HiddenValley:probVector");
+  nFlav      = settings.get(Mode::HiddenValley_nFlav);
+  probVector = settings.get(Param::HiddenValley_probVector);
 
 }
 
@@ -89,7 +89,7 @@ void HVStringPT::init(Settings& settings, ParticleData& particleData,
   rndmPtr        = rndmPtrIn;
 
   // Parameter of the pT width. No enhancement, since this is finetuning.
-  double sigmamqv  = settings.parm("HiddenValley:sigmamqv");
+  double sigmamqv  = settings.get(Param::HiddenValley_sigmamqv);
   double sigma     = sigmamqv * particleData.m0( 4900101);
   sigmaQ           = sigma / sqrt(2.);
   enhancedFraction = 0.;
@@ -115,9 +115,9 @@ void HVStringZ::init(Settings& settings, ParticleData& particleData,
   rndmPtr  = rndmPtrIn;
 
   // Paramaters of Lund/Bowler symmetric fragmentation function.
-  aLund    = settings.parm("HiddenValley:aLund");
-  bmqv2    = settings.parm("HiddenValley:bmqv2");
-  rFactqv  = settings.parm("HiddenValley:rFactqv");
+  aLund    = settings.get(Param::HiddenValley_aLund);
+  bmqv2    = settings.get(Param::HiddenValley_bmqv2);
+  rFactqv  = settings.get(Param::HiddenValley_rFactqv);
 
   // Use qv mass to set scale of bEff = b * m^2;
   mqv2     = pow2( particleData.m0( 4900101) );
@@ -158,12 +158,12 @@ bool HiddenValleyFragmentation::init(Info* infoPtrIn, Settings& settings,
   rndmPtr         = rndmPtrIn;
 
   // Check whether Hidden Valley fragmentation switched on, and SU(N).
-  doHVfrag = settings.flag("HiddenValley:fragment");
-  if (settings.mode("HiddenValley:Ngauge") < 2) doHVfrag = false;
+  doHVfrag = settings.get(Flag::HiddenValley_fragment);
+  if (settings.get(Mode::HiddenValley_Ngauge) < 2) doHVfrag = false;
   if (!doHVfrag) return false;
 
   // Several copies of qv may be needed. Taken to have same mass.
-  nFlav = settings.mode("HiddenValley:nFlav");
+  nFlav = settings.get(Mode::HiddenValley_nFlav);
   if (nFlav > 1) {
     int spinType = particleDataPtr->spinType(4900101);
     double m0    = particleDataPtr->m0(4900101);

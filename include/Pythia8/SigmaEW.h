@@ -539,7 +539,7 @@ public:
 private:
 
   // Values stored for process type. Z parameters for propagator.
-  int    idNew, codeSave, gmZmode;
+  int    idNew, gmZmode;
   bool   isPhysical;
   double ef, vf, af, mRes, GammaRes, m2Res, GamMRat, thetaWRat,
          mr, betaf, cosThe, gamProp, intProp, resProp, openFracPair;
@@ -1119,7 +1119,7 @@ public:
 private:
 
   // Member variables.
-  int    idNew, codeSave, idMass, idNow;
+  int    idNew, idMass, idNow;
   double ef4, s34Avg, sigTU, sigma, openFracPair;
 
 };

@@ -354,19 +354,19 @@ void Sigma2ffbar2HZ::initProc() {
     name = "f fbar -> h0(H1) Z0";
     code = 1004;
     resonanceA    = 25;
-    coup2Z   = pState->settings.parm("HiggsH1:coup2Z");
+    coup2Z   = pState->settings.get(Param::HiggsH1_coup2Z);
   }
   else if (higgsType == 2) {
     name = "f fbar -> H0(H2) Z0";
     code = 1024;
     resonanceA    = 35;
-    coup2Z   = pState->settings.parm("HiggsH2:coup2Z");
+    coup2Z   = pState->settings.get(Param::HiggsH2_coup2Z);
   }
   else if (higgsType == 3) {
     name = "f fbar -> A0(A3) ZO";
     code = 1044;
     resonanceA    = 36;
-    coup2Z   = pState->settings.parm("HiggsA3:coup2Z");
+    coup2Z   = pState->settings.get(Param::HiggsA3_coup2Z);
   }
 
   // Store Z0 mass and width for propagator. Common coupling factor.
@@ -504,19 +504,19 @@ void Sigma2ffbar2HW::initProc() {
     name = "f fbar -> h0(H1) W+-";
     code = 1005;
     idRes    = 25;
-    coup2W   = pState->settings.parm("HiggsH1:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsH1_coup2W);
   }
   else if (higgsType == 2) {
     name = "f fbar -> H0(H2) W+-";
     code = 1025;
     idRes    = 35;
-    coup2W   = pState->settings.parm("HiggsH2:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsH2_coup2W);
   }
   else if (higgsType == 3) {
     name = "f fbar -> A0(A3) W+-";
     code = 1045;
     idRes    = 36;
-    coup2W   = pState->settings.parm("HiggsA3:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsA3_coup2W);
   }
 
   // Store W+- mass and width for propagator. Common coupling factor.
@@ -649,19 +649,19 @@ void Sigma3ff2HfftZZ::initProc() {
     name = "f f' -> h0(H1) f f' (Z0 Z0 fusion)";
     code = 1006;
     idRes    = 25;
-    coup2Z  = pState->settings.parm("HiggsH1:coup2Z");
+    coup2Z  = pState->settings.get(Param::HiggsH1_coup2Z);
   }
   else if (higgsType == 2) {
     name = "f f' -> H0(H2) f f' (Z0 Z0 fusion)";
     code = 1026;
     idRes    = 35;
-    coup2Z  = pState->settings.parm("HiggsH2:coup2Z");
+    coup2Z  = pState->settings.get(Param::HiggsH2_coup2Z);
   }
   else if (higgsType == 3) {
     name = "f f' -> A0(A3) f f' (Z0 Z0 fusion)";
     code = 1046;
     idRes    = 36;
-    coup2Z  = pState->settings.parm("HiggsA3:coup2Z");
+    coup2Z  = pState->settings.get(Param::HiggsA3_coup2Z);
   }
 
   // Common fixed mass and coupling factor.
@@ -791,19 +791,19 @@ void Sigma3ff2HfftWW::initProc() {
     name = "f_1 f_2 -> h0(H1) f_3 f_4 (W+ W- fusion)";
     code = 1007;
     idRes    = 25;
-    coup2W   = pState->settings.parm("HiggsH1:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsH1_coup2W);
   }
   else if (higgsType == 2) {
     name = "f_1 f_2 -> H0(H2) f_3 f_4 (W+ W- fusion)";
     code = 1027;
     idRes    = 35;
-    coup2W   = pState->settings.parm("HiggsH2:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsH2_coup2W);
   }
   else if (higgsType == 3) {
     name = "f_1 f_2 -> A0(A3) f_3 f_4 (W+ W- fusion)";
     code = 1047;
     idRes    = 36;
-    coup2W   = pState->settings.parm("HiggsA3:coup2W");
+    coup2W   = pState->settings.get(Param::HiggsA3_coup2W);
   }
 
   // Common fixed mass and coupling factor.
@@ -933,19 +933,19 @@ void Sigma3gg2HQQbar::initProc() {
     name = "g g -> h0(H1) t tbar";
     code = 1008;
     idRes    = 25;
-    coup2Q   = pState->settings.parm("HiggsH1:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsH1_coup2u);
   }
   else if (higgsType == 2 && idNew == 6) {
     name = "g g -> H0(H2) t tbar";
     code = 1028;
     idRes    = 35;
-    coup2Q   = pState->settings.parm("HiggsH2:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsH2_coup2u);
   }
   else if (higgsType == 3 && idNew == 6) {
     name = "g g -> A0(A3) t tbar";
     code = 1048;
     idRes    = 36;
-    coup2Q   = pState->settings.parm("HiggsA3:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsA3_coup2u);
   }
 
   // Properties specific to Higgs state for the "g g -> H b bbar" process.
@@ -960,19 +960,19 @@ void Sigma3gg2HQQbar::initProc() {
     name = "g g -> h0(H1) b bbar";
     code = 1012;
     idRes    = 25;
-    coup2Q   = pState->settings.parm("HiggsH1:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsH1_coup2d);
   }
   else if (higgsType == 2 && idNew == 5) {
     name = "g g -> H0(H2) b bbar";
     code = 1032;
     idRes    = 35;
-    coup2Q   = pState->settings.parm("HiggsH2:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsH2_coup2d);
   }
   else if (higgsType == 3 && idNew == 5) {
     name = "g g -> A0(A3) b bbar";
     code = 1052;
     idRes    = 36;
-    coup2Q   = pState->settings.parm("HiggsA3:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsA3_coup2d);
   }
 
   // Common mass and coupling factors.
@@ -1410,19 +1410,19 @@ void Sigma3qqbar2HQQbar::initProc() {
     name = "q qbar -> h0(H1) t tbar";
     code = 1009;
     idRes    = 25;
-    coup2Q   = pState->settings.parm("HiggsH1:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsH1_coup2u);
   }
   else if (higgsType == 2 && idNew == 6) {
     name = "q qbar -> H0(H2) t tbar";
     code = 1029;
     idRes    = 35;
-    coup2Q   = pState->settings.parm("HiggsH2:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsH2_coup2u);
   }
   else if (higgsType == 3 && idNew == 6) {
     name = "q qbar -> A0(A3) t tbar";
     code = 1049;
     idRes    = 36;
-    coup2Q   = pState->settings.parm("HiggsA3:coup2u");
+    coup2Q   = pState->settings.get(Param::HiggsA3_coup2u);
   }
 
  // Properties specific to Higgs state for the "q qbar -> H b bbar" process.
@@ -1437,19 +1437,19 @@ void Sigma3qqbar2HQQbar::initProc() {
     name = "q qbar -> h0(H1) b bbar";
     code = 1013;
     idRes    = 25;
-    coup2Q   = pState->settings.parm("HiggsH1:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsH1_coup2d);
   }
   else if (higgsType == 2 && idNew == 5) {
     name = "q qbar -> H0(H2) b bbar";
     code = 1033;
     idRes    = 35;
-    coup2Q   = pState->settings.parm("HiggsH2:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsH2_coup2d);
   }
   else if (higgsType == 3 && idNew == 5) {
     name = "q qbar -> A0(A3) b bbar";
     code = 1053;
     idRes    = 36;
-    coup2Q   = pState->settings.parm("HiggsA3:coup2d");
+    coup2Q   = pState->settings.get(Param::HiggsA3_coup2d);
   }
 
   // Common mass and coupling factors.
@@ -2055,7 +2055,7 @@ void Sigma1ffbar2Hchg::initProc() {
   // Couplings.
   m2W       = pow2(pState->particleData.m0(24));
   thetaWRat = 1. / (8. * pState->couplings->sin2thetaW());
-  tan2Beta  = pow2(pState->settings.parm("HiggsHchg:tanBeta"));
+  tan2Beta  = pow2(pState->settings.get(Param::HiggsHchg_tanBeta));
 
 }
 
@@ -2155,7 +2155,7 @@ void Sigma2qg2Hchgq::initProc() {
   // Standard parameters.
   m2W       = pow2( pState->particleData.m0(24) );
   thetaWRat = 1. / (24. * pState->couplings->sin2thetaW());
-  tan2Beta  = pow2(pState->settings.parm("HiggsHchg:tanBeta"));
+  tan2Beta  = pow2(pState->settings.get(Param::HiggsHchg_tanBeta));
 
   // Incoming flavour within same doublet. Uptype and downtype flavours.
   idOld     = (idNew%2 == 0) ? idNew - 1 : idNew + 1;
@@ -2268,8 +2268,8 @@ void Sigma2ffbar2A3H12::initProc() {
   code   = (higgsType == 1) ? 1081 : 1082;
   name   = (higgsType == 1) ? "f fbar -> A0(H3) h0(H1)"
                                 : "f fbar -> A0(H3) H0(H2)";
-  coupZA3H12 = (higgsType == 1) ? pState->settings.parm("HiggsA3:coup2H1Z")
-                                : pState->settings.parm("HiggsA3:coup2H2Z");
+  coupZA3H12 = (higgsType == 1) ? pState->settings.get(Param::HiggsA3_coup2H1Z)
+                                : pState->settings.get(Param::HiggsA3_coup2H2Z);
 
   // Standard parameters.
   double mZ  = pState->particleData.m0(23);
@@ -2371,8 +2371,8 @@ void Sigma2ffbar2HchgH12::initProc() {
   code   = (higgsType == 1) ? 1083 : 1084;
   name   = (higgsType == 1) ? "f fbar' -> H+- h0(H1)"
                                 : "f fbar' -> H+- H0(H2)";
-  coupWHchgH12 = (higgsType == 1) ? pState->settings.parm("HiggsHchg:coup2H1W")
-                                  : pState->settings.parm("HiggsHchg:coup2H2W");
+  coupWHchgH12 = (higgsType == 1) ? pState->settings.get(Param::HiggsHchg_coup2H1W)
+                                  : pState->settings.get(Param::HiggsHchg_coup2H2W);
 
   // Standard parameters.
   double mW  = pState->particleData.m0(24);

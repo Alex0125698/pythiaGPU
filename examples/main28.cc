@@ -26,7 +26,7 @@ int main() {
   Event& event = pythia.event;
 
   // Set up beams: p p is default so only need set energy.
-  pythia.settings.parm("Beams:eCM", eCM);
+  pythia.settings.set(Param::Beams_eCM, eCM);
 
   // Squark pair: use stop-antistop as example.
   if (nGluino == 0) {

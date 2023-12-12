@@ -124,7 +124,6 @@ public:
   virtual double weightDecay(Event& process, int iResBeg, int iResEnd);
 
   // Info on the subprocess.
-  virtual string inFlux()     const {return "qq";}
 
 private:
 
@@ -268,7 +267,7 @@ public:
   {
     fluxType = FluxType::QQBARSAME;
     name = "q qbar -> (QC) -> q' qbar' (uds)";
-    code = 4204;
+    code = 4202;
   }
 
   // Initialize process.

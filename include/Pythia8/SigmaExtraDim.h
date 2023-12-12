@@ -320,7 +320,7 @@ private:
 
   // Values stored for process type.
   string  nameSave;
-  int     idNew, gmZmode, codeSave, nexcitationmax;
+  int     idNew, gmZmode, nexcitationmax;
   bool    isPhysical;
   double  gPlusf, gMinusf, gPlusF, gMinusF, gPlusTop, gMinusTop, gf, gF;
   double  mRes, m2Res, mStar, mTop, m2Top, mZKKn, m2ZKKn, m2gmKKn, mgmKKn,

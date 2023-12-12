@@ -633,8 +633,6 @@ public:
 
   // Convert string to lowercase, removing junk characters
   // Copied from PYTHIA 8 Settings class
-  // !@!@
-  // void toLower(string& name);
 
   //***************************** SLHA PRIVATE *****************************//
 private:
@@ -652,7 +650,7 @@ private:
 template <class T> int SusyLesHouches::set(string blockName, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -670,7 +668,7 @@ template <class T> int SusyLesHouches::set(string blockName, T val) {
 template <class T> int SusyLesHouches::set(string blockName, int indx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -689,7 +687,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -708,7 +706,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
                                            int jndx, int kndx, T val) {
 
   // Make sure everything is interpreted as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Add new generic block if not already existing
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -728,7 +726,7 @@ template <class T> int SusyLesHouches::set(string blockName, int indx,
 template <class T> bool SusyLesHouches::getEntry(string blockName, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -764,7 +762,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -802,7 +800,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {
@@ -840,7 +838,7 @@ template <class T> bool SusyLesHouches::getEntry(string blockName, int indx,
                                                  int jndx, int kndx, T& val) {
 
   // Make sure everything is interpret as lower case (for safety)
-  toLower(blockName);
+  toLowerInPlace(blockName);
 
   // Safety checks
   if (genericBlocks.find(blockName) == genericBlocks.end()) {

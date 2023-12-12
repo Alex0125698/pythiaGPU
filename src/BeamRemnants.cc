@@ -49,22 +49,22 @@ bool BeamRemnants::init( Info* infoPtrIn, Settings& settings, Rndm* rndmPtrIn,
   colourReconnectionPtr = colourReconnectionPtrIn;
 
   // Width of primordial kT distribution.
-  doPrimordialKT      = settings.flag("BeamRemnants:primordialKT");
-  primordialKTsoft    = settings.parm("BeamRemnants:primordialKTsoft");
-  primordialKThard    = settings.parm("BeamRemnants:primordialKThard");
-  primordialKTremnant = settings.parm("BeamRemnants:primordialKTremnant");
-  halfScaleForKT      = settings.parm("BeamRemnants:halfScaleForKT");
-  halfMassForKT       = settings.parm("BeamRemnants:halfMassForKT");
-  reducedKTatHighY    = settings.parm("BeamRemnants:reducedKTatHighY");
+  doPrimordialKT      = settings.get(Flag::BeamRemnants_primordialKT);
+  primordialKTsoft    = settings.get(Param::BeamRemnants_primordialKTsoft);
+  primordialKThard    = settings.get(Param::BeamRemnants_primordialKThard);
+  primordialKTremnant = settings.get(Param::BeamRemnants_primordialKTremnant);
+  halfScaleForKT      = settings.get(Param::BeamRemnants_halfScaleForKT);
+  halfMassForKT       = settings.get(Param::BeamRemnants_halfMassForKT);
+  reducedKTatHighY    = settings.get(Param::BeamRemnants_reducedKTatHighY);
 
   // Handling of rescattering kinematics uncertainties from primodial kT.
-  allowRescatter     = settings.flag("MultipartonInteractions:allowRescatter");
-  doRescatterRestoreY = settings.flag("BeamRemnants:rescatterRestoreY");
+  allowRescatter     = settings.get(Flag::MultipartonInteractions_allowRescatter);
+  doRescatterRestoreY = settings.get(Flag::BeamRemnants_rescatterRestoreY);
 
   // Choice of beam remnant and colour reconnection scenarios.
-  remnantMode         = settings.mode("BeamRemnants:remnantMode");
-  doReconnect         = settings.flag("ColourReconnection:reconnect");
-  reconnectMode       = settings.mode("ColourReconnection:mode");
+  remnantMode         = settings.get(Mode::BeamRemnants_remnantMode);
+  doReconnect         = settings.get(Flag::ColourReconnection_reconnect);
+  reconnectMode       = settings.get(Mode::ColourReconnection_mode);
 
   // Check that remnant model and colour reconnection model work together.
   if (remnantMode == 1 && reconnectMode == 0) {

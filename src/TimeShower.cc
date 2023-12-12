@@ -72,26 +72,26 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   beamBPtr           = beamBPtrIn;
 
   // Main flags.
-  doQCDshower        = settingsPtr->flag("TimeShower:QCDshower");
-  doQEDshowerByQ     = settingsPtr->flag("TimeShower:QEDshowerByQ");
-  doQEDshowerByL     = settingsPtr->flag("TimeShower:QEDshowerByL");
-  doQEDshowerByGamma = settingsPtr->flag("TimeShower:QEDshowerByGamma");
-  doWeakShower       = settingsPtr->flag("TimeShower:weakShower");
-  doMEcorrections    = settingsPtr->flag("TimeShower:MEcorrections");
-  doMEafterFirst     = settingsPtr->flag("TimeShower:MEafterFirst");
-  doPhiPolAsym       = settingsPtr->flag("TimeShower:phiPolAsym");
-  doInterleave       = settingsPtr->flag("TimeShower:interleave");
-  allowBeamRecoil    = settingsPtr->flag("TimeShower:allowBeamRecoil");
-  dampenBeamRecoil   = settingsPtr->flag("TimeShower:dampenBeamRecoil");
-  recoilToColoured   = settingsPtr->flag("TimeShower:recoilToColoured");
-  allowMPIdipole     = settingsPtr->flag("TimeShower:allowMPIdipole");
+  doQCDshower        = settingsPtr->get(Flag::TimeShower_QCDshower);
+  doQEDshowerByQ     = settingsPtr->get(Flag::TimeShower_QEDshowerByQ);
+  doQEDshowerByL     = settingsPtr->get(Flag::TimeShower_QEDshowerByL);
+  doQEDshowerByGamma = settingsPtr->get(Flag::TimeShower_QEDshowerByGamma);
+  doWeakShower       = settingsPtr->get(Flag::TimeShower_weakShower);
+  doMEcorrections    = settingsPtr->get(Flag::TimeShower_MEcorrections);
+  doMEafterFirst     = settingsPtr->get(Flag::TimeShower_MEafterFirst);
+  doPhiPolAsym       = settingsPtr->get(Flag::TimeShower_phiPolAsym);
+  doInterleave       = settingsPtr->get(Flag::TimeShower_interleave);
+  allowBeamRecoil    = settingsPtr->get(Flag::TimeShower_allowBeamRecoil);
+  dampenBeamRecoil   = settingsPtr->get(Flag::TimeShower_dampenBeamRecoil);
+  recoilToColoured   = settingsPtr->get(Flag::TimeShower_recoilToColoured);
+  allowMPIdipole     = settingsPtr->get(Flag::TimeShower_allowMPIdipole);
 
   // Matching in pT of hard interaction or MPI to shower evolution.
-  pTmaxMatch         = settingsPtr->mode("TimeShower:pTmaxMatch");
-  pTdampMatch        = settingsPtr->mode("TimeShower:pTdampMatch");
-  pTmaxFudge         = settingsPtr->parm("TimeShower:pTmaxFudge");
-  pTmaxFudgeMPI      = settingsPtr->parm("TimeShower:pTmaxFudgeMPI");
-  pTdampFudge        = settingsPtr->parm("TimeShower:pTdampFudge");
+  pTmaxMatch         = settingsPtr->get(Mode::TimeShower_pTmaxMatch);
+  pTdampMatch        = settingsPtr->get(Mode::TimeShower_pTdampMatch);
+  pTmaxFudge         = settingsPtr->get(Param::TimeShower_pTmaxFudge);
+  pTmaxFudgeMPI      = settingsPtr->get(Param::TimeShower_pTmaxFudgeMPI);
+  pTdampFudge        = settingsPtr->get(Param::TimeShower_pTdampFudge);
 
   // Charm and bottom mass thresholds.
   mc                 = max( MCMIN, particleDataPtr->m0(4));
@@ -100,16 +100,16 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   m2b                = mb * mb;
 
   // Parameters of scale choices.
-  renormMultFac     = settingsPtr->parm("TimeShower:renormMultFac");
-  factorMultFac     = settingsPtr->parm("TimeShower:factorMultFac");
-  useFixedFacScale  = settingsPtr->flag("TimeShower:useFixedFacScale");
-  fixedFacScale2    = pow2(settingsPtr->parm("TimeShower:fixedFacScale"));
+  renormMultFac     = settingsPtr->get(Param::TimeShower_renormMultFac);
+  factorMultFac     = settingsPtr->get(Param::TimeShower_factorMultFac);
+  useFixedFacScale  = settingsPtr->get(Flag::TimeShower_useFixedFacScale);
+  fixedFacScale2    = pow2(settingsPtr->get(Param::TimeShower_fixedFacScale));
 
   // Parameters of alphaStrong generation.
-  alphaSvalue        = settingsPtr->parm("TimeShower:alphaSvalue");
-  alphaSorder        = settingsPtr->mode("TimeShower:alphaSorder");
-  alphaSnfmax        = settingsPtr->mode("StandardModel:alphaSnfmax");
-  alphaSuseCMW       = settingsPtr->flag("TimeShower:alphaSuseCMW");
+  alphaSvalue        = settingsPtr->get(Param::TimeShower_alphaSvalue);
+  alphaSorder        = settingsPtr->get(Mode::TimeShower_alphaSorder);
+  alphaSnfmax        = settingsPtr->get(Mode::StandardModel_alphaSnfmax);
+  alphaSuseCMW       = settingsPtr->get(Flag::TimeShower_alphaSuseCMW);
   alphaS2pi          = 0.5 * alphaSvalue / M_PI;
 
   // Initialize alphaStrong generation.
@@ -124,11 +124,11 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   Lambda3flav2       = pow2(Lambda3flav);
 
   // Parameters of QCD evolution. Warn if pTmin must be raised.
-  nGluonToQuark      = settingsPtr->mode("TimeShower:nGluonToQuark");
-  weightGluonToQuark = settingsPtr->mode("TimeShower:weightGluonToQuark");
-  scaleGluonToQuark  = settingsPtr->parm("TimeShower:scaleGluonToQuark");
+  nGluonToQuark      = settingsPtr->get(Mode::TimeShower_nGluonToQuark);
+  weightGluonToQuark = settingsPtr->get(Mode::TimeShower_weightGluonToQuark);
+  scaleGluonToQuark  = settingsPtr->get(Param::TimeShower_scaleGluonToQuark);
   extraGluonToQuark  = (weightGluonToQuark%4 == 3) ? WG2QEXTRA : 1.;
-  pTcolCutMin        = settingsPtr->parm("TimeShower:pTmin");
+  pTcolCutMin        = settingsPtr->get(Param::TimeShower_pTmin);
   if (pTcolCutMin > LAMBDA3MARGIN * Lambda3flav / sqrt(renormMultFac))
     pTcolCut         = pTcolCutMin;
   else {
@@ -142,48 +142,48 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   pT2colCut          = pow2(pTcolCut);
 
   // Parameters of alphaEM generation.
-  alphaEMorder       = settingsPtr->mode("TimeShower:alphaEMorder");
+  alphaEMorder       = settingsPtr->get(Mode::TimeShower_alphaEMorder);
 
   // Initialize alphaEM generation.
   alphaEM.init( alphaEMorder, settingsPtr);
 
   // Parameters of QED evolution.
-  nGammaToQuark      = settingsPtr->mode("TimeShower:nGammaToQuark");
-  nGammaToLepton     = settingsPtr->mode("TimeShower:nGammaToLepton");
-  pTchgQCut          = settingsPtr->parm("TimeShower:pTminChgQ");
+  nGammaToQuark      = settingsPtr->get(Mode::TimeShower_nGammaToQuark);
+  nGammaToLepton     = settingsPtr->get(Mode::TimeShower_nGammaToLepton);
+  pTchgQCut          = settingsPtr->get(Param::TimeShower_pTminChgQ);
   pT2chgQCut         = pow2(pTchgQCut);
-  pTchgLCut          = settingsPtr->parm("TimeShower:pTminChgL");
+  pTchgLCut          = settingsPtr->get(Param::TimeShower_pTminChgL);
   pT2chgLCut         = pow2(pTchgLCut);
-  mMaxGamma          = settingsPtr->parm("TimeShower:mMaxGamma");
+  mMaxGamma          = settingsPtr->get(Param::TimeShower_mMaxGamma);
   m2MaxGamma         = pow2(mMaxGamma);
 
   // Parameters of weak evolution.
-  weakMode           = settingsPtr->mode("TimeShower:weakShowerMode");
-  pTweakCut          = settingsPtr->parm("TimeShower:pTminWeak");
+  weakMode           = settingsPtr->get(Mode::TimeShower_weakShowerMode);
+  pTweakCut          = settingsPtr->get(Param::TimeShower_pTminWeak);
   pT2weakCut         = pow2(pTweakCut);
-  weakEnhancement    = settingsPtr->parm("WeakShower:enhancement");
-  singleWeakEmission = settingsPtr->flag("WeakShower:singleEmission");
-  vetoWeakJets       = settingsPtr->flag("WeakShower:vetoWeakJets");
-  vetoWeakDeltaR2    = pow2(settingsPtr->parm("WeakShower:vetoWeakDeltaR"));
+  weakEnhancement    = settingsPtr->get(Param::WeakShower_enhancement);
+  singleWeakEmission = settingsPtr->get(Flag::WeakShower_singleEmission);
+  vetoWeakJets       = settingsPtr->get(Flag::WeakShower_vetoWeakJets);
+  vetoWeakDeltaR2    = pow2(settingsPtr->get(Param::WeakShower_vetoWeakDeltaR));
 
   // Consisteny check for gamma -> f fbar variables.
   if (nGammaToQuark <= 0 && nGammaToLepton <= 0) doQEDshowerByGamma = false;
 
   // Possibility of a global recoil stategy, e.g. for MC@NLO.
-  globalRecoil       = settingsPtr->flag("TimeShower:globalRecoil");
-  nMaxGlobalRecoil   = settingsPtr->mode("TimeShower:nMaxGlobalRecoil");
+  globalRecoil       = settingsPtr->get(Flag::TimeShower_globalRecoil);
+  nMaxGlobalRecoil   = settingsPtr->get(Mode::TimeShower_nMaxGlobalRecoil);
   // Number of splittings produced with global recoil.
-  nMaxGlobalBranch   = settingsPtr->mode("TimeShower:nMaxGlobalBranch");
+  nMaxGlobalBranch   = settingsPtr->get(Mode::TimeShower_nMaxGlobalBranch);
   // Number of partons in Born-like events, to distinguish between S and H.
-  nFinalBorn         = settingsPtr->mode("TimeShower:nPartonsInBorn");
+  nFinalBorn         = settingsPtr->get(Mode::TimeShower_nPartonsInBorn);
   // Flag to allow to start from a scale smaller than scalup.
-  globalRecoilMode   = settingsPtr->mode("TimeShower:globalRecoilMode");
+  globalRecoilMode   = settingsPtr->get(Mode::TimeShower_globalRecoilMode);
   // Flag to allow to start from a scale smaller than scalup.
-  limitMUQ           = settingsPtr->flag("TimeShower:limitPTmaxGlobal");
+  limitMUQ           = settingsPtr->get(Flag::TimeShower_limitPTmaxGlobal);
 
   // Fraction and colour factor of gluon emission off onium octat state.
-  octetOniumFraction = settingsPtr->parm("TimeShower:octetOniumFraction");
-  octetOniumColFac   = settingsPtr->parm("TimeShower:octetOniumColFac");
+  octetOniumFraction = settingsPtr->get(Param::TimeShower_octetOniumFraction);
+  octetOniumColFac   = settingsPtr->get(Param::TimeShower_octetOniumColFac);
 
   // Z0 and W+- properties needed for gamma/Z0 mixing and weak showers.
   mZ                 = particleDataPtr->m0(23);
@@ -194,14 +194,14 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   gammaW             = particleDataPtr->mWidth(24);
 
   // May have to fix up recoils related to rescattering.
-  allowRescatter     = settingsPtr->flag("PartonLevel:MPI")
-    && settingsPtr->flag("MultipartonInteractions:allowRescatter");
+  allowRescatter     = settingsPtr->get(Flag::PartonLevel_MPI)
+    && settingsPtr->get(Flag::MultipartonInteractions_allowRescatter);
 
   // Hidden Valley scenario with further shower activity.
-  doHVshower         = settingsPtr->flag("HiddenValley:FSR");
-  nCHV               = settingsPtr->mode("HiddenValley:Ngauge");
-  alphaHVfix         = settingsPtr->parm("HiddenValley:alphaFSR");
-  pThvCut            = settingsPtr->parm("HiddenValley:pTminFSR");
+  doHVshower         = settingsPtr->get(Flag::HiddenValley_FSR);
+  nCHV               = settingsPtr->get(Mode::HiddenValley_Ngauge);
+  alphaHVfix         = settingsPtr->get(Param::HiddenValley_alphaFSR);
+  pThvCut            = settingsPtr->get(Param::HiddenValley_pTminFSR);
   pT2hvCut           = pThvCut * pThvCut;
   CFHV               = (nCHV == 1) ? 1. : (nCHV * nCHV - 1.)/(2. * nCHV);
   idHV               = (nCHV == 1) ? 4900022 : 4900021;
@@ -209,7 +209,7 @@ void TimeShower::init( BeamParticle* beamAPtrIn,
   brokenHVsym        = (nCHV == 1 && mHV > 0.);
 
   // Possibility of two predetermined hard emissions in event.
-  doSecondHard    = settingsPtr->flag("SecondHard:generate");
+  doSecondHard    = settingsPtr->get(Flag::SecondHard_generate);
 
   // Possibility to allow user veto of emission step.
   hasUserHooks       = (userHooksPtr != 0);
@@ -533,7 +533,7 @@ void TimeShower::prepareGlobal( Event& event) {
   nHard      = 0;
   nProposed.clear();
   hardPartons.resize(0);
-  nFinalBorn = settingsPtr->mode("TimeShower:nPartonsInBorn");
+  nFinalBorn = settingsPtr->get(Mode::TimeShower_nPartonsInBorn);
 
   // Global recoils: store positions of hard outgoing partons.
   // No global recoil for H events.

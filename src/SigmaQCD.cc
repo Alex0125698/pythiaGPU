@@ -159,7 +159,7 @@ void Sigma2gg2gg::setIdColAcol() {
 void Sigma2gg2qqbar::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = pState->settings.mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -350,7 +350,7 @@ void Sigma2qqbar2gg::setIdColAcol() {
 void Sigma2qqbar2qqbarNew::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = pState->settings.mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -814,7 +814,7 @@ void Sigma3qg2qgg::setIdColAcol(){
 void Sigma3gg2qqbarg::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = pState->settings.mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -1022,7 +1022,7 @@ inline void Sigma3qq2qqgDiff::mapFinal() {
 void Sigma3qqbar2qqbargDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = pState->settings.mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
@@ -1122,7 +1122,7 @@ void Sigma3qqbar2qqbargDiff::setIdColAcol(){
 void Sigma3qg2qqqbarDiff::initProc() {
 
   // Read number of quarks to be considered in massless approximation.
-  nQuarkNew       = pState->settings.mode("HardQCD:nQuarkNew");
+  nQuarkNew       = pState->settings.get(Mode::HardQCD_nQuarkNew);
 
 }
 
