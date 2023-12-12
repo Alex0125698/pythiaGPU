@@ -1,3 +1,6 @@
+#ifndef PYTHIA_STATE_H
+#define PYTHIA_STATE_H
+
 #include "Pythia8/forwardDeclarations.h"
 #include "Pythia8/Settings.h"
 #include "Pythia8/ParticleData.h"
@@ -25,3 +28,5 @@ struct PythiaState
 };
 
 }
+
+#endif // PYTHIA_STATE_H
