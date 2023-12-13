@@ -106,6 +106,8 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   // SigmaProcesses are initialized here
   // I think this is where the strings get created
 
+  pState->beamA = beamAPtr;
+  pState->beamB = beamBPtr;
   sigmaProcessPtr->init(pState);
   
   Benchmark_stop(ProcessContainer0init_sigmaProcess);

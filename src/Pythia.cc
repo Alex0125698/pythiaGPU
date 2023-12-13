@@ -50,9 +50,6 @@ Pythia::Pythia(stringref xmlDir_, bool printBanner) {
   Benchmark_start(PythiaP);
   Benchmark_start(PythiaP_clearData); // trivial
 
-  pState.beamA = new BeamParticle;
-  pState.beamB = new BeamParticle;
-
   // Initial values for pointers to PDF's.
   useNewPdfA      = false;
   useNewPdfB      = false;
@@ -184,18 +181,6 @@ Pythia::Pythia(stringref xmlDir_, bool printBanner) {
 
 // done
 Pythia::~Pythia() {
-
-  if (pState.beamA)
-  {
-    delete pState.beamA;
-    pState.beamA = nullptr;
-  }
-
-  if (pState.beamB)
-  {
-    delete pState.beamB;
-    pState.beamB = nullptr;
-  }
 
   // Delete the PDF's created with new.
   if (useNewPdfHard && pdfHardAPtr != pdfAPtr) delete pdfHardAPtr;
@@ -570,8 +555,8 @@ bool Pythia::init() {
   doVetoPartons    = false;
   retryPartonLevel = false;
   if (hasUserHooks) {
-    userHooksPtr->initPtr( &pState.info, &pState.settings, &pState.particleData, &pState.rndm, pState.beamA,
-      pState.beamB, &beamPomA, &beamPomB, pState.couplings, &partonSystems, &sigmaTot);
+    userHooksPtr->initPtr( &pState.info, &pState.settings, &pState.particleData, &pState.rndm, &beamA,
+      &beamB, &beamPomA, &beamPomB, pState.couplings, &partonSystems, &sigmaTot);
     if (!userHooksPtr->initAfterBeams()) {
       pState.info.errorMsg("Abort from Pythia::init: could not initialise UserHooks");
       return false;
@@ -646,7 +631,7 @@ bool Pythia::init() {
   // (in case we are using SUSY coup rather than SM coup)
   pState.particleData.initPtr( &pState.info, &pState.settings, &pState.rndm, pState.couplings);
   if (hasUserHooks) userHooksPtr->initPtr( &pState.info, &pState.settings, &pState.particleData,
-    &pState.rndm, pState.beamA, pState.beamB, &beamPomA, &beamPomB, pState.couplings,
+    &pState.rndm, &beamA, &beamB, &beamPomA, &beamPomB, pState.couplings,
     &partonSystems, &sigmaTot);
 
   // Set headers to distinguish the two event listing kinds.
@@ -741,9 +726,9 @@ bool Pythia::init() {
     // Note: StringFlav class is used to select parton/hadron flavours
     // it belongs to hadronLevel, so need to extract it here
     StringFlav* flavSelPtr = hadronLevel.getStringFlavPtr();
-    pState.beamA->init( idA, pzAcm, eA, mA, &pState.info, pState.settings, &pState.particleData, &pState.rndm,
+    beamA.init( idA, pzAcm, eA, mA, &pState.info, pState.settings, &pState.particleData, &pState.rndm,
       pdfAPtr, pdfHardAPtr, isUnresolvedA, flavSelPtr);
-    pState.beamB->init( idB, pzBcm, eB, mB, &pState.info, pState.settings, &pState.particleData, &pState.rndm,
+    beamB.init( idB, pzBcm, eB, mB, &pState.info, pState.settings, &pState.particleData, &pState.rndm,
       pdfBPtr, pdfHardBPtr, isUnresolvedB, flavSelPtr);
 
     // Optionally set up new alternative beams for these Pomerons.
@@ -761,7 +746,7 @@ bool Pythia::init() {
   // !!!
   // Send info/pointers to process level for initialization.
   if ( doProcessLevel && !processLevel.init(&pState, &pState.info, pState.settings, &pState.particleData,
-    &pState.rndm, pState.beamA, pState.beamB, pState.couplings, &sigmaTot, doLHA, &pState.slhaInterface,
+    &pState.rndm, &beamA, &beamB, pState.couplings, &sigmaTot, doLHA, &pState.slhaInterface,
     userHooksPtr, sigmaPtrs, phaseSpacePtrs) ) {
     pState.info.errorMsg("Abort from Pythia::init: "
       "processLevel initialization failed");
@@ -771,7 +756,7 @@ bool Pythia::init() {
   // Initialize timelike showers already here, since needed in decays.
   // The pointers to the beams are needed by some external plugin showers.
   // (not much here; just copying settings)
-  timesDecPtr->init( pState.beamA, pState.beamB);
+  timesDecPtr->init( &beamA, &beamB);
 
   // (note: above processLevel.init will do this)
   // Alternatively only initialize resonance decays.
@@ -783,7 +768,7 @@ bool Pythia::init() {
 
   // Send info/pointers to parton level for initialization.
   if ( doPartonLevel && doProcessLevel && !partonLevel.init(&pState, &pState.info, pState.settings,
-    &pState.particleData, &pState.rndm, pState.beamA, pState.beamB, &beamPomA, &beamPomB, pState.couplings,
+    &pState.particleData, &pState.rndm, &beamA, &beamB, &beamPomA, &beamPomB, pState.couplings,
     &partonSystems, &sigmaTot, timesDecPtr, timesPtr, spacePtr, &rHadrons,
     userHooksPtr, mergingHooksPtr, false) ) {
     pState.info.errorMsg("Abort from Pythia::init: "
@@ -805,7 +790,7 @@ bool Pythia::init() {
 
   // Send info/pointers to parton level for trial shower initialization.
   if ( doMerging && !trialPartonLevel.init(&pState, &pState.info, pState.settings, &pState.particleData,
-      &pState.rndm, pState.beamA, pState.beamB, &beamPomA, &beamPomB, pState.couplings,
+      &pState.rndm, &beamA, &beamB, &beamPomA, &beamPomB, pState.couplings,
       &partonSystems, &sigmaTot, timesDecPtr, timesPtr, spacePtr, &rHadrons,
       userHooksPtr, mergingHooksPtr, true) ) {
     pState.info.errorMsg("Abort from Pythia::init: "
@@ -818,7 +803,7 @@ bool Pythia::init() {
 
   // Initialise the merging wrapper class.
   if (doMerging ) merging.init( &pState.settings, &pState.info, &pState.particleData, &pState.rndm,
-    pState.beamA, pState.beamB, mergingHooksPtr, &trialPartonLevel );
+    &beamA, &beamB, mergingHooksPtr, &trialPartonLevel );
 
   // !!!
   // Send info/pointers to hadron level for initialization.
@@ -866,7 +851,7 @@ bool Pythia::init() {
 
   // Init colour reconnection and junction splitting.
   colourReconnection.init( &pState.info, pState.settings, &pState.rndm, &pState.particleData,
-    pState.beamA, pState.beamB, &partonSystems);
+    &beamA, &beamB, &partonSystems);
 
   Benchmark_stop(Pythia0init_initCOlorReconnection);
   Benchmark_start(Pythia0init_initCOlorJunctionSplitting);
@@ -1190,8 +1175,8 @@ bool Pythia::next() {
   process.clear();
   event.clear();
   partonSystems.clear();
-  pState.beamA->clear();
-  pState.beamB->clear();
+  beamA.clear();
+  beamB.clear();
   beamPomA.clear();
   beamPomB.clear();
 
@@ -1199,8 +1184,8 @@ bool Pythia::next() {
   Benchmark_start(Pythia0next_pickValenceFlavours);
 
   // Pick current beam valence flavours (for pi0, K0S, K0L, Pomeron).
-  pState.beamA->newValenceContent();
-  pState.beamB->newValenceContent();
+  beamA.newValenceContent();
+  beamB.newValenceContent();
   if ( doDiffraction || doHardDiff) {
     beamPomA.newValenceContent();
     beamPomB.newValenceContent();
@@ -1324,8 +1309,8 @@ bool Pythia::next() {
 
       // Reset event record and (extracted partons from) beam remnants.
       event.clear();
-      pState.beamA->clear();
-      pState.beamB->clear();
+      beamA.clear();
+      beamB.clear();
       beamPomA.clear();
       beamPomB.clear();
       partonSystems.clear();
@@ -1659,8 +1644,8 @@ void Pythia::nextKinematics() {
   pState.info.setBeamA( idA, pzAcm, eA, mA);
   pState.info.setBeamB( idB, pzBcm, eB, mB);
   pState.info.setECM( eCM);
-  pState.beamA->newPzE( pzAcm, eA);
-  pState.beamB->newPzE( pzBcm, eB);
+  beamA.newPzE( pzAcm, eA);
+  beamB.newPzE( pzBcm, eB);
 
   // Set boost/rotation matrices from/to CM frame.
   MfromCM.reset();
@@ -2141,11 +2126,11 @@ bool Pythia::check(ostream& os) {
   // Check that beams and event records agree on incoming partons.
   // Only meaningful for resolved beams.
   if (pState.info.isResolved() && !pState.info.hasUnresolvedBeams())
-  for (int iSys = 0; iSys < pState.beamA->sizeInit(); ++iSys) {
+  for (int iSys = 0; iSys < beamA.sizeInit(); ++iSys) {
     int eventANw  = partonSystems.getInA(iSys);
     int eventBNw  = partonSystems.getInB(iSys);
-    int beamANw   = (*pState.beamA)[iSys].iPos();
-    int beamBNw   = (*pState.beamB)[iSys].iPos();
+    int beamANw   = (*&beamA)[iSys].iPos();
+    int beamBNw   = (*&beamB)[iSys].iPos();
     if (eventANw != beamANw || eventBNw != beamBNw) {
       pState.info.errorMsg("Error in Pythia::check: "
         "event and beams records disagree");
@@ -2296,8 +2281,8 @@ bool Pythia::check(ostream& os) {
     pState.info.list();
     event.list(listVertices, listHistory);
     if (listSystems) partonSystems.list();
-    if (listBeams) pState.beamA->list();
-    if (listBeams) pState.beamB->list();
+    if (listBeams) beamA.list();
+    if (listBeams) beamB.list();
   }
 
   // Update error counter. Done also for flawed event.
