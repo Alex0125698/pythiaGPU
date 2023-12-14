@@ -332,7 +332,9 @@ public:
   virtual void sigmaKin();
 
   // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat();
+  virtual double sigmaHat() { return my_sigmaHat(); }
+  double my_sigmaHat();
+  virtual double sigmaPDF();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();

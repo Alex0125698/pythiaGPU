@@ -15,7 +15,7 @@
         {
             "name": "Windows",
             "includePath": [
-                "e:/repos/PythiaGPU/include",
+                "e:/repos/PythiaGPU2/include",
                 "E:/vcpkg/installed/x64-windows/include",
                 "E:/vcpkg/installed/x86-windows/include"
             ],
@@ -33,8 +33,8 @@
             "mergeConfigurations": false,
             "browse": {
                 "path": [
-                    "e:/repos/PythiaGPU/**",
-                    "e:/repos/PythiaGPU/include",
+                    "e:/repos/PythiaGPU2/**",
+                    "e:/repos/PythiaGPU2/include",
                     "E:/vcpkg/installed/x64-windows/include",
                     "E:/vcpkg/installed/x86-windows/include",
                     "${workspaceFolder}"

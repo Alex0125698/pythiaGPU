@@ -122,10 +122,12 @@ public: // private data
 
   // Initialization data, normally only set once.
   // WARNING: alias of some settings / particleData
-  int    nQuarkIn, renormScale1, renormScale2, renormScale3, renormScale3VV,
+  int    renormScale1, renormScale2, renormScale3, renormScale3VV,
          factorScale1, factorScale2, factorScale3, factorScale3VV;
   double mcME, mbME, mmuME, mtauME, renormMultFac, renormFixScale,
          factorMultFac, factorFixScale;
+
+  // nQuarkIn
   
   // Kfactor, 
 
@@ -238,8 +240,9 @@ public: // public functions
   // For 2 -> 1/2 also (c) convert from from |M|^2 to d(sigmaHat)/d(tHat).
   double sigmaHatWrap(int id1in = 0, int id2in = 0);
 
+  // NOTE: changed to virtual!!!!!
   // Convolute above with parton flux and K factor. Sum over open channels.
-  double sigmaPDF();
+  virtual double sigmaPDF();
 
   // Select incoming parton channel and extract parton densities (resolved).
   void pickInState(int id1in = 0, int id2in = 0);

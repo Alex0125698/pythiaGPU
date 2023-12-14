@@ -69,9 +69,6 @@ void SigmaProcess::init(PythiaState* pState_)
   // --- alias of some settings / particleData
   // TODO: these need to be deleted
 
-  // Maximum incoming quark flavour.
-  nQuarkIn        = pState->settings.get(Mode::PDFinProcess_nQuarkIn);
-
   // Medium heavy fermion masses set massless or not in ME expressions.
   mcME            = (pState->settings.get(Flag::SigmaProcess_cMassiveME))
                   ? pState->particleData.m0(4)  : 0.;
@@ -103,6 +100,9 @@ void SigmaProcess::init(PythiaState* pState_)
 // adds all the possible partons (based on fluxtype) to inBeamA, inBeamB, inPair arrays
 bool SigmaProcess::initFlux()
 {
+    // Maximum incoming quark flavour.
+    int nQuarkIn        = pState->settings.get(Mode::PDFinProcess_nQuarkIn);
+
     // --- alias of beam info
     // TODO: these need to be deleted
 
@@ -695,6 +695,7 @@ double SigmaProcess::sigmaHatWrap(int id1in, int id2in)
 
   // SigmaProcess
   if (convert2mb) result *= CONVERT2MB;
+
   return result;
 }
 

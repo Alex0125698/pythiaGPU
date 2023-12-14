@@ -1030,7 +1030,15 @@ void Sigma2qq2squarksquark::sigmaKin() {
 
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
-double Sigma2qq2squarksquark::sigmaHat() {
+
+// isUD: depends on final state which is fixed for each copy of this class
+// there are 6*2*3*6=216 input options for this class (one for each pair of final states id3,id4)
+// swapTU: depends on initial state and final state
+// m2Neut,m2Char: mass squares of all possible internal propagator lines
+// onlyQCD = pState->settings.get(Flag::SUSY_qq2squarksquark_onlyQCD);
+// coupSUSYPtr
+
+double Sigma2qq2squarksquark::my_sigmaHat() {
 
 
   Benchmark_start(sigmaHat_SUSY_Sigma2qq2squarksquark);
@@ -1482,6 +1490,74 @@ double Sigma2qq2squarksquark::sigmaHat() {
   // Return answer.
   return sigma;
 
+}
+
+double Sigma2qq2squarksquark::sigmaPDF()
+{
+  // Maximum incoming quark flavours
+  int nQuarkIn = pState->settings.get(Mode::PDFinProcess_nQuarkIn);
+
+  // K factor, multiplying resolved processes. (But not here for MPI.)
+  double Kfactor = pState->settings.get(Param::SigmaProcess_Kfactor);
+
+
+  // store PDFs on stack; assume no more than 8 quarks
+  // shouldn't be possible to have more since the PGD codes will clash
+  double pdf1arr[8], pdf2arr[8];
+  int i=-1,j=-1;
+  for (int id1 = -nQuarkIn; id1 <= nQuarkIn; ++id1)
+  {
+    if (id1 == 0) continue;
+    ++i; 
+    // (<parton-id>, <parton-momentum-fraction>, <factorization-scale>)
+    pdf1arr[i] = pState->beamA->xfHard(id1, x1Save, Q2FacSave);
+    pdf2arr[i] = pState->beamB->xfHard(id1, x2Save, Q2FacSave);
+  }
+
+  // total hadronic cross-section summed over all parton channels
+  double sigmaSum = 0.;
+
+
+  i=-1; j=-1;
+  for (int id1 = -nQuarkIn; id1 <= nQuarkIn; ++id1)
+  {
+    if (id1 == 0) continue;
+    ++i;
+    double pdf1 = pdf1arr[i];
+
+    for (int id2 = -nQuarkIn; id2 <= nQuarkIn; ++id2)
+    {
+      if (id2 == 0) continue;
+      ++j;
+      double pdf2 = pdf2arr[j];
+
+      this->id1 = id1; 
+      this->id2 = id2;
+      sigmaSum += Kfactor * pdf1 * pdf2 * my_sigmaHat();
+    }
+  }
+
+
+  if (type == ProcessType::P2to1)
+  {
+    if (convertM2) 
+    {
+      sigmaSumSave /= 2. * sH; // TODO: what is sH?
+      // Convert 2 * pi * delta(p^2 - m^2) to Breit-Wigner with same area.
+      // TODO: why do we assume resonance just based on units?
+      double mTmp   = pState->particleData.m0(resonanceA);
+      double GamTmp = pState->particleData.mWidth(resonanceA);
+      sigmaSumSave *= 2. * mTmp * GamTmp / ( pow2(sH - mTmp * mTmp) + pow2(mTmp * GamTmp) );
+    }
+  }
+
+  if (type == ProcessType::P2to2)
+  {
+    if (convertM2) sigmaSumSave /= 16. * M_PI * sH2;
+  }
+
+  // SigmaProcess
+  if (convert2mb) sigmaSumSave *= CONVERT2MB;
 }
 
 //--------------------------------------------------------------------------
