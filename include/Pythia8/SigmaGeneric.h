@@ -24,9 +24,15 @@ class Sigma2gg2qGqGbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2qGqGbar(int idIn, int codeIn, int spinIn,
-    stringref nameIn = "g g -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nameSave(nameIn) {}
+  Sigma2gg2qGqGbar(int idIn, int codeIn, int spinIn, stringref nameIn = "g g -> qG qGbar") 
+     : idNew(idIn), spinSave(spinIn)
+  {
+    name = nameIn;
+    code = codeIn;
+    fluxType = FluxType::GG;
+    id3Mass =  idNew;
+    id4Mass =  idNew;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -40,18 +46,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idNew;}
-  virtual int    id4Mass() const {return idNew;}
-
 private:
 
   // Values stored for process type and colour flow selection.
-  int    idNew, codeSave, spinSave, nCHV;
-  string nameSave;
+  int    idNew, spinSave, nCHV;
   bool   hasKappa;
   double openFracPair, sigma, sigTS, sigUS, sigSum, kappam1;
 
@@ -66,9 +64,15 @@ class Sigma2qqbar2qGqGbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2qGqGbar(int idIn, int codeIn, int spinIn,
-    stringref nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nameSave(nameIn) {}
+  Sigma2qqbar2qGqGbar(int idIn, int codeIn, int spinIn, stringref nameIn = "q qbar -> qG qGbar") 
+     : idNew(idIn), spinSave(spinIn)
+  {
+    name = nameIn;
+    code = codeIn;
+    fluxType = FluxType::QQBARSAME;
+    id3Mass = idNew;
+    id4Mass = idNew;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -82,18 +86,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idNew;}
-  virtual int    id4Mass() const {return idNew;}
-
 private:
 
   // Values stored for process type and colour flow selection.
-  int    idNew, codeSave, spinSave, nCHV;
-  string nameSave;
+  int    idNew, spinSave, nCHV;
   double openFracPair, sigma, sigSum, kappa;
 
 };
@@ -109,8 +105,15 @@ public:
 
   // Constructor.
   Sigma2ffbar2fGfGbar(int idIn, int codeIn, int spinIn,
-    stringref nameIn = "q qbar -> qG qGbar") : idNew(idIn), codeSave(codeIn),
-    spinSave(spinIn), nameSave(nameIn) {}
+    stringref nameIn = "q qbar -> qG qGbar") : idNew(idIn),
+    spinSave(spinIn)
+  {
+    name = nameIn;
+    code = codeIn;
+    fluxType = FluxType::FFBARSAME;
+    id3Mass = idNew;
+    id4Mass = idNew;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -124,18 +127,10 @@ public:
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
 
-  // Info on the subprocess.
-  virtual string name()    const {return nameSave;}
-  virtual int    code()    const {return codeSave;}
-  virtual string inFlux()  const {return "ffbarSame";}
-  virtual int    id3Mass() const {return idNew;}
-  virtual int    id4Mass() const {return idNew;}
-
 private:
 
   // Values stored for process type and colour flow selection.
-  int    idNew, codeSave, spinSave, nCHV;
-  string nameSave;
+  int    idNew, spinSave, nCHV;
   bool   hasColour;
   double eQHV2, openFracPair, sigma0, sigSum, kappa, colFac;
 
@@ -151,7 +146,13 @@ class Sigma1ffbar2Zv : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2Zv() {}
+  Sigma1ffbar2Zv()
+  {
+    name = "f fbar -> Zv";
+    code = 4941;
+    fluxType = FluxType::FFBARSAME;
+    resonanceA = 4900023;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -167,12 +168,6 @@ public:
 
   // Evaluate weight for decay angles.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return "f fbar -> Zv";}
-  virtual int    code()       const {return 4941;}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual int    resonanceA() const {return 4900023;}
 
 private:
 

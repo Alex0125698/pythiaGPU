@@ -407,12 +407,12 @@ void Sigma2qqbar2qqbarNew::setIdColAcol() {
 void Sigma2gg2QQbar::initProc() {
 
   // Process name.
-  nameSave                 = "g g -> Q Qbar";
-  if (idNew == 4) nameSave = "g g -> c cbar";
-  if (idNew == 5) nameSave = "g g -> b bbar";
-  if (idNew == 6) nameSave = "g g -> t tbar";
-  if (idNew == 7) nameSave = "g g -> b' b'bar";
-  if (idNew == 8) nameSave = "g g -> t' t'bar";
+  name                 = "g g -> Q Qbar";
+  if (idNew == 4) name = "g g -> c cbar";
+  if (idNew == 5) name = "g g -> b bbar";
+  if (idNew == 6) name = "g g -> t tbar";
+  if (idNew == 7) name = "g g -> b' b'bar";
+  if (idNew == 8) name = "g g -> t' t'bar";
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
@@ -494,12 +494,12 @@ double Sigma2gg2QQbar::weightDecay( Event& process, int iResBeg,
 void Sigma2qqbar2QQbar::initProc() {
 
   // Process name.
-  nameSave                 = "q qbar -> Q Qbar";
-  if (idNew == 4) nameSave = "q qbar -> c cbar";
-  if (idNew == 5) nameSave = "q qbar -> b bbar";
-  if (idNew == 6) nameSave = "q qbar -> t tbar";
-  if (idNew == 7) nameSave = "q qbar -> b' b'bar";
-  if (idNew == 8) nameSave = "q qbar -> t' t'bar";
+  name                 = "q qbar -> Q Qbar";
+  if (idNew == 4) name = "q qbar -> c cbar";
+  if (idNew == 5) name = "q qbar -> b bbar";
+  if (idNew == 6) name = "q qbar -> t tbar";
+  if (idNew == 7) name = "q qbar -> b' b'bar";
+  if (idNew == 8) name = "q qbar -> t' t'bar";
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);

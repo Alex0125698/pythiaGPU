@@ -24,28 +24,28 @@ void Sigma1ffbar2H::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "f fbar -> H (SM)";
-    codeSave = 901;
-    idRes    = 25;
+    name = "f fbar -> H (SM)";
+    code = 901;
+    resonanceA    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "f fbar -> h0(H1)";
-    codeSave = 1001;
-    idRes    = 25;
+    name = "f fbar -> h0(H1)";
+    code = 1001;
+    resonanceA    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "f fbar -> H0(H2)";
-    codeSave = 1021;
-    idRes    = 35;
+    name = "f fbar -> H0(H2)";
+    code = 1021;
+    resonanceA    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "f fbar -> A0(A3)";
-    codeSave = 1041;
-    idRes    = 36;
+    name = "f fbar -> A0(A3)";
+    code = 1041;
+    resonanceA    = 36;
   }
 
   // Find pointer to H0, H1, H2 or A3 depending on the value of idRes.
-  HResPtr = particleDataPtr->particleDataEntryPtr(idRes);
+  HResPtr = particleDataPtr->particleDataEntryPtr(resonanceA);
 
   // Store H0, H1, H2 or A3 mass and width for propagator.
   mRes     = HResPtr->m0();
@@ -63,11 +63,11 @@ void Sigma1ffbar2H::initProc() {
 void Sigma1ffbar2H::sigmaKin() {
 
   // Set up Breit-Wigner.
-  double width = HResPtr->resWidth(idRes, mH);
+  double width = HResPtr->resWidth(resonanceA, mH);
   sigBW        = 4. * M_PI/ ( pow2(sH - m2Res) + pow2(mH * width) );
 
   // Width out only includes open channels.
-  widthOut     = width * HResPtr->resOpenFrac(idRes);
+  widthOut     = width * HResPtr->resOpenFrac(resonanceA);
 
 }
 
@@ -96,7 +96,7 @@ double Sigma1ffbar2H::sigmaHat() {
 void Sigma1ffbar2H::setIdColAcol() {
 
   // Flavours trivial.
-  setId( id1, id2, idRes);
+  setId( id1, id2, resonanceA);
 
   // Colour flow topologies. Swap when antiquarks.
   if (abs(id1) < 9) setColAcol( 1, 0, 0, 1, 0, 0);
@@ -141,28 +141,28 @@ void Sigma1gg2H::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "g g -> H (SM)";
-    codeSave = 902;
-    idRes    = 25;
+    name = "g g -> H (SM)";
+    code = 902;
+    resonanceA    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "g g -> h0(H1)";
-    codeSave = 1002;
-    idRes    = 25;
+    name = "g g -> h0(H1)";
+    code = 1002;
+    resonanceA    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "g g -> H0(H2)";
-    codeSave = 1022;
-    idRes    = 35;
+    name = "g g -> H0(H2)";
+    code = 1022;
+    resonanceA    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "g g -> A0(A3)";
-    codeSave = 1042;
-    idRes    = 36;
+    name = "g g -> A0(A3)";
+    code = 1042;
+    resonanceA    = 36;
   }
 
-  // Find pointer to H0, H1, H2 or A3 depending on idRes.
-  HResPtr = particleDataPtr->particleDataEntryPtr(idRes);
+  // Find pointer to H0, H1, H2 or A3 depending on resonanceA.
+  HResPtr = particleDataPtr->particleDataEntryPtr(resonanceA);
 
   // Store H0, H1, H2 or A3 mass and width for propagator.
   mRes     = HResPtr->m0();
@@ -182,11 +182,11 @@ void Sigma1gg2H::sigmaKin() {
   double widthIn  = HResPtr->resWidthChan( mH, 21, 21) / 64.;
 
   // Set up Breit-Wigner.
-  double width    = HResPtr->resWidth(idRes, mH);
+  double width    = HResPtr->resWidth(resonanceA, mH);
   double sigBW    = 8. * M_PI/ ( pow2(sH - m2Res) + pow2(mH * width) );
 
   // Width out only includes open channels.
-  double widthOut = width * HResPtr->resOpenFrac(idRes);
+  double widthOut = width * HResPtr->resOpenFrac(resonanceA);
 
   // Done.
   sigma = widthIn * sigBW * widthOut;
@@ -200,7 +200,7 @@ void Sigma1gg2H::sigmaKin() {
 void Sigma1gg2H::setIdColAcol() {
 
   // Flavours trivial.
-  setId( 21, 21, idRes);
+  setId( 21, 21, resonanceA);
 
   // Colour flow topology.
   setColAcol( 1, 2, 2, 1, 0, 0);
@@ -244,28 +244,28 @@ void Sigma1gmgm2H::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "gamma gamma -> H (SM)";
-    codeSave = 903;
-    idRes    = 25;
+    name = "gamma gamma -> H (SM)";
+    code = 903;
+    resonanceA    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "gamma gamma -> h0(H1)";
-    codeSave = 1003;
-    idRes    = 25;
+    name = "gamma gamma -> h0(H1)";
+    code = 1003;
+    resonanceA    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "gamma gamma -> H0(H2)";
-    codeSave = 1023;
-    idRes    = 35;
+    name = "gamma gamma -> H0(H2)";
+    code = 1023;
+    resonanceA    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "gamma gamma -> A0(A3)";
-    codeSave = 1043;
-    idRes    = 36;
+    name = "gamma gamma -> A0(A3)";
+    code = 1043;
+    resonanceA    = 36;
   }
 
   // Find pointer to H0, H1, H2 or A3.
-  HResPtr = particleDataPtr->particleDataEntryPtr(idRes);
+  HResPtr = particleDataPtr->particleDataEntryPtr(resonanceA);
 
   // Store H0, H1, H2 or A3 mass and width for propagator.
   mRes     = HResPtr->m0();
@@ -285,11 +285,11 @@ void Sigma1gmgm2H::sigmaKin() {
   double widthIn  = HResPtr->resWidthChan( mH, 22, 22);
 
   // Set up Breit-Wigner.
-  double width    = HResPtr->resWidth(idRes, mH);
+  double width    = HResPtr->resWidth(resonanceA, mH);
   double sigBW    = 8. * M_PI/ ( pow2(sH - m2Res) + pow2(mH * width) );
 
   // Width out only includes open channels.
-  double widthOut = width * HResPtr->resOpenFrac(idRes);
+  double widthOut = width * HResPtr->resOpenFrac(resonanceA);
 
   // Done.
   sigma = widthIn * sigBW * widthOut;
@@ -303,7 +303,7 @@ void Sigma1gmgm2H::sigmaKin() {
 void Sigma1gmgm2H::setIdColAcol() {
 
   // Flavours trivial.
-  setId( 22, 22, idRes);
+  setId( 22, 22, resonanceA);
 
   // Colour flow trivial.
   setColAcol( 0, 0, 0, 0, 0, 0);
@@ -347,27 +347,27 @@ void Sigma2ffbar2HZ::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-     nameSave = "f fbar -> H0 Z0 (SM)";
-     codeSave = 904;
-     idRes    = 25;
+     name = "f fbar -> H0 Z0 (SM)";
+     code = 904;
+     resonanceA    = 25;
      coup2Z   = 1.;
   }
   else if (higgsType == 1) {
-    nameSave = "f fbar -> h0(H1) Z0";
-    codeSave = 1004;
-    idRes    = 25;
+    name = "f fbar -> h0(H1) Z0";
+    code = 1004;
+    resonanceA    = 25;
     coup2Z   = settingsPtr->parm("HiggsH1:coup2Z");
   }
   else if (higgsType == 2) {
-    nameSave = "f fbar -> H0(H2) Z0";
-    codeSave = 1024;
-    idRes    = 35;
+    name = "f fbar -> H0(H2) Z0";
+    code = 1024;
+    resonanceA    = 35;
     coup2Z   = settingsPtr->parm("HiggsH2:coup2Z");
   }
   else if (higgsType == 3) {
-    nameSave = "f fbar -> A0(A3) ZO";
-    codeSave = 1044;
-    idRes    = 36;
+    name = "f fbar -> A0(A3) ZO";
+    code = 1044;
+    resonanceA    = 36;
     coup2Z   = settingsPtr->parm("HiggsA3:coup2Z");
   }
 
@@ -380,7 +380,7 @@ void Sigma2ffbar2HZ::initProc() {
                  * couplingsPtr->cos2thetaW());
 
   // Secondary open width fraction.
-  openFracPair = particleDataPtr->resOpenFrac(idRes, 23);
+  openFracPair = particleDataPtr->resOpenFrac(resonanceA, 23);
 
 }
 
@@ -424,7 +424,7 @@ double Sigma2ffbar2HZ::sigmaHat() {
 void Sigma2ffbar2HZ::setIdColAcol() {
 
   // Flavours trivial.
-  setId( id1, id2, idRes, 23);
+  setId( id1, id2, resonanceA, 23);
 
   // Colour flow topologies. Swap when antiquarks.
   if (abs(id1) < 9) setColAcol( 1, 0, 0, 1, 0, 0);
@@ -499,26 +499,26 @@ void Sigma2ffbar2HW::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "f fbar -> H0 W+- (SM)";
-    codeSave = 905;
+    name = "f fbar -> H0 W+- (SM)";
+    code = 905;
     idRes    = 25;
     coup2W   = 1.;
   }
   else if (higgsType == 1) {
-    nameSave = "f fbar -> h0(H1) W+-";
-    codeSave = 1005;
+    name = "f fbar -> h0(H1) W+-";
+    code = 1005;
     idRes    = 25;
     coup2W   = settingsPtr->parm("HiggsH1:coup2W");
   }
   else if (higgsType == 2) {
-    nameSave = "f fbar -> H0(H2) W+-";
-    codeSave = 1025;
+    name = "f fbar -> H0(H2) W+-";
+    code = 1025;
     idRes    = 35;
     coup2W   = settingsPtr->parm("HiggsH2:coup2W");
   }
   else if (higgsType == 3) {
-    nameSave = "f fbar -> A0(A3) W+-";
-    codeSave = 1045;
+    name = "f fbar -> A0(A3) W+-";
+    code = 1045;
     idRes    = 36;
     coup2W   = settingsPtr->parm("HiggsA3:coup2W");
   }
@@ -533,6 +533,8 @@ void Sigma2ffbar2HW::initProc() {
   // Secondary open width fractions.
   openFracPairPos = particleDataPtr->resOpenFrac(idRes,  24);
   openFracPairNeg = particleDataPtr->resOpenFrac(idRes, -24);
+
+  id3Mass = idRes;
 
 }
 
@@ -642,26 +644,26 @@ void Sigma3ff2HfftZZ::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "f f' -> H0 f f'(Z0 Z0 fusion) (SM)";
-    codeSave = 906;
+    name = "f f' -> H0 f f'(Z0 Z0 fusion) (SM)";
+    code = 906;
     idRes    = 25;
     coup2Z   = 1.;
   }
   else if (higgsType == 1) {
-    nameSave = "f f' -> h0(H1) f f' (Z0 Z0 fusion)";
-    codeSave = 1006;
+    name = "f f' -> h0(H1) f f' (Z0 Z0 fusion)";
+    code = 1006;
     idRes    = 25;
     coup2Z  = settingsPtr->parm("HiggsH1:coup2Z");
   }
   else if (higgsType == 2) {
-    nameSave = "f f' -> H0(H2) f f' (Z0 Z0 fusion)";
-    codeSave = 1026;
+    name = "f f' -> H0(H2) f f' (Z0 Z0 fusion)";
+    code = 1026;
     idRes    = 35;
     coup2Z  = settingsPtr->parm("HiggsH2:coup2Z");
   }
   else if (higgsType == 3) {
-    nameSave = "f f' -> A0(A3) f f' (Z0 Z0 fusion)";
-    codeSave = 1046;
+    name = "f f' -> A0(A3) f f' (Z0 Z0 fusion)";
+    code = 1046;
     idRes    = 36;
     coup2Z  = settingsPtr->parm("HiggsA3:coup2Z");
   }
@@ -673,6 +675,8 @@ void Sigma3ff2HfftZZ::initProc() {
 
   // Secondary open width fraction.
   openFrac = particleDataPtr->resOpenFrac(idRes);
+
+  id3Mass = idRes;
 
 }
 
@@ -782,26 +786,26 @@ void Sigma3ff2HfftWW::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "f_1 f_2 -> H0 f_3 f_4 (W+ W- fusion) (SM)";
-    codeSave = 907;
+    name = "f_1 f_2 -> H0 f_3 f_4 (W+ W- fusion) (SM)";
+    code = 907;
     idRes    = 25;
     coup2W   = 1.;
   }
   else if (higgsType == 1) {
-    nameSave = "f_1 f_2 -> h0(H1) f_3 f_4 (W+ W- fusion)";
-    codeSave = 1007;
+    name = "f_1 f_2 -> h0(H1) f_3 f_4 (W+ W- fusion)";
+    code = 1007;
     idRes    = 25;
     coup2W   = settingsPtr->parm("HiggsH1:coup2W");
   }
   else if (higgsType == 2) {
-    nameSave = "f_1 f_2 -> H0(H2) f_3 f_4 (W+ W- fusion)";
-    codeSave = 1027;
+    name = "f_1 f_2 -> H0(H2) f_3 f_4 (W+ W- fusion)";
+    code = 1027;
     idRes    = 35;
     coup2W   = settingsPtr->parm("HiggsH2:coup2W");
   }
   else if (higgsType == 3) {
-    nameSave = "f_1 f_2 -> A0(A3) f_3 f_4 (W+ W- fusion)";
-    codeSave = 1047;
+    name = "f_1 f_2 -> A0(A3) f_3 f_4 (W+ W- fusion)";
+    code = 1047;
     idRes    = 36;
     coup2W   = settingsPtr->parm("HiggsA3:coup2W");
   }
@@ -812,6 +816,8 @@ void Sigma3ff2HfftWW::initProc() {
 
   // Secondary open width fraction.
   openFrac = particleDataPtr->resOpenFrac(idRes);
+
+  id3Mass = idRes;
 
 }
 
@@ -922,26 +928,26 @@ void Sigma3gg2HQQbar::initProc() {
   // Properties specific to Higgs state for the "g g -> H ttbar" process.
   // (H can be H0 SM or H1, H2, A3 from BSM).
   if (higgsType == 0 && idNew == 6) {
-    nameSave = "g g -> H t tbar (SM)";
-    codeSave = 908;
+    name = "g g -> H t tbar (SM)";
+    code = 908;
     idRes    = 25;
     coup2Q   = 1.;
   }
   else if (higgsType == 1 && idNew == 6) {
-    nameSave = "g g -> h0(H1) t tbar";
-    codeSave = 1008;
+    name = "g g -> h0(H1) t tbar";
+    code = 1008;
     idRes    = 25;
     coup2Q   = settingsPtr->parm("HiggsH1:coup2u");
   }
   else if (higgsType == 2 && idNew == 6) {
-    nameSave = "g g -> H0(H2) t tbar";
-    codeSave = 1028;
+    name = "g g -> H0(H2) t tbar";
+    code = 1028;
     idRes    = 35;
     coup2Q   = settingsPtr->parm("HiggsH2:coup2u");
   }
   else if (higgsType == 3 && idNew == 6) {
-    nameSave = "g g -> A0(A3) t tbar";
-    codeSave = 1048;
+    name = "g g -> A0(A3) t tbar";
+    code = 1048;
     idRes    = 36;
     coup2Q   = settingsPtr->parm("HiggsA3:coup2u");
   }
@@ -949,26 +955,26 @@ void Sigma3gg2HQQbar::initProc() {
   // Properties specific to Higgs state for the "g g -> H b bbar" process.
   // (H can be H0 SM or H1, H2, A3 from BSM).
   if (higgsType == 0 && idNew == 5) {
-    nameSave = "g g -> H b bbar (SM)";
-    codeSave = 912;
+    name = "g g -> H b bbar (SM)";
+    code = 912;
     idRes    = 25;
     coup2Q   = 1.;
   }
   else if (higgsType == 1 && idNew == 5) {
-    nameSave = "g g -> h0(H1) b bbar";
-    codeSave = 1012;
+    name = "g g -> h0(H1) b bbar";
+    code = 1012;
     idRes    = 25;
     coup2Q   = settingsPtr->parm("HiggsH1:coup2d");
   }
   else if (higgsType == 2 && idNew == 5) {
-    nameSave = "g g -> H0(H2) b bbar";
-    codeSave = 1032;
+    name = "g g -> H0(H2) b bbar";
+    code = 1032;
     idRes    = 35;
     coup2Q   = settingsPtr->parm("HiggsH2:coup2d");
   }
   else if (higgsType == 3 && idNew == 5) {
-    nameSave = "g g -> A0(A3) b bbar";
-    codeSave = 1052;
+    name = "g g -> A0(A3) b bbar";
+    code = 1052;
     idRes    = 36;
     coup2Q   = settingsPtr->parm("HiggsA3:coup2d");
   }
@@ -981,6 +987,11 @@ void Sigma3gg2HQQbar::initProc() {
   // Secondary open width fraction.
   openFracTriplet = particleDataPtr->resOpenFrac(idRes, idNew, -idNew);
 
+  id3Mass = idRes;
+  id4Mass = idNew;
+  id5Mass = idNew;
+  idTchan1 = idNew;
+  idTchan2 = idNew;
 }
 
 //--------------------------------------------------------------------------
@@ -1394,26 +1405,26 @@ void Sigma3qqbar2HQQbar::initProc() {
   // (H can be H0 SM or H1, H2, A3 from BSM).
 
   if (higgsType == 0 && idNew == 6) {
-    nameSave = "q qbar -> H t tbar (SM)";
-    codeSave = 909;
+    name = "q qbar -> H t tbar (SM)";
+    code = 909;
     idRes    = 25;
     coup2Q   = 1.;
   }
   else if (higgsType == 1 && idNew == 6) {
-    nameSave = "q qbar -> h0(H1) t tbar";
-    codeSave = 1009;
+    name = "q qbar -> h0(H1) t tbar";
+    code = 1009;
     idRes    = 25;
     coup2Q   = settingsPtr->parm("HiggsH1:coup2u");
   }
   else if (higgsType == 2 && idNew == 6) {
-    nameSave = "q qbar -> H0(H2) t tbar";
-    codeSave = 1029;
+    name = "q qbar -> H0(H2) t tbar";
+    code = 1029;
     idRes    = 35;
     coup2Q   = settingsPtr->parm("HiggsH2:coup2u");
   }
   else if (higgsType == 3 && idNew == 6) {
-    nameSave = "q qbar -> A0(A3) t tbar";
-    codeSave = 1049;
+    name = "q qbar -> A0(A3) t tbar";
+    code = 1049;
     idRes    = 36;
     coup2Q   = settingsPtr->parm("HiggsA3:coup2u");
   }
@@ -1421,26 +1432,26 @@ void Sigma3qqbar2HQQbar::initProc() {
  // Properties specific to Higgs state for the "q qbar -> H b bbar" process.
  // (H can be H0 SM or H1, H2, A3 from BSM).
   if (higgsType == 0 && idNew == 5) {
-    nameSave = "q qbar -> H b bbar (SM)";
-    codeSave = 913;
+    name = "q qbar -> H b bbar (SM)";
+    code = 913;
     idRes    = 25;
     coup2Q   = 1.;
   }
   else if (higgsType == 1 && idNew == 5) {
-    nameSave = "q qbar -> h0(H1) b bbar";
-    codeSave = 1013;
+    name = "q qbar -> h0(H1) b bbar";
+    code = 1013;
     idRes    = 25;
     coup2Q   = settingsPtr->parm("HiggsH1:coup2d");
   }
   else if (higgsType == 2 && idNew == 5) {
-    nameSave = "q qbar -> H0(H2) b bbar";
-    codeSave = 1033;
+    name = "q qbar -> H0(H2) b bbar";
+    code = 1033;
     idRes    = 35;
     coup2Q   = settingsPtr->parm("HiggsH2:coup2d");
   }
   else if (higgsType == 3 && idNew == 5) {
-    nameSave = "q qbar -> A0(A3) b bbar";
-    codeSave = 1053;
+    name = "q qbar -> A0(A3) b bbar";
+    code = 1053;
     idRes    = 36;
     coup2Q   = settingsPtr->parm("HiggsA3:coup2d");
   }
@@ -1453,6 +1464,12 @@ void Sigma3qqbar2HQQbar::initProc() {
   // Secondary open width fraction.
   openFracTriplet = particleDataPtr->resOpenFrac(idRes, idNew, -idNew);
 
+
+  id3Mass = idRes;
+  id4Mass = idNew;
+  id5Mass = idNew;
+  idTchan1 = idNew;
+  idTchan2 = idNew;
 }
 
 //--------------------------------------------------------------------------
@@ -1584,48 +1601,51 @@ void Sigma2qg2Hq::initProc() {
   // Properties specific to Higgs state for the "c g -> H c" process.
   // (H can be H0 SM or H1, H2, A3 from BSM).
   if (higgsType == 0 && idNew == 4) {
-    nameSave = "c g -> H c (SM)";
-    codeSave = 911;
+    name = "c g -> H c (SM)";
+    code = 911;
     idRes    = 25;
   }
   else if (higgsType == 1 && idNew == 4) {
-    nameSave = "c g -> h0(H1) c";
-    codeSave = 1011;
+    name = "c g -> h0(H1) c";
+    code = 1011;
     idRes    = 25;
   }
   else if (higgsType == 2 && idNew == 4) {
-    nameSave = "c g -> H0(H2) c";
-    codeSave = 1031;
+    name = "c g -> H0(H2) c";
+    code = 1031;
     idRes    = 35;
   }
   else if (higgsType == 3 && idNew == 4) {
-    nameSave = "c g -> A0(A3) c";
-    codeSave = 1051;
+    name = "c g -> A0(A3) c";
+    code = 1051;
     idRes    = 36;
   }
 
  // Properties specific to Higgs state for the "b g -> H b" process.
  // (H can be H0 SM or H1, H2, A3 from BSM).
  if (higgsType == 0 && idNew == 5) {
-    nameSave = "b g -> H b (SM)";
-    codeSave = 911;
+    name = "b g -> H b (SM)";
+    code = 911;
     idRes    = 25;
   }
   else if (higgsType == 1 && idNew == 5) {
-    nameSave = "b g -> h0(H1) b";
-    codeSave = 1011;
+    name = "b g -> h0(H1) b";
+    code = 1011;
     idRes    = 25;
   }
   else if (higgsType == 2 && idNew == 5) {
-    nameSave = "b g -> H0(H2) b";
-    codeSave = 1031;
+    name = "b g -> H0(H2) b";
+    code = 1031;
     idRes    = 35;
   }
   else if (higgsType == 3 && idNew == 5) {
-    nameSave = "b g -> A0(A3) b";
-    codeSave = 1051;
+    name = "b g -> A0(A3) b";
+    code = 1051;
     idRes    = 36;
   }
+
+  id3Mass = idRes;
+  id4Mass = idNew;
 
   // Standard parameters.
   m2W       = pow2( particleDataPtr->m0(24) );
@@ -1729,25 +1749,27 @@ void Sigma2gg2Hglt::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "g g -> H g (SM; top loop)";
-    codeSave = 914;
+    name = "g g -> H g (SM; top loop)";
+    code = 914;
     idRes    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "g g -> h0(H1) g (BSM; top loop)";
-    codeSave = 1014;
+    name = "g g -> h0(H1) g (BSM; top loop)";
+    code = 1014;
     idRes    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "g g -> H0(H2) g (BSM; top loop)";
-    codeSave = 1034;
+    name = "g g -> H0(H2) g (BSM; top loop)";
+    code = 1034;
     idRes    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "g g -> A0(A3) g (BSM; top loop)";
-    codeSave = 1054;
+    name = "g g -> A0(A3) g (BSM; top loop)";
+    code = 1054;
     idRes    = 36;
   }
+
+  id3Mass = idRes;
 
   // Normalization factor by g g -> H partial width.
   // (H can be H0 SM or H1, H2, A3 from BSM).
@@ -1826,25 +1848,27 @@ void Sigma2qg2Hqlt::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "q g -> H q (SM; top loop)";
-    codeSave = 915;
+    name = "q g -> H q (SM; top loop)";
+    code = 915;
     idRes    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "q g -> h0(H1) q (BSM; top loop)";
-    codeSave = 1015;
+    name = "q g -> h0(H1) q (BSM; top loop)";
+    code = 1015;
     idRes    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "q g -> H0(H2) q (BSM; top loop)";
-    codeSave = 1035;
+    name = "q g -> H0(H2) q (BSM; top loop)";
+    code = 1035;
     idRes    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "q g -> A0(A3) q (BSM; top loop)";
-    codeSave = 1055;
+    name = "q g -> A0(A3) q (BSM; top loop)";
+    code = 1055;
     idRes    = 36;
   }
+
+  id3Mass = idRes;
 
   // Normalization factor by g g -> H partial width.
   // (H can be H0 SM or H1, H2, A3 from BSM).
@@ -1927,25 +1951,27 @@ void Sigma2qqbar2Hglt::initProc() {
 
   // Properties specific to Higgs state.
   if (higgsType == 0) {
-    nameSave = "q qbar -> H g (SM; top loop)";
-    codeSave = 916;
+    name = "q qbar -> H g (SM; top loop)";
+    code = 916;
     idRes    = 25;
   }
   else if (higgsType == 1) {
-    nameSave = "q qbar -> h0(H1) g (BSM; top loop)";
-    codeSave = 1016;
+    name = "q qbar -> h0(H1) g (BSM; top loop)";
+    code = 1016;
     idRes    = 25;
   }
   else if (higgsType == 2) {
-    nameSave = "q qbar -> H0(H2) g (BSM; top loop)";
-    codeSave = 1036;
+    name = "q qbar -> H0(H2) g (BSM; top loop)";
+    code = 1036;
     idRes    = 35;
   }
   else if (higgsType == 3) {
-    nameSave = "q qbar -> A0(A3) g (BSM; top loop)";
-    codeSave = 1056;
+    name = "q qbar -> A0(A3) g (BSM; top loop)";
+    code = 1056;
     idRes    = 36;
   }
+
+  id3Mass = idRes;
 
   // Normalization factor by g g -> H partial width.
   // (H can be H0 SM or H1, H2, A3 from BSM).
@@ -2146,6 +2172,8 @@ void Sigma2qg2Hchgq::initProc() {
   openFracNeg = (idOld%2 == 0) ? particleDataPtr->resOpenFrac(-37, -idNew)
                                : particleDataPtr->resOpenFrac( 37, -idNew);
 
+  id4Mass = idNew;
+
 }
 
 //--------------------------------------------------------------------------
@@ -2241,8 +2269,8 @@ void Sigma2ffbar2A3H12::initProc() {
 
   // Set up whether h0(H_1) or H0(H_2).
   higgs12    = (higgsType == 1) ? 25 : 35;
-  codeSave   = (higgsType == 1) ? 1081 : 1082;
-  nameSave   = (higgsType == 1) ? "f fbar -> A0(H3) h0(H1)"
+  code   = (higgsType == 1) ? 1081 : 1082;
+  name   = (higgsType == 1) ? "f fbar -> A0(H3) h0(H1)"
                                 : "f fbar -> A0(H3) H0(H2)";
   coupZA3H12 = (higgsType == 1) ? settingsPtr->parm("HiggsA3:coup2H1Z")
                                 : settingsPtr->parm("HiggsA3:coup2H2Z");
@@ -2257,6 +2285,8 @@ void Sigma2ffbar2A3H12::initProc() {
 
   // Secondary open width fraction.
   openFrac   = particleDataPtr->resOpenFrac(36, higgs12);
+
+  id4Mass = higgs12;
 
 }
 
@@ -2342,8 +2372,8 @@ void Sigma2ffbar2HchgH12::initProc() {
 
   // Set up whether h0(H_1) or H0(H_2).
   higgs12    = (higgsType == 1) ? 25 : 35;
-  codeSave   = (higgsType == 1) ? 1083 : 1084;
-  nameSave   = (higgsType == 1) ? "f fbar' -> H+- h0(H1)"
+  code   = (higgsType == 1) ? 1083 : 1084;
+  name   = (higgsType == 1) ? "f fbar' -> H+- h0(H1)"
                                 : "f fbar' -> H+- H0(H2)";
   coupWHchgH12 = (higgsType == 1) ? settingsPtr->parm("HiggsHchg:coup2H1W")
                                   : settingsPtr->parm("HiggsHchg:coup2H2W");
@@ -2358,6 +2388,8 @@ void Sigma2ffbar2HchgH12::initProc() {
   // Secondary open width fraction.
   openFracPos   = particleDataPtr->resOpenFrac( 37, higgs12);
   openFracNeg   = particleDataPtr->resOpenFrac(-37, higgs12);
+
+  id4Mass = higgs12;
 
 }
 

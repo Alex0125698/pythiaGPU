@@ -122,232 +122,232 @@ void SigmaProcess::init(Info* infoPtrIn, Settings* settingsPtrIn,
 
 bool SigmaProcess::initFlux() {
 
-  // Reset arrays (in case of several init's in same run).
-  inBeamA.clear();
-  inBeamB.clear();
-  inPair.clear();
+    // Reset arrays (in case of several init's in same run).
+    inBeamA.clear();
+    inBeamB.clear();
+    inPair.clear();
 
-  // Read in process-specific channel information.
-  string fluxType = inFlux();
+    switch (fluxType)
+    {
+      case FluxType::NONE:
+        exit(0);
+        // pState->info.errorMsg("Error in SigmaProcess::initFlux; fluxType was not specified");
+        return false;  
 
-  // Case with g g incoming state.
-  if (fluxType == "gg") {
-    addBeamA(21);
-    addBeamB(21);
-    addPair(21, 21);
-  }
+      case FluxType::GG:
+        addBeamA(21);
+        addBeamB(21);
+        addPair(21, 21);
+        break;
 
-  // Case with q g incoming state.
-  else if (fluxType == "qg") {
-    for (int i = -nQuarkIn; i <= nQuarkIn; ++i) {
-      int idNow = (i == 0) ? 21 : i;
-      addBeamA(idNow);
-      addBeamB(idNow);
-    }
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-    if (idNow != 0) {
-      addPair(idNow, 21);
-      addPair(21, idNow);
-    }
-  }
+      case FluxType::QG:
+        for (int i = -nQuarkIn; i <= nQuarkIn; ++i)
+        {
+          int idNow = (i == 0) ? 21 : i;
+          addBeamA(idNow);
+          addBeamB(idNow);
+        }
+        for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+        {
+          if (idNow != 0)
+          {
+            addPair(idNow, 21);
+            addPair(21, idNow);
+          }
+        }
+        break;
 
-  // Case with q q', q qbar' or qbar qbar' incoming state.
-  else if (fluxType == "qq") {
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-    if (idNow != 0) {
-      addBeamA(idNow);
-      addBeamB(idNow);
-    }
-    for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
-    if (id1Now != 0)
-    for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
-    if (id2Now != 0)
-      addPair(id1Now, id2Now);
-  }
+      case FluxType::QQ:
+        for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+        {
+          if (idNow == 0) continue;
+          addBeamA(idNow);
+          addBeamB(idNow);
+        }
+        for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
+        {
+          if (id1Now == 0) continue;
+          for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
+          {
+            if (id2Now != 0) addPair(id1Now, id2Now);
+          }
+        }
+        break;
 
-  // Case with q qbar' incoming state.
-  else if (fluxType == "qqbar") {
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-    if (idNow != 0) {
-      addBeamA(idNow);
-      addBeamB(idNow);
-    }
-    for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
-    if (id1Now != 0)
-    for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
-    if (id2Now != 0 && id1Now * id2Now < 0)
-      addPair(id1Now, id2Now);
-  }
+      case FluxType::QQBAR:
+        for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+        {
+          if (idNow == 0) continue;
+          addBeamA(idNow);
+          addBeamB(idNow);
+        }
+        for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
+        {
+          if (id1Now == 0) continue;
+          for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
+          {
+            if (id2Now != 0 && id1Now * id2Now < 0) addPair(id1Now, id2Now);
+          }
+        }
+        break;
 
-  // Case with q qbar incoming state.
-  else if (fluxType == "qqbarSame") {
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-    if (idNow != 0) {
-      addBeamA(idNow);
-      addBeamB(idNow);
-    }
-    for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-    if (idNow != 0)
-      addPair(idNow, -idNow);
-  }
+      case FluxType::QQBARSAME:
+        for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+        {
+          if (idNow == 0) continue;
+          addBeamA(idNow);
+          addBeamB(idNow);
+        }
+        for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+        {
+          if (idNow != 0) addPair(idNow, -idNow);
+        }
+        break;
 
-  // Case with f f', f fbar', fbar fbar' incoming state.
-  else if (fluxType == "ff") {
-    // If beams are leptons then they are also the colliding partons.
-    if ( isLeptonA && isLeptonB ) {
-      addBeamA(idA);
-      addBeamB(idB);
-      addPair(idA, idB);
-    // First beam is lepton and second is hadron.
-    } else if ( isLeptonA ) {
-      addBeamA(idA);
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamB(idNow);
-        addPair(idA, idNow);
-      }
-    // First beam is hadron and second is lepton.
-    } else if ( isLeptonB ) {
-      addBeamB(idB);
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addPair(idNow, idB);
-      }
-    // Hadron beams gives quarks.
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addBeamB(idNow);
-      }
-      for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
-      if (id1Now != 0)
-      for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
-      if (id2Now != 0)
-        addPair(id1Now, id2Now);
-    }
-  }
+      case FluxType::FF:
+        // If beams are leptons then they are also the colliding partons.
+        if ( isLeptonA && isLeptonB ) {
+          addBeamA(idA);
+          addBeamB(idB);
+          addPair(idA, idB);
+        // First beam is lepton and second is hadron.
+        } else if ( isLeptonA ) {
+          addBeamA(idA);
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamB(idNow);
+            addPair(idA, idNow);
+          }
+        // First beam is hadron and second is lepton.
+        } else if ( isLeptonB ) {
+          addBeamB(idB);
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addPair(idNow, idB);
+          }
+        // Hadron beams gives quarks.
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addBeamB(idNow);
+          }
+          for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
+          if (id1Now != 0)
+          for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
+          if (id2Now != 0)
+            addPair(id1Now, id2Now);
+        }
+        break;
 
-  // Case with f fbar' generic incoming state.
-  else if (fluxType == "ffbar") {
-    // If beams are leptons then also colliding partons.
-    if (isLeptonA && isLeptonB && idA * idB < 0) {
-      addBeamA(idA);
-      addBeamB(idB);
-      addPair(idA, idB);
-    // Hadron beams gives quarks.
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addBeamB(idNow);
-      }
-      for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
-      if (id1Now != 0)
-      for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
-      if (id2Now != 0 && id1Now * id2Now < 0)
-        addPair(id1Now, id2Now);
-    }
-  }
+      case FluxType::FFBAR:
+        // If beams are leptons then also colliding partons.
+        if (isLeptonA && isLeptonB && idA * idB < 0) {
+          addBeamA(idA);
+          addBeamB(idB);
+          addPair(idA, idB);
+        // Hadron beams gives quarks.
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addBeamB(idNow);
+          }
+          for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
+          if (id1Now != 0)
+          for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
+          if (id2Now != 0 && id1Now * id2Now < 0)
+            addPair(id1Now, id2Now);
+        }
+        break;
 
-  // Case with f fbar incoming state.
-  else if (fluxType == "ffbarSame") {
-    // If beams are antiparticle pair and leptons then also colliding partons.
-    if ( idA + idB == 0 && isLeptonA ) {
-      addBeamA(idA);
-      addBeamB(idB);
-      addPair(idA, idB);
-    // Else assume both to be hadrons, for better or worse.
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addBeamB(idNow);
-      }
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0)
-        addPair(idNow, -idNow);
-    }
-  }
+      case FluxType::FFBARSAME:
+        // If beams are antiparticle pair and leptons then also colliding partons.
+        if ( idA + idB == 0 && isLeptonA ) {
+          addBeamA(idA);
+          addBeamB(idB);
+          addPair(idA, idB);
+        // Else assume both to be hadrons, for better or worse.
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addBeamB(idNow);
+          }
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0)
+            addPair(idNow, -idNow);
+        }
+        break;
 
-  // Case with f fbar' charged(+-1) incoming state.
-  else if (fluxType == "ffbarChg") {
-    // If beams are leptons then also colliding partons.
-    if ( isLeptonA && isLeptonB && abs( particleDataPtr->chargeType(idA)
-             + particleDataPtr->chargeType(idB) ) == 3 ) {
-      addBeamA(idA);
-      addBeamB(idB);
-      addPair(idA, idB);
-    // Hadron beams gives quarks.
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addBeamB(idNow);
-      }
-      for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
-      if (id1Now != 0)
-      for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
-      if (id2Now != 0 && id1Now * id2Now < 0
-        && (abs(id1Now) + abs(id2Now))%2 == 1) addPair(id1Now, id2Now);
-    }
-  }
+      case FluxType::FFBARCHG:
+        // If beams are leptons then also colliding partons.
+        if ( isLeptonA && isLeptonB && abs( particleDataPtr->chargeType(idA)
+                + particleDataPtr->chargeType(idB) ) == 3 ) {
+          addBeamA(idA);
+          addBeamB(idB);
+          addPair(idA, idB);
+        // Hadron beams gives quarks.
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addBeamB(idNow);
+          }
+          for (int id1Now = -nQuarkIn; id1Now <= nQuarkIn; ++id1Now)
+          if (id1Now != 0)
+          for (int id2Now = -nQuarkIn; id2Now <= nQuarkIn; ++id2Now)
+          if (id2Now != 0 && id1Now * id2Now < 0
+            && (abs(id1Now) + abs(id2Now))%2 == 1) addPair(id1Now, id2Now);
+        }
+        break;
 
-  // Case with f gamma incoming state.
-  else if (fluxType == "fgm") {
-    // Fermion from incoming side A.
-    if ( isLeptonA ) {
-      addBeamA(idA);
-      addPair(idA, 22);
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamA(idNow);
-        addPair(idNow, 22);
-      }
-    }
-    // Fermion from incoming side B.
-    if ( isLeptonB ) {
-      addBeamB( idB);
-      addPair(22, idB);
-    } else {
-      for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
-      if (idNow != 0) {
-        addBeamB(idNow);
-        addPair(22, idNow);
-      }
-    }
-    // Photons in the beams.
-    addBeamA(22);
-    addBeamB(22);
-  }
+      case FluxType::FGAMMA:
+        // Fermion from incoming side A.
+        if ( isLeptonA ) {
+          addBeamA(idA);
+          addPair(idA, 22);
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamA(idNow);
+            addPair(idNow, 22);
+          }
+        }
+        // Fermion from incoming side B.
+        if ( isLeptonB ) {
+          addBeamB( idB);
+          addPair(22, idB);
+        } else {
+          for (int idNow = -nQuarkIn; idNow <= nQuarkIn; ++idNow)
+          if (idNow != 0) {
+            addBeamB(idNow);
+            addPair(22, idNow);
+          }
+        }
+        // Photons in the beams.
+        addBeamA(22);
+        addBeamB(22);
+        break;
 
-  // Case with gamma gamma incoming state.
-  else if (fluxType == "ggm") {
-    addBeamA(21);
-    addBeamA(22);
-    addBeamB(21);
-    addBeamB(22);
-    addPair(21, 22);
-    addPair(22, 21);
-  }
+      case FluxType::GGAMMA:
+        addBeamA(21);
+        addBeamA(22);
+        addBeamB(21);
+        addBeamB(22);
+        addPair(21, 22);
+        addPair(22, 21);
+        break;
 
-  // Case with gamma gamma incoming state.
-  else if (fluxType == "gmgm") {
-    addBeamA(22);
-    addBeamB(22);
-    addPair(22, 22);
-  }
+      case FluxType::GAMMAGAMMA:
+        addBeamA(22);
+        addBeamB(22);
+        addPair(22, 22);
+        break;
+    };
 
-  // Unrecognized fluxType is bad sign. Else done.
-  else {
-    infoPtr->errorMsg("Error in SigmaProcess::initFlux: "
-    "unrecognized inFlux type", fluxType);
-    return false;
-  }
   return true;
-
 }
 
 //--------------------------------------------------------------------------
@@ -700,16 +700,16 @@ double Sigma1Process::sigmaHatWrap(int id1in, int id2in) {
   id1 = id1in;
   id2 = id2in;
   double sigmaTmp = sigmaHat();
-  if (convertM2()) {
+  if (convertM2) {
     sigmaTmp /= 2. * sH;
     // Convert 2 * pi * delta(p^2 - m^2) to Breit-Wigner with same area.
-    int idTmp     = resonanceA();
+    int idTmp     = resonanceA;
     double mTmp   = particleDataPtr->m0(idTmp);
     double GamTmp = particleDataPtr->mWidth(idTmp);
     sigmaTmp *= 2. * mTmp * GamTmp / ( pow2(sH - mTmp * mTmp)
       + pow2(mTmp * GamTmp) );
   }
-  if (convert2mb()) sigmaTmp *= CONVERT2MB;
+  if (convert2mb) sigmaTmp *= CONVERT2MB;
   return sigmaTmp;
 
 }
@@ -782,7 +782,7 @@ void Sigma2Process::store2Kin( double x1in, double x2in, double sHin,
   x2Save   = x2in;
 
   // Incoming masses and their squares.
-  bool masslessKin = (id3Mass() == 0) && (id4Mass() == 0);
+  bool masslessKin = (id3Mass == 0) && (id4Mass == 0);
   if (masslessKin) {
     m3     = 0.;
     m4     = 0.;
@@ -812,7 +812,7 @@ void Sigma2Process::store2Kin( double x1in, double x2in, double sHin,
   pT2 = (masslessKin) ?  tH * uH / sH : (tH * uH - s3 * s4) / sH;
 
   // Special case: pick scale as if 2 -> 1 process in disguise.
-  if (isSChannel()) {
+  if (isSChannel) {
 
     // Different options for renormalization scale, but normally sHat.
     Q2RenSave                        = renormMultFac * sH;
@@ -989,13 +989,13 @@ bool Sigma2Process::setupForME() {
 
   // Correct outgoing c, b, mu and tau to be massive or not.
   mME[2] = m3;
-  int id3Tmp = abs(id3Mass());
+  int id3Tmp = abs(id3Mass);
   if (id3Tmp ==  4) mME[2] = mcME;
   if (id3Tmp ==  5) mME[2] = mbME;
   if (id3Tmp == 13) mME[2] = mmuME;
   if (id3Tmp == 15) mME[2] = mtauME;
   mME[3] = m4;
-  int id4Tmp = abs(id4Mass());
+  int id4Tmp = abs(id4Mass);
   if (id4Tmp ==  4) mME[3] = mcME;
   if (id4Tmp ==  5) mME[3] = mbME;
   if (id4Tmp == 13) mME[3] = mmuME;
@@ -1060,7 +1060,7 @@ void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
   x2Save   = x2in;
 
   // Incoming masses and their squares.
-  if (id3Mass() == 0 && id4Mass() == 0 && id5Mass() == 0) {
+  if (id3Mass == 0 && id4Mass == 0 && id5Mass == 0) {
     m3     = 0.;
     m4     = 0.;
     m5     = 0.;
@@ -1090,7 +1090,7 @@ void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
   runBW5   = runBW5in;
 
   // Special case: pick scale as if 2 -> 1 process in disguise.
-  if (isSChannel()) {
+  if (isSChannel) {
 
     // Different options for renormalization scale, but normally sHat.
     Q2RenSave = renormMultFac * sH;
@@ -1101,8 +1101,8 @@ void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
     if (factorScale1 == 2) Q2RenSave = factorFixScale;
 
   // "Normal" 2 -> 3 processes, i.e. not vector boson fusion.
-  } else if ( idTchan1() != 23 && idTchan1() != 24 && idTchan2() != 23
-    && idTchan2() != 24 ) {
+  } else if ( idTchan1 != 23 && idTchan1 != 24 && idTchan2 != 23
+    && idTchan2 != 24 ) {
     double mT3S = s3 + p3cm.pT2();
     double mT4S = s4 + p4cm.pT2();
     double mT5S = s5 + p5cm.pT2();
@@ -1131,8 +1131,8 @@ void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
 
   // Vector boson fusion 2 -> 3 processes; recoils in positions 4 and 5.
   } else {
-    double sV4   = pow2( particleDataPtr->m0(idTchan1()) );
-    double sV5   = pow2( particleDataPtr->m0(idTchan2()) );
+    double sV4   = pow2( particleDataPtr->m0(idTchan1) );
+    double sV5   = pow2( particleDataPtr->m0(idTchan2) );
     double mT3S  = s3  + p3cm.pT2();
     double mTV4S = sV4 + p4cm.pT2();
     double mTV5S = sV5 + p5cm.pT2();
@@ -1175,19 +1175,19 @@ bool Sigma3Process::setupForME() {
 
   // Correct outgoing c, b, mu and tau to be massive or not.
   mME[2] = m3;
-  int id3Tmp = abs(id3Mass());
+  int id3Tmp = abs(id3Mass);
   if (id3Tmp ==  4) mME[2] = mcME;
   if (id3Tmp ==  5) mME[2] = mbME;
   if (id3Tmp == 13) mME[2] = mmuME;
   if (id3Tmp == 15) mME[2] = mtauME;
   mME[3] = m4;
-  int id4Tmp = abs(id4Mass());
+  int id4Tmp = abs(id4Mass);
   if (id4Tmp ==  4) mME[3] = mcME;
   if (id4Tmp ==  5) mME[3] = mbME;
   if (id4Tmp == 13) mME[3] = mmuME;
   if (id4Tmp == 15) mME[3] = mtauME;
   mME[4] = m5;
-  int id5Tmp = abs(id5Mass());
+  int id5Tmp = abs(id5Mass);
   if (id5Tmp ==  4) mME[4] = mcME;
   if (id5Tmp ==  5) mME[4] = mbME;
   if (id5Tmp == 13) mME[4] = mmuME;
@@ -1393,18 +1393,18 @@ void SigmaLHAProcess::setScale() {
 
 // Obtain number of final-state partons from LHA object.
 
-int SigmaLHAProcess::nFinal() const {
+// int SigmaLHAProcess::nFinal() const {
 
-  // At initialization size unknown, so return 0.
-  if (lhaUpPtr->sizePart() <= 0) return 0;
+//   // At initialization size unknown, so return 0.
+//   if (lhaUpPtr->sizePart() <= 0) return 0;
 
-  // Sum up all particles that has first mother = 1.
-  int nFin = 0;
-  for (int i = 3; i < lhaUpPtr->sizePart(); ++i)
-    if (lhaUpPtr->mother1(i) == 1) ++nFin;
-  return nFin;
+//   // Sum up all particles that has first mother = 1.
+//   int nFin = 0;
+//   for (int i = 3; i < lhaUpPtr->sizePart(); ++i)
+//     if (lhaUpPtr->mother1(i) == 1) ++nFin;
+//   return nFin;
 
-}
+// }
 
 //==========================================================================
 

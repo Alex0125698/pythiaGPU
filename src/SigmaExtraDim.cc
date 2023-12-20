@@ -586,6 +586,7 @@ void Sigma2gg2GravitonStarg::initProc() {
 
    // Secondary open width fraction.
   openFrac = particleDataPtr->resOpenFrac(idGstar);
+  id3Mass = idGstar;
 
 }
 
@@ -661,6 +662,7 @@ void Sigma2qg2GravitonStarq::initProc() {
 
    // Secondary open width fraction.
   openFrac = particleDataPtr->resOpenFrac(idGstar);
+  id3Mass = idGstar;
 
 }
 
@@ -742,6 +744,7 @@ void Sigma2qqbar2GravitonStarg::initProc() {
    // Secondary open width fraction.
   openFrac = particleDataPtr->resOpenFrac(idGstar);
 
+  id3Mass = idGstar;
 }
 
 //--------------------------------------------------------------------------
@@ -820,6 +823,9 @@ void Sigma2ffbar2TEVffbar::initProc() {
   if (idNew == 15) nameSave = "f fbar -> tau+ tau- (s-channel gamma_KK/Z_KK)";
   if (idNew == 16) nameSave
     = "f fbar -> nutau nutaubar (s-channel gamma_KK/Z_KK)";
+
+  id3Mass = idNew;
+  id4Mass = idNew;
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
   gmZmode = settingsPtr->mode("ExtraDimensionsTEV:gmZmode");
@@ -900,7 +906,7 @@ void Sigma2ffbar2TEVffbar::initProc() {
 
 // For improving the phase-space sampling (there can be 2 resonances)
 
-int Sigma2ffbar2TEVffbar::resonanceB() {
+int Sigma2ffbar2TEVffbar::phaseResonanceB() {
 
   return 23;
 
@@ -910,7 +916,7 @@ int Sigma2ffbar2TEVffbar::resonanceB() {
 
 // For improving the phase-space sampling (there can be 2 resonances)
 
-int Sigma2ffbar2TEVffbar::resonanceA() {
+int Sigma2ffbar2TEVffbar::phaseResonanceA() {
 
   if (gmZmode>=3) {
     phaseSpacemHatMin  = settingsPtr->parm("PhaseSpace:mHatMin");

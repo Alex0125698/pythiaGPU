@@ -494,12 +494,12 @@ void Sigma2ff2fftW::setIdColAcol() {
 void Sigma2qq2QqtW::initProc() {
 
   // Process name.
-  nameSave                 = "q q -> Q q (t-channel W+-)";
-  if (idNew == 4) nameSave = "q q -> c q (t-channel W+-)";
-  if (idNew == 5) nameSave = "q q -> b q (t-channel W+-)";
-  if (idNew == 6) nameSave = "q q -> t q (t-channel W+-)";
-  if (idNew == 7) nameSave = "q q -> b' q (t-channel W+-)";
-  if (idNew == 8) nameSave = "q q -> t' q (t-channel W+-)";
+  name                 = "q q -> Q q (t-channel W+-)";
+  if (idNew == 4) name = "q q -> c q (t-channel W+-)";
+  if (idNew == 5) name = "q q -> b q (t-channel W+-)";
+  if (idNew == 6) name = "q q -> t q (t-channel W+-)";
+  if (idNew == 7) name = "q q -> b' q (t-channel W+-)";
+  if (idNew == 8) name = "q q -> t' q (t-channel W+-)";
 
   // Store W+- mass for propagator. Common coupling factor.
   mW        = particleDataPtr->m0(24);
@@ -1272,16 +1272,16 @@ void Sigma2ffbar2ffbarsW::setIdColAcol() {
 void Sigma2ffbar2FFbarsgmZ::initProc() {
 
   // Process name.
-  nameSave                 = "f fbar -> F Fbar (s-channel gamma*/Z0)";
-  if (idNew == 4) nameSave = "f fbar -> c cbar (s-channel gamma*/Z0)";
-  if (idNew == 5) nameSave = "f fbar -> b bbar (s-channel gamma*/Z0)";
-  if (idNew == 6) nameSave = "f fbar -> t tbar (s-channel gamma*/Z0)";
-  if (idNew == 7) nameSave = "f fbar -> b' b'bar (s-channel gamma*/Z0)";
-  if (idNew == 8) nameSave = "f fbar -> t' t'bar (s-channel gamma*/Z0)";
-  if (idNew == 15) nameSave = "f fbar -> tau+ tau- (s-channel gamma*/Z0)";
-  if (idNew == 17) nameSave = "f fbar -> tau'+ tau'- (s-channel gamma*/Z0)";
+  name                 = "f fbar -> F Fbar (s-channel gamma*/Z0)";
+  if (idNew == 4) name = "f fbar -> c cbar (s-channel gamma*/Z0)";
+  if (idNew == 5) name = "f fbar -> b bbar (s-channel gamma*/Z0)";
+  if (idNew == 6) name = "f fbar -> t tbar (s-channel gamma*/Z0)";
+  if (idNew == 7) name = "f fbar -> b' b'bar (s-channel gamma*/Z0)";
+  if (idNew == 8) name = "f fbar -> t' t'bar (s-channel gamma*/Z0)";
+  if (idNew == 15) name = "f fbar -> tau+ tau- (s-channel gamma*/Z0)";
+  if (idNew == 17) name = "f fbar -> tau'+ tau'- (s-channel gamma*/Z0)";
   if (idNew == 18)
-    nameSave   = "f fbar -> nu'_tau nu'bar_tau (s-channel gamma*/Z0)";
+    name   = "f fbar -> nu'_tau nu'bar_tau (s-channel gamma*/Z0)";
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
   gmZmode      = settingsPtr->mode("WeakZ0:gmZmode");
@@ -1422,20 +1422,20 @@ double Sigma2ffbar2FFbarsgmZ::weightDecay( Event& process, int iResBeg,
 void Sigma2ffbar2FfbarsW::initProc() {
 
   // Process name.
-  nameSave                 = "f fbar -> F fbar (s-channel W+-)";
-  if (idNew == 4) nameSave = "f fbar -> c qbar (s-channel W+-)";
-  if (idNew == 5) nameSave = "f fbar -> b qbar (s-channel W+-)";
-  if (idNew == 6) nameSave = "f fbar -> t qbar (s-channel W+-)";
-  if (idNew == 7) nameSave = "f fbar -> b' qbar (s-channel W+-)";
-  if (idNew == 8) nameSave = "f fbar -> t' qbar (s-channel W+-)";
+  name                 = "f fbar -> F fbar (s-channel W+-)";
+  if (idNew == 4) name = "f fbar -> c qbar (s-channel W+-)";
+  if (idNew == 5) name = "f fbar -> b qbar (s-channel W+-)";
+  if (idNew == 6) name = "f fbar -> t qbar (s-channel W+-)";
+  if (idNew == 7) name = "f fbar -> b' qbar (s-channel W+-)";
+  if (idNew == 8) name = "f fbar -> t' qbar (s-channel W+-)";
   if (idNew == 7 && idNew2 == 6)
-    nameSave = "f fbar -> b' tbar (s-channel W+-)";
+    name = "f fbar -> b' tbar (s-channel W+-)";
   if (idNew == 8 && idNew2 == 7)
-    nameSave = "f fbar -> t' b'bar (s-channel W+-)";
+    name = "f fbar -> t' b'bar (s-channel W+-)";
   if (idNew == 15 || idNew == 16)
-    nameSave = "f fbar -> tau nu_taubar (s-channel W+-)";
+    name = "f fbar -> tau nu_taubar (s-channel W+-)";
   if (idNew == 17 || idNew == 18)
-    nameSave = "f fbar -> tau'  nu'_taubar (s-channel W+-)";
+    name = "f fbar -> tau'  nu'_taubar (s-channel W+-)";
 
   // Store W+- mass and width for propagator.
   mRes      = particleDataPtr->m0(24);
@@ -3059,14 +3059,14 @@ void Sigma2fgm2Wf::setIdColAcol() {
 void Sigma2gmgm2ffbar::initProc() {
 
   // Process name.
-  nameSave = "gamma gamma -> f fbar";
-  if (idNew ==  1) nameSave = "gamma gamma -> q qbar (uds)";
-  if (idNew ==  4) nameSave = "gamma gamma -> c cbar";
-  if (idNew ==  5) nameSave = "gamma gamma -> b bbar";
-  if (idNew ==  6) nameSave = "gamma gamma -> t tbar";
-  if (idNew == 11) nameSave = "gamma gamma -> e+ e-";
-  if (idNew == 13) nameSave = "gamma gamma -> mu+ mu-";
-  if (idNew == 15) nameSave = "gamma gamma -> tau+ tau-";
+  name = "gamma gamma -> f fbar";
+  if (idNew ==  1) name = "gamma gamma -> q qbar (uds)";
+  if (idNew ==  4) name = "gamma gamma -> c cbar";
+  if (idNew ==  5) name = "gamma gamma -> b bbar";
+  if (idNew ==  6) name = "gamma gamma -> t tbar";
+  if (idNew == 11) name = "gamma gamma -> e+ e-";
+  if (idNew == 13) name = "gamma gamma -> mu+ mu-";
+  if (idNew == 15) name = "gamma gamma -> tau+ tau-";
 
   // Generate massive phase space, except for u+d+s.
   idMass = 0;

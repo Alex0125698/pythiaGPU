@@ -53,17 +53,17 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   Benchmark_start(ProcessContainer0init_setup); // trivial
 
   // Extract info about current process from SigmaProcess object.
-  isLHA       = sigmaProcessPtr->isLHA();
-  isNonDiff   = sigmaProcessPtr->isNonDiff();
-  isResolved  = sigmaProcessPtr->isResolved();
-  isDiffA     = sigmaProcessPtr->isDiffA();
-  isDiffB     = sigmaProcessPtr->isDiffB();
-  isDiffC     = sigmaProcessPtr->isDiffC();
-  isQCD3body  = sigmaProcessPtr->isQCD3body();
-  int nFin    = sigmaProcessPtr->nFinal();
+  isLHA       = sigmaProcessPtr->isLHA;
+  isNonDiff   = sigmaProcessPtr->isNonDiff;
+  isResolved  = sigmaProcessPtr->isResolved;
+  isDiffA     = sigmaProcessPtr->isDiffA;
+  isDiffB     = sigmaProcessPtr->isDiffB;
+  isDiffC     = sigmaProcessPtr->isDiffC;
+  isQCD3body  = sigmaProcessPtr->isQCD3body;
+  int nFin    = sigmaProcessPtr->nFinal;
   lhaStrat    = (isLHA) ? lhaUpPtr->strategy() : 0;
   lhaStratAbs = abs(lhaStrat);
-  allowNegSig = sigmaProcessPtr->allowNegativeSigma();
+  allowNegSig = sigmaProcessPtr->allowNegativeSigma;
 
   useStrictLHEFscales = settings.flag("Beams:strictLHEFscale");
 
@@ -287,7 +287,7 @@ bool ProcessContainer::trialProcess() {
     if (!allowNegSig) {
       if (sigmaNow < sigmaNeg) {
         infoPtr->errorMsg("Warning in ProcessContainer::trialProcess: neg"
-          "ative cross section set 0", "for " +  sigmaProcessPtr->name() );
+          "ative cross section set 0", "for " +  sigmaProcessPtr->name );
         sigmaNeg = sigmaNow;
       }
       if (sigmaNow < 0.) sigmaNow = 0.;
@@ -370,7 +370,7 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
 
   // Construct kinematics from selected phase space point.
   if (!phaseSpacePtr->finalKin()) return false;
-  int nFin = sigmaProcessPtr->nFinal();
+  int nFin = sigmaProcessPtr->nFinal;
 
   // Basic info on process.
   if (isHardest) infoPtr->setType( name(), code(), nFin, isNonDiff,
@@ -405,7 +405,7 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
   }
 
   // Insert the subprocess partons - resolved processes.
-  int idRes = sigmaProcessPtr->idSChannel();
+  int idRes = sigmaProcessPtr->idSChannel;
   if (isResolved && !isLHA) {
 
     // NOAM: Mothers and daughters without/with intermediate state.
@@ -429,16 +429,16 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
     for (int i = 1; i <= 2 + nFin; ++i) {
 
       // Read out particle info from SigmaProcess object.
-      int id        = sigmaProcessPtr->id(i);
+      int id        = sigmaProcessPtr->idSave[i];
       int status    = (i <= 2) ? -21 : 23;
       int mother1   = (i <= 2) ? i : m_M1 ;
       int mother2   = (i <= 2) ? 0 : m_M2 ;
       int daughter1 = (i <= 2) ? m_D1 : 0;
       int daughter2 = (i <= 2) ? m_D2 : 0;
-      int col       = sigmaProcessPtr->col(i);
+      int col       = sigmaProcessPtr->colSave[i];
       if      (col > 0) col += colOffset;
       else if (col < 0) col -= colOffset;
-      int acol      = sigmaProcessPtr->acol(i);
+      int acol      = sigmaProcessPtr->acolSave[i];
       if      (acol > 0) acol += colOffset;
       else if (acol < 0) acol -= colOffset;
 
@@ -460,10 +460,10 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
         // resolved separately.
         col         = 0;
         acol        = 0;
-        int m_col1  = sigmaProcessPtr->col(1);
-        int m_acol1 = sigmaProcessPtr->acol(1);
-        int m_col2  = sigmaProcessPtr->col(2);
-        int m_acol2 = sigmaProcessPtr->acol(2);
+        int m_col1  = sigmaProcessPtr->colSave[1];
+        int m_acol1 = sigmaProcessPtr->acolSave[1];
+        int m_col2  = sigmaProcessPtr->colSave[2];
+        int m_acol2 = sigmaProcessPtr->acolSave[2];
         if (m_col1 == m_acol2 && m_col2 != m_acol1) {
           col       = m_col2;
           acol       = m_acol1;
@@ -490,11 +490,11 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
 
   // Insert the outgoing particles - unresolved processes.
   else if (!isLHA) {
-    int id3     = sigmaProcessPtr->id(3);
+    int id3     = sigmaProcessPtr->idSave[3];
     int status3 = (id3 == process[1].id()) ? 14 : 15;
     process.append( id3, status3, 1, 0, 0, 0, 0, 0,
       phaseSpacePtr->p(3), phaseSpacePtr->m(3));
-    int id4     = sigmaProcessPtr->id(4);
+    int id4     = sigmaProcessPtr->idSave[4];
     int status4 = (id4 == process[2].id()) ? 14 : 15;
     process.append( id4, status4, 2, 0, 0, 0, 0, 0,
       phaseSpacePtr->p(4), phaseSpacePtr->m(4));
@@ -504,7 +504,7 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
     if (isDiffC) {
       process[3].mothers( 1, 2);
       process[4].mothers( 1, 2);
-      int id5     = sigmaProcessPtr->id(5);
+      int id5     = sigmaProcessPtr->idSave[5];
       int status5 = 15;
       process.append( id5, status5, 1, 2, 0, 0, 0, 0,
         phaseSpacePtr->p(5), phaseSpacePtr->m(5));
@@ -678,12 +678,12 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
     x2Now        = phaseSpacePtr->x2();
     x1pdf        = x1Now;
     x2pdf        = x2Now;
-    pdf1         = sigmaProcessPtr->pdf1();
-    pdf2         = sigmaProcessPtr->pdf2();
-    Q2FacNow     = sigmaProcessPtr->Q2Fac();
-    alphaEM      = sigmaProcessPtr->alphaEMRen();
-    alphaS       = sigmaProcessPtr->alphaSRen();
-    Q2Ren        = sigmaProcessPtr->Q2Ren();
+    pdf1         = sigmaProcessPtr->pdf1Save;
+    pdf2         = sigmaProcessPtr->pdf2Save;
+    Q2FacNow     = sigmaProcessPtr->Q2FacSave;
+    alphaEM      = sigmaProcessPtr->alpEM;
+    alphaS       = sigmaProcessPtr->alpS;
+    Q2Ren        = sigmaProcessPtr->Q2RenSave;
     sHat         = phaseSpacePtr->sHat();
     tHat         = phaseSpacePtr->tHat();
     uHat         = phaseSpacePtr->uHat();
@@ -698,12 +698,12 @@ bool ProcessContainer::constructProcess( Event& process, bool isHardest) {
   else {
     x1Now        = 2. * process[3].e() / infoPtr->eCM();
     x2Now        = 2. * process[4].e() / infoPtr->eCM();
-    Q2FacNow     = (scale < 0.) ? sigmaProcessPtr->Q2Fac() : pow2(scale);
+    Q2FacNow     = (scale < 0.) ? sigmaProcessPtr->Q2FacSave : pow2(scale);
     alphaEM      = lhaUpPtr->alphaQED();
-    if (alphaEM < 0.001) alphaEM = sigmaProcessPtr->alphaEMRen();
+    if (alphaEM < 0.001) alphaEM = sigmaProcessPtr->alpEM;
     alphaS       = lhaUpPtr->alphaQCD();
-    if (alphaS  < 0.001) alphaS  = sigmaProcessPtr->alphaSRen();
-    Q2Ren        = (scale < 0.) ? sigmaProcessPtr->Q2Ren() : pow2(scale);
+    if (alphaS  < 0.001) alphaS  = sigmaProcessPtr->alpS;
+    Q2Ren        = (scale < 0.) ? sigmaProcessPtr->Q2RenSave : pow2(scale);
     Vec4 pSum    = process[3].p() + process[4].p();
     sHat         = pSum * pSum;
     int nFinLH   = 0;
@@ -2015,97 +2015,97 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
 
   } // End of SUSY processes.
 
-  // Set up requested objects for New-Gauge-Boson processes.
-  if (settings.flag("NewGaugeBoson:ffbar2gmZZprime")) {
-    sigmaPtr = new Sigma1ffbar2gmZZprime();
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (settings.flag("NewGaugeBoson:ffbar2Wprime")) {
-    sigmaPtr = new Sigma1ffbar2Wprime();
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (settings.flag("NewGaugeBoson:ffbar2R0")) {
-    sigmaPtr = new Sigma1ffbar2Rhorizontal();
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
+  // // Set up requested objects for New-Gauge-Boson processes.
+  // if (settings.flag("NewGaugeBoson:ffbar2gmZZprime")) {
+  //   sigmaPtr = new Sigma1ffbar2gmZZprime();
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (settings.flag("NewGaugeBoson:ffbar2Wprime")) {
+  //   sigmaPtr = new Sigma1ffbar2Wprime();
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (settings.flag("NewGaugeBoson:ffbar2R0")) {
+  //   sigmaPtr = new Sigma1ffbar2Rhorizontal();
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
 
-  // Set up requested objects for Left-Right-Symmetry processes.
-  bool leftrights = settings.flag("LeftRightSymmmetry:all");
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2ZR")) {
-    sigmaPtr = new Sigma1ffbar2ZRight();
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2WR")) {
-    sigmaPtr = new Sigma1ffbar2WRight();
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ll2HL")) {
-    sigmaPtr = new Sigma1ll2Hchgchg(1);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLe")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(1, 11);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLmu")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(1, 13);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLtau")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(1, 15);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ff2HLff")) {
-    sigmaPtr = new Sigma3ff2HchgchgfftWW(1);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HLHL")) {
-    sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(1);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ll2HR")) {
-    sigmaPtr = new Sigma1ll2Hchgchg(2);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRe")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(2, 11);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRmu")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(2, 13);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRtau")) {
-    sigmaPtr = new Sigma2lgm2Hchgchgl(2, 15);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ff2HRff")) {
-    sigmaPtr = new Sigma3ff2HchgchgfftWW(2);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HRHR")) {
-    sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(2);
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
+  // // Set up requested objects for Left-Right-Symmetry processes.
+  // bool leftrights = settings.flag("LeftRightSymmmetry:all");
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2ZR")) {
+  //   sigmaPtr = new Sigma1ffbar2ZRight();
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2WR")) {
+  //   sigmaPtr = new Sigma1ffbar2WRight();
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ll2HL")) {
+  //   sigmaPtr = new Sigma1ll2Hchgchg(1);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLe")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(1, 11);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLmu")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(1, 13);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLtau")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(1, 15);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ff2HLff")) {
+  //   sigmaPtr = new Sigma3ff2HchgchgfftWW(1);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HLHL")) {
+  //   sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(1);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ll2HR")) {
+  //   sigmaPtr = new Sigma1ll2Hchgchg(2);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRe")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(2, 11);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRmu")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(2, 13);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRtau")) {
+  //   sigmaPtr = new Sigma2lgm2Hchgchgl(2, 15);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ff2HRff")) {
+  //   sigmaPtr = new Sigma3ff2HchgchgfftWW(2);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HRHR")) {
+  //   sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(2);
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
 
-  // Set up requested objects for leptoquark LQ processes.
-  bool leptoquarks = settings.flag("LeptoQuark:all");
-  if (leptoquarks || settings.flag("LeptoQuark:ql2LQ")) {
-    sigmaPtr = new Sigma1ql2LeptoQuark;
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leptoquarks || settings.flag("LeptoQuark:qg2LQl")) {
-    sigmaPtr = new Sigma2qg2LeptoQuarkl;
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leptoquarks || settings.flag("LeptoQuark:gg2LQLQbar")) {
-    sigmaPtr = new Sigma2gg2LQLQbar;
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
-  if (leptoquarks || settings.flag("LeptoQuark:qqbar2LQLQbar")) {
-    sigmaPtr = new Sigma2qqbar2LQLQbar;
-    containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
-  }
+  // // Set up requested objects for leptoquark LQ processes.
+  // bool leptoquarks = settings.flag("LeptoQuark:all");
+  // if (leptoquarks || settings.flag("LeptoQuark:ql2LQ")) {
+  //   sigmaPtr = new Sigma1ql2LeptoQuark;
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leptoquarks || settings.flag("LeptoQuark:qg2LQl")) {
+  //   sigmaPtr = new Sigma2qg2LeptoQuarkl;
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leptoquarks || settings.flag("LeptoQuark:gg2LQLQbar")) {
+  //   sigmaPtr = new Sigma2gg2LQLQbar;
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
+  // if (leptoquarks || settings.flag("LeptoQuark:qqbar2LQLQbar")) {
+  //   sigmaPtr = new Sigma2qqbar2LQLQbar;
+  //   containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
+  // }
 
   // Set up requested objects for excited-fermion processes.
   bool excitedfermions = settings.flag("ExcitedFermion:all");

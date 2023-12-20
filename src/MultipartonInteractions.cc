@@ -158,8 +158,8 @@ bool SigmaMultiparton::init(int inState, int processLevel, Info* infoPtr,
 
     // Prepare for massive kinematics (but fixed masses!) where required.
     needMasses[i] = false;
-    int id3Mass =  sigmaT[i]->id3Mass();
-    int id4Mass =  sigmaT[i]->id4Mass();
+    int id3Mass =  sigmaT[i]->id3Mass;
+    int id4Mass =  sigmaT[i]->id4Mass;
     m3Fix[i] = 0.;
     m4Fix[i] = 0.;
     if (id3Mass > 0 || id4Mass > 0) {
@@ -205,7 +205,7 @@ double SigmaMultiparton::sigma( int id1, int id2, double x1, double x2,
       sigmaTval[i] = sigmaT[i]->sigmaHatWrap(id1, id2);
       sigmaT[i]->pickInState(id1, id2);
       // Correction factor for tHat rescaling in massive kinematics.
-      if (needMasses[i]) sigmaTval[i] *= sigmaT[i]->sHBetaMPI() / sHat;
+      if (needMasses[i]) sigmaTval[i] *= sigmaT[i]->sHBeta / sHat;
       sigmaTsum += sigmaTval[i];
     }
 
@@ -216,7 +216,7 @@ double SigmaMultiparton::sigma( int id1, int id2, double x1, double x2,
       sigmaUval[i] = sigmaU[i]->sigmaHatWrap( id1, id2);
       sigmaU[i]->pickInState(id1, id2);
       // Correction factor for tHat rescaling in massive kinematics.
-      if (needMasses[i]) sigmaUval[i] *= sigmaU[i]->sHBetaMPI() / sHat;
+      if (needMasses[i]) sigmaUval[i] *= sigmaU[i]->sHBeta / sHat;
       sigmaUsum += sigmaUval[i];
     }
 
@@ -917,7 +917,7 @@ void MultipartonInteractions::setupFirstSys( Event& process) {
   // Loop over four partons and offset info relative to subprocess itself.
   int colOffset = process.lastColTag();
   for (int i = 1; i <= 4; ++i) {
-    Particle parton = dSigmaDtSel->getParton(i);
+    Particle parton = dSigmaDtSel->parton[i];
     if (i <= 2) parton.status(-21);
     else        parton.status(23);
     if (i <= 2) parton.mothers( i + nOffset, 0);
@@ -937,10 +937,10 @@ void MultipartonInteractions::setupFirstSys( Event& process) {
   process.scale(  sqrt(pT2Fac) );
 
   // Info on subprocess - specific to mimimum-bias events.
-  string nameSub = dSigmaDtSel->name();
-  int codeSub    = dSigmaDtSel->code();
-  int nFinalSub  = dSigmaDtSel->nFinal();
-  double pTMPI   = dSigmaDtSel->pTMPIFin();
+  string nameSub = dSigmaDtSel->name;
+  int codeSub    = dSigmaDtSel->code;
+  int nFinalSub  = dSigmaDtSel->nFinal;
+  double pTMPI   = dSigmaDtSel->pTFin;
   infoPtr->setSubType( iDiffSys, nameSub, codeSub, nFinalSub);
   if (iDiffSys == 0) infoPtr->setTypeMPI( codeSub, pTMPI, 0, 0,
     enhanceB / zeroIntCorr);
@@ -948,10 +948,10 @@ void MultipartonInteractions::setupFirstSys( Event& process) {
   // Further standard info on process.
   infoPtr->setPDFalpha( iDiffSys, id1, id2, x1, x2, xPDF1now, xPDF2now,
     pT2Fac, alpEM, alpS, pT2Ren, 0.);
-  double m3    = dSigmaDtSel->m(3);
-  double m4    = dSigmaDtSel->m(4);
+  double m3    = dSigmaDtSel->mSave[3];
+  double m4    = dSigmaDtSel->mSave[4];
   double theta = dSigmaDtSel->thetaMPI();
-  double phi   = dSigmaDtSel->phiMPI();
+  double phi   = dSigmaDtSel->phi;
   infoPtr->setKin( iDiffSys, id1, id2, x1, x2, sHat, tHat, uHat, sqrt(pT2),
     m3, m4, theta, phi);
 
@@ -1155,7 +1155,7 @@ bool MultipartonInteractions::scatter( Event& event) {
   int motherOffset = event.size();
   int colOffset = event.lastColTag();
   for (int i = 1; i <= 4; ++i) {
-    Particle parton = dSigmaDtSel->getParton(i);
+    Particle parton = dSigmaDtSel->parton[i]; // @overhead
     if (i <= 2 ) parton.mothers( i + nOffset, 0);
     else parton.mothers( motherOffset, motherOffset + 1);
     if (i <= 2 ) parton.daughters( motherOffset + 2, motherOffset + 3);
@@ -1278,8 +1278,8 @@ bool MultipartonInteractions::scatter( Event& event) {
   }
 
   // Store info on subprocess code and rescattered partons.
-  int    codeMPI = dSigmaDtSel->code();
-  double pTMPI   = dSigmaDtSel->pTMPIFin();
+  int    codeMPI = dSigmaDtSel->code;
+  double pTMPI   = dSigmaDtSel->pTFin;
   if (iDiffSys == 0) infoPtr->setTypeMPI( codeMPI, pTMPI, i1Sel, i2Sel,
     enhanceBnow / zeroIntCorr);
   partonSystemsPtr->setPTHat(iSys, pTMPI);

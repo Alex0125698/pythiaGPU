@@ -482,8 +482,8 @@ void PhaseSpace::decayKinematicsStep( Event& process, int iRes) {
 void PhaseSpace::setup3Body() {
 
   // Check for massive t-channel propagator particles.
-  int idTchan1    = abs( sigmaProcessPtr->idTchan1() );
-  int idTchan2    = abs( sigmaProcessPtr->idTchan2() );
+  int idTchan1    = abs( sigmaProcessPtr->idTchan1 );
+  int idTchan2    = abs( sigmaProcessPtr->idTchan2 );
   mTchan1         = (idTchan1 == 0) ? pTHatMinDiverge
                                     : particleDataPtr->m0(idTchan1);
   mTchan2         = (idTchan2 == 0) ? pTHatMinDiverge
@@ -492,10 +492,10 @@ void PhaseSpace::setup3Body() {
   sTchan2         = mTchan2 * mTchan2;
 
   // Find coefficients of different pT2 selection terms. Mirror choice.
-  frac3Pow1       = sigmaProcessPtr->tChanFracPow1();
-  frac3Pow2       = sigmaProcessPtr->tChanFracPow2();
+  frac3Pow1       = sigmaProcessPtr->tChanFracPow1;
+  frac3Pow2       = sigmaProcessPtr->tChanFracPow2;
   frac3Flat       = 1. - frac3Pow1 - frac3Pow2;
-  useMirrorWeight = sigmaProcessPtr->useMirrorWeight();
+  useMirrorWeight = sigmaProcessPtr->useMirrorWeight;
 
 }
 
@@ -510,7 +510,7 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
   // Optional printout.
   if (showSearch) os <<  "\n PYTHIA Optimization printout for "
-    << sigmaProcessPtr->name() << "\n \n" << scientific << setprecision(3);
+    << sigmaProcessPtr->name << "\n \n" << scientific << setprecision(3);
 
   // Check that open range in tau (+ set tauMin, tauMax).
   if (!limitTau(is2, is3)) return false;
@@ -546,14 +546,14 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   Benchmark_start(PhaseSpace0setupSampling123_identifyResonances);
 
   // Identify if any resonances contribute in s-channel.
-  idResA = sigmaProcessPtr->resonanceA();
+  idResA = sigmaProcessPtr->resonanceA;
   if (idResA != 0) {
      mResA = particleDataPtr->m0(idResA);
      GammaResA = particleDataPtr->mWidth(idResA);
      if (mHatMin > mResA + WIDTHMARGIN * GammaResA || (mHatMax > 0.
        && mHatMax < mResA - WIDTHMARGIN * GammaResA) ) idResA = 0;
   }
-  idResB = sigmaProcessPtr->resonanceB();
+  idResB = sigmaProcessPtr->resonanceB;
   if (idResB != 0) {
      mResB = particleDataPtr->m0(idResB);
      GammaResB = particleDataPtr->mWidth(idResB);
@@ -1151,7 +1151,7 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
       if (showViolation) {
         if (violFact < 9.99) os << fixed;
         else                 os << scientific;
-        os << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+        os << " PYTHIA Maximum for " << sigmaProcessPtr->name
            << " increased by factor " << setprecision(3) << violFact
            << " to " << scientific << sigmaMx << endl;
       }
@@ -1161,7 +1161,7 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
       double violFact = sigmaNw / sigmaMx;
       if (violFact < 9.99) os << fixed;
       else                 os << scientific;
-      os << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+      os << " PYTHIA Maximum for " << sigmaProcessPtr->name
          << " exceeded by factor " << setprecision(3) << violFact << endl;
       sigmaPos = sigmaNw;
     }
@@ -1172,12 +1172,12 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
   Benchmark_start(trialKin123_McheckNegativeXsec);
   if (sigmaNw < sigmaNeg) {
     infoPtr->errorMsg("Warning in PhaseSpace2to2tauyz::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
     if (showViolation) os << " PYTHIA Negative minimum for "
-      << sigmaProcessPtr->name() << " changed to " << scientific
+      << sigmaProcessPtr->name << " changed to " << scientific
       << setprecision(3) << sigmaNeg << endl;
   }
   if (sigmaNw < 0.) sigmaNw = 0.;
@@ -1751,9 +1751,9 @@ void PhaseSpace::solveSys( int n, int bin[8], double vec[8],
 void PhaseSpace::setupMass1(int iM) {
 
   // Identity for mass seletion; is 0 also for light quarks (not yet selected).
-  if (iM == 3) idMass[iM] = abs(sigmaProcessPtr->id3Mass());
-  if (iM == 4) idMass[iM] = abs(sigmaProcessPtr->id4Mass());
-  if (iM == 5) idMass[iM] = abs(sigmaProcessPtr->id5Mass());
+  if (iM == 3) idMass[iM] = abs(sigmaProcessPtr->id3Mass);
+  if (iM == 4) idMass[iM] = abs(sigmaProcessPtr->id4Mass);
+  if (iM == 5) idMass[iM] = abs(sigmaProcessPtr->id5Mass);
 
   // Masses and widths of resonances.
   if (idMass[iM] == 0) {
@@ -1911,12 +1911,12 @@ bool PhaseSpace2to1tauy::setupMass() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Mass limits for current resonance.
-  int idRes = abs(sigmaProcessPtr->resonanceA());
-  int idTmp = abs(sigmaProcessPtr->resonanceB());
+  int idRes = abs(sigmaProcessPtr->resonanceA);
+  int idTmp = abs(sigmaProcessPtr->resonanceB);
   if (idTmp > 0) idRes = idTmp;
   double mResMin = (idRes == 0) ? 0. : particleDataPtr->mMin(idRes);
   double mResMax = (idRes == 0) ? 0. : particleDataPtr->mMax(idRes);
@@ -1970,7 +1970,7 @@ bool PhaseSpace2to2tauyz::setupMasses() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Set sHat limits - based on global limits only.
@@ -2078,13 +2078,13 @@ bool PhaseSpace2to2tauyz::trialMasses() {
 bool PhaseSpace2to2tauyz::finalKin() {
 
   // Assign masses to particles assumed massless in matrix elements.
-  int id3 = sigmaProcessPtr->id(3);
-  int id4 = sigmaProcessPtr->id(4);
+  int id3 = sigmaProcessPtr->idSave[3];
+  int id4 = sigmaProcessPtr->idSave[4];
   if (idMass[3] == 0) { m3 = particleDataPtr->m0(id3); s3 = m3*m3; }
   if (idMass[4] == 0) { m4 = particleDataPtr->m0(id4); s4 = m4*m4; }
 
   // Sometimes swap tHat <-> uHat to reflect chosen final-state order.
-  if (sigmaProcessPtr->swappedTU()) {
+  if (sigmaProcessPtr->swapTU) {
     swap(tH, uH);
     z = -z;
   }
@@ -3429,7 +3429,7 @@ bool PhaseSpace2to3tauycyl::setupMasses() {
 
   // Treat Z0 as such or as gamma*/Z0
   gmZmode         = gmZmodeGlobal;
-  int gmZmodeProc = sigmaProcessPtr->gmZmode();
+  int gmZmodeProc = sigmaProcessPtr->gmZmode;
   if (gmZmodeProc >= 0) gmZmode = gmZmodeProc;
 
   // Set sHat limits - based on global limits only.
@@ -3550,9 +3550,9 @@ bool PhaseSpace2to3tauycyl::trialMasses() {
 bool PhaseSpace2to3tauycyl::finalKin() {
 
   // Assign masses to particles assumed massless in matrix elements.
-  int id3 = sigmaProcessPtr->id(3);
-  int id4 = sigmaProcessPtr->id(4);
-  int id5 = sigmaProcessPtr->id(5);
+  int id3 = sigmaProcessPtr->idSave[3];
+  int id4 = sigmaProcessPtr->idSave[4];
+  int id5 = sigmaProcessPtr->idSave[5];
   if (idMass[3] == 0) { m3 = particleDataPtr->m0(id3); s3 = m3*m3; }
   if (idMass[4] == 0) { m4 = particleDataPtr->m0(id4); s4 = m4*m4; }
   if (idMass[5] == 0) { m5 = particleDataPtr->m0(id5); s5 = m5*m5; }
@@ -3855,7 +3855,7 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
       if (showViolation) {
         if (violFact < 9.99) cout << fixed;
         else                 cout << scientific;
-        cout << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+        cout << " PYTHIA Maximum for " << sigmaProcessPtr->name
              << " increased by factor " << setprecision(3) << violFact
              << " to " << scientific << sigmaMx << endl;
       }
@@ -3865,7 +3865,7 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
       double violFact = sigmaNw / sigmaMx;
       if (violFact < 9.99) cout << fixed;
       else                 cout << scientific;
-      cout << " PYTHIA Maximum for " << sigmaProcessPtr->name()
+      cout << " PYTHIA Maximum for " << sigmaProcessPtr->name
            << " exceeded by factor " << setprecision(3) << violFact << endl;
       sigmaPos = sigmaNw;
     }
@@ -3874,12 +3874,12 @@ bool PhaseSpace2to3yyycyl::trialKin(bool inEvent, bool) {
   // Check if negative cross section.
   if (sigmaNw < sigmaNeg) {
     infoPtr->errorMsg("Warning in PhaseSpace2to3yyycyl::trialKin:"
-      " negative cross section set 0", "for " +  sigmaProcessPtr->name() );
+      " negative cross section set 0", "for " +  sigmaProcessPtr->name );
     sigmaNeg = sigmaNw;
 
     // Optional printout of (all) violations.
     if (showViolation) cout << " PYTHIA Negative minimum for "
-      << sigmaProcessPtr->name() << " changed to " << scientific
+      << sigmaProcessPtr->name << " changed to " << scientific
       << setprecision(3) << sigmaNeg << endl;
   }
   if (sigmaNw < 0.) sigmaNw = 0.;

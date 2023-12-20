@@ -23,7 +23,12 @@ class Sigma1gg2GravitonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1gg2GravitonStar() {}
+  Sigma1gg2GravitonStar()
+  {
+    name = "g g -> G*";
+    code = 5001;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -39,12 +44,6 @@ public:
 
   // Evaluate weight for G* decay angle.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return "g g -> G*";}
-  virtual int    code()       const {return 5001;}
-  virtual string inFlux()     const {return "gg";}
-  virtual int    resonanceA() const {return idGstar;}
 
 private:
 
@@ -70,7 +69,12 @@ class Sigma1ffbar2GravitonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1ffbar2GravitonStar() {}
+  Sigma1ffbar2GravitonStar()
+  {
+    name = "f fbar -> G*";
+    code = 5002;
+    fluxType = FluxType::FFBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -86,12 +90,6 @@ public:
 
   // Evaluate weight for G* decay angle.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return "f fbar -> G*";}
-  virtual int    code()       const {return 5002;}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual int    resonanceA() const {return idGstar;}
 
 private:
 
@@ -117,7 +115,12 @@ class Sigma1qqbar2KKgluonStar : public Sigma1Process {
 public:
 
   // Constructor.
-  Sigma1qqbar2KKgluonStar() {}
+  Sigma1qqbar2KKgluonStar()
+  {
+    name = "q qbar -> g*/KK-gluon*";
+    code = 5006;
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -133,12 +136,6 @@ public:
 
   // Evaluate weight for g* decay angle.
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()       const {return "q qbar -> g*/KK-gluon*";}
-  virtual int    code()       const {return 5006;}
-  virtual string inFlux()     const {return "qqbarSame";}
-  virtual int    resonanceA() const {return idKKgluon;}
 
 private:
 
@@ -170,7 +167,12 @@ class Sigma2gg2GravitonStarg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2GravitonStarg() {}
+  Sigma2gg2GravitonStarg()
+  {
+    name = "g g -> G* g";
+    code = 5003;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -186,12 +188,6 @@ public:
 
   // Evaluate weight: currently isotropic (except secondary top decay)..
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()    const {return "g g -> G* g";}
-  virtual int    code()    const {return 5003;}
-  virtual string inFlux()  const {return "gg";}
-  virtual int    id3Mass() const {return idGstar;}
 
 private:
 
@@ -210,7 +206,12 @@ class Sigma2qg2GravitonStarq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2GravitonStarq() {}
+  Sigma2qg2GravitonStarq()
+  {
+    name = "q g -> G* q";
+    code = 5004;
+    fluxType = FluxType::QG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -226,12 +227,6 @@ public:
 
   // Evaluate weight: currently isotropic (except secondary top decay).
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()    const {return "q g -> G* q";}
-  virtual int    code()    const {return 5004;}
-  virtual string inFlux()  const {return "qg";}
-  virtual int    id3Mass() const {return idGstar;}
 
 private:
 
@@ -250,7 +245,12 @@ class Sigma2qqbar2GravitonStarg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2GravitonStarg() {}
+  Sigma2qqbar2GravitonStarg()
+  {
+    name = "q qbar -> G* g";
+    code = 5005;
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -266,12 +266,6 @@ public:
 
   // Evaluate weight: currently isotropic (except secondary top decay).
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
-
-  // Info on the subprocess.
-  virtual string name()    const {return "q qbar -> G* g";}
-  virtual int    code()    const {return 5005;}
-  virtual string inFlux()  const {return "qqbarSame";}
-  virtual int    id3Mass() const {return idGstar;}
 
 private:
 
@@ -292,7 +286,15 @@ class Sigma2ffbar2TEVffbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2ffbar2TEVffbar(int idIn, int codeIn) : idNew(idIn), codeSave(codeIn) {}
+  Sigma2ffbar2TEVffbar(int idIn, int codeIn) : idNew(idIn)
+  {
+    code = codeIn;
+    fluxType = FluxType::FFBARSAME;
+    isSChannel = true;
+    idSChannel = 5000023;
+    resonanceA = 23;
+    resonanceB = 5000023;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -309,25 +311,16 @@ public:
   // Evaluate weight for W decay angles in top decay (else inactive).
   virtual double weightDecay( Event& process, int iResBeg, int iResEnd);
 
-  // Info on the subprocess.
-  virtual string name()       const {return nameSave;}
-  virtual int    code()       const {return codeSave;}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual bool   isSChannel() const {return true;}
-  virtual int    idSChannel() const {return 5000023;}
-  virtual int    resonanceA() const {return 23;}
-  virtual int    resonanceB() const {return 5000023;}
-  virtual int    id3Mass()    const {return idNew;}
-  virtual int    id4Mass()    const {return idNew;}
   // Add phase-space sampling also around the Z_KK resonance.
-  virtual int    resonanceA();
-  virtual int    resonanceB();
+  // TODO: surely this must be a bug...
+  virtual int    phaseResonanceA();
+  virtual int    phaseResonanceB();
 
 private:
 
   // Values stored for process type.
   string  nameSave;
-  int     idNew, gmZmode, codeSave, nexcitationmax;
+  int     idNew, gmZmode, nexcitationmax;
   bool    isPhysical;
   double  gPlusf, gMinusf, gPlusF, gMinusF, gPlusTop, gMinusTop, gf, gF;
   double  mRes, m2Res, mStar, mTop, m2Top, mZKKn, m2ZKKn, m2gmKKn, mgmKKn,
@@ -352,7 +345,15 @@ class Sigma2gg2LEDUnparticleg : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDUnparticleg( bool Graviton ) : eDgraviton(Graviton) {}
+  Sigma2gg2LEDUnparticleg( bool Graviton ) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "g g -> G g" : "g g -> U g";
+    code = eDgraviton ? 5021 : 5045;
+    fluxType = FluxType::GG;
+    id3Mass = 5000039;
+    id4Mass = 21;
+
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -366,14 +367,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "g g -> G g" : "g g -> U g") ;}
-  virtual int    code()       const {return (eDgraviton ? 5021 : 5045);}
-  virtual string inFlux()     const {return "gg";}
-  virtual int    id3Mass()    const {return 5000039;}
-  virtual int    id4Mass()    const {return 21;}
 
 private:
 
@@ -394,7 +387,13 @@ class Sigma2qg2LEDUnparticleq : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2qg2LEDUnparticleq( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2qg2LEDUnparticleq( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "q g -> G q" : "q g -> U q";
+    code = eDgraviton ? 5022 : 5046;
+    fluxType = FluxType::QG;
+    id3Mass = 5000039;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -408,13 +407,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "q g -> G q" : "q g -> U q") ;}
-  virtual int    code()       const {return (eDgraviton ? 5022 : 5046);}
-  virtual string inFlux()     const {return "qg";}
-  virtual int    id3Mass()    const {return 5000039;}
 
 private:
 
@@ -435,7 +427,14 @@ class Sigma2qqbar2LEDUnparticleg : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2qqbar2LEDUnparticleg( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2qqbar2LEDUnparticleg( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "q qbar -> G g" : "q qbar -> U g";
+    code = eDgraviton ? 5023 : 5047;
+    fluxType = FluxType::QQBARSAME;
+    id3Mass = 5000039;
+    id4Mass = 21;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -449,14 +448,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "q qbar -> G g" : "q qbar -> U g") ;}
-  virtual int    code()       const {return (eDgraviton ? 5023 : 5047);}
-  virtual string inFlux()     const {return "qqbarSame";}
-  virtual int    id3Mass()    const {return 5000039;}
-  virtual int    id4Mass()    const {return 21;}
 
 private:
 
@@ -477,7 +468,16 @@ class Sigma2ffbar2LEDUnparticleZ : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDUnparticleZ( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2ffbar2LEDUnparticleZ( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "f fbar -> G Z" : "f fbar -> U Z";
+    code = eDgraviton ? 5024 : 5041;
+    fluxType = FluxType::FFBARSAME;
+    id3Mass = 5000039;
+    id4Mass = 23;
+    resonanceA = 23;
+    gmZmode = 2;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -491,16 +491,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "f fbar -> G Z" : "f fbar -> U Z") ;}
-  virtual int    code()       const {return (eDgraviton ? 5024 : 5041);}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual int    id3Mass()    const {return 5000039;}
-  virtual int    id4Mass()    const {return 23;}
-  virtual int    resonanceA() const {return 23;}
-  virtual int    gmZmode()    const {return 2;}
 
 private:
 
@@ -526,7 +516,14 @@ class Sigma2ffbar2LEDUnparticlegamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDUnparticlegamma( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2ffbar2LEDUnparticlegamma( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "f fbar -> G gamma" : "f fbar -> U gamma";
+    code = eDgraviton ? 5025 : 5042;
+    fluxType = FluxType::FFBARSAME;
+    id3Mass = 5000039;
+    id4Mass = 22;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -540,14 +537,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "f fbar -> G gamma" : "f fbar -> U gamma") ;}
-  virtual int    code()       const {return (eDgraviton ? 5025 : 5042);}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual int    id3Mass()    const {return 5000039;}
-  virtual int    id4Mass()    const {return 22;}
 
 private:
 
@@ -573,7 +562,12 @@ class Sigma2ffbar2LEDgammagamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDgammagamma( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2ffbar2LEDgammagamma( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "f fbar -> (LED G*) -> gamma gamma" : "f fbar -> (U*) -> gamma gamma";
+    code = eDgraviton ? 5026 : 5043;
+    fluxType = FluxType::FFBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -587,13 +581,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "f fbar -> (LED G*) -> gamma gamma"
-    : "f fbar -> (U*) -> gamma gamma") ;}
-  virtual int    code()       const {return (eDgraviton ? 5026 : 5043);}
-  virtual string inFlux()     const {return "ffbarSame";}
 
 private:
 
@@ -614,7 +601,12 @@ class Sigma2gg2LEDgammagamma : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDgammagamma( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2gg2LEDgammagamma( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "g g -> (LED G*) -> gamma gamma" : "g g -> (U*) -> gamma gamma";
+    code = eDgraviton ? 5027 : 5044;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -628,12 +620,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return (eDgraviton
-    ? "g g -> (LED G*) -> gamma gamma" : "g g -> (U*) -> gamma gamma") ;}
-  virtual int    code()       const {return (eDgraviton ? 5027 : 5044);}
-  virtual string inFlux()     const {return "gg";}
 
 private:
 
@@ -654,7 +640,13 @@ class Sigma2ffbar2LEDllbar : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2ffbar2LEDllbar( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2ffbar2LEDllbar( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "f fbar -> (LED G*) -> l l" : "f fbar -> (U*) -> l l";
+    code = eDgraviton ? 5028 : 5048;
+    fluxType = FluxType::FFBARSAME;
+    isSChannel = true;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -668,13 +660,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "f fbar -> (LED G*) -> l l" : "f fbar -> (U*) -> l l") ;}
-  virtual int    code()       const {return (eDgraviton ? 5028 : 5048);}
-  virtual string inFlux()     const {return "ffbarSame";}
-  virtual bool   isSChannel() const {return true;}
 
 private:
 
@@ -697,7 +682,12 @@ class Sigma2gg2LEDllbar : public Sigma2Process {
 public:
 
   // Constructor: bool Graviton  = true, to use LED graviton settings.
-  Sigma2gg2LEDllbar( bool Graviton) : eDgraviton(Graviton) {}
+  Sigma2gg2LEDllbar( bool Graviton) : eDgraviton(Graviton)
+  {
+    name = eDgraviton ? "g g -> (LED G*) -> l l" : "g g -> (U*) -> l l";
+    code = eDgraviton ? 5029 : 5049;
+    fluxType = FluxType::GG;
+  }
 
 
   // Initialize process.
@@ -712,12 +702,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()       const {return
-    (eDgraviton ? "g g -> (LED G*) -> l l" : "g g -> (U*) -> l l") ;}
-  virtual int    code()       const {return (eDgraviton ? 5029 : 5049);}
-  virtual string inFlux()     const {return "gg";}
 
 private:
 
@@ -736,7 +720,12 @@ class Sigma2gg2LEDgg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2LEDgg() {}
+  Sigma2gg2LEDgg()
+  {
+    name = "g g -> (LED G*) -> g g";
+    code = 5030;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -749,11 +738,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "g g -> (LED G*) -> g g";}
-  virtual int    code()   const {return 5030;}
-  virtual string inFlux() const {return "gg";}
 
 private:
 
@@ -775,7 +759,12 @@ class Sigma2gg2LEDqqbar : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2gg2LEDqqbar() {}
+  Sigma2gg2LEDqqbar()
+  {
+    name = "g g -> (LED G*) -> q qbar (uds)";
+    code = 5031;
+    fluxType = FluxType::GG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -788,11 +777,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "g g -> (LED G*) -> q qbar (uds)";}
-  virtual int    code()   const {return 5031;}
-  virtual string inFlux() const {return "gg";}
 
 private:
 
@@ -819,7 +803,12 @@ class Sigma2qg2LEDqg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qg2LEDqg() {}
+  Sigma2qg2LEDqg()
+  {
+    name = "q g -> (LED G*) -> q g";
+    code = 5032;
+    fluxType = FluxType::QG;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -832,11 +821,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "q g -> (LED G*) -> q g";}
-  virtual int    code()   const {return 5032;}
-  virtual string inFlux() const {return "qg";}
 
 private:
 
@@ -858,7 +842,12 @@ class Sigma2qq2LEDqq : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qq2LEDqq() {}
+  Sigma2qq2LEDqq()
+  {
+    name = "q q(bar)' -> (LED G*) -> q q(bar)'";
+    code = 5033;
+    fluxType = FluxType::QQ;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -871,11 +860,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "q q(bar)' -> (LED G*) -> q q(bar)'";}
-  virtual int    code()   const {return 5033;}
-  virtual string inFlux() const {return "qq";}
 
  private:
 
@@ -898,7 +882,12 @@ class Sigma2qqbar2LEDgg : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2LEDgg() {}
+  Sigma2qqbar2LEDgg()
+  {
+    name = "q qbar -> (LED G*) -> g g";
+    code = 5034;
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -911,11 +900,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()   const {return "q qbar -> (LED G*) -> g g";}
-  virtual int    code()   const {return 5034;}
-  virtual string inFlux() const {return "qqbarSame";}
 
  private:
 
@@ -937,7 +921,12 @@ class Sigma2qqbar2LEDqqbarNew : public Sigma2Process {
 public:
 
   // Constructor.
-  Sigma2qqbar2LEDqqbarNew() {}
+  Sigma2qqbar2LEDqqbarNew()
+  {
+    name = "q qbar -> (LED G*) -> q' qbar' (uds)";
+    code = 5035;
+    fluxType = FluxType::QQBARSAME;
+  }
 
   // Initialize process.
   virtual void initProc();
@@ -950,11 +939,6 @@ public:
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
-
-  // Info on the subprocess.
-  virtual string name()  const {return "q qbar -> (LED G*) -> q' qbar' (uds)";}
-  virtual int    code()   const {return 5035;}
-  virtual string inFlux() const {return "qqbarSame";}
 
  private:
 

@@ -384,8 +384,8 @@ void SigmaOniaSetup::initSettings(stringref wave, unsigned int size,
 void Sigma2gg2QQbar3S11g::initProc() {
 
   // Process name.
-  nameSave = "g g -> "
-    + string((codeSave - codeSave%100)/100 == 4 ? "ccbar" : "bbbar")
+  name = "g g -> "
+    + string((code - code%100)/100 == 4 ? "ccbar" : "bbbar")
     + "(3S1)[3S1(1)] g";
 
 }
@@ -436,10 +436,10 @@ void Sigma2gg2QQbar3PJ1g::initProc() {
 
   // Process name.
   if (jSave >= 0 && jSave <= 2)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3PJ)[3PJ(1)] "
+    name = namePrefix() + " -> " + nameMidfix() + "(3PJ)[3PJ(1)] "
       + namePostfix();
   else
-    nameSave = "illegal process";
+    name = "illegal process";
 
 }
 
@@ -614,10 +614,10 @@ void Sigma2gg2QQbar3DJ1g::initProc() {
 
   // Process name.
   if (jSave >= 1 && jSave <= 3)
-    nameSave = namePrefix() + " -> " + nameMidfix() + "(3DJ)[3DJ(1)] "
+    name = namePrefix() + " -> " + nameMidfix() + "(3DJ)[3DJ(1)] "
       + namePostfix();
   else
-    nameSave = "illegal process";
+    name = "illegal process";
 
 }
 
@@ -787,7 +787,7 @@ void Sigma2gg2QQbarX8g::initProc() {
   // Return for illegal process.
   if (stateSave < 0 || stateSave > 2) {
     idHad = 0;
-    nameSave = "illegal process";
+    name = "illegal process";
     return;
   }
 
@@ -822,7 +822,7 @@ void Sigma2gg2QQbarX8g::initProc() {
   if (stateSave == 0) stateName = "[3S1(8)]";
   else if (stateSave == 1) stateName = "[1S0(8)]";
   else if (stateSave == 2) stateName = "[3PJ(8)]";
-  nameSave = namePrefix() + " -> " + (digits[1] == 4 ? "ccbar" : "bbbar")
+  name = namePrefix() + " -> " + (digits[1] == 4 ? "ccbar" : "bbbar")
     + "(" + sName.str() + lName + jName.str() + ")" + stateName
     + " " + namePostfix();
 

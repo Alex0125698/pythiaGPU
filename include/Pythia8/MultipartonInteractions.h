@@ -61,8 +61,8 @@ public:
 
   // Return code or name of a specified process, for statistics table.
   int    nProc() const {return nChan;}
-  int    codeProc(int iProc) const {return sigmaT[iProc]->code();}
-  string nameProc(int iProc) const {return sigmaT[iProc]->name();}
+  int    codeProc(int iProc) const {return sigmaT[iProc]->code;}
+  string nameProc(int iProc) const {return sigmaT[iProc]->name;}
 
 private:
 

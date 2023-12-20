@@ -42,6 +42,13 @@
 
 namespace Pythia8 {
 
+// incoming parton pair type
+enum class FluxType { 
+  NONE, GG, QG, QQ, QQBAR, QQBARSAME, FF, FFBAR,  
+  FFBARSAME, FFBARCHG, FGAMMA, GGAMMA, GAMMAGAMMA 
+};
+
+
 //==========================================================================
 
 // InBeam is a simple helper class for partons and their flux in a beam.
@@ -137,7 +144,7 @@ public:
   // For 2 -> 1/2 also (c) convert from from |M|^2 to d(sigmaHat)/d(tHat).
   virtual double sigmaHatWrap(int id1in = 0, int id2in = 0) {
     id1 = id1in; id2 = id2in;
-    return ( convert2mb() ? CONVERT2MB * sigmaHat() : sigmaHat() ); }
+    return ( convert2mb ? CONVERT2MB * sigmaHat() : sigmaHat() ); }
 
   // Convolute above with parton flux and K factor. Sum over open channels.
   virtual double sigmaPDF();
@@ -164,91 +171,127 @@ public:
   // Set scale, when that is missing for an external LHA process.
   virtual void setScale() {}
 
-  // Process name and code, and the number of final-state particles.
-  virtual string name()            const {return "unnamed process";}
-  virtual int    code()            const {return 0;}
-  virtual int    nFinal()          const {return 2;}
+  // // Process name and code, and the number of final-state particles.
+  // virtual string name()            const {return "unnamed process";}
+  // virtual int    code()            const {return 0;}
+  // virtual int    nFinal()          const {return 2;}
 
-  // Need to know which incoming partons to set up interaction for.
-  virtual string inFlux()          const {return "unknown";}
+  // // Need to know which incoming partons to set up interaction for.
+  // virtual string inFlux()          const {return "unknown";}
 
-  // Need to know whether to convert cross section answer from GeV^-2 to mb.
-  virtual bool   convert2mb()      const {return true;}
+  // // Need to know whether to convert cross section answer from GeV^-2 to mb.
+  // virtual bool   convert2mb()      const {return true;}
 
-  // For 2 -> 2 process optional conversion from |M|^2 to d(sigmaHat)/d(tHat).
-  virtual bool   convertM2()       const {return false;}
+  // // For 2 -> 2 process optional conversion from |M|^2 to d(sigmaHat)/d(tHat).
+  // virtual bool   convertM2()       const {return false;}
 
-  // Special treatment needed for Les Houches processes.
-  virtual bool   isLHA()           const {return false;}
+  // // Special treatment needed for Les Houches processes.
+  // virtual bool   isLHA()           const {return false;}
 
-  // Special treatment needed for elastic and diffractive processes.
-  virtual bool   isNonDiff()       const {return false;}
-  virtual bool   isResolved()      const {return true;}
-  virtual bool   isDiffA()         const {return false;}
-  virtual bool   isDiffB()         const {return false;}
-  virtual bool   isDiffC()         const {return false;}
+  // // Special treatment needed for elastic and diffractive processes.
+  // virtual bool   isNonDiff()       const {return false;}
+  // virtual bool   isResolved()      const {return true;}
+  // virtual bool   isDiffA()         const {return false;}
+  // virtual bool   isDiffB()         const {return false;}
+  // virtual bool   isDiffC()         const {return false;}
 
-  // Special treatment needed for SUSY processes.
-  virtual bool   isSUSY()          const {return false;}
+  // // Special treatment needed for SUSY processes.
+  // virtual bool   isSUSY()          const {return false;}
 
-  // Special treatment needed if negative cross sections allowed.
-  virtual bool   allowNegativeSigma() const {return false;}
+  // // Special treatment needed if negative cross sections allowed.
+  // virtual bool   allowNegativeSigma() const {return false;}
 
-  // Flavours in 2 -> 2/3 processes where masses needed from beginning.
-  // (For a light quark masses will be used in the final kinematics,
-  // but not at the matrix-element level. For a gluon no masses at all.)
-  virtual int    id3Mass()         const {return 0;}
-  virtual int    id4Mass()         const {return 0;}
-  virtual int    id5Mass()         const {return 0;}
+  // // Flavours in 2 -> 2/3 processes where masses needed from beginning.
+  // // (For a light quark masses will be used in the final kinematics,
+  // // but not at the matrix-element level. For a gluon no masses at all.)
+  // virtual int    id3Mass()         const {return 0;}
+  // virtual int    id4Mass()         const {return 0;}
+  // virtual int    id5Mass()         const {return 0;}
 
-  // Special treatment needed if process contains an s-channel resonance.
-  virtual int    resonanceA()      const {return 0;}
-  virtual int    resonanceB()      const {return 0;}
+  // // Special treatment needed if process contains an s-channel resonance.
+  // virtual int    resonanceA()      const {return 0;}
+  // virtual int    resonanceB()      const {return 0;}
 
-  // 2 -> 2 and 2 -> 3 processes only through s-channel exchange.
-  virtual bool   isSChannel()      const {return false;}
+  // // 2 -> 2 and 2 -> 3 processes only through s-channel exchange.
+  // virtual bool   isSChannel()      const {return false;}
 
-  // NOAM: Insert an intermediate resonance in 2 -> 1 -> 2 (or 3) listings.
-  virtual int    idSChannel()      const {return 0;}
+  // // NOAM: Insert an intermediate resonance in 2 -> 1 -> 2 (or 3) listings.
+  // virtual int    idSChannel()      const {return 0;}
 
-  // QCD 2 -> 3 processes need special phase space selection machinery.
-  virtual bool   isQCD3body()      const {return false;}
+  // // QCD 2 -> 3 processes need special phase space selection machinery.
+  // virtual bool   isQCD3body()      const {return false;}
 
-  // Special treatment in 2 -> 3 with two massive propagators.
-  virtual int    idTchan1()        const {return 0;}
-  virtual int    idTchan2()        const {return 0;}
-  virtual double tChanFracPow1()   const {return 0.3;}
-  virtual double tChanFracPow2()   const {return 0.3;}
-  virtual bool   useMirrorWeight() const {return false;}
+  // // Special treatment in 2 -> 3 with two massive propagators.
+  // virtual int    idTchan1()        const {return 0;}
+  // virtual int    idTchan2()        const {return 0;}
+  // virtual double tChanFracPow1()   const {return 0.3;}
+  // virtual double tChanFracPow2()   const {return 0.3;}
+  // virtual bool   useMirrorWeight() const {return false;}
 
-  // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
-  virtual int    gmZmode()         const {return -1;}
+  // // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
+  // virtual int    gmZmode()         const {return -1;}
 
-  // Tell whether tHat and uHat are swapped (= same as swap 3 and 4).
-  bool swappedTU()          const {return swapTU;}
+  // // Tell whether tHat and uHat are swapped (= same as swap 3 and 4).
+  // bool swappedTU()          const {return swapTU;}
 
-  // Give back particle properties: flavours, colours, masses, or all.
-  int    id(int i)          const {return idSave[i];}
-  int    col(int i)         const {return colSave[i];}
-  int    acol(int i)        const {return acolSave[i];}
-  double m(int i)           const {return mSave[i];}
-  Particle getParton(int i) const {return parton[i];}
+  // // Give back particle properties: flavours, colours, masses, or all.
+  // int    id(int i)          const {return idSave[i];}
+  // int    col(int i)         const {return colSave[i];}
+  // int    acol(int i)        const {return acolSave[i];}
+  // double m(int i)           const {return mSave[i];}
+  // Particle getParton(int i) const {return parton[i];}
 
-  // Give back couplings and parton densities.
-  // Not all known for nondiffractive.
-  double Q2Ren()            const {return Q2RenSave;}
-  double alphaEMRen()       const {return alpEM;}
-  double alphaSRen()        const {return alpS;}
-  double Q2Fac()            const {return Q2FacSave;}
-  double pdf1()             const {return pdf1Save;}
-  double pdf2()             const {return pdf2Save;}
+  // // Give back couplings and parton densities.
+  // // Not all known for nondiffractive.
+  // double Q2Ren()            const {return Q2RenSave;}
+  // double alphaEMRen()       const {return alpEM;}
+  // double alphaSRen()        const {return alpS;}
+  // double Q2Fac()            const {return Q2FacSave;}
+  // double pdf1()             const {return pdf1Save;}
+  // double pdf2()             const {return pdf2Save;}
 
-  // Give back angles; relevant only for multipe-interactions processes.
-  double thetaMPI()         const {return atan2( sinTheta, cosTheta);}
-  double phiMPI()           const {return phi;}
-  double sHBetaMPI()        const {return sHBeta;}
-  double pT2MPI()           const {return pT2Mass;}
-  double pTMPIFin()         const {return pTFin;}
+  // // Give back angles; relevant only for multipe-interactions processes.
+  // double thetaMPI()         const {return atan2( sinTheta, cosTheta);}
+  // double phiMPI()           const {return phi;}
+  // double sHBetaMPI()        const {return sHBeta;}
+  // double pT2MPI()           const {return pT2Mass;}
+  // double pTMPIFin()         const {return pTFin;}
+public:
+  // getter functions (new)
+  // Note: these were originally virtual functions
+  string name; // name to identify process
+  bool   convert2mb         = true;  // do we need to convert from GeV^-2 to mb
+  bool   convertM2          = false; // For 2 -> 2 process optional conversion from |M|^2 to d(sigmaHat)/d(tHat).
+  bool   isLHA              = false; // is this an LHA process?
+  bool   isNonDiff          = false; // is it not a diffractive process?
+  bool   isResolved         = true;  // is it a resolved process?
+  bool   isDiffA            = false; // is product A diffractive?
+  bool   isDiffB            = false; // is product B diffractive?
+  bool   isDiffC            = false; // is product C diffractive?
+  bool   isSUSY             = false; // is this a SUSY process?
+  bool   allowNegativeSigma = false; // are negative cross-sections allowed?
+  bool   isSChannel         = false; // 2 -> 2 and 2 -> 3 processes only through s-channel exchange.
+  bool   isQCD3body         = false; // QCD 2 -> 3 processes need special phase space selection machinery.
+  bool   useMirrorWeight    = false; // (for  2 -> 3 with two massive propagators)
+  FluxType fluxType         = FluxType::NONE; // incomping parton type
+  int    code               = 0; // code to identify proces
+  int    nFinal             = 2; // number of final state particles
+  int    gmZmode            = -1; // // Special process-specific gamma*/Z0 choice if >=0 (e.g. f fbar -> H0 Z0).
+  int    id3Mass            = 0; // mass of first product for (2->3 processes)
+  int    id4Mass            = 0; // mass of second product for (2->3 processes)
+  int    id5Mass            = 0; // mass of third product for (2->3 processes)
+  int    resonanceA         = 0; // id of first resonance
+  int    resonanceB         = 0; // id of second resonance
+  int    idSChannel         = 0; // NOAM: Insert an intermediate resonance in 2 -> 1 -> 2 (or 3) listings.
+  int    idTchan1           = 0; // (for  2 -> 3 with two massive propagators)
+  int    idTchan2           = 0; // (for  2 -> 3 with two massive propagators)
+  double tChanFracPow1      = 0.3; // (for  2 -> 3 with two massive propagators)
+  double tChanFracPow2      = 0.3; // (for  2 -> 3 with two massive propagators)
+
+  // getter functions (original)
+  double thetaMPI() const {return atan2( sinTheta, cosTheta);}
+  // Note: rest were deleted since they were just accessers
+
 
   // Save and load kinematics for trial interactions
   void saveKin() {
@@ -267,6 +310,7 @@ public:
     swap(sinTheta, sinThetaT); swap(phi, phiT); }
 
 protected:
+public:
 
   // Constructor.
   SigmaProcess() : infoPtr(0), settingsPtr(0), particleDataPtr(0),
@@ -402,10 +446,10 @@ class Sigma0Process : public SigmaProcess {
 public:
 
   // Destructor.
-  virtual ~Sigma0Process() {}
+  virtual ~Sigma0Process() {nFinal = 2;}
 
   // Number of final-state particles.
-  virtual int    nFinal() const {return 2;};
+  // virtual int    nFinal() const {return 2;};
 
   // No partonic flux to be set up.
   virtual bool   initFlux() {return true;}
@@ -436,10 +480,10 @@ class Sigma1Process : public SigmaProcess {
 public:
 
   // Destructor.
-  virtual ~Sigma1Process() {}
+  virtual ~Sigma1Process() {nFinal = 1;}
 
   // Number of final-state particles.
-  virtual int    nFinal() const {return 1;};
+  // virtual int    nFinal() const {return 1;};
 
   // Input and complement kinematics for resolved 2 -> 1 process.
   virtual void   set1Kin( double x1in, double x2in, double sHin) {
@@ -476,10 +520,10 @@ class Sigma2Process : public SigmaProcess {
 public:
 
   // Destructor.
-  virtual ~Sigma2Process() {}
+  virtual ~Sigma2Process() {nFinal=2;}
 
   // Number of final-state particles.
-  virtual int    nFinal() const {return 2;};
+  // virtual int    nFinal() const {return 2;};
 
   // Input and complement kinematics for resolved 2 -> 2 process.
   virtual void   set2Kin( double x1in, double x2in, double sHin,
@@ -533,8 +577,8 @@ public:
 
     id1 = id1in; id2 = id2in; double sigmaTmp = sigmaHat();
     Benchmark_start(sigmaHat_convert);
-    if (convertM2())  sigmaTmp /= 16. * M_PI * sH2;
-    if (convert2mb()) sigmaTmp *= CONVERT2MB; return sigmaTmp;}
+    if (convertM2)  sigmaTmp /= 16. * M_PI * sH2;
+    if (convert2mb) sigmaTmp *= CONVERT2MB; return sigmaTmp;}
 
   // Perform kinematics for a Multiparton Interaction, in its rest frame.
   virtual bool   final2KinMPI( int i1Res = 0, int i2Res = 0, Vec4ref p1Res = 0.,
@@ -572,10 +616,10 @@ class Sigma3Process : public SigmaProcess {
 public:
 
   // Destructor.
-  virtual ~Sigma3Process() {}
+  virtual ~Sigma3Process() {nFinal=3;}
 
   // Number of final-state particles.
-  virtual int    nFinal() const {return 3;};
+  // virtual int    nFinal() const {return 3;};
 
   // Input and complement kinematics for resolved 2 -> 3 process.
   virtual void   set3Kin( double x1in, double x2in, double sHin,
@@ -638,7 +682,7 @@ public:
   virtual int    code()     const {return 9999;}
 
   // Number of final-state particles depends on current process choice.
-  virtual int    nFinal()   const;
+  // virtual int    nFinal()   const;
 
   // Answer for these processes not in GeV^-2, so do not do this conversion.
   virtual bool   convert2mb() const {return false;}
