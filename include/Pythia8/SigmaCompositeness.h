@@ -207,7 +207,7 @@ public:
 private:
 
   // Parameters set at initialization or for current kinematics.
-  int    idl;
+  int    idl, idRes;
   double Lambda, preFac, openFracPos, openFracNeg, sigma;
 
 };
