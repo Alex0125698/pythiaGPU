@@ -13,17 +13,15 @@ namespace Pythia8 {
 
 struct PythiaState
 {
-  // true singletons
-  Settings settings;
-  ParticleData particleData;
-  // duplicated per pythia event generator
   Info info;
+  Settings settings; // true singleton
+  ParticleData particleData; // true singleton
   Rndm rndm;
+  Couplings* couplings = nullptr;
+  SLHAinterface slhaInterface;
   BeamParticle* beamA = nullptr;
   BeamParticle* beamB = nullptr;
-  Couplings* couplings = nullptr;
   SigmaTotal sigmaTotal;
-  SLHAinterface slhaInterface;
   LHAup* lhaUp = nullptr;
 };
 

@@ -174,18 +174,36 @@ bool PartonLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings,
   // Set info and initialize the respective program elements.
   timesPtr->init( beamAPtr, beamBPtr);
   if (doISR) spacePtr->init( beamAPtr, beamBPtr);
+  pState->beamA = beamAPtr;
+  pState->beamB = beamBPtr;
   doMPIMB  =  multiMB.init(pState, doMPIinit, 0, infoPtr, settings, particleDataPtr,
     rndmPtr, beamAPtr, beamBPtr, couplingsPtr, partonSystemsPtr, sigmaTotPtr,
     userHooksPtr);
-  if (doSD || doDD || doSQ || doHardDiff) doMPISDA = multiSDA.init(pState, doMPIinit,
+  if (doSD || doDD || doSQ || doHardDiff) 
+  {
+    pState->beamA = beamAPtr;
+    pState->beamB = beamPomBPtr;
+  doMPISDA = multiSDA.init(pState, doMPIinit,
     1, infoPtr, settings, particleDataPtr, rndmPtr, beamAPtr, beamPomBPtr,
     couplingsPtr, partonSystemsPtr, sigmaTotPtr, userHooksPtr);
-  if (doSD || doDD || doSQ || doHardDiff) doMPISDB = multiSDB.init(pState, doMPIinit,
+  }
+  if (doSD || doDD || doSQ || doHardDiff)
+  {
+    pState->beamA = beamPomAPtr;
+    pState->beamB = beamBPtr;
+  doMPISDB = multiSDB.init(pState, doMPIinit,
     2, infoPtr, settings, particleDataPtr, rndmPtr, beamPomAPtr, beamBPtr,
     couplingsPtr, partonSystemsPtr, sigmaTotPtr, userHooksPtr);
-  if (doCD || doSQ) doMPICD = multiCD.init(pState, doMPIinit, 3, infoPtr, settings,
+  }
+  
+  if (doCD || doSQ) 
+  {
+    pState->beamA = beamPomAPtr;
+    pState->beamB = beamPomBPtr;
+  doMPICD = multiCD.init(pState, doMPIinit, 3, infoPtr, settings,
     particleDataPtr, rndmPtr, beamPomAPtr, beamPomBPtr, couplingsPtr,
     partonSystemsPtr, sigmaTotPtr, userHooksPtr);
+  }
   if (!remnants.init( infoPtr, settings, rndmPtr, beamAPtr, beamBPtr,
     partonSystemsPtr, particleDataPtr, &colourReconnection)) return false;
   resonanceDecays.init( infoPtr, particleDataPtr, rndmPtr);

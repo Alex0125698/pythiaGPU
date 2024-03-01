@@ -253,6 +253,10 @@ public:
 
   PythiaState pState;
 
+  // The two incoming beams.
+  BeamParticle beamA;
+  BeamParticle beamB;
+
   // Alternative Pomeron beam-inside-beam.
   BeamParticle beamPomA;
   BeamParticle beamPomB;

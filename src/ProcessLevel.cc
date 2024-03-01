@@ -199,6 +199,8 @@ bool ProcessLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings
 
   // Initialize each process.
   int numberOn = 0;
+  pState->beamA = beamAPtr;
+  pState->beamB = beamBPtr;
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     if (containerPtrs[i]->init(true, infoPtr, settings, particleDataPtr,
       rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
@@ -221,6 +223,8 @@ bool ProcessLevel::init(PythiaState* pState, Info* infoPtrIn, Settings& settings
         "no second hard process switched on");
       return false;
     }
+    pState->beamA = beamAPtr;
+    pState->beamB = beamBPtr;
     for (int i2 = 0; i2 < int(container2Ptrs.size()); ++i2)
       if (container2Ptrs[i2]->init(false, infoPtr, settings, particleDataPtr,
         rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,

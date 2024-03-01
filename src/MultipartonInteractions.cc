@@ -148,6 +148,8 @@ bool SigmaMultiparton::init(PythiaState* pState, int inState, int processLevel, 
   sigmaUval.resize(nChan);
 
   // Initialize the processes.
+  pState->beamA = beamAPtr;
+  pState->beamB = beamBPtr;
   for (int i = 0; i < nChan; ++i) {
     sigmaT[i]->init( pState);
     sigmaT[i]->initProc();
@@ -455,6 +457,8 @@ bool MultipartonInteractions::init(PythiaState* pState,  bool doMPIinit, int iDi
   alphaEM.init( alphaEMorder, &settings);
 
   // Attach matrix-element calculation objects.
+  pState->beamA = beamAPtr;
+  pState->beamB = beamBPtr;
   sigma2gg.init(pState, 0, processLevel, infoPtr, &settings, particleDataPtr,
     rndmPtr, beamAPtr, beamBPtr, couplingsPtr);
   sigma2qg.init(pState, 1, processLevel, infoPtr, &settings, particleDataPtr,
