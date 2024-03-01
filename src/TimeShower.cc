@@ -554,7 +554,7 @@ void TimeShower::prepareGlobal( Event& event) {
   }
 
   // Reset nFinalBorn on an event-by-event basis.
-  string nNow = infoPtr->getEventAttribute("npNLO",true);
+  auto nNow = infoPtr->getEventAttribute("npNLO",true);
   if (nNow != "" && nFinalBorn == -1){
     nFinalBorn = max(0, atoi((char*)nNow.c_str()));
     // Add number of heavy colored objects in lowest multiplicity state.
