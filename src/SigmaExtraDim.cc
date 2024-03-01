@@ -122,6 +122,8 @@ void Sigma1gg2GravitonStar::initProc() {
   // Set pointer to particle properties and decay table.
   gStarPtr = particleDataPtr->particleDataEntryPtr(idGstar);
 
+  resonanceA = idGstar;
+
 }
 
 //--------------------------------------------------------------------------
@@ -270,6 +272,8 @@ void Sigma1ffbar2GravitonStar::initProc() {
 
   // Set pointer to particle properties and decay table.
   gStarPtr = particleDataPtr->particleDataEntryPtr(idGstar);
+
+  resonanceA = idGstar;
 
 }
 
@@ -427,6 +431,8 @@ void Sigma1qqbar2KKgluonStar::initProc() {
 
   // Set pointer to particle properties and decay table.
   gStarPtr = particleDataPtr->particleDataEntryPtr(idKKgluon);
+
+  resonanceA = idKKgluon;
 
 }
 

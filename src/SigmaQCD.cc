@@ -417,6 +417,9 @@ void Sigma2gg2QQbar::initProc() {
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
 
+  id3Mass = idNew;
+  id4Mass = idNew;
+
 }
 
 //--------------------------------------------------------------------------
@@ -503,6 +506,9 @@ void Sigma2qqbar2QQbar::initProc() {
 
   // Secondary open width fraction.
   openFracPair = particleDataPtr->resOpenFrac(idNew, -idNew);
+
+  id3Mass = idNew;
+  id4Mass = idNew;
 
 }
 

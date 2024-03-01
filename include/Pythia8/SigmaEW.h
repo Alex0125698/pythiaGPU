@@ -563,6 +563,8 @@ public:
     isSChannel = true;
     code = codeIn;
     resonanceA = 24;
+    idNew = idIn;
+    idNew2 = idIn2;
   }
 
   // Initialize process.

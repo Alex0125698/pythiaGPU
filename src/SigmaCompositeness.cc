@@ -246,8 +246,8 @@ double Sigma1lgm2lStar::weightDecay( Event& process, int iResBeg, int iResEnd) {
 void Sigma2qq2qStarq::initProc() {
 
   // Set up process properties from the chosen quark flavour.
-  resonanceA         = 4000000 + idq;
-  id3Mass = resonanceA;
+  id3Mass         = 4000000 + idq;
+  id3Mass = id3Mass;
   code      = 4020 + idq;
   if      (idq == 1) name = "q q -> d^* q";
   else if (idq == 2) name = "q q -> u^* q";
@@ -260,8 +260,8 @@ void Sigma2qq2qStarq::initProc() {
   preFac        = M_PI / pow4(Lambda);
 
   // Secondary open width fractions.
-  openFracPos = particleDataPtr->resOpenFrac( resonanceA);
-  openFracNeg = particleDataPtr->resOpenFrac(-resonanceA);
+  openFracPos = particleDataPtr->resOpenFrac( id3Mass);
+  openFracNeg = particleDataPtr->resOpenFrac(-id3Mass);
 
 }
 
@@ -322,7 +322,7 @@ void Sigma2qq2qStarq::setIdColAcol() {
 
   // Always excited quark in slot 3 so colour flow flipped or not.
   if (excite1) {
-    id3    = (id1 > 0) ? resonanceA : -resonanceA;
+    id3    = (id1 > 0) ? id3Mass : -id3Mass;
     id4    = id2;
     // Special case for s-channel like production.
     if ((idAbs1 == idAbs2) && (id1 * id2 < 0)) {
@@ -332,7 +332,7 @@ void Sigma2qq2qStarq::setIdColAcol() {
     else               setColAcol( 1, 0, 0, 2, 1, 0, 0, 2);
     if (id1 < 0) swapColAcol();
   } else {
-    id3    = (id2 > 0) ? resonanceA : -resonanceA;
+    id3    = (id2 > 0) ? id3Mass : -id3Mass;
     id4    = id1;
     // Special case for s-channel like production.
     if ((idAbs1 == idAbs2) && (id1 * id2 < 0)) {
@@ -394,8 +394,8 @@ double Sigma2qq2qStarq::weightDecay( Event& process, int iResBeg,
 void Sigma2qqbar2lStarlbar::initProc() {
 
   // Set up process properties from the chosen lepton flavour.
-  resonanceA         = 4000000 + idl;
-  id3Mass = resonanceA;
+  id3Mass         = 4000000 + idl;
+  id3Mass = id3Mass;
   code      = 4020 + idl;
   if      (idl == 11) name = "q qbar -> e^*+- e^-+";
   else if (idl == 12) name = "q qbar -> nu_e^* nu_ebar";
@@ -405,8 +405,8 @@ void Sigma2qqbar2lStarlbar::initProc() {
   else                name = "q qbar -> nu_tau^* nu_taubar";
 
   // Secondary open width fractions.
-  openFracPos = particleDataPtr->resOpenFrac( resonanceA);
-  openFracNeg = particleDataPtr->resOpenFrac(-resonanceA);
+  openFracPos = particleDataPtr->resOpenFrac( id3Mass);
+  openFracNeg = particleDataPtr->resOpenFrac(-id3Mass);
 
   // Locally stored properties and couplings.
   Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
@@ -429,10 +429,10 @@ void Sigma2qqbar2lStarlbar::setIdColAcol() {
 
   // Flavours: either lepton or antilepton may be excited.
   if (rndmPtr->flat() * (openFracPos + openFracNeg) < openFracPos) {
-    setId( id1, id2, resonanceA, -idl);
+    setId( id1, id2, id3Mass, -idl);
     if (id1 < 0) swapTU = true;
   } else {
-    setId( id1, id2, -resonanceA, idl);
+    setId( id1, id2, -id3Mass, idl);
     if (id1 > 0) swapTU = true;
   }
 
@@ -490,9 +490,9 @@ double Sigma2qqbar2lStarlbar::weightDecay( Event& process, int iResBeg,
 void Sigma2qqbar2lStarlStarBar::initProc() {
 
   // Set up process properties from the chosen lepton flavour.
-  resonanceA         = 4000000 + idl;
-  id3Mass = resonanceA;
-  id4Mass = resonanceA;
+  idRes         = 4000000 + idl;
+  id3Mass = idRes;
+  id4Mass = idRes;
   code      = 4040 + idl;
   if      (idl == 11) name = "q qbar -> e^*+- e^*-+";
   else if (idl == 12) name = "q qbar -> nu_e^* nu_e^*bar";
@@ -502,12 +502,15 @@ void Sigma2qqbar2lStarlStarBar::initProc() {
   else                name = "q qbar -> nu_tau^* nu_tau^*bar";
 
   // Secondary open width fractions.
-  openFracPos = particleDataPtr->resOpenFrac( resonanceA);
-  openFracNeg = particleDataPtr->resOpenFrac(-resonanceA);
+  openFracPos = particleDataPtr->resOpenFrac( idRes);
+  openFracNeg = particleDataPtr->resOpenFrac(-idRes);
 
   // Locally stored properties and couplings.
   Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
   preFac        = (M_PI / pow4(Lambda)) * openFracPos * openFracNeg / 12.;
+
+  id3Mass = idRes;
+  id4Mass = idRes;
 
 }
 
@@ -525,7 +528,7 @@ void Sigma2qqbar2lStarlStarBar::sigmaKin() {
 void Sigma2qqbar2lStarlStarBar::setIdColAcol() {
 
   // Flavours: both lepton and antilepton are excited.
-  setId( id1, id2, resonanceA, -resonanceA);
+  setId( id1, id2, idRes, -idRes);
 
   // Colour flow trivial.
   if (id1 > 0) setColAcol( 1, 0, 0, 1, 0, 0, 0, 0);

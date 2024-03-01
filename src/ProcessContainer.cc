@@ -84,7 +84,7 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
                                         isDiffA, isDiffB);
   else if (nFin == 1)   phaseSpacePtr = new PhaseSpace2to1tauy();
   else if (nFin == 2)   phaseSpacePtr = new PhaseSpace2to2tauyz();
-  else if (isQCD3body)  phaseSpacePtr = new PhaseSpace2to3yyycyl();
+  else if (isQCD3body == true)  phaseSpacePtr = new PhaseSpace2to3yyycyl();
   else                  phaseSpacePtr = new PhaseSpace2to3tauycyl();
 
   // Store pointers and perform simple initialization.
