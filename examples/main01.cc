@@ -25,6 +25,10 @@ int main()
     Pythia pythia;
     pythia.readString("Beams:eCM = 8000.");
     pythia.readString("HardQCD:all = on");
+    // pythia.readString("SUSY:qq2squarksquark = on");
+    // pythia.readString("HardQCD:gg2gg = on");
+    // pythia.readString("HardQCD:qg2qg = on");
+    // pythia.readString("HardQCD:qq2qq = on");
     pythia.readString("PhaseSpace:pTHatMin = 20.");
 
     t1.stop();
