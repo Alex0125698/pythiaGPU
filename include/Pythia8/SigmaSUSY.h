@@ -332,8 +332,7 @@ public:
   virtual void sigmaKin();
 
   // Evaluate d(sigmaHat)/d(tHat).
-  virtual double sigmaHat() { return my_sigmaHat(); }
-  double my_sigmaHat();
+  virtual double sigmaHat();
   virtual double sigmaPDF();
 
   // Select flavour, colour and anticolour.
@@ -357,7 +356,7 @@ private:
   // Point-by-point info
   double tGlu, uGlu;
   vector<double> tNeut, uNeut, tChar, uChar;
-  double sumCt, sumCu, sumNt, sumNu, sumGt, sumGu, sumInterference;
+  double sigmaCt, sigmaCu, sigmaNt, sigmaNu, sigmaGt, sigmaGu, sigmaInterference;
 
   //SUSY couplings
   CoupSUSY* coupSUSYPtr;
