@@ -333,6 +333,7 @@ public:
 
   // Evaluate d(sigmaHat)/d(tHat).
   virtual double sigmaHat();
+  virtual double sigmaPDF2();
 
   // Select flavour, colour and anticolour.
   virtual void setIdColAcol();
@@ -355,7 +356,7 @@ private:
   // Point-by-point info
   double tGlu, uGlu;
   vector<double> tNeut, uNeut, tChar, uChar;
-  double sumCt, sumCu, sumNt, sumNu, sumGt, sumGu, sumInterference;
+  double sigmaCt, sigmaCu, sigmaNt, sigmaNu, sigmaGt, sigmaGu, sigmaInterference;
 
   //SUSY couplings
   CoupSUSY* coupSUSYPtr;
