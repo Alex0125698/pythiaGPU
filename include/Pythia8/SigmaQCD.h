@@ -397,8 +397,6 @@ public:
   {
     code = codeIn;
     fluxType = FluxType::GG;
-    id3Mass = idNew;
-    id4Mass = idNew;
   }
 
   // Initialize process.
@@ -437,8 +435,6 @@ public:
   {
     code = codeIn;
     fluxType = FluxType::QQBARSAME;
-    id3Mass = idNew;
-    id4Mass = idNew;
   }
 
   // Initialize process.

@@ -116,27 +116,27 @@ bool SigmaMultiparton::init(PythiaState* pState, int inState, int processLevel, 
     }
   }
 
-  // Optionally store charmonium and bottomonium production.
-  if (processLevel > 2) {
-    SigmaOniaSetup charmonium(infoPtr, settingsPtr, particleDataPtr, 4);
-    SigmaOniaSetup bottomonium(infoPtr, settingsPtr, particleDataPtr, 5);
-    if (inState == 0) {
-      charmonium.setupSigma2gg(sigmaT, true);
-      charmonium.setupSigma2gg(sigmaU, true);
-      bottomonium.setupSigma2gg(sigmaT, true);
-      bottomonium.setupSigma2gg(sigmaU, true);
-    } else if (inState == 1) {
-      charmonium.setupSigma2qg(sigmaT, true);
-      charmonium.setupSigma2qg(sigmaU, true);
-      bottomonium.setupSigma2qg(sigmaT, true);
-      bottomonium.setupSigma2qg(sigmaU, true);
-    } else if (inState == 2) {
-      charmonium.setupSigma2qq(sigmaT, true);
-      charmonium.setupSigma2qq(sigmaU, true);
-      bottomonium.setupSigma2qq(sigmaT, true);
-      bottomonium.setupSigma2qq(sigmaU, true);
-    }
-  }
+  // // Optionally store charmonium and bottomonium production.
+  // if (processLevel > 2) {
+  //   SigmaOniaSetup charmonium(infoPtr, settingsPtr, particleDataPtr, 4);
+  //   SigmaOniaSetup bottomonium(infoPtr, settingsPtr, particleDataPtr, 5);
+  //   if (inState == 0) {
+  //     charmonium.setupSigma2gg(sigmaT, true);
+  //     charmonium.setupSigma2gg(sigmaU, true);
+  //     bottomonium.setupSigma2gg(sigmaT, true);
+  //     bottomonium.setupSigma2gg(sigmaU, true);
+  //   } else if (inState == 1) {
+  //     charmonium.setupSigma2qg(sigmaT, true);
+  //     charmonium.setupSigma2qg(sigmaU, true);
+  //     bottomonium.setupSigma2qg(sigmaT, true);
+  //     bottomonium.setupSigma2qg(sigmaU, true);
+  //   } else if (inState == 2) {
+  //     charmonium.setupSigma2qq(sigmaT, true);
+  //     charmonium.setupSigma2qq(sigmaU, true);
+  //     bottomonium.setupSigma2qq(sigmaT, true);
+  //     bottomonium.setupSigma2qq(sigmaU, true);
+  //   }
+  // }
 
   // Resize arrays to match sizes above.
   nChan = sigmaT.size();
