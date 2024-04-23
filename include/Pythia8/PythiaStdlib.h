@@ -10,6 +10,8 @@
 #ifndef Pythia8_PythiaStdlib_H
 #define Pythia8_PythiaStdlib_H
 
+#include "Pythia8/forwardDeclarations.h"
+
 // Stdlib header files for mathematics.
 #include <cmath>
 #include <cstdlib>
