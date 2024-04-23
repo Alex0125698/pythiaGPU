@@ -19,7 +19,7 @@ int main() {
   pythia.init();
   Hist pTZ("dN/dpTZ", 100, 0., 100.);
   // Begin event loop. Generate event. Skip if error. List first one.
-  for (int iEvent = 0; iEvent < 1000; ++iEvent) {
+  for (int iEvent = 0; iEvent < 500; ++iEvent) {
     if (!pythia.next()) continue;
     // Loop over particles in event. Find last Z0 copy. Fill its pT.
     int iZ = 0;

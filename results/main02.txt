@@ -8,7 +8,7 @@
  |  |   P  P   Y Y     T    H   H   I    A A     This is PYTHIA version 8.212      |  | 
  |  |   PPP     Y      T    HHHHH   I   AAAAA    Last date of change: 23 Sep 2015  |  | 
  |  |   P       Y      T    H   H   I   A   A                                      |  | 
- |  |   P       Y      T    H   H  III  A   A    Now is 03 Apr 2024 at 10:48:18    |  | 
+ |  |   P       Y      T    H   H  III  A   A    Now is 23 Apr 2024 at 17:46:48    |  | 
  |  |                                                                              |  | 
  |  |   Torbjorn Sjostrand;  Department of Astronomy and Theoretical Physics,      |  | 
  |  |      Lund University, Solvegatan 14A, SE-223 62 Lund, Sweden;                |  | 
@@ -962,9 +962,9 @@
  |                                                    |                                   |                        |
  |-----------------------------------------------------------------------------------------------------------------|
  |                                                    |                                   |                        |
- | f fbar -> gamma*/Z0                            221 |        4307       1000       1000 |   5.275e-06  1.034e-07 |
+ | f fbar -> gamma*/Z0                            221 |        2160        500        500 |   5.272e-06  1.456e-07 |
  |                                                    |                                   |                        |
- | sum                                                |        4307       1000       1000 |   5.275e-06  1.034e-07 |
+ | sum                                                |        2160        500        500 |   5.272e-06  1.456e-07 |
  |                                                                                                                 |
  *-------  End PYTHIA Event and Cross Section Statistics ----------------------------------------------------------*
 
@@ -972,47 +972,42 @@
  |                                                                                                                 | 
  |  times   message                                                                                                | 
  |                                                                                                                 | 
- |      3   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
+ |      2   Warning in StringFragmentation::fragmentToJunction: bad convergence junction rest frame                | 
  |                                                                                                                 | 
  *-------  End PYTHIA Error and Warning Messages Statistics  ------------------------------------------------------* 
 
 
-  2024-04-03 10:48       dN/dpTZ
+  2024-04-23 17:46       dN/dpTZ
 
-        9.00*10^ 1     7                                                                                                
-        8.70*10^ 1    7XX                                                                                               
-        8.40*10^ 1    XXX                                                                                               
-        8.10*10^ 1    XXX                                                                                               
-        7.80*10^ 1    XXX                                                                                               
-        7.50*10^ 1    XXX                                                                                               
-        7.20*10^ 1    XXX                                                                                               
-        6.90*10^ 1    XXX                                                                                               
-        6.60*10^ 1    XXX                                                                                               
-        6.30*10^ 1    XXXX                                                                                              
-        6.00*10^ 1   XXXXX                                                                                              
-        5.70*10^ 1   XXXXX                                                                                              
-        5.40*10^ 1   XXXXX                                                                                              
-        5.10*10^ 1   XXXXX                                                                                              
-        4.80*10^ 1   XXXXX7X                                                                                            
-        4.50*10^ 1   XXXXXXX                                                                                            
-        4.20*10^ 1   XXXXXXX                                                                                            
-        3.90*10^ 1   XXXXXXX7                                                                                           
-        3.60*10^ 1   XXXXXXXX   X                                                                                       
-        3.30*10^ 1   XXXXXXXX X X                                                                                       
-        3.00*10^ 1   XXXXXXXX X7X 3                                                                                     
-        2.70*10^ 1   XXXXXXXX3XXXXX3                                                                                    
-        2.40*10^ 1   XXXXXXXXXXXXXXX                                                                                    
-        2.10*10^ 1   XXXXXXXXXXXXXXX3X   7                                                                              
-        1.80*10^ 1   XXXXXXXXXXXXXXXXX   X                                                                              
-        1.50*10^ 1  XXXXXXXXXXXXXXXXXX   X                                                                              
-        1.20*10^ 1  XXXXXXXXXXXXXXXXXX337X7  3    3                                                                     
-        0.90*10^ 1  XXXXXXXXXXXXXXXXXXXXXXX7 X7   X 3                                                                   
-        0.60*10^ 1  XXXXXXXXXXXXXXXXXXXXXXXXXXX 7XX7X7X   XXX3 3                                                        
-        0.30*10^ 1  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX7XXXXX XX77X3773X3  3X7 33  77  X733 3         3    3   3      3
+        5.00*10^ 1      5                                                                                               
+        4.80*10^ 1      X                                                                                               
+        4.60*10^ 1     5X                                                                                               
+        4.40*10^ 1     XX                                                                                               
+        4.20*10^ 1     XX                                                                                               
+        4.00*10^ 1     XX                                                                                               
+        3.80*10^ 1    5XX                                                                                               
+        3.60*10^ 1    XXX                                                                                               
+        3.40*10^ 1    XXX                                                                                               
+        3.20*10^ 1   5XXX5                                                                                              
+        3.00*10^ 1   XXXXX                                                                                              
+        2.80*10^ 1   XXXXX                                                                                              
+        2.60*10^ 1   XXXXX                                                                                              
+        2.40*10^ 1   XXXXXX 5                                                                                           
+        2.20*10^ 1   XXXXXX X   5                                                                                       
+        2.00*10^ 1   XXXXXXXX  XX                                                                                       
+        1.80*10^ 1   XXXXXXXX  XX                                                                                       
+        1.60*10^ 1   XXXXXXXX  XX5 X                                                                                    
+        1.40*10^ 1   XXXXXXXX55XXXXXX                                                                                   
+        1.20*10^ 1   XXXXXXXXXXXXXXXX                                                                                   
+        1.00*10^ 1   XXXXXXXXXXXXXXXX                                                                                   
+        0.80*10^ 1   XXXXXXXXXXXXXXXXX       5                                                                          
+        0.60*10^ 1  XXXXXXXXXXXXXXXXXX   XX 5X    5                                                                     
+        0.40*10^ 1  XXXXXXXXXXXXXXXXXX  5XXXXXX  5XX  5        5                        5                               
+        0.20*10^ 1  XXXXXXXXXXXXXXXXXXXXXXXXXXXX5XXXX5XX55XXX  XX555 5X555   X   5  5X  X5 5 5              5           
 
           Contents                                                                                                      
-            *10^ 1  1688864432323222121112100100001000000000000000000000000000000000000000000000000000000000000000000000
-            *10^ 0  5069737885396785910010186083560575632366640432231221310013201100220032110100000000010000100010000001
+            *10^ 1  0334432221122111100000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            *10^ 0  6175914033301546482236645742135421321122200321110121110002000100120031010100000000000000100000000000
             *10^-1  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
             *10^-2  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
@@ -1021,5 +1016,5 @@
             *10^ 0  0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789
             *10^-1  0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-   Entries  =        1000    Mean =  1.3140e+01    Underflow =  0.0000e+00    Low edge  =  0.0000e+00
-   All chan =  9.9500e+02    Rms  =  1.3996e+01    Overflow  =  5.0000e+00    High edge =  1.0000e+02
+   Entries  =         500    Mean =  1.2985e+01    Underflow =  0.0000e+00    Low edge  =  0.0000e+00
+   All chan =  4.9700e+02    Rms  =  1.3863e+01    Overflow  =  3.0000e+00    High edge =  1.0000e+02
