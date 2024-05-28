@@ -28,14 +28,14 @@
             "name": "RUN it!",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/examples/main01",
+            "program": "${workspaceFolder}/bin/main01",
             "args": [
                 ">",
                 "main01.txt"
             ],
             "stopAtEntry": false,
             // "preLaunchTask":"clear_shit",
-            "cwd": "${workspaceFolder}/examples",
+            "cwd": "${workspaceFolder}/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
