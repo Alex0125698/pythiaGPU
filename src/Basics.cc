@@ -879,6 +879,7 @@ ostream& operator<<(ostream& os, const Hist& h) {
   time_t t = time(0);
   char date[18];
   strftime(date,18,"%Y-%m-%d %H:%M",localtime(&t));
+  date[0] = '\0'; // !!!!
   os << "\n\n  " << date << "       " << h.title << "\n\n";
 
   // Group bins, where required, to make printout have fewer columns.
