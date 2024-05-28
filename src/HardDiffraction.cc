@@ -194,7 +194,7 @@ double HardDiffraction::xfPom(double xIn) {
   double x     = xIn;
   double xFlux = 0.;
 
-  // Schuler-Sjöstrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sj'strand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   // flux = normPom * 1/x * exp(2t(2.3 + 0.25 * log(1/x)))
   // => x * flux = normPom * exp(2t(2.3 + 0.25*log(1/x)))
   if (pomFlux == 1) {
@@ -270,7 +270,7 @@ double HardDiffraction::pickTNow(double xIn) {
   double tTmp = 0.;
   double rndm = rndmPtr->flat();
 
-  // Schuler-Sjöstrndm Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sj'strndm Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   if (pomFlux == 1) {
     double b = b0 + ap * log(1./xIn);
     tTmp     = log( rndm*exp(2.*b*tMin) + (1. - rndm)*exp(2.*b*tMax))/(2.*b);
@@ -342,7 +342,7 @@ double HardDiffraction::xfPomWithT(double xIn, double tIn) {
   double t     = tIn;
   double xFlux = 0.;
 
-  // Schuler-Sjöstrand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
+  // Schuler-Sj'strand Pomeron flux, see Phys. Rev. D.49 (1994) 2259.
   if (pomFlux == 1) {
     double b = b0 + ap * log(1./x);
     xFlux    = normPom * exp( 2.*b*t);
