@@ -6,9 +6,12 @@
 // This is a simple test program. It fits on one slide in a talk.
 // It studies the charged multiplicity distribution at the LHC.
 
+#include "generateTimings.h"
+#include "Pythia8/timings.h"
 #include "Pythia8/Pythia.h"
+
 using namespace Pythia8;
-int main() {
+int mainfcn() {
   // Generator. Process selection. LHC initialization. Histogram.
   Pythia pythia;
   pythia.readString("Beams:eCM = 8000.");
@@ -30,4 +33,9 @@ int main() {
   pythia.stat();
   cout << mult;
   return 0;
+}
+
+int main()
+{
+  return setupTimings(mainfcn, 5);
 }

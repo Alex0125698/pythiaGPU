@@ -7,11 +7,13 @@
 // It illustrates how different processes can be selected and studied.
 // All input is specified in the main03.cmnd file.
 
+#include "generateTimings.h"
+#include "Pythia8/timings.h"
 #include "Pythia8/Pythia.h"
 
 using namespace Pythia8;
 
-int main() {
+int mainfcn() {
 
   // Generator.
   Pythia pythia;
@@ -91,4 +93,9 @@ int main() {
 
   // Done.
   return 0;
+}
+
+int main()
+{
+  return setupTimings(mainfcn, 5);
 }

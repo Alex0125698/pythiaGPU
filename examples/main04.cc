@@ -10,13 +10,15 @@
 // Note that the "total" cross section does NOT include
 // the Coulomb contribution to elastic scattering, as switched on here.
 
+#include "generateTimings.h"
+#include "Pythia8/timings.h"
 #include "Pythia8/Pythia.h"
 
 using namespace Pythia8;
 
 //==========================================================================
 
-int main() {
+int mainfcn() {
 
   // Generator. Shorthand for the event.
   Pythia pythia;
@@ -213,4 +215,9 @@ int main() {
 
   // Done.
   return 0;
+}
+
+int main()
+{
+  return setupTimings(mainfcn, 5);
 }

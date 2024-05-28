@@ -1,0 +1,63 @@
+%All %Scope durAve durMin durMax 
+-------------------------------- 
+
+> everything
+  all                       100.0% 100.0%  2315  2313  2319 1 
+  > Pythia_constructor
+    all                         1.1% 100.0%    25    25    26 1 
+    readSettingsData            0.6%  57.5%    14    14    15 1 
+    > Settings_init
+      all                         0.6% 100.0%    14    14    15 1 
+    < Settings_init
+    readParticleData            0.5%  42.4%    11    10    11 1 
+  < Pythia_constructor
+  > Pythia_init
+    all                        24.3% 100.0%   562   562   563 1 
+    initResonanceWidths         4.2%  17.4%    98    98    98 1 
+    > AlphaStrong_alphaEM
+      all                         1.4% 100.0%    32    32    32 301552 
+      AlphaStrong_alphaEM_        0.6%  40.8%    13    13    13 301552 
+    < AlphaStrong_alphaEM
+    > AlphaStrong_alphaS
+      all                         0.7% 100.0%    17    17    17 159036 
+      AlphaStrong_alphaS_         0.3%  42.8%     7     7     7 159036 
+    < AlphaStrong_alphaS
+    initPDFs                    1.1%   4.6%    26    26    26 1 
+    > ProcessLevel_init
+      all                         0.1% 100.0%     2     2     2 1 
+      > ProcessContainer_init
+        > PhaseSpace_setupSampling123
+          > SigmaProcess_sigmaPDF
+            all                         0.5% 100.0%    11    11    11 2427 
+            xfHard                      0.4%  82.3%     9     9     9 2427 
+          < SigmaProcess_sigmaPDF
+        < PhaseSpace_setupSampling123
+      < ProcessContainer_init
+    < ProcessLevel_init
+    initPartonLevel            18.8%  77.6%   436   436   437 1 
+  < Pythia_init
+  > Pythia_next
+    all                        74.6% 100.0%  1727  1726  1729 500 
+    processLevel                0.7%   1.0%    17    17    17 500 
+    > ProcessLevel_next
+      all                         0.7% 100.0%    17    17    17 500 
+      nextOneTwo                  0.7%  98.3%    16    16    16 500 
+      > ProcessLevel_nextOne
+        all                         0.7% 100.0%    16    16    16 500 
+        trialProcess                0.6%  79.8%    13    13    13 2221 
+        > ProcessContainer_trialProcess
+          all                         0.6% 100.0%    13    13    13 2221 
+          trialKin                    0.5%  98.4%    13    13    13 2221 
+        < ProcessContainer_trialProcess
+        decayResonances             0.1%  14.2%     2     2     2 500 
+        > ProcessContainer_decayResonances
+          all                         0.1% 100.0%     2     2     2 500 
+          resDecaysPtrnext            0.1%  88.2%     2     2     2 500 
+        < ProcessContainer_decayResonances
+      < ProcessLevel_nextOne
+    < ProcessLevel_next
+    partonLevel                58.1%  77.9%  1345  1344  1345 500 
+    hadronLevel                14.0%  18.7%   323   323   323 500 
+    check                       1.8%   2.4%    41    40    41 500 
+  < Pythia_next
+< everything

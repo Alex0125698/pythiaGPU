@@ -22,4 +22,8 @@ echo -e "\n>> running main24"
 g++ main24.cc -o ../bin/main24 -O2 ${rest}
 time ../bin/main24 > ../results/main24.txt 2> ../results/main24perf.txt
 
+echo -e "\n>> running mainX01"
+g++ mainX01.cc -o ../bin/mainX01 -O2 ${rest}
+time ../bin/mainX01 > ../results/mainX01.txt 2> ../results/mainX01perf.txt
+
 echo -e "\nall done"
