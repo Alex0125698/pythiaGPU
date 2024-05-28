@@ -27,7 +27,9 @@
 
 // Stdlib header file for dynamic library loading.
 #define dlsym __
+#ifdef __unix__
 #include <dlfcn.h>
+#endif
 #undef dlsym
 
 // Redefine dlsym to suppress compiler warnings.
@@ -38,6 +40,8 @@ extern "C" void *(*dlsym(void *handle, const char *symbol))();
 #include <iomanip>
 #include <fstream>
 #include <sstream>
+
+#include "Pythia8/timings.h"
 
 // Define pi if not yet done.
 #ifndef M_PI
