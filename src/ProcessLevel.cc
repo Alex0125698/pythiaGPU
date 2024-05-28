@@ -49,6 +49,8 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   vector<SigmaProcess*>& sigmaPtrs, vector<PhaseSpace*>& phaseSpacePtrs,
   ostream& os) {
 
+  Benchmark_function(ProcessLevel_init)
+
   // Store input pointers for future use.
   infoPtr          = infoPtrIn;
   particleDataPtr  = particleDataPtrIn;
@@ -64,11 +66,17 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   resonanceDecays.init( infoPtr, particleDataPtr, rndmPtr);
 
   // Set up SigmaTotal. Store sigma_nondiffractive for future use.
+  Benchmark_start(sigmaTotPtrInit)
   sigmaTotPtr->init( infoPtr, settings, particleDataPtr);
+  Benchmark_stop(sigmaTotPtrInit)
   int    idA = infoPtr->idA();
   int    idB = infoPtr->idB();
   double eCM = infoPtr->eCM();
+
+  Benchmark_start(sigmaTotPtrCalc)
   sigmaTotPtr->calc( idA, idB, eCM);
+  Benchmark_stop(sigmaTotPtrCalc)
+
   sigmaND = sigmaTotPtr->sigmaND();
 
   // Options to allow second hard interaction and resonance decays.
@@ -114,8 +122,10 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
   // Set up containers for all the internal hard processes.
   SetupContainers setupContainers;
+  Benchmark_start(constructProcessContainers)
   setupContainers.init(containerPtrs, infoPtr, settings, particleDataPtr,
                        couplingsPtr);
+  Benchmark_stop(constructProcessContainers)
 
   // Append containers for external hard processes, if any.
   if (sigmaPtrs.size() > 0) {
@@ -172,14 +182,18 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   // Fill SLHA blocks SMINPUTS and MASS from PYTHIA SM parameter values.
+  Benchmark_start(initSLHAblocks)
   slhaInterfacePtr->pythia2slha(particleDataPtr);
+  Benchmark_stop(initSLHAblocks)
 
   // Initialize each process.
   int numberOn = 0;
+  Benchmark_start(initProcessContainers)
   for (int i = 0; i < int(containerPtrs.size()); ++i)
     if (containerPtrs[i]->init(true, infoPtr, settings, particleDataPtr,
       rndmPtr, beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr,
       &resonanceDecays, slhaInterfacePtr, userHooksPtr)) ++numberOn;
+  Benchmark_stop(initProcessContainers)
 
   // Sum maxima for Monte Carlo choice.
   sigmaMaxSum = 0.;
@@ -344,11 +358,17 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
 
 bool ProcessLevel::next( Event& process) {
 
+  Benchmark_function(ProcessLevel_next)
+
   // Generate the next event with two or one hard interactions.
+  Benchmark_start(nextOneTwo)
   bool physical = (doSecondHard) ? nextTwo( process) : nextOne( process);
+  Benchmark_stop(nextOneTwo)
 
   // Check that colour assignments make sense.
+  Benchmark_start(checkColours)
   if (physical) physical = checkColours( process);
+  Benchmark_stop(checkColours)
 
   // Done.
   return physical;
@@ -603,6 +623,8 @@ void ProcessLevel::resetStatistics() {
 
 bool ProcessLevel::nextOne( Event& process) {
 
+  Benchmark_function(ProcessLevel_nextOne)
+
   // Update CM energy for phase space selection.
   double eCM = infoPtr->eCM();
   for (int i = 0; i < int(containerPtrs.size()); ++i)
@@ -625,7 +647,9 @@ bool ProcessLevel::nextOne( Event& process) {
       while (sigmaMaxNow > 0. && iContainer < iMax);
 
       // Do a trial event of this subprocess; accept or not.
+      Benchmark_start(trialProcess)
       if (containerPtrs[iContainer]->trialProcess()) break;
+      Benchmark_stop(trialProcess)
 
       // Check for end-of-file condition for Les Houches events.
       if (infoPtr->atEndOfFile()) return false;
@@ -639,14 +663,21 @@ bool ProcessLevel::nextOne( Event& process) {
     }
 
     // Construct kinematics of acceptable process.
+    Benchmark_start(constructState)
     containerPtrs[iContainer]->constructState();
+    Benchmark_stop(constructState)
+
+    Benchmark_start(constructProcess)
     if ( !containerPtrs[iContainer]->constructProcess( process) )
       physical = false;
+    Benchmark_stop(constructProcess)
 
     // Do all resonance decays.
+    Benchmark_start(decayResonances)
     if ( physical && doResDecays
       && !containerPtrs[iContainer]->decayResonances( process) )
       physical = false;
+    Benchmark_stop(decayResonances)
 
     // Retry process for unphysical states.
     for (int i =1; i < process.size(); ++i)
@@ -657,7 +688,9 @@ bool ProcessLevel::nextOne( Event& process) {
       }
 
     // Add any junctions to the process event record list.
+    Benchmark_start(findJunctions)
     if (physical) findJunctions( process);
+    Benchmark_stop(findJunctions)
 
     // Outer loop should normally work first time around.
     if (physical) break;

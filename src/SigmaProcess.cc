@@ -356,19 +356,25 @@ bool SigmaProcess::initFlux() {
 
 double SigmaProcess::sigmaPDF() {
 
+  Benchmark_function(SigmaProcess_sigmaPDF)
+
   // Evaluate and store the required parton densities.
+  Benchmark_start(xfHard)
   for (int j = 0; j < sizeBeamA(); ++j)
     inBeamA[j].pdf = beamAPtr->xfHard( inBeamA[j].id, x1Save, Q2FacSave);
   for (int j = 0; j < sizeBeamB(); ++j)
     inBeamB[j].pdf = beamBPtr->xfHard( inBeamB[j].id, x2Save, Q2FacSave);
+  Benchmark_stop(xfHard)
 
   // Loop over allowed incoming channels.
   sigmaSumSave = 0.;
   for (int i = 0; i < sizePair(); ++i) {
 
     // Evaluate hard-scattering cross section. Include K factor.
+    Benchmark_start(sigmaHatWrap)
     inPair[i].pdfSigma = Kfactor
                        * sigmaHatWrap(inPair[i].idA, inPair[i].idB);
+    Benchmark_stop(sigmaHatWrap)
 
     // Multiply by respective parton densities.
     for (int j = 0; j < sizeBeamA(); ++j)
@@ -706,6 +712,8 @@ double Sigma1Process::sigmaHatWrap(int id1in, int id2in) {
 
 void Sigma1Process::store1Kin( double x1in, double x2in, double sHin) {
 
+  // Benchmark_function(Sigma1Process_store1Kin)
+
   // Default value only sensible for these processes.
   swapTU = false;
 
@@ -759,6 +767,8 @@ bool Sigma1Process::setupForME() {
 
 void Sigma2Process::store2Kin( double x1in, double x2in, double sHin,
   double tHin, double m3in, double m4in, double runBW3in, double runBW4in) {
+
+    // Benchmark_function(Sigma1Process_store2Kin)
 
   // Default ordering of particles 3 and 4.
   swapTU   = false;
@@ -1037,6 +1047,8 @@ bool Sigma2Process::setupForME() {
 void Sigma3Process::store3Kin( double x1in, double x2in, double sHin,
   Vec4 p3cmIn, Vec4 p4cmIn, Vec4 p5cmIn, double m3in, double m4in,
   double m5in, double runBW3in, double runBW4in, double runBW5in) {
+
+    // Benchmark_function(Sigma1Process_store3Kin)
 
   // Default ordering of particles 3 and 4 - not relevant here.
   swapTU   = false;

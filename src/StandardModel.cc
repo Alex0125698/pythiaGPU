@@ -168,6 +168,9 @@ void AlphaStrong::init( double valueIn, int orderIn, int nfmaxIn,
 
 double AlphaStrong::alphaS( double scale2) {
 
+  Benchmark_function(AlphaStrong_alphaS)
+  Benchmark_start(AlphaStrong_alphaS_)
+
   // Check for initialization and ensure minimal scale2 value.
   if (!isInit) return 0.;
   if (scale2 < scale2Min) scale2 = scale2Min;
@@ -398,6 +401,9 @@ void AlphaEM::init(int orderIn, Settings* settingsPtr) {
 // Calculate alpha_EM value
 
 double AlphaEM::alphaEM( double scale2) {
+
+  Benchmark_function(AlphaStrong_alphaEM)
+  Benchmark_start(AlphaStrong_alphaEM_)
 
   // Fix alphaEM; for order = -1 fixed at m_Z.
   if (order == 0)  return alpEM0;

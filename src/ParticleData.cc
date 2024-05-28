@@ -542,6 +542,8 @@ void ParticleDataEntry::setConstituentMass() {
 
 void ParticleData::initCommon() {
 
+  // Benchmark_function(ParticleData_initCommon)
+
   // Mass generation: fixed mass or linear/quadratic Breit-Wigner.
   modeBreitWigner = settingsPtr->mode("ParticleData:modeBreitWigner");
 
@@ -571,6 +573,8 @@ void ParticleData::initCommon() {
 // the order of initialization is essential to get secondary widths right.
 
 void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
+
+  // Benchmark_function(ParticleData_initWidths)
 
   // Initialize some common data.
   initCommon();
@@ -775,6 +779,8 @@ void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
 // Read in database from specific XML file (which may refer to others).
 
 bool ParticleData::readXML(string inFile, bool reset) {
+
+  // Benchmark_function(ParticleData_readXML)
 
   // Normally reset whole database before beginning.
   if (reset) {pdt.clear(); isInit = false;}

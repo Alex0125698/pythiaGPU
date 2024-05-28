@@ -946,6 +946,9 @@ void Sigma2qg2charsquark::setIdColAcol() {
 
 void Sigma2qq2squarksquark::initProc() {
 
+  Benchmark_function(Sigma2qq2squarksquark_initProc)
+  Benchmark_start(Sigma2qq2squarksquark_initProc_)
+
   //Typecast to the correct couplings
   coupSUSYPtr = (CoupSUSY*) couplingsPtr;
 
@@ -993,6 +996,9 @@ void Sigma2qq2squarksquark::initProc() {
 
 void Sigma2qq2squarksquark::sigmaKin() {
 
+  Benchmark_function(Sigma2qq2squarksquark_sigmaKin)
+  Benchmark_start(Sigma2qq2squarksquark_sigmaKin_)
+
   // Weak mixing
   double xW = coupSUSYPtr->sin2W;
 
@@ -1021,6 +1027,9 @@ void Sigma2qq2squarksquark::sigmaKin() {
 // Evaluate d(sigmaHat)/d(tHat), including incoming flavour dependence.
 
 double Sigma2qq2squarksquark::sigmaHat() {
+
+  Benchmark_function(Sigma2qq2squarksquark_sigmaHat)
+  Benchmark_start(Sigma2qq2squarksquark_sigmaHat_)
 
   // In-pair must be same-sign
   if (id1 * id2 < 0) return 0.0;
@@ -1468,6 +1477,9 @@ double Sigma2qq2squarksquark::sigmaHat() {
 // Select identity, colour and anticolour.
 
 void Sigma2qq2squarksquark::setIdColAcol() {
+
+  Benchmark_function(Sigma2qq2squarksquark_setIdColAcol)
+  Benchmark_start(Sigma2qq2squarksquark_setIdColAcol_)
 
   // Set flavours.
   if (id1 > 0 && id2 > 0) {

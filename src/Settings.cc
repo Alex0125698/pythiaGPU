@@ -23,6 +23,8 @@ namespace Pythia8 {
 
 bool Settings::init(string startFile, bool append, ostream& os) {
 
+  Benchmark_function(Settings_init)
+
   // Don't initialize if it has already been done and not in append mode.
   if (isInit && !append) return true;
   int nError = 0;
@@ -167,10 +169,16 @@ bool Settings::init(string startFile, bool append, ostream& os) {
   };
 
   // Set up default e+e- and pp tunes, if positive.
+
+  Benchmark_start(initTuneEE)
   int eeTune = mode("Tune:ee");
   if (eeTune > 0) initTuneEE( eeTune);
+  Benchmark_stop(initTuneEE)
+
+  Benchmark_start(initTunePP)
   int ppTune = mode("Tune:pp");
   if (ppTune > 0) initTunePP( ppTune);
+  Benchmark_stop(initTunePP)
 
   // Done.
   if (nError > 0) return false;
@@ -1406,6 +1414,8 @@ void Settings::resetTunePP() {
 
 void Settings::initTuneEE( int eeTune) {
 
+  // Benchmark_function(Settings_initTuneEE)
+
   // Restore all e+e- settings to their original values.
   // Is first step for setting up a specific tune.
   if (eeTune != 0) resetTuneEE();
@@ -1640,6 +1650,8 @@ void Settings::initTuneEE( int eeTune) {
 // i.e. mainly for initial-state radiation and multiparton interactions.
 
 void Settings::initTunePP( int ppTune) {
+
+  // Benchmark_function(Settings_initTunePP)
 
   // Restore all pp/ppbar settings to their original values.
   // Is first step for setting up a specific tune.

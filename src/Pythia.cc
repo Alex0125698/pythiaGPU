@@ -42,6 +42,8 @@ const int Pythia::SUBRUNDEFAULT = -999;
 
 Pythia::Pythia(string xmlDir, bool printBanner) {
 
+  Benchmark_function(Pythia_constructor)
+
   // Initial values for pointers to PDF's.
   useNewPdfA      = false;
   useNewPdfB      = false;
@@ -105,6 +107,8 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
   }
   if (xmlPath[ xmlPath.length() - 1 ] != '/') xmlPath += "/";
 
+  Benchmark_start(readSettingsData)
+
   // Read in files with all flags, modes, parms and words.
   settings.initPtr( &info);
   string initFile = xmlPath + "Index.xml";
@@ -113,6 +117,8 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     info.errorMsg("Abort from Pythia::Pythia: settings unavailable");
     return;
   }
+
+  Benchmark_stop(readSettingsData)
 
   // Check that XML version number matches code version number.
   double versionNumberXML = parm("Pythia:versionNumber");
@@ -137,6 +143,8 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     return;
   }
 
+  Benchmark_start(readParticleData)
+
   // Read in files with all particle data.
   particleData.initPtr( &info, &settings, &rndm, couplingsPtr);
   string dataFile = xmlPath + "ParticleData.xml";
@@ -146,8 +154,10 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
     return;
   }
 
+  Benchmark_stop(readParticleData)
+
   // Write the Pythia banner to output.
-  if (printBanner) banner();
+  // if (printBanner) banner();
 
   // Not initialized until at the end of the init() call.
   isInit = false;
@@ -339,6 +349,8 @@ bool Pythia::setPDFPtr( PDF* pdfAPtrIn, PDF* pdfBPtrIn, PDF* pdfHardAPtrIn,
 // Routine to initialize with the variable values of the Beams kind.
 
 bool Pythia::init() {
+
+  Benchmark_function(Pythia_init)
 
   // Check that constructor worked.
   isInit = false;
@@ -574,10 +586,17 @@ bool Pythia::init() {
   rndm.init( 1234 );
 
   // Check that combinations of settings are allowed; change if not.
+  Benchmark_start(checkSettings)
   checkSettings();
+  Benchmark_stop(checkSettings)
+
 
   // Initialize the SM couplings (needed to initialize resonances).
+  Benchmark_start(initCouplings)
   couplingsPtr->init( settings, &rndm );
+  Benchmark_stop(initCouplings)
+
+  Benchmark_start(initSlha)
 
   // Initialize SLHA interface (including SLHA/BSM couplings).
   bool useSLHAcouplings = false;
@@ -586,6 +605,8 @@ bool Pythia::init() {
   slhaInterface.init( settings, &rndm, couplingsPtr, &particleData,
     useSLHAcouplings, particleDataBuffer );
   if (useSLHAcouplings) couplingsPtr = slhaInterface.couplingsPtr;
+
+  Benchmark_stop(initSlha)
 
   // Reset couplingsPtr to the correct memory address.
   particleData.initPtr( &info, &settings, &rndm, couplingsPtr);
@@ -598,11 +619,17 @@ bool Pythia::init() {
   process.init("(hard process)", &particleData, startColTag);
   event.init("(complete event)", &particleData, startColTag);
 
+  Benchmark_start(initResonanceWidths)
+
   // Final setup stage of particle data, notably resonance widths.
   particleData.initWidths( resonancePtrs);
 
+  Benchmark_stop(initResonanceWidths)
+
   // Set up R-hadrons particle data, where relevant.
+  Benchmark_start(rHadrons_init)
   rHadrons.init( &info, settings, &particleData, &rndm);
+  Benchmark_stop(rHadrons_init)
 
   // Set up objects for timelike and spacelike showers.
   if (timesDecPtr == 0 || timesPtr == 0) {
@@ -634,7 +661,10 @@ bool Pythia::init() {
     beamShapePtr    = new BeamShape();
     useNewBeamShape = true;
   }
+
+  Benchmark_start(beamShapePtr_init)
   beamShapePtr->init( settings, &rndm);
+  Benchmark_stop(beamShapePtr_init)
 
   // Check that beams and beam combination can be handled.
   if (!checkBeams()) {
@@ -648,17 +678,24 @@ bool Pythia::init() {
   else {
 
     // Set up beam kinematics.
+    Benchmark_start(initKinematics)
     if (!initKinematics()) {
       info.errorMsg("Abort from Pythia::init: "
         "kinematics initialization failed");
       return false;
     }
+    Benchmark_stop(initKinematics)
+
+    Benchmark_start(initPDFs)
 
     // Set up pointers to PDFs.
     if (!initPDFs()) {
       info.errorMsg("Abort from Pythia::init: PDF initialization failed");
       return false;
     }
+
+    Benchmark_stop(initPDFs)
+    Benchmark_start(initBeams)
 
     // Set up the two beams and the common remnant system.
     StringFlav* flavSelPtr = hadronLevel.getStringFlavPtr();
@@ -674,7 +711,11 @@ bool Pythia::init() {
       beamPomB.init( 990, -0.5 * eCM, 0.5 * eCM, 0., &info, settings,
         &particleData, &rndm, pdfPomBPtr, pdfPomBPtr, false, flavSelPtr);
     }
+
+    Benchmark_stop(initBeams)
   }
+
+  Benchmark_start(initProcessLevel)
 
   // Send info/pointers to process level for initialization.
   if ( doProcessLevel && !processLevel.init( &info, settings, &particleData,
@@ -685,13 +726,21 @@ bool Pythia::init() {
     return false;
   }
 
+  Benchmark_stop(initProcessLevel)
+
+
   // Initialize timelike showers already here, since needed in decays.
   // The pointers to the beams are needed by some external plugin showers.
   timesDecPtr->init( &beamA, &beamB);
 
+  Benchmark_start(initDecays)
+
   // Alternatively only initialize resonance decays.
   if ( !doProcessLevel) processLevel.initDecays( &info, &particleData,
     &rndm, lhaUpPtr);
+  
+  Benchmark_stop(initDecays)
+  Benchmark_start(initPartonLevel)
 
   // Send info/pointers to parton level for initialization.
   if ( doPartonLevel && doProcessLevel && !partonLevel.init( &info, settings,
@@ -722,9 +771,13 @@ bool Pythia::init() {
     return false;
   }
 
+  Benchmark_stop(initPartonLevel)
+
   // Initialise the merging wrapper class.
   if (doMerging ) merging.init( &settings, &info, &particleData, &rndm,
     &beamA, &beamB, mergingHooksPtr, &trialPartonLevel );
+
+  Benchmark_start(initHadronLevel)
 
   // Send info/pointers to hadron level for initialization.
   // Note: forceHadronLevel() can come, so we must always initialize.
@@ -735,6 +788,9 @@ bool Pythia::init() {
       "hadronLevel initialization failed");
     return false;
   }
+
+  Benchmark_stop(initHadronLevel)
+
 
   // Optionally check particle data table for inconsistencies.
   if ( settings.flag("Check:particleData") )
@@ -763,10 +819,16 @@ bool Pythia::init() {
   showSaV      = settings.flag("Next:showScaleAndVertex");
   showMaD      = settings.flag("Next:showMothersAndDaughters");
 
+
   // Init colour reconnection and junction splitting.
+  Benchmark_start(initcolourReconnection)
   colourReconnection.init( &info, settings, &rndm, &particleData,
     &beamA, &beamB, &partonSystems);
+  Benchmark_stop(initcolourReconnection)
+
+  Benchmark_start(initjunctionSplitting)
   junctionSplitting.init(&info, settings, &rndm, &particleData);
+  Benchmark_stop(initjunctionSplitting)
 
   // Flags for colour reconnection.
   doReconnect        = settings.flag("ColourReconnection:reconnect");
@@ -1024,6 +1086,8 @@ bool Pythia::initPDFs() {
 
 bool Pythia::next() {
 
+  Benchmark_function(Pythia_next)
+
   // Check that constructor worked.
   if (!isConstructed) return false;
 
@@ -1090,10 +1154,14 @@ bool Pythia::next() {
   }
 
   // Pick beam momentum spread and beam vertex.
+  Benchmark_start(pickbeamShapePtr)
   if (doMomentumSpread || doVertexSpread) beamShapePtr->pick();
+  Benchmark_stop(pickbeamShapePtr)
 
   // Recalculate kinematics when beam momentum spread.
+  Benchmark_start(nextKinematics)
   if (doMomentumSpread) nextKinematics();
+  Benchmark_stop(nextKinematics)
 
   // Outer loop over hard processes; only relevant for user-set vetoes.
   for ( ; ; ) {
@@ -1110,6 +1178,8 @@ bool Pythia::next() {
     info.setLHEF3EventInfo();
     process.clear();
 
+    Benchmark_start(processLevel)
+
     if ( !processLevel.next( process) ) {
       if (doLHA && info.atEndOfFile()) info.errorMsg("Abort from "
         "Pythia::next: reached end of Les Houches Events File");
@@ -1117,6 +1187,8 @@ bool Pythia::next() {
         "processLevel failed; giving up");
       return false;
     }
+
+    Benchmark_stop(processLevel)
 
     info.addCounter(11);
 
@@ -1160,7 +1232,10 @@ bool Pythia::next() {
     }
 
     // Save spare copy of process record in case of problems.
+    Benchmark_start(copyProcessRecord)
     Event processSave = process;
+    Benchmark_stop(copyProcessRecord)
+    
     int sizeMPI       = info.sizeMPIarrays();
     info.addCounter(12);
     for (int i = 14; i < 19; ++i) info.setCounter(i);
@@ -1184,6 +1259,8 @@ bool Pythia::next() {
       beamPomA.clear();
       beamPomB.clear();
       partonSystems.clear();
+
+      Benchmark_start(partonLevel)
 
       // Parton-level evolution: ISR, FSR, MPI.
       if ( !partonLevel.next( process, event) ) {
@@ -1219,6 +1296,8 @@ bool Pythia::next() {
       }
       info.addCounter(15);
 
+      Benchmark_stop(partonLevel)
+
       // Possibility for a user veto of the parton-level event.
       if (doVetoPartons) {
         hasVetoed = userHooksPtr->doVetoPartonLevel( event);
@@ -1229,7 +1308,9 @@ bool Pythia::next() {
       }
 
       // Boost to lab frame (before decays, for vertices).
+      Benchmark_start(boost)
       boostAndVertex( true, true);
+      Benchmark_stop(boost)
 
       // Possibility to stop the generation at this stage.
       if (!doHadronLevel) {
@@ -1251,12 +1332,15 @@ bool Pythia::next() {
 
       // Hadron-level: hadronization, decays.
       info.addCounter(16);
+
+      Benchmark_start(hadronLevel)
       if ( !hadronLevel.next( event) ) {
         info.errorMsg("Error in Pythia::next: "
           "hadronLevel failed; try again");
         physical = false;
         continue;
       }
+      Benchmark_stop(hadronLevel)
 
       // If R-hadrons have been formed, then (optionally) let them decay.
       if (decayRHadrons && rHadrons.exist() && !doRHadronDecays()) {
@@ -1267,6 +1351,8 @@ bool Pythia::next() {
       }
       info.addCounter(17);
 
+      Benchmark_start(check)
+
       // Optionally check final event for problems.
       if (checkEvent && !check()) {
         info.errorMsg("Error in Pythia::next: "
@@ -1274,6 +1360,8 @@ bool Pythia::next() {
         physical = false;
         continue;
       }
+
+      Benchmark_stop(check)
 
       // Stop parton- and hadron-level looping if you got this far.
       info.addCounter(18);
@@ -1294,8 +1382,13 @@ bool Pythia::next() {
     }
 
     // Process- and parton-level statistics. Event scale.
+    Benchmark_start(accumulateProcess)
     processLevel.accumulate();
+    Benchmark_stop(accumulateProcess)
+    Benchmark_start(accumulateParton)
     partonLevel.accumulate();
+    Benchmark_stop(accumulateParton)
+
     event.scale( process.scale() );
 
     // End of outer loop over hard processes. Done with normal option.

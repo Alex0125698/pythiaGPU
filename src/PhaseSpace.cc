@@ -505,12 +505,17 @@ void PhaseSpace::setup3Body() {
 
 bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
+  Benchmark_function(PhaseSpace_setupSampling123)
+
   // Optional printout.
   if (showSearch) os <<  "\n PYTHIA Optimization printout for "
     << sigmaProcessPtr->name() << "\n \n" << scientific << setprecision(3);
 
+
   // Check that open range in tau (+ set tauMin, tauMax).
+  Benchmark_start(limitTau)
   if (!limitTau(is2, is3)) return false;
+  Benchmark_stop(limitTau)
 
   // Reset coefficients and matrices of equation system to solve.
   int binTau[8], binY[8], binZ[8];
@@ -596,16 +601,35 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
   for (int iTau = 0; iTau < nTau; ++iTau) {
     double posTau = 0.5;
     if (sameResMass && iTau > 1 && iTau < 6) posTau = (iTau < 4) ? 0.4 : 0.6;
+    Benchmark_start(selectTau)
     selectTau( iTau, posTau, is2);
+    Benchmark_stop(selectTau)
+    
+    Benchmark_start(limitY)
     if (!limitY()) continue;
+    Benchmark_stop(limitY)
+
+    Benchmark_start(limitZ)
     if (is2 && !limitZ()) continue;
+    Benchmark_stop(limitZ)
 
     // Step through grids in y and z.
     for (int iY = 0; iY < nY; ++iY) {
+
+      Benchmark_start(selectY)
       selectY( iY, 0.5);
+      Benchmark_stop(selectY)
+
+
       for (int iZ = 0; iZ < nZ; ++iZ) {
+
+        Benchmark_start(selectZ)
         if (is2) selectZ( iZ, 0.5);
+        Benchmark_stop(selectZ)
+
         double sigmaTmp = 0.;
+
+        Benchmark_start(crossSection)
 
         // 2 -> 1: calculate cross section, weighted by phase-space volume.
         if (!is2 && !is3) {
@@ -634,6 +658,8 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
             if (sigmaTry > sigmaTmp) sigmaTmp = sigmaTry;
           }
         }
+
+        Benchmark_stop(crossSection)
 
         // Allow possibility for user to modify cross section. (3body??)
         if (canModifySigma) sigmaTmp
@@ -721,12 +747,14 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
     return false;
   }
 
+  Benchmark_start(solveSys)
   // Solve respective equation system for better phase space coefficients.
   if (!hasTwoPointLeptons) solveSys( nTau, binTau, vecTau, matTau, tauCoef);
   if (!hasOnePointLepton && !hasTwoPointLeptons)
     solveSys( nY, binY, vecY, matY, yCoef);
   if (is2) solveSys( nZ, binZ, vecZ, matZ, zCoef);
   if (showSearch) os << "\n";
+  Benchmark_stop(solveSys)
 
   // Provide cumulative sum of coefficients.
   tauCoefSum[0] = tauCoef[0];
@@ -988,6 +1016,8 @@ bool PhaseSpace::setupSampling123(bool is2, bool is3, ostream& os) {
 
 bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
 
+  // Benchmark_function(PhaseSpace_trialKin123)
+
   // Allow for possibility that energy varies from event to event.
   if (doEnergySpread) {
     eCM       = infoPtr->eCM();
@@ -1133,6 +1163,8 @@ bool PhaseSpace::trialKin123(bool is2, bool is3, bool inEvent, ostream& os) {
 
 bool PhaseSpace::limitTau(bool is2, bool is3) {
 
+  // Benchmark_function(PhaseSpace_limitTau)
+
   // Trivial reply for unresolved lepton beams.
   if (hasTwoPointLeptons) {
     tauMin = 1.;
@@ -1162,6 +1194,8 @@ bool PhaseSpace::limitTau(bool is2, bool is3) {
 
 bool PhaseSpace::limitY() {
 
+  // Benchmark_function(PhaseSpace_limitY)
+
   // Trivial reply for unresolved lepton beams.
   if (hasTwoPointLeptons) {
     yMax = 1.;
@@ -1185,6 +1219,8 @@ bool PhaseSpace::limitY() {
 
 bool PhaseSpace::limitZ() {
 
+  // Benchmark_function(PhaseSpace_limitZ)
+
   // Default limits.
   zMin = 0.;
   zMax = 1.;
@@ -1202,6 +1238,8 @@ bool PhaseSpace::limitZ() {
 // Select tau according to a choice of shapes.
 
 void PhaseSpace::selectTau(int iTau, double tauVal, bool is2) {
+
+  // Benchmark_function(PhaseSpace_selectTau)
 
   // Trivial reply for unresolved lepton beams.
   if (hasTwoPointLeptons) {
@@ -1300,6 +1338,8 @@ void PhaseSpace::selectTau(int iTau, double tauVal, bool is2) {
 
 void PhaseSpace::selectY(int iY, double yVal) {
 
+  // Benchmark_function(PhaseSpace_selectY)
+
   // Trivial reply for two unresolved lepton beams.
   if (hasTwoPointLeptons) {
     y = 0.;
@@ -1377,6 +1417,8 @@ void PhaseSpace::selectY(int iY, double yVal) {
 // since a pTmax cut can remove the region around z = 0.
 
 void PhaseSpace::selectZ(int iZ, double zVal) {
+
+  // Benchmark_function(PhaseSpace_selectZ)
 
   // Mass-dependent dampening of pT -> 0 limit.
   ratio34 = max(TINY, 2. * s3 * s4 / pow2(sH));
@@ -1477,6 +1519,8 @@ void PhaseSpace::selectZ(int iZ, double zVal) {
 // that can be chosen to favour low pT based on the form of propagators.
 
 bool PhaseSpace::select3Body() {
+
+  // Benchmark_function(PhaseSpace_select3Body)
 
   // Upper and lower limits of pT choice for 4 and 5.
   double m35S = pow2(m3 + m5);
@@ -1606,6 +1650,8 @@ bool PhaseSpace::select3Body() {
 
 void PhaseSpace::solveSys( int n, int bin[8], double vec[8],
   double mat[8][8], double coef[8], ostream& os) {
+
+    // Benchmark_function(PhaseSpace_solveSys)
 
   // Optional printout.
   if (showSearch) {

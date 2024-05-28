@@ -49,6 +49,8 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   SigmaTotal* sigmaTotPtr, ResonanceDecays* resDecaysPtrIn,
   SLHAinterface* slhaInterfacePtr, UserHooks* userHooksPtrIn) {
 
+  Benchmark_function(ProcessContainer_init)
+
   // Extract info about current process from SigmaProcess object.
   isLHA       = sigmaProcessPtr->isLHA();
   isNonDiff   = sigmaProcessPtr->isNonDiff();
@@ -94,11 +96,17 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
     sigmaProcessPtr->setLHAPtr(lhaUpPtr);
     phaseSpacePtr->setLHAPtr(lhaUpPtr);
   }
+
+  Benchmark_start(initSigmaProcess)
   sigmaProcessPtr->init(infoPtr, &settings, particleDataPtr, rndmPtr,
     beamAPtr, beamBPtr, couplingsPtr, sigmaTotPtr, slhaInterfacePtr);
+  Benchmark_stop(initSigmaProcess)
+
+  Benchmark_start(initPhaseSpace)
   phaseSpacePtr->init( isFirst, sigmaProcessPtr, infoPtr, &settings,
     particleDataPtr, rndmPtr, beamAPtr,  beamBPtr, couplingsPtr, sigmaTotPtr,
     userHooksPtr);
+  Benchmark_stop(initPhaseSpace)
 
   // Reset cross section statistics.
   nTry      = 0;
@@ -115,11 +123,19 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   wtAccSum  = 0.;
 
   // Initialize process and allowed incoming partons.
+  Benchmark_start(initProcSigmaProcess)
   sigmaProcessPtr->initProc();
+  Benchmark_stop(initProcSigmaProcess)
+
+  Benchmark_start(initFluxSigmaProcess)
   if (!sigmaProcessPtr->initFlux()) return false;
+  Benchmark_stop(initFluxSigmaProcess)
 
   // Find maximum of differential cross section * phasespace.
+  Benchmark_start(phaseSpaceSetupSampling)
   bool physical       = phaseSpacePtr->setupSampling();
+  Benchmark_stop(phaseSpaceSetupSampling)
+  
   sigmaMx             = phaseSpacePtr->sigmaMax();
   double sigmaHalfWay = sigmaMx;
 
@@ -131,7 +147,9 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
     int nSample = (nFin < 3) ? N12SAMPLE : N3SAMPLE;
     for (int iSample = 0; iSample < nSample; ++iSample) {
       bool test = false;
+      Benchmark_start(phaseSpaceTrialForMax)
       while (!test) test = phaseSpacePtr->trialKin(false);
+      Benchmark_stop(phaseSpaceTrialForMax)
       if (iSample == nSample/2) sigmaHalfWay = phaseSpacePtr->sigmaMax();
     }
     double sigmaFullWay = phaseSpacePtr->sigmaMax();
@@ -160,6 +178,8 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
 
 bool ProcessContainer::trialProcess() {
 
+  Benchmark_function(ProcessContainer_trialProcess)
+
   // Loop over tries only occurs for Les Houches strategy = +-2.
   for (int iTry = 0;  ; ++iTry) {
 
@@ -167,7 +187,10 @@ bool ProcessContainer::trialProcess() {
     if (sigmaMx == 0.) return false;
     infoPtr->setEndOfFile(false);
     bool repeatSame = (iTry > 0);
+
+    Benchmark_start(trialKin)
     bool physical = phaseSpacePtr->trialKin(true, repeatSame);
+    Benchmark_stop(trialKin)
 
     // Note if at end of Les Houches file, else do statistics.
     if (isLHA && !physical) infoPtr->setEndOfFile(true);
@@ -821,6 +844,8 @@ bool ProcessContainer::constructDecays( Event& process) {
 
 bool ProcessContainer::decayResonances( Event& process) {
 
+  Benchmark_function(ProcessContainer_decayResonances)
+
   // Save current event-record size and status codes.
   process.saveSize();
   vector<int> statusSave( process.size());
@@ -835,7 +860,10 @@ bool ProcessContainer::decayResonances( Event& process) {
 
     // Do sequential chain of uncorrelated isotropic decays.
     do {
+      Benchmark_start(resDecaysPtrnext)
       physical = resDecaysPtr->next( process);
+      Benchmark_stop(resDecaysPtrnext)
+      
       if (!physical) return false;
 
       // Check whether flavours should be correlated.
