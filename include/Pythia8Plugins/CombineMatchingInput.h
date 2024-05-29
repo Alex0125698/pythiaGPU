@@ -83,7 +83,7 @@ public:
   // Initialisation.
   virtual bool initAfterBeams() {
     // Madgraph matching parameters should not be set from Alpgen file.
-    settingsPtr->flag("JetMatching:setMad",false);
+    settingsPtr->set(Flag::JetMatching_setMad, false);
     if (!AlpgenHooks::initAfterBeams()) return false;
     if (!JetMatchingMadgraph::initAfterBeams()) return false;
     return true;

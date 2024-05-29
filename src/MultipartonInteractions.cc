@@ -359,77 +359,77 @@ bool MultipartonInteractions::init( bool doMPIinit, int iDiffSysIn,
   hasBaryonBeams = ( beamAPtr->isBaryon() && beamBPtr->isBaryon() );
 
   // Matching in pT of hard interaction to further interactions.
-  pTmaxMatch     = settings.mode("MultipartonInteractions:pTmaxMatch");
+  pTmaxMatch     = settings.get(Mode::MultipartonInteractions_pTmaxMatch);
 
   //  Parameters of alphaStrong generation.
-  alphaSvalue    = settings.parm("MultipartonInteractions:alphaSvalue");
-  alphaSorder    = settings.mode("MultipartonInteractions:alphaSorder");
-  alphaSnfmax    = settings.mode("StandardModel:alphaSnfmax");
+  alphaSvalue    = settings.get(Param::MultipartonInteractions_alphaSvalue);
+  alphaSorder    = settings.get(Mode::MultipartonInteractions_alphaSorder);
+  alphaSnfmax    = settings.get(Mode::StandardModel_alphaSnfmax);
 
   // Parameters of alphaEM generation.
-  alphaEMorder   = settings.mode("MultipartonInteractions:alphaEMorder");
+  alphaEMorder   = settings.get(Mode::MultipartonInteractions_alphaEMorder);
 
   //  Parameters of cross section generation.
-  Kfactor        = settings.parm("MultipartonInteractions:Kfactor");
+  Kfactor        = settings.get(Param::MultipartonInteractions_Kfactor);
 
   // Regularization of QCD evolution for pT -> 0.
-  pT0Ref         = settings.parm("MultipartonInteractions:pT0Ref");
-  ecmRef         = settings.parm("MultipartonInteractions:ecmRef");
-  ecmPow         = settings.parm("MultipartonInteractions:ecmPow");
-  pTmin          = settings.parm("MultipartonInteractions:pTmin");
+  pT0Ref         = settings.get(Param::MultipartonInteractions_pT0Ref);
+  ecmRef         = settings.get(Param::MultipartonInteractions_ecmRef);
+  ecmPow         = settings.get(Param::MultipartonInteractions_ecmPow);
+  pTmin          = settings.get(Param::MultipartonInteractions_pTmin);
 
   // Impact parameter profile: nondiffractive topologies.
   if (iDiffSys == 0) {
-    bProfile     = settings.mode("MultipartonInteractions:bProfile");
-    coreRadius   = settings.parm("MultipartonInteractions:coreRadius");
-    coreFraction = settings.parm("MultipartonInteractions:coreFraction");
-    expPow       = settings.parm("MultipartonInteractions:expPow");
+    bProfile     = settings.get(Mode::MultipartonInteractions_bProfile);
+    coreRadius   = settings.get(Param::MultipartonInteractions_coreRadius);
+    coreFraction = settings.get(Param::MultipartonInteractions_coreFraction);
+    expPow       = settings.get(Param::MultipartonInteractions_expPow);
     expPow       = max(EXPPOWMIN, expPow);
     // x-dependent impact parameter profile.
-    a1           = settings.parm("MultipartonInteractions:a1");
+    a1           = settings.get(Param::MultipartonInteractions_a1);
 
   // Impact parameter profile: diffractive topologies.
   } else {
-    bProfile     = settings.mode("Diffraction:bProfile");
-    coreRadius   = settings.parm("Diffraction:coreRadius");
-    coreFraction = settings.parm("Diffraction:coreFraction");
-    expPow       = settings.parm("Diffraction:expPow");
+    bProfile     = settings.get(Mode::Diffraction_bProfile);
+    coreRadius   = settings.get(Param::Diffraction_coreRadius);
+    coreFraction = settings.get(Param::Diffraction_coreFraction);
+    expPow       = settings.get(Param::Diffraction_expPow);
     expPow       = max(EXPPOWMIN, expPow);
   }
 
   // Common choice of "pT" scale for determining impact parameter.
-  bSelScale      = settings.mode("MultipartonInteractions:bSelScale");
+  bSelScale      = settings.get(Mode::MultipartonInteractions_bSelScale);
 
   // Process sets to include in machinery.
-  processLevel   = settings.mode("MultipartonInteractions:processLevel");
+  processLevel   = settings.get(Mode::MultipartonInteractions_processLevel);
 
   // Parameters of rescattering description.
-  allowRescatter = settings.flag("MultipartonInteractions:allowRescatter");
+  allowRescatter = settings.get(Flag::MultipartonInteractions_allowRescatter);
   allowDoubleRes
-    = settings.flag("MultipartonInteractions:allowDoubleRescatter");
-  rescatterMode  = settings.mode("MultipartonInteractions:rescatterMode");
-  ySepResc       = settings.parm("MultipartonInteractions:ySepRescatter");
-  deltaYResc     = settings.parm("MultipartonInteractions:deltaYRescatter");
+    = settings.get(Flag::MultipartonInteractions_allowDoubleRescatter);
+  rescatterMode  = settings.get(Mode::MultipartonInteractions_rescatterMode);
+  ySepResc       = settings.get(Param::MultipartonInteractions_ySepRescatter);
+  deltaYResc     = settings.get(Param::MultipartonInteractions_deltaYRescatter);
 
   // Rescattering not yet implemented for x-dependent impact profile.
   if (bProfile == 4) allowRescatter = false;
 
   // A global recoil FSR stategy restricts rescattering.
-  globalRecoilFSR     = settings.flag("TimeShower:globalRecoil");
-  nMaxGlobalRecoilFSR = settings.mode("TimeShower:nMaxGlobalRecoil");
+  globalRecoilFSR     = settings.get(Flag::TimeShower_globalRecoil);
+  nMaxGlobalRecoilFSR = settings.get(Mode::TimeShower_nMaxGlobalRecoil);
 
   // Various other parameters.
-  nQuarkIn       = settings.mode("MultipartonInteractions:nQuarkIn");
-  nSample        = settings.mode("MultipartonInteractions:nSample");
+  nQuarkIn       = settings.get(Mode::MultipartonInteractions_nQuarkIn);
+  nSample        = settings.get(Mode::MultipartonInteractions_nSample);
 
   // Optional dampening at small pT's when large multiplicities.
-  enhanceScreening = settings.mode("MultipartonInteractions:enhanceScreening");
+  enhanceScreening = settings.get(Mode::MultipartonInteractions_enhanceScreening);
 
   // Parameters for diffractive systems.
-  sigmaPomP      = settings.parm("Diffraction:sigmaRefPomP");
-  mPomP          = settings.parm("Diffraction:mRefPomP");
-  pPomP          = settings.parm("Diffraction:mPowPomP");
-  mMinPertDiff   = settings.parm("Diffraction:mMinPert");
+  sigmaPomP      = settings.get(Param::Diffraction_sigmaRefPomP);
+  mPomP          = settings.get(Param::Diffraction_mRefPomP);
+  pPomP          = settings.get(Param::Diffraction_mPowPomP);
+  mMinPertDiff   = settings.get(Param::Diffraction_mMinPert);
 
   // Possibility to allow user veto of MPI
   canVetoMPI = (userHooksPtr != 0) ? userHooksPtr->canVetoMPIEmission()
@@ -479,7 +479,7 @@ bool MultipartonInteractions::init( bool doMPIinit, int iDiffSysIn,
   double sigmaMaxViol = 0.;
 
   // Output initialization info - first part.
-  bool showMPI = settings.flag("Init:showMultipartonInteractions");
+  bool showMPI = settings.get(Flag::Init_showMultipartonInteractions);
   if (showMPI) {
     os << "\n *-------  PYTHIA Multiparton Interactions Initialization  "
        << "---------* \n"

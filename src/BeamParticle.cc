@@ -71,45 +71,45 @@ void BeamParticle::init( int idIn, double pzIn, double eIn, double mIn,
   flavSelPtr        = flavSelPtrIn;
 
   // Maximum quark kind in allowed incoming beam hadrons.
-  maxValQuark       = settings.mode("BeamRemnants:maxValQuark");
+  maxValQuark       = settings.get(Mode::BeamRemnants_maxValQuark);
 
   // Power of (1-x)^power/sqrt(x) for remnant valence quark distribution.
-  valencePowerMeson = settings.parm("BeamRemnants:valencePowerMeson");
-  valencePowerUinP  = settings.parm("BeamRemnants:valencePowerUinP");
-  valencePowerDinP  = settings.parm("BeamRemnants:valencePowerDinP");
+  valencePowerMeson = settings.get(Param::BeamRemnants_valencePowerMeson);
+  valencePowerUinP  = settings.get(Param::BeamRemnants_valencePowerUinP);
+  valencePowerDinP  = settings.get(Param::BeamRemnants_valencePowerDinP);
 
   // Enhancement factor of x of diquark.
-  valenceDiqEnhance = settings.parm("BeamRemnants:valenceDiqEnhance");
+  valenceDiqEnhance = settings.get(Param::BeamRemnants_valenceDiqEnhance);
 
   // Assume g(x) ~ (1-x)^power/x to constrain companion to sea quark.
-  companionPower    = settings.mode("BeamRemnants:companionPower");
+  companionPower    = settings.get(Mode::BeamRemnants_companionPower);
 
   // Assume g(x) ~ (1-x)^power/x with a cut-off for low x.
-  gluonPower        = settings.parm("BeamRemnants:gluonPower");
-  xGluonCutoff      = settings.parm("BeamRemnants:xGluonCutoff");
+  gluonPower        = settings.get(Param::BeamRemnants_gluonPower);
+  xGluonCutoff      = settings.get(Param::BeamRemnants_xGluonCutoff);
 
   // Allow or not more than one valence quark to be kicked out.
-  allowJunction     = settings.flag("BeamRemnants:allowJunction");
+  allowJunction     = settings.get(Flag::BeamRemnants_allowJunction);
 
   // Choose whether to form a di-quark or
   // a junction with new colur reconnection scheme.
-  beamJunction       = settings.flag("beamRemnants:beamJunction");
+  beamJunction       = settings.get(Flag::beamRemnants_beamJunction);
 
   // Allow junctions in the outgoing colour state.
-  allowBeamJunctions = settings.flag("beamRemnants:allowBeamJunction");
+  allowBeamJunctions = settings.get(Flag::beamRemnants_allowBeamJunction);
 
   // For low-mass diffractive system kick out q/g = norm / mass^power.
-  pickQuarkNorm     = settings.parm("Diffraction:pickQuarkNorm");
-  pickQuarkPower    = settings.parm("Diffraction:pickQuarkPower");
+  pickQuarkNorm     = settings.get(Param::Diffraction_pickQuarkNorm);
+  pickQuarkPower    = settings.get(Param::Diffraction_pickQuarkPower);
 
   // Controls the amount of saturation in the new model.
-  beamSat           = settings.parm("BeamRemnants:saturation");
+  beamSat           = settings.get(Param::BeamRemnants_saturation);
 
   // Width of primordial kT distribution in low-mass diffractive systems.
-  diffPrimKTwidth   = settings.parm("Diffraction:primKTwidth");
+  diffPrimKTwidth   = settings.get(Param::Diffraction_primKTwidth);
 
   // Suppress large masses of beam remnant in low-mass diffractive systems.
-  diffLargeMassSuppress = settings.parm("Diffraction:largeMassSuppress");
+  diffLargeMassSuppress = settings.get(Param::Diffraction_largeMassSuppress);
 
   // Store info on the incoming beam.
   idBeam            = idIn;

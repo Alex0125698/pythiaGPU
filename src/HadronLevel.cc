@@ -32,25 +32,25 @@ bool HadronLevel::init(Info* infoPtrIn, Settings& settings,
   userHooksPtr    = userHooksPtrIn;
 
   // Main flags.
-  doHadronize     = settings.flag("HadronLevel:Hadronize");
-  doDecay         = settings.flag("HadronLevel:Decay");
-  doBoseEinstein  = settings.flag("HadronLevel:BoseEinstein");
+  doHadronize     = settings.get(Flag::HadronLevel_Hadronize);
+  doDecay         = settings.get(Flag::HadronLevel_Decay);
+  doBoseEinstein  = settings.get(Flag::HadronLevel_BoseEinstein);
 
   // Boundary mass between string and ministring handling.
-  mStringMin      = settings.parm("HadronLevel:mStringMin");
+  mStringMin      = settings.get(Param::HadronLevel_mStringMin);
 
   // For junction processing.
-  eNormJunction   = settings.parm("StringFragmentation:eNormJunction");
+  eNormJunction   = settings.get(Param::StringFragmentation_eNormJunction);
 
   // Allow R-hadron formation.
-  allowRH         = settings.flag("RHadrons:allow");
+  allowRH         = settings.get(Flag::RHadrons_allow);
 
   // Particles that should decay or not before Bose-Einstein stage.
-  widthSepBE      = settings.parm("BoseEinstein:widthSep");
+  widthSepBE      = settings.get(Param::BoseEinstein_widthSep);
 
   // Hadron scattering --rjc
-  doHadronScatter = settings.flag("HadronScatter:scatter");
-  hsAfterDecay    = settings.flag("HadronScatter:afterDecay");
+  doHadronScatter = settings.get(Flag::HadronScatter_scatter);
+  hsAfterDecay    = settings.get(Flag::HadronScatter_afterDecay);
 
   // Initialize auxiliary fragmentation classes.
   flavSel.init(settings, rndmPtr);

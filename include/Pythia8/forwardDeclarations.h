@@ -472,15 +472,15 @@ class RHadrons;
 
 // (Settings.h)
 
-// classes for each type of setting
-class Flag;
-class Mode;
-class Parm;
-class Word;
-// classes for arrays of settings
-class FVec;
-class MVec;
-class PVec;
+// // classes for each type of setting
+// class Flag;
+// class Mode;
+// class Parm;
+// class Word;
+// // classes for arrays of settings
+// class FVec;
+// class MVec;
+// class PVec;
 // This class holds info on flags (bool), modes (int), parms (double),
 // words (string), fvecs (vector of bool), mvecs (vector of int) and pvecs
 // (vector of double).

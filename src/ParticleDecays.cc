@@ -68,48 +68,48 @@ void ParticleDecays::init(Info* infoPtrIn, Settings& settings,
     particleDataPtr->doExternalDecay(handledParticles[i], true);
 
   // Safety margin in mass to avoid troubles.
-  mSafety       = settings.parm("ParticleDecays:mSafety");
+  mSafety       = settings.get(Param::ParticleDecays_mSafety);
 
   // Lifetime and vertex rules for determining whether decay allowed.
-  limitTau0     = settings.flag("ParticleDecays:limitTau0");
-  tau0Max       = settings.parm("ParticleDecays:tau0Max");
-  limitTau      = settings.flag("ParticleDecays:limitTau");
-  tauMax        = settings.parm("ParticleDecays:tauMax");
-  limitRadius   = settings.flag("ParticleDecays:limitRadius");
-  rMax          = settings.parm("ParticleDecays:rMax");
-  limitCylinder = settings.flag("ParticleDecays:limitCylinder");
-  xyMax         = settings.parm("ParticleDecays:xyMax");
-  zMax          = settings.parm("ParticleDecays:zMax");
+  limitTau0     = settings.get(Flag::ParticleDecays_limitTau0);
+  tau0Max       = settings.get(Param::ParticleDecays_tau0Max);
+  limitTau      = settings.get(Flag::ParticleDecays_limitTau);
+  tauMax        = settings.get(Param::ParticleDecays_tauMax);
+  limitRadius   = settings.get(Flag::ParticleDecays_limitRadius);
+  rMax          = settings.get(Param::ParticleDecays_rMax);
+  limitCylinder = settings.get(Flag::ParticleDecays_limitCylinder);
+  xyMax         = settings.get(Param::ParticleDecays_xyMax);
+  zMax          = settings.get(Param::ParticleDecays_zMax);
   limitDecay    = limitTau0 || limitTau || limitRadius || limitCylinder;
 
   // B-Bbar mixing parameters.
-  mixB          = settings.flag("ParticleDecays:mixB");
-  xBdMix        = settings.parm("ParticleDecays:xBdMix");
-  xBsMix        = settings.parm("ParticleDecays:xBsMix");
+  mixB          = settings.get(Flag::ParticleDecays_mixB);
+  xBdMix        = settings.get(Param::ParticleDecays_xBdMix);
+  xBsMix        = settings.get(Param::ParticleDecays_xBsMix);
 
   // Suppression of extra-hadron momenta in semileptonic decays.
-  sigmaSoft     = settings.parm("ParticleDecays:sigmaSoft");
+  sigmaSoft     = settings.get(Param::ParticleDecays_sigmaSoft);
 
   // Selection of multiplicity and colours in "phase space" model.
-  multIncrease     = settings.parm("ParticleDecays:multIncrease");
-  multIncreaseWeak = settings.parm("ParticleDecays:multIncreaseWeak");
-  multRefMass      = settings.parm("ParticleDecays:multRefMass");
-  multGoffset      = settings.parm("ParticleDecays:multGoffset");
-  colRearrange     = settings.parm("ParticleDecays:colRearrange");
+  multIncrease     = settings.get(Param::ParticleDecays_multIncrease);
+  multIncreaseWeak = settings.get(Param::ParticleDecays_multIncreaseWeak);
+  multRefMass      = settings.get(Param::ParticleDecays_multRefMass);
+  multGoffset      = settings.get(Param::ParticleDecays_multGoffset);
+  colRearrange     = settings.get(Param::ParticleDecays_colRearrange);
 
   // Minimum energy in system (+ m_q) from StringFragmentation.
-  stopMass      = settings.parm("StringFragmentation:stopMass");
+  stopMass      = settings.get(Param::StringFragmentation_stopMass);
 
   // Parameters for Dalitz decay virtual gamma mass spectrum.
   sRhoDal       = pow2(particleDataPtr->m0(113));
   wRhoDal       = pow2(particleDataPtr->mWidth(113));
 
   // Allow showers in decays to qqbar/gg/ggg/gammagg.
-  doFSRinDecays = settings.flag("ParticleDecays:FSRinDecays");
-  doGammaRad    = settings.flag("ParticleDecays:allowPhotonRadiation");
+  doFSRinDecays = settings.get(Flag::ParticleDecays_FSRinDecays);
+  doGammaRad    = settings.get(Flag::ParticleDecays_allowPhotonRadiation);
 
   // Use standard decays or dedicated tau decay package
-  tauMode       = settings.mode("TauDecays:mode");
+  tauMode       = settings.get(Mode::TauDecays_mode);
 
   // Initialize the dedicated tau decay handler.
   if (tauMode) tauDecayer.init(infoPtr, &settings,

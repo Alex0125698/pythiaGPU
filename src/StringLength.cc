@@ -31,11 +31,11 @@ void StringLength::init(Info* infoPtrIn, Settings& settings) {
   infoPtr = infoPtrIn;
 
   // Store variables.
-  m0         = settings.parm("ColourReconnection:m0");
+  m0         = settings.get(Param::ColourReconnection_m0);
   m0sqr      = pow2(m0);
-  juncCorr   = settings.parm("ColourReconnection:junctionCorrection");
+  juncCorr   = settings.get(Param::ColourReconnection_junctionCorrection);
   sqrt2      = sqrt(2);
-  lambdaForm = settings.mode("ColourReconnection:lambdaForm");
+  lambdaForm = settings.get(Mode::ColourReconnection_lambdaForm);
 }
 
 //--------------------------------------------------------------------------

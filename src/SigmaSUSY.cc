@@ -34,7 +34,7 @@ double Sigma2SUSY::weightDecay( Event& process, int iResBeg, int iResEnd) {
     return weightTopDecay( process, iResBeg, iResEnd);
 
   // For Neutralino(i) decay hand over to standard routine.
-  if ( settingsPtr->flag("SUSYResonance:3BodyMatrixElement")
+  if ( settingsPtr->get(Flag::SUSYResonance_3BodyMatrixElement)
     && (idMother == 1000023 || idMother == 1000025 || idMother == 1000035) ) {
 
     // Nj -> Ni f fbar
@@ -987,7 +987,7 @@ void Sigma2qq2squarksquark::initProc() {
   openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
 
   // Selection of interference terms
-  onlyQCD = settingsPtr->flag("SUSY:qq2squarksquark:onlyQCD");
+  onlyQCD = settingsPtr->get(Flag::SUSY_qq2squarksquark_onlyQCD);
 }
 
 //--------------------------------------------------------------------------
@@ -1561,7 +1561,7 @@ void Sigma2qqbar2squarkantisquark::initProc() {
   openFracPair = particleDataPtr->resOpenFrac(id3Sav, id4Sav);
 
   // Select interference terms
-  onlyQCD = settingsPtr->flag("SUSY:qqbar2squarkantisquark:onlyQCD");
+  onlyQCD = settingsPtr->get(Flag::SUSY_qqbar2squarkantisquark_onlyQCD);
 }
 
 //--------------------------------------------------------------------------

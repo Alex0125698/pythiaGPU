@@ -49,8 +49,8 @@ bool ResonanceWidths::init(Info* infoPtrIn, Settings* settingsPtrIn,
   bool isInit = initBSM();
 
   // Minimal decaying-resonance width. Minimal phase space for meMode = 103.
-  minWidth     = settingsPtr->parm("ResonanceWidths:minWidth");
-  minThreshold = settingsPtr->parm("ResonanceWidths:minThreshold");
+  minWidth     = settingsPtr->get(Param::ResonanceWidths_minWidth);
+  minThreshold = settingsPtr->get(Param::ResonanceWidths_minThreshold);
 
   // Pointer to particle species.
   particlePtr  = particleDataPtr->particleDataEntryPtr(idRes);
@@ -91,9 +91,9 @@ bool ResonanceWidths::init(Info* infoPtrIn, Settings* settingsPtrIn,
   // Allow option where on-shell width is forced to current value.
   // Disable for mixes gamma*/Z0/Z'0
   doForceWidth = particlePtr->doForceWidth();
-  if (idRes == 23 && settingsPtr->mode("WeakZ0:gmZmode") != 2)
+  if (idRes == 23 && settingsPtr->get(Mode::WeakZ0_gmZmode) != 2)
     doForceWidth = false;
-  if (idRes == 33 && settingsPtr->mode("Zprime:gmZmode") != 3)
+  if (idRes == 33 && settingsPtr->get(Mode::Zprime_gmZmode) != 3)
     doForceWidth = false;
   forceFactor  = 1.;
 
@@ -235,11 +235,11 @@ bool ResonanceWidths::init(Info* infoPtrIn, Settings* settingsPtrIn,
 
   // Clip wings of Higgses.
   bool isHiggs = (idRes == 25 || idRes == 35 ||idRes == 36 ||idRes == 37);
-  bool clipHiggsWings = settingsPtr->flag("Higgs:clipWings");
+  bool clipHiggsWings = settingsPtr->get(Flag::Higgs_clipWings);
   if (isHiggs && clipHiggsWings) {
     double mMinNow  = particlePtr->mMin();
     double mMaxNow  = particlePtr->mMax();
-    double wingsFac = settingsPtr->parm("Higgs:wingsFac");
+    double wingsFac = settingsPtr->get(Param::Higgs_wingsFac);
     double mMinWing = mRes - wingsFac * GammaRes;
     double mMaxWing = mRes + wingsFac * GammaRes;
     if (mMinWing > mMinNow) particlePtr->setMMinNoChange(mMinWing);
@@ -588,7 +588,7 @@ double ResonanceWidths::numInt2BW(double mHatIn, double m1, double Gamma1,
 void ResonanceGmZ::initConstants() {
 
   // Locally stored properties and couplings.
-  gmZmode     = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::WeakZ0_gmZmode);
   thetaWRat   = 1. / (16. * couplingsPtr->sin2thetaW()
                 * couplingsPtr->cos2thetaW());
 
@@ -744,7 +744,7 @@ void ResonanceTop::initConstants() {
   m2W       = pow2(particleDataPtr->m0(24));
 
   // Extra coupling factors for t -> H+ + b.
-  tanBeta   = settingsPtr->parm("HiggsHchg:tanBeta");
+  tanBeta   = settingsPtr->get(Param::HiggsHchg_tanBeta);
   tan2Beta  = tanBeta * tanBeta;
   mbRun     = particleDataPtr->mRun( 5, particleDataPtr->m0(6) );
 
@@ -866,8 +866,8 @@ const double ResonanceH::GAMMAMARGIN = 10.;
 void ResonanceH::initConstants() {
 
   // Locally stored properties and couplings.
-  useCubicWidth  = settingsPtr->flag("Higgs:cubicWidth");
-  useRunLoopMass = settingsPtr->flag("Higgs:runningLoopMass");
+  useCubicWidth  = settingsPtr->get(Flag::Higgs_cubicWidth);
+  useRunLoopMass = settingsPtr->get(Flag::Higgs_runningLoopMass);
   sin2tW         = couplingsPtr->sin2thetaW();
   cos2tW         = 1. - sin2tW;
   mT             = particleDataPtr->m0(6);
@@ -879,7 +879,7 @@ void ResonanceH::initConstants() {
   GammaW         = particleDataPtr->mWidth(24);
 
   // NLO corrections to SM Higgs width, rescaled to reference alpha_S value.
-  useNLOWidths   = (higgsType == 0) && settingsPtr->flag("HiggsSM:NLOWidths");
+  useNLOWidths   = (higgsType == 0) && settingsPtr->get(Flag::HiggsSM_NLOWidths);
   rescAlpS       = 0.12833 / couplingsPtr->alphaS(125. * 125.);
   rescColQ       = 1.;
 
@@ -897,35 +897,35 @@ void ResonanceH::initConstants() {
   coup2A3H1      = 0.;
   coup2HchgW     = 0.;
   if (higgsType == 1) {
-    coup2d       = settingsPtr->parm("HiggsH1:coup2d");
-    coup2u       = settingsPtr->parm("HiggsH1:coup2u");
-    coup2l       = settingsPtr->parm("HiggsH1:coup2l");
-    coup2Z       = settingsPtr->parm("HiggsH1:coup2Z");
-    coup2W       = settingsPtr->parm("HiggsH1:coup2W");
-    coup2Hchg    = settingsPtr->parm("HiggsH1:coup2Hchg");
+    coup2d       = settingsPtr->get(Param::HiggsH1_coup2d);
+    coup2u       = settingsPtr->get(Param::HiggsH1_coup2u);
+    coup2l       = settingsPtr->get(Param::HiggsH1_coup2l);
+    coup2Z       = settingsPtr->get(Param::HiggsH1_coup2Z);
+    coup2W       = settingsPtr->get(Param::HiggsH1_coup2W);
+    coup2Hchg    = settingsPtr->get(Param::HiggsH1_coup2Hchg);
   } else if (higgsType == 2) {
-    coup2d       = settingsPtr->parm("HiggsH2:coup2d");
-    coup2u       = settingsPtr->parm("HiggsH2:coup2u");
-    coup2l       = settingsPtr->parm("HiggsH2:coup2l");
-    coup2Z       = settingsPtr->parm("HiggsH2:coup2Z");
-    coup2W       = settingsPtr->parm("HiggsH2:coup2W");
-    coup2Hchg    = settingsPtr->parm("HiggsH2:coup2Hchg");
-    coup2H1H1    = settingsPtr->parm("HiggsH2:coup2H1H1");
-    coup2A3A3    = settingsPtr->parm("HiggsH2:coup2A3A3");
-    coup2H1Z     = settingsPtr->parm("HiggsH2:coup2H1Z");
-    coup2A3Z     = settingsPtr->parm("HiggsA3:coup2H2Z");
-    coup2A3H1    = settingsPtr->parm("HiggsH2:coup2A3H1");
-    coup2HchgW   = settingsPtr->parm("HiggsH2:coup2HchgW");
+    coup2d       = settingsPtr->get(Param::HiggsH2_coup2d);
+    coup2u       = settingsPtr->get(Param::HiggsH2_coup2u);
+    coup2l       = settingsPtr->get(Param::HiggsH2_coup2l);
+    coup2Z       = settingsPtr->get(Param::HiggsH2_coup2Z);
+    coup2W       = settingsPtr->get(Param::HiggsH2_coup2W);
+    coup2Hchg    = settingsPtr->get(Param::HiggsH2_coup2Hchg);
+    coup2H1H1    = settingsPtr->get(Param::HiggsH2_coup2H1H1);
+    coup2A3A3    = settingsPtr->get(Param::HiggsH2_coup2A3A3);
+    coup2H1Z     = settingsPtr->get(Param::HiggsH2_coup2H1Z);
+    coup2A3Z     = settingsPtr->get(Param::HiggsA3_coup2H2Z);
+    coup2A3H1    = settingsPtr->get(Param::HiggsH2_coup2A3H1);
+    coup2HchgW   = settingsPtr->get(Param::HiggsH2_coup2HchgW);
   } else if (higgsType == 3) {
-    coup2d       = settingsPtr->parm("HiggsA3:coup2d");
-    coup2u       = settingsPtr->parm("HiggsA3:coup2u");
-    coup2l       = settingsPtr->parm("HiggsA3:coup2l");
-    coup2Z       = settingsPtr->parm("HiggsA3:coup2Z");
-    coup2W       = settingsPtr->parm("HiggsA3:coup2W");
-    coup2Hchg    = settingsPtr->parm("HiggsA3:coup2Hchg");
-    coup2H1H1    = settingsPtr->parm("HiggsA3:coup2H1H1");
-    coup2H1Z     = settingsPtr->parm("HiggsA3:coup2H1Z");
-    coup2HchgW   = settingsPtr->parm("HiggsA3:coup2Hchg");
+    coup2d       = settingsPtr->get(Param::HiggsA3_coup2d);
+    coup2u       = settingsPtr->get(Param::HiggsA3_coup2u);
+    coup2l       = settingsPtr->get(Param::HiggsA3_coup2l);
+    coup2Z       = settingsPtr->get(Param::HiggsA3_coup2Z);
+    coup2W       = settingsPtr->get(Param::HiggsA3_coup2W);
+    coup2Hchg    = settingsPtr->get(Param::HiggsA3_coup2Hchg);
+    coup2H1H1    = settingsPtr->get(Param::HiggsA3_coup2H1H1);
+    coup2H1Z     = settingsPtr->get(Param::HiggsA3_coup2H1Z);
+    coup2HchgW   = settingsPtr->get(Param::HiggsA3_coup2Hchg);
   }
 
   // Initialization of threshold kinematical factor by stepwise
@@ -1290,12 +1290,12 @@ double ResonanceH::eta2gaZ() {
 void ResonanceHchg::initConstants() {
 
   // Locally stored properties and couplings.
-  useCubicWidth = settingsPtr->flag("Higgs:cubicWidth");
+  useCubicWidth = settingsPtr->get(Flag::Higgs_cubicWidth);
   thetaWRat     = 1. / (8. * couplingsPtr->sin2thetaW());
   mW            = particleDataPtr->m0(24);
-  tanBeta       = settingsPtr->parm("HiggsHchg:tanBeta");
+  tanBeta       = settingsPtr->get(Param::HiggsHchg_tanBeta);
   tan2Beta      = tanBeta * tanBeta;
-  coup2H1W      = settingsPtr->parm("HiggsHchg:coup2H1W");
+  coup2H1W      = settingsPtr->get(Param::HiggsHchg_coup2H1W);
 
 }
 
@@ -1354,7 +1354,7 @@ void ResonanceHchg::calcWidth(bool) {
 void ResonanceZprime::initConstants() {
 
   // Locally stored properties and couplings.
-  gmZmode     = settingsPtr->mode("Zprime:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::Zprime_gmZmode);
   sin2tW      = couplingsPtr->sin2thetaW();
   cos2tW      = 1. - sin2tW;
   thetaWRat   = 1. / (16. * sin2tW * cos2tW);
@@ -1370,21 +1370,21 @@ void ResonanceZprime::initConstants() {
   for (int i = 0; i < 20; ++i) vfZp[i] = 0.;
 
   // Store first-generation axial and vector couplings.
-  afZp[1]     = settingsPtr->parm("Zprime:ad");
-  afZp[2]     = settingsPtr->parm("Zprime:au");
-  afZp[11]    = settingsPtr->parm("Zprime:ae");
-  afZp[12]    = settingsPtr->parm("Zprime:anue");
-  vfZp[1]     = settingsPtr->parm("Zprime:vd");
-  vfZp[2]     = settingsPtr->parm("Zprime:vu");
-  vfZp[11]    = settingsPtr->parm("Zprime:ve");
-  vfZp[12]    = settingsPtr->parm("Zprime:vnue");
+  afZp[1]     = settingsPtr->get(Param::Zprime_ad);
+  afZp[2]     = settingsPtr->get(Param::Zprime_au);
+  afZp[11]    = settingsPtr->get(Param::Zprime_ae);
+  afZp[12]    = settingsPtr->get(Param::Zprime_anue);
+  vfZp[1]     = settingsPtr->get(Param::Zprime_vd);
+  vfZp[2]     = settingsPtr->get(Param::Zprime_vu);
+  vfZp[11]    = settingsPtr->get(Param::Zprime_ve);
+  vfZp[12]    = settingsPtr->get(Param::Zprime_vnue);
 
   // Determine if the 4th generation should be included
-  bool coupZp2gen4    = settingsPtr->flag("Zprime:coup2gen4");
+  bool coupZp2gen4    = settingsPtr->get(Flag::Zprime_coup2gen4);
   maxZpGen = (coupZp2gen4) ? 8 : 6;
 
   // Second and third generation could be carbon copy of this...
-  if (settingsPtr->flag("Zprime:universality")) {
+  if (settingsPtr->get(Flag::Zprime_universality)) {
     for (int i = 3; i <= maxZpGen; ++i) {
       afZp[i]    = afZp[i-2];
       vfZp[i]    = vfZp[i-2];
@@ -1394,36 +1394,36 @@ void ResonanceZprime::initConstants() {
 
   // ... or could have different couplings.
   } else {
-    afZp[3]   = settingsPtr->parm("Zprime:as");
-    afZp[4]   = settingsPtr->parm("Zprime:ac");
-    afZp[5]   = settingsPtr->parm("Zprime:ab");
-    afZp[6]   = settingsPtr->parm("Zprime:at");
-    afZp[13]  = settingsPtr->parm("Zprime:amu");
-    afZp[14]  = settingsPtr->parm("Zprime:anumu");
-    afZp[15]  = settingsPtr->parm("Zprime:atau");
-    afZp[16]  = settingsPtr->parm("Zprime:anutau");
-    vfZp[3]   = settingsPtr->parm("Zprime:vs");
-    vfZp[4]   = settingsPtr->parm("Zprime:vc");
-    vfZp[5]   = settingsPtr->parm("Zprime:vb");
-    vfZp[6]   = settingsPtr->parm("Zprime:vt");
-    vfZp[13]  = settingsPtr->parm("Zprime:vmu");
-    vfZp[14]  = settingsPtr->parm("Zprime:vnumu");
-    vfZp[15]  = settingsPtr->parm("Zprime:vtau");
-    vfZp[16]  = settingsPtr->parm("Zprime:vnutau");
+    afZp[3]   = settingsPtr->get(Param::Zprime_as);
+    afZp[4]   = settingsPtr->get(Param::Zprime_ac);
+    afZp[5]   = settingsPtr->get(Param::Zprime_ab);
+    afZp[6]   = settingsPtr->get(Param::Zprime_at);
+    afZp[13]  = settingsPtr->get(Param::Zprime_amu);
+    afZp[14]  = settingsPtr->get(Param::Zprime_anumu);
+    afZp[15]  = settingsPtr->get(Param::Zprime_atau);
+    afZp[16]  = settingsPtr->get(Param::Zprime_anutau);
+    vfZp[3]   = settingsPtr->get(Param::Zprime_vs);
+    vfZp[4]   = settingsPtr->get(Param::Zprime_vc);
+    vfZp[5]   = settingsPtr->get(Param::Zprime_vb);
+    vfZp[6]   = settingsPtr->get(Param::Zprime_vt);
+    vfZp[13]  = settingsPtr->get(Param::Zprime_vmu);
+    vfZp[14]  = settingsPtr->get(Param::Zprime_vnumu);
+    vfZp[15]  = settingsPtr->get(Param::Zprime_vtau);
+    vfZp[16]  = settingsPtr->get(Param::Zprime_vnutau);
     if( coupZp2gen4 ) {
-      afZp[7]   = settingsPtr->parm("Zprime:abPrime");
-      afZp[8]   = settingsPtr->parm("Zprime:atPrime");
-      vfZp[7]   = settingsPtr->parm("Zprime:vbPrime");
-      vfZp[8]   = settingsPtr->parm("Zprime:vtPrime");
-      afZp[17]  = settingsPtr->parm("Zprime:atauPrime");
-      afZp[18]  = settingsPtr->parm("Zprime:anutauPrime");
-      vfZp[17]  = settingsPtr->parm("Zprime:vtauPrime");
-      vfZp[18]  = settingsPtr->parm("Zprime:vnutauPrime");
+      afZp[7]   = settingsPtr->get(Param::Zprime_abPrime);
+      afZp[8]   = settingsPtr->get(Param::Zprime_atPrime);
+      vfZp[7]   = settingsPtr->get(Param::Zprime_vbPrime);
+      vfZp[8]   = settingsPtr->get(Param::Zprime_vtPrime);
+      afZp[17]  = settingsPtr->get(Param::Zprime_atauPrime);
+      afZp[18]  = settingsPtr->get(Param::Zprime_anutauPrime);
+      vfZp[17]  = settingsPtr->get(Param::Zprime_vtauPrime);
+      vfZp[18]  = settingsPtr->get(Param::Zprime_vnutauPrime);
     }
   }
 
   // Coupling for Z' -> W+ W-.
-  coupZpWW    = settingsPtr->parm("Zprime:coup2WW");
+  coupZpWW    = settingsPtr->get(Param::Zprime_coup2WW);
 
 }
 
@@ -1571,13 +1571,13 @@ void ResonanceWprime::initConstants() {
   cos2tW    = couplingsPtr->cos2thetaW();
 
   // Axial and vector couplings of fermions.
-  aqWp      = settingsPtr->parm("Wprime:aq");
-  vqWp      = settingsPtr->parm("Wprime:vq");
-  alWp      = settingsPtr->parm("Wprime:al");
-  vlWp      = settingsPtr->parm("Wprime:vl");
+  aqWp      = settingsPtr->get(Param::Wprime_aq);
+  vqWp      = settingsPtr->get(Param::Wprime_vq);
+  alWp      = settingsPtr->get(Param::Wprime_al);
+  vlWp      = settingsPtr->get(Param::Wprime_vl);
 
   // Coupling for W' -> W Z.
-  coupWpWZ    = settingsPtr->parm("Wprime:coup2WZ");
+  coupWpWZ    = settingsPtr->get(Param::Wprime_coup2WZ);
 
 }
 
@@ -1681,11 +1681,11 @@ void ResonanceRhorizontal::calcWidth(bool) {
 void ResonanceExcited::initConstants() {
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
-  coupF         = settingsPtr->parm("ExcitedFermion:coupF");
-  coupFprime    = settingsPtr->parm("ExcitedFermion:coupFprime");
-  coupFcol      = settingsPtr->parm("ExcitedFermion:coupFcol");
-  contactDec    = settingsPtr->parm("ExcitedFermion:contactDec");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
+  coupF         = settingsPtr->get(Param::ExcitedFermion_coupF);
+  coupFprime    = settingsPtr->get(Param::ExcitedFermion_coupFprime);
+  coupFcol      = settingsPtr->get(Param::ExcitedFermion_coupFcol);
+  contactDec    = settingsPtr->get(Param::ExcitedFermion_contactDec);
   sin2tW        = couplingsPtr->sin2thetaW();
   cos2tW        = 1. - sin2tW;
 
@@ -1764,22 +1764,22 @@ void ResonanceGraviton::initConstants() {
 
   // SMinBulk = off/on, use universal coupling (kappaMG)
   // or individual (Gxx) between graviton and SM particles.
-  eDsmbulk   = settingsPtr->flag("ExtraDimensionsG*:SMinBulk");
+  eDsmbulk   = settingsPtr->get(Flag::ExtraDimensionsGstar_SMinBulk);
   eDvlvl = false;
-  if (eDsmbulk) eDvlvl = settingsPtr->flag("ExtraDimensionsG*:VLVL");
-  kappaMG    = settingsPtr->parm("ExtraDimensionsG*:kappaMG");
+  if (eDsmbulk) eDvlvl = settingsPtr->get(Flag::ExtraDimensionsGstar_VLVL);
+  kappaMG    = settingsPtr->get(Param::ExtraDimensionsGstar_kappaMG);
   for (int i = 0; i < 27; ++i) eDcoupling[i] = 0.;
-  double tmp_coup = settingsPtr->parm("ExtraDimensionsG*:Gqq");
+  double tmp_coup = settingsPtr->get(Param::ExtraDimensionsGstar_Gqq);
   for (int i = 1; i <= 4; ++i)  eDcoupling[i] = tmp_coup;
-  eDcoupling[5] = settingsPtr->parm("ExtraDimensionsG*:Gbb");
-  eDcoupling[6] = settingsPtr->parm("ExtraDimensionsG*:Gtt");
-  tmp_coup = settingsPtr->parm("ExtraDimensionsG*:Gll");
+  eDcoupling[5] = settingsPtr->get(Param::ExtraDimensionsGstar_Gbb);
+  eDcoupling[6] = settingsPtr->get(Param::ExtraDimensionsGstar_Gtt);
+  tmp_coup = settingsPtr->get(Param::ExtraDimensionsGstar_Gll);
   for (int i = 11; i <= 16; ++i) eDcoupling[i] = tmp_coup;
-  eDcoupling[21] = settingsPtr->parm("ExtraDimensionsG*:Ggg");
-  eDcoupling[22] = settingsPtr->parm("ExtraDimensionsG*:Ggmgm");
-  eDcoupling[23] = settingsPtr->parm("ExtraDimensionsG*:GZZ");
-  eDcoupling[24] = settingsPtr->parm("ExtraDimensionsG*:GWW");
-  eDcoupling[25] = settingsPtr->parm("ExtraDimensionsG*:Ghh");
+  eDcoupling[21] = settingsPtr->get(Param::ExtraDimensionsGstar_Ggg);
+  eDcoupling[22] = settingsPtr->get(Param::ExtraDimensionsGstar_Ggmgm);
+  eDcoupling[23] = settingsPtr->get(Param::ExtraDimensionsGstar_GZZ);
+  eDcoupling[24] = settingsPtr->get(Param::ExtraDimensionsGstar_GWW);
+  eDcoupling[25] = settingsPtr->get(Param::ExtraDimensionsGstar_Ghh);
 
 }
 
@@ -1852,19 +1852,19 @@ void ResonanceKKgluon::initConstants() {
 
   // KK-gluon gv/ga couplings and interference.
   for (int i = 0; i < 10; ++i) { eDgv[i] = 0.; eDga[i] = 0.; }
-  double tmp_gL = settingsPtr->parm("ExtraDimensionsG*:KKgqL");
-  double tmp_gR = settingsPtr->parm("ExtraDimensionsG*:KKgqR");
+  double tmp_gL = settingsPtr->get(Param::ExtraDimensionsGstar_KKgqL);
+  double tmp_gR = settingsPtr->get(Param::ExtraDimensionsGstar_KKgqR);
   for (int i = 1; i <= 4; ++i) {
     eDgv[i] = 0.5 * (tmp_gL + tmp_gR);
     eDga[i] = 0.5 * (tmp_gL - tmp_gR);
   }
-  tmp_gL = settingsPtr->parm("ExtraDimensionsG*:KKgbL");
-  tmp_gR = settingsPtr->parm("ExtraDimensionsG*:KKgbR");
+  tmp_gL = settingsPtr->get(Param::ExtraDimensionsGstar_KKgbL);
+  tmp_gR = settingsPtr->get(Param::ExtraDimensionsGstar_KKgbR);
   eDgv[5] = 0.5 * (tmp_gL + tmp_gR); eDga[5] = 0.5 * (tmp_gL - tmp_gR);
-  tmp_gL = settingsPtr->parm("ExtraDimensionsG*:KKgtL");
-  tmp_gR = settingsPtr->parm("ExtraDimensionsG*:KKgtR");
+  tmp_gL = settingsPtr->get(Param::ExtraDimensionsGstar_KKgtL);
+  tmp_gR = settingsPtr->get(Param::ExtraDimensionsGstar_KKgtR);
   eDgv[6] = 0.5 * (tmp_gL + tmp_gR); eDga[6] = 0.5 * (tmp_gL - tmp_gR);
-  interfMode    = settingsPtr->mode("ExtraDimensionsG*:KKintMode");
+  interfMode    = settingsPtr->get(Mode::ExtraDimensionsGstar_KKintMode);
 
 }
 
@@ -1935,7 +1935,7 @@ void ResonanceKKgluon::calcWidth(bool calledFromInit) {
 void ResonanceLeptoquark::initConstants() {
 
   // Locally stored properties and couplings.
-  kCoup      = settingsPtr->parm("LeptoQuark:kCoup");
+  kCoup      = settingsPtr->get(Param::LeptoQuark_kCoup);
 
   // Check that flavour info in decay channel is correctly set.
   int id1Now = particlePtr->channel(0).product(0);
@@ -2177,16 +2177,16 @@ void ResonanceWRight::calcWidth(bool) {
 void ResonanceHchgchgLeft::initConstants() {
 
   // Read in Yukawa matrix for couplings to a lepton pair.
-  yukawa[1][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHee");
-  yukawa[2][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-  yukawa[2][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHmumu");
-  yukawa[3][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
-  yukawa[3][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
-  yukawa[3][3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtautau");
+  yukawa[1][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHee);
+  yukawa[2][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+  yukawa[2][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmumu);
+  yukawa[3][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
+  yukawa[3][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
+  yukawa[3][3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtautau);
 
   // Locally stored properties and couplings.
-  gL            = settingsPtr->parm("LeftRightSymmmetry:gL");
-  vL            = settingsPtr->parm("LeftRightSymmmetry:vL");
+  gL            = settingsPtr->get(Param::LeftRightSymmmetry_gL);
+  vL            = settingsPtr->get(Param::LeftRightSymmmetry_vL);
   mW            = particleDataPtr->m0(24);
 
 }
@@ -2236,16 +2236,16 @@ void ResonanceHchgchgLeft::calcWidth(bool) {
 void ResonanceHchgchgRight::initConstants() {
 
   // Read in Yukawa matrix for couplings to a lepton pair.
-  yukawa[1][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHee");
-  yukawa[2][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-  yukawa[2][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHmumu");
-  yukawa[3][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
-  yukawa[3][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
-  yukawa[3][3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtautau");
+  yukawa[1][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHee);
+  yukawa[2][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+  yukawa[2][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmumu);
+  yukawa[3][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
+  yukawa[3][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
+  yukawa[3][3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtautau);
 
   // Locally stored properties and couplings.
   idWR          = 9000024;
-  gR            = settingsPtr->parm("LeftRightSymmmetry:gR");
+  gR            = settingsPtr->get(Param::LeftRightSymmmetry_gR);
 
 }
 

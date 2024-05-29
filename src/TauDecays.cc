@@ -75,21 +75,21 @@ void TauDecays::init(Info* infoPtrIn, Settings* settingsPtrIn,
   hmeTau2PhaseSpace              .initPointers(particleDataPtr, couplingsPtr);
 
   // User selected tau settings.
-  tauExt    = settingsPtr->mode("TauDecays:externalMode");
-  tauMode   = settingsPtr->mode("TauDecays:mode");
-  tauMother = settingsPtr->mode("TauDecays:tauMother");
-  tauPol    = settingsPtr->parm("TauDecays:tauPolarization");
+  tauExt    = settingsPtr->get(Mode::TauDecays_externalMode);
+  tauMode   = settingsPtr->get(Mode::TauDecays_mode);
+  tauMother = settingsPtr->get(Mode::TauDecays_tauMother);
+  tauPol    = settingsPtr->get(Param::TauDecays_tauPolarization);
 
   // Parameters to determine if correlated partner should decay.
-  limitTau0     = settingsPtr->flag("ParticleDecays:limitTau0");
-  tau0Max       = settingsPtr->parm("ParticleDecays:tau0Max");
-  limitTau      = settingsPtr->flag("ParticleDecays:limitTau");
-  tauMax        = settingsPtr->parm("ParticleDecays:tauMax");
-  limitRadius   = settingsPtr->flag("ParticleDecays:limitRadius");
-  rMax          = settingsPtr->parm("ParticleDecays:rMax");
-  limitCylinder = settingsPtr->flag("ParticleDecays:limitCylinder");
-  xyMax         = settingsPtr->parm("ParticleDecays:xyMax");
-  zMax          = settingsPtr->parm("ParticleDecays:zMax");
+  limitTau0     = settingsPtr->get(Flag::ParticleDecays_limitTau0);
+  tau0Max       = settingsPtr->get(Param::ParticleDecays_tau0Max);
+  limitTau      = settingsPtr->get(Flag::ParticleDecays_limitTau);
+  tauMax        = settingsPtr->get(Param::ParticleDecays_tauMax);
+  limitRadius   = settingsPtr->get(Flag::ParticleDecays_limitRadius);
+  rMax          = settingsPtr->get(Param::ParticleDecays_rMax);
+  limitCylinder = settingsPtr->get(Flag::ParticleDecays_limitCylinder);
+  xyMax         = settingsPtr->get(Param::ParticleDecays_xyMax);
+  zMax          = settingsPtr->get(Param::ParticleDecays_zMax);
   limitDecay    = limitTau0 || limitTau || limitRadius || limitCylinder;
 }
 

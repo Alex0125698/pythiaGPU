@@ -29,14 +29,14 @@ SigmaOniaSetup::SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
   particleDataPtr = particleDataPtrIn;
   cat   = (flavour == 4) ? "Charmonium" : "Bottomonium";
   key   = (flavour == 4) ? "ccbar" : "bbbar";
-  mSplit = settingsPtr->parm("Onia:massSplit");
-  if (!settingsPtr->flag("Onia:forceMassSplit")) mSplit = -mSplit;
+  mSplit = settingsPtr->get(Param::Onia_massSplit);
+  if (!settingsPtr->get(Flag::Onia_forceMassSplit)) mSplit = -mSplit;
 
   // Set the general switch settings.
-  onia        = settingsPtr->flag("Onia:all");
-  onia3S1     = settingsPtr->flag("Onia:all(3S1)");
-  onia3PJ     = settingsPtr->flag("Onia:all(3PJ)");
-  onia3DJ     = settingsPtr->flag("Onia:all(3DJ)");
+  onia        = settingsPtr->get(Flag::Onia_all);
+  onia3S1     = settingsPtr->get(Flag::Onia_all_3S1_);
+  onia3PJ     = settingsPtr->get(Flag::Onia_all_3PJ_);
+  onia3DJ     = settingsPtr->get(Flag::Onia_all_3DJ_);
   oniaFlavour = settingsPtr->flag(cat + ":all");
 
   // Set the names of the matrix element settings.

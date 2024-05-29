@@ -64,10 +64,10 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   lhaStratAbs = abs(lhaStrat);
   allowNegSig = sigmaProcessPtr->allowNegativeSigma();
 
-  useStrictLHEFscales = settings.flag("Beams:strictLHEFscale");
+  useStrictLHEFscales = settings.get(Flag::Beams_strictLHEFscale);
 
   // Flag for maximum violation handling.
-  increaseMaximum = settings.flag("PhaseSpace:increaseMaximum");
+  increaseMaximum = settings.get(Flag::PhaseSpace_increaseMaximum);
 
   // Pick and create phase space generator. Send pointers where required.
   if (phaseSpacePtr != 0) ;
@@ -159,11 +159,11 @@ bool ProcessContainer::init(bool isFirst, Info* infoPtrIn,
   }
 
   // Allow Pythia to overwrite incoming beams or parts of Les Houches input.
-  idRenameBeams = settings.mode("LesHouches:idRenameBeams");
-  setLifetime   = settings.mode("LesHouches:setLifetime");
-  setLeptonMass = settings.mode("LesHouches:setLeptonMass");
-  mRecalculate  = settings.parm("LesHouches:mRecalculate");
-  matchInOut    = settings.flag("LesHouches:matchInOut");
+  idRenameBeams = settings.get(Mode::LesHouches_idRenameBeams);
+  setLifetime   = settings.get(Mode::LesHouches_setLifetime);
+  setLeptonMass = settings.get(Mode::LesHouches_setLeptonMass);
+  mRecalculate  = settings.get(Param::LesHouches_mRecalculate);
+  matchInOut    = settings.get(Flag::LesHouches_matchInOut);
   idLep[0] = 11; mLep[0] = particleDataPtr->m0(11);
   idLep[1] = 13; mLep[1] = particleDataPtr->m0(13);
   idLep[2] = 15; mLep[2] = particleDataPtr->m0(15);
@@ -979,276 +979,276 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
   SigmaProcess* sigmaPtr;
 
   // Set up requested objects for soft QCD processes.
-  bool softQCD = settings.flag("SoftQCD:all");
-  bool inelastic = settings.flag("SoftQCD:inelastic");
-  if (softQCD || inelastic || settings.flag("SoftQCD:nonDiffractive")) {
+  bool softQCD = settings.get(Flag::SoftQCD_all);
+  bool inelastic = settings.get(Flag::SoftQCD_inelastic);
+  if (softQCD || inelastic || settings.get(Flag::SoftQCD_nonDiffractive)) {
     sigmaPtr = new Sigma0nonDiffractive;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (softQCD || settings.flag("SoftQCD:elastic")) {
+  if (softQCD || settings.get(Flag::SoftQCD_elastic)) {
     sigmaPtr = new Sigma0AB2AB;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (softQCD || inelastic || settings.flag("SoftQCD:singleDiffractive")) {
+  if (softQCD || inelastic || settings.get(Flag::SoftQCD_singleDiffractive)) {
     sigmaPtr = new Sigma0AB2XB;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma0AB2AX;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (softQCD || inelastic || settings.flag("SoftQCD:doubleDiffractive")) {
+  if (softQCD || inelastic || settings.get(Flag::SoftQCD_doubleDiffractive)) {
     sigmaPtr = new Sigma0AB2XX;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (softQCD || inelastic || settings.flag("SoftQCD:centralDiffractive")) {
+  if (softQCD || inelastic || settings.get(Flag::SoftQCD_centralDiffractive)) {
     sigmaPtr = new Sigma0AB2AXB;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for hard QCD processes.
-  bool hardQCD = settings.flag("HardQCD:all");
-  if (hardQCD || settings.flag("HardQCD:gg2gg")) {
+  bool hardQCD = settings.get(Flag::HardQCD_all);
+  if (hardQCD || settings.get(Flag::HardQCD_gg2gg)) {
     sigmaPtr = new Sigma2gg2gg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || settings.flag("HardQCD:gg2qqbar")) {
+  if (hardQCD || settings.get(Flag::HardQCD_gg2qqbar)) {
     sigmaPtr = new Sigma2gg2qqbar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || settings.flag("HardQCD:qg2qg")) {
+  if (hardQCD || settings.get(Flag::HardQCD_qg2qg)) {
     sigmaPtr = new Sigma2qg2qg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || settings.flag("HardQCD:qq2qq")) {
+  if (hardQCD || settings.get(Flag::HardQCD_qq2qq)) {
     sigmaPtr = new Sigma2qq2qq;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || settings.flag("HardQCD:qqbar2gg")) {
+  if (hardQCD || settings.get(Flag::HardQCD_qqbar2gg)) {
     sigmaPtr = new Sigma2qqbar2gg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || settings.flag("HardQCD:qqbar2qqbarNew")) {
+  if (hardQCD || settings.get(Flag::HardQCD_qqbar2qqbarNew)) {
     sigmaPtr = new Sigma2qqbar2qqbarNew;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for c cbar and b bbar, also hard QCD.
-  bool hardccbar = settings.flag("HardQCD:hardccbar");
-  if (hardQCD || hardccbar || settings.flag("HardQCD:gg2ccbar")) {
+  bool hardccbar = settings.get(Flag::HardQCD_hardccbar);
+  if (hardQCD || hardccbar || settings.get(Flag::HardQCD_gg2ccbar)) {
     sigmaPtr = new Sigma2gg2QQbar(4, 121);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || hardccbar || settings.flag("HardQCD:qqbar2ccbar")) {
+  if (hardQCD || hardccbar || settings.get(Flag::HardQCD_qqbar2ccbar)) {
     sigmaPtr = new Sigma2qqbar2QQbar(4, 122);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  bool hardbbbar = settings.flag("HardQCD:hardbbbar");
-  if (hardQCD || hardbbbar || settings.flag("HardQCD:gg2bbbar")) {
+  bool hardbbbar = settings.get(Flag::HardQCD_hardbbbar);
+  if (hardQCD || hardbbbar || settings.get(Flag::HardQCD_gg2bbbar)) {
     sigmaPtr = new Sigma2gg2QQbar(5, 123);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD || hardbbbar || settings.flag("HardQCD:qqbar2bbbar")) {
+  if (hardQCD || hardbbbar || settings.get(Flag::HardQCD_qqbar2bbbar)) {
     sigmaPtr = new Sigma2qqbar2QQbar(5, 124);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for hard QCD 2 -> 3 processes.
-  bool hardQCD3parton = settings.flag("HardQCD:3parton");
-  if (hardQCD3parton || settings.flag("HardQCD:gg2ggg")) {
+  bool hardQCD3parton = settings.get(Flag::HardQCD_3parton);
+  if (hardQCD3parton || settings.get(Flag::HardQCD_gg2ggg)) {
     sigmaPtr = new Sigma3gg2ggg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qqbar2ggg")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qqbar2ggg)) {
     sigmaPtr = new Sigma3qqbar2ggg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qg2qgg")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qg2qgg)) {
     sigmaPtr = new Sigma3qg2qgg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qq2qqgDiff")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qq2qqgDiff)) {
     sigmaPtr = new Sigma3qq2qqgDiff;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qq2qqgSame")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qq2qqgSame)) {
     sigmaPtr = new Sigma3qq2qqgSame;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qqbar2qqbargDiff")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qqbar2qqbargDiff)) {
     sigmaPtr = new Sigma3qqbar2qqbargDiff;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qqbar2qqbargSame")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qqbar2qqbargSame)) {
     sigmaPtr = new Sigma3qqbar2qqbargSame;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:gg2qqbarg")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_gg2qqbarg)) {
     sigmaPtr = new Sigma3gg2qqbarg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qg2qqqbarDiff")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qg2qqqbarDiff)) {
     sigmaPtr = new Sigma3qg2qqqbarDiff;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hardQCD3parton || settings.flag("HardQCD:qg2qqqbarSame")) {
+  if (hardQCD3parton || settings.get(Flag::HardQCD_qg2qqqbarSame)) {
     sigmaPtr = new Sigma3qg2qqqbarSame;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for prompt photon processes.
-  bool promptPhotons = settings.flag("PromptPhoton:all");
+  bool promptPhotons = settings.get(Flag::PromptPhoton_all);
   if (promptPhotons
-    || settings.flag("PromptPhoton:qg2qgamma")) {
+    || settings.get(Flag::PromptPhoton_qg2qgamma)) {
     sigmaPtr = new Sigma2qg2qgamma;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (promptPhotons
-    || settings.flag("PromptPhoton:qqbar2ggamma")) {
+    || settings.get(Flag::PromptPhoton_qqbar2ggamma)) {
     sigmaPtr = new Sigma2qqbar2ggamma;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (promptPhotons
-    || settings.flag("PromptPhoton:gg2ggamma")) {
+    || settings.get(Flag::PromptPhoton_gg2ggamma)) {
     sigmaPtr = new Sigma2gg2ggamma;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (promptPhotons
-    || settings.flag("PromptPhoton:ffbar2gammagamma")) {
+    || settings.get(Flag::PromptPhoton_ffbar2gammagamma)) {
     sigmaPtr = new Sigma2ffbar2gammagamma;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (promptPhotons
-    || settings.flag("PromptPhoton:gg2gammagamma")) {
+    || settings.get(Flag::PromptPhoton_gg2gammagamma)) {
     sigmaPtr = new Sigma2gg2gammagamma;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for weak gauge boson t-channel exchange.
-  bool weakBosonExchanges = settings.flag("WeakBosonExchange:all");
+  bool weakBosonExchanges = settings.get(Flag::WeakBosonExchange_all);
   if (weakBosonExchanges
-    || settings.flag("WeakBosonExchange:ff2ff(t:gmZ)")) {
+    || settings.get(Flag::WeakBosonExchange_ff2ff_t_gmZ_)) {
     sigmaPtr = new Sigma2ff2fftgmZ;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonExchanges
-    || settings.flag("WeakBosonExchange:ff2ff(t:W)")) {
+    || settings.get(Flag::WeakBosonExchange_ff2ff_t_W_)) {
     sigmaPtr = new Sigma2ff2fftW;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for weak gauge boson processes.
-  bool weakSingleBosons = settings.flag("WeakSingleBoson:all");
+  bool weakSingleBosons = settings.get(Flag::WeakSingleBoson_all);
   if (weakSingleBosons
-    || settings.flag("WeakSingleBoson:ffbar2gmZ")) {
+    || settings.get(Flag::WeakSingleBoson_ffbar2gmZ)) {
     sigmaPtr = new Sigma1ffbar2gmZ;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakSingleBosons
-    || settings.flag("WeakSingleBoson:ffbar2W")) {
+    || settings.get(Flag::WeakSingleBoson_ffbar2W)) {
     sigmaPtr = new Sigma1ffbar2W;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested object for s-channel gamma exchange.
   // Subset of gamma*/Z0 above, intended for multiparton interactions.
-  if (settings.flag("WeakSingleBoson:ffbar2ffbar(s:gm)")) {
+  if (settings.get(Flag::WeakSingleBoson_ffbar2ffbar_s_gm_)) {
     sigmaPtr = new Sigma2ffbar2ffbarsgm;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested object for s-channel gamma*/Z0 or W+- exchange.
-  if (settings.flag("WeakSingleBoson:ffbar2ffbar(s:gmZ)")) {
+  if (settings.get(Flag::WeakSingleBoson_ffbar2ffbar_s_gmZ_)) {
     sigmaPtr = new Sigma2ffbar2ffbarsgmZ;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("WeakSingleBoson:ffbar2ffbar(s:W)")) {
+  if (settings.get(Flag::WeakSingleBoson_ffbar2ffbar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2ffbarsW;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for weak gauge boson pair processes.
-  bool weakDoubleBosons = settings.flag("WeakDoubleBoson:all");
+  bool weakDoubleBosons = settings.get(Flag::WeakDoubleBoson_all);
   if (weakDoubleBosons
-    || settings.flag("WeakDoubleBoson:ffbar2gmZgmZ")) {
+    || settings.get(Flag::WeakDoubleBoson_ffbar2gmZgmZ)) {
     sigmaPtr = new Sigma2ffbar2gmZgmZ;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakDoubleBosons
-    || settings.flag("WeakDoubleBoson:ffbar2ZW")) {
+    || settings.get(Flag::WeakDoubleBoson_ffbar2ZW)) {
     sigmaPtr = new Sigma2ffbar2ZW;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakDoubleBosons
-    || settings.flag("WeakDoubleBoson:ffbar2WW")) {
+    || settings.get(Flag::WeakDoubleBoson_ffbar2WW)) {
     sigmaPtr = new Sigma2ffbar2WW;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for weak gauge boson + parton processes.
-  bool weakBosonAndPartons = settings.flag("WeakBosonAndParton:all");
+  bool weakBosonAndPartons = settings.get(Flag::WeakBosonAndParton_all);
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:qqbar2gmZg")) {
+    || settings.get(Flag::WeakBosonAndParton_qqbar2gmZg)) {
     sigmaPtr = new Sigma2qqbar2gmZg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:qg2gmZq")) {
+    || settings.get(Flag::WeakBosonAndParton_qg2gmZq)) {
     sigmaPtr = new Sigma2qg2gmZq;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:ffbar2gmZgm")) {
+    || settings.get(Flag::WeakBosonAndParton_ffbar2gmZgm)) {
     sigmaPtr = new Sigma2ffbar2gmZgm;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:fgm2gmZf")) {
+    || settings.get(Flag::WeakBosonAndParton_fgm2gmZf)) {
     sigmaPtr = new Sigma2fgm2gmZf;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:qqbar2Wg")) {
+    || settings.get(Flag::WeakBosonAndParton_qqbar2Wg)) {
     sigmaPtr = new Sigma2qqbar2Wg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:qg2Wq")) {
+    || settings.get(Flag::WeakBosonAndParton_qg2Wq)) {
     sigmaPtr = new Sigma2qg2Wq;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:ffbar2Wgm")) {
+    || settings.get(Flag::WeakBosonAndParton_ffbar2Wgm)) {
     sigmaPtr = new Sigma2ffbar2Wgm;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (weakBosonAndPartons
-    || settings.flag("WeakBosonAndParton:fgm2Wf")) {
+    || settings.get(Flag::WeakBosonAndParton_fgm2Wf)) {
     sigmaPtr = new Sigma2fgm2Wf;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for photon collision processes.
-  bool photonCollisions = settings.flag("PhotonCollision:all");
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2qqbar")) {
+  bool photonCollisions = settings.get(Flag::PhotonCollision_all);
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2qqbar)) {
     sigmaPtr = new Sigma2gmgm2ffbar(1, 261);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2ccbar")) {
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2ccbar)) {
     sigmaPtr = new Sigma2gmgm2ffbar(4, 262);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2bbbar")) {
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2bbbar)) {
     sigmaPtr = new Sigma2gmgm2ffbar(5, 263);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2ee")) {
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2ee)) {
     sigmaPtr = new Sigma2gmgm2ffbar(11, 264);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2mumu")) {
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2mumu)) {
     sigmaPtr = new Sigma2gmgm2ffbar(13, 265);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (photonCollisions || settings.flag("PhotonCollision:gmgm2tautau")) {
+  if (photonCollisions || settings.get(Flag::PhotonCollision_gmgm2tautau)) {
     sigmaPtr = new Sigma2gmgm2ffbar(15, 266);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
@@ -1269,160 +1269,160 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     containerPtrs.push_back( new ProcessContainer(bottomoniumSigmaPtrs[i]) );
 
   // Set up requested objects for top production.
-  bool tops = settings.flag("Top:all");
-  if (tops || settings.flag("Top:gg2ttbar")) {
+  bool tops = settings.get(Flag::Top_all);
+  if (tops || settings.get(Flag::Top_gg2ttbar)) {
     sigmaPtr = new Sigma2gg2QQbar(6, 601);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tops || settings.flag("Top:qqbar2ttbar")) {
+  if (tops || settings.get(Flag::Top_qqbar2ttbar)) {
     sigmaPtr = new Sigma2qqbar2QQbar(6, 602);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tops || settings.flag("Top:qq2tq(t:W)")) {
+  if (tops || settings.get(Flag::Top_qq2tq_t_W_)) {
     sigmaPtr = new Sigma2qq2QqtW(6, 603);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tops || settings.flag("Top:ffbar2ttbar(s:gmZ)")) {
+  if (tops || settings.get(Flag::Top_ffbar2ttbar_s_gmZ_)) {
     sigmaPtr = new Sigma2ffbar2FFbarsgmZ(6, 604);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tops || settings.flag("Top:ffbar2tqbar(s:W)")) {
+  if (tops || settings.get(Flag::Top_ffbar2tqbar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(6, 0, 605);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tops || settings.flag("Top:gmgm2ttbar")) {
+  if (tops || settings.get(Flag::Top_gmgm2ttbar)) {
     sigmaPtr = new Sigma2gmgm2ffbar(6, 606);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for fourth-generation b' production
-  bool bPrimes = settings.flag("FourthBottom:all");
-  if (bPrimes || settings.flag("FourthBottom:gg2bPrimebPrimebar")) {
+  bool bPrimes = settings.get(Flag::FourthBottom_all);
+  if (bPrimes || settings.get(Flag::FourthBottom_gg2bPrimebPrimebar)) {
     sigmaPtr = new Sigma2gg2QQbar(7, 801);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (bPrimes || settings.flag("FourthBottom:qqbar2bPrimebPrimebar")) {
+  if (bPrimes || settings.get(Flag::FourthBottom_qqbar2bPrimebPrimebar)) {
     sigmaPtr = new Sigma2qqbar2QQbar(7, 802);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (bPrimes || settings.flag("FourthBottom:qq2bPrimeq(t:W)")) {
+  if (bPrimes || settings.get(Flag::FourthBottom_qq2bPrimeq_t_W_)) {
     sigmaPtr = new Sigma2qq2QqtW(7, 803);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (bPrimes || settings.flag("FourthBottom:ffbar2bPrimebPrimebar(s:gmZ)")) {
+  if (bPrimes || settings.get(Flag::FourthBottom_ffbar2bPrimebPrimebar_s_gmZ_)) {
     sigmaPtr = new Sigma2ffbar2FFbarsgmZ(7, 804);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (bPrimes || settings.flag("FourthBottom:ffbar2bPrimeqbar(s:W)")) {
+  if (bPrimes || settings.get(Flag::FourthBottom_ffbar2bPrimeqbar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(7, 0, 805);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (bPrimes || settings.flag("FourthBottom:ffbar2bPrimetbar(s:W)")) {
+  if (bPrimes || settings.get(Flag::FourthBottom_ffbar2bPrimetbar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(7, 6, 806);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for fourth-generation t' production
-  bool tPrimes = settings.flag("FourthTop:all");
-  if (tPrimes || settings.flag("FourthTop:gg2tPrimetPrimebar")) {
+  bool tPrimes = settings.get(Flag::FourthTop_all);
+  if (tPrimes || settings.get(Flag::FourthTop_gg2tPrimetPrimebar)) {
     sigmaPtr = new Sigma2gg2QQbar(8, 821);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tPrimes || settings.flag("FourthTop:qqbar2tPrimetPrimebar")) {
+  if (tPrimes || settings.get(Flag::FourthTop_qqbar2tPrimetPrimebar)) {
     sigmaPtr = new Sigma2qqbar2QQbar(8, 822);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tPrimes || settings.flag("FourthTop:qq2tPrimeq(t:W)")) {
+  if (tPrimes || settings.get(Flag::FourthTop_qq2tPrimeq_t_W_)) {
     sigmaPtr = new Sigma2qq2QqtW(8, 823);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tPrimes || settings.flag("FourthTop:ffbar2tPrimetPrimebar(s:gmZ)")) {
+  if (tPrimes || settings.get(Flag::FourthTop_ffbar2tPrimetPrimebar_s_gmZ_)) {
     sigmaPtr = new Sigma2ffbar2FFbarsgmZ(8, 824);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (tPrimes || settings.flag("FourthTop:ffbar2tPrimeqbar(s:W)")) {
+  if (tPrimes || settings.get(Flag::FourthTop_ffbar2tPrimeqbar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(8, 0, 825);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for two different fourth-generation fermions.
   if (bPrimes || tPrimes
-    || settings.flag("FourthPair:ffbar2tPrimebPrimebar(s:W)")) {
+    || settings.get(Flag::FourthPair_ffbar2tPrimebPrimebar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(8, 7, 841);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("FourthPair:ffbar2tauPrimenuPrimebar(s:W)")) {
+  if (settings.get(Flag::FourthPair_ffbar2tauPrimenuPrimebar_s_W_)) {
     sigmaPtr = new Sigma2ffbar2FfbarsW(17, 18, 842);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Flag for global choice between SM and BSM Higgses.
-  bool useBSMHiggses = settings.flag("Higgs:useBSM");
+  bool useBSMHiggses = settings.get(Flag::Higgs_useBSM);
 
   // Set up requested objects for Standard-Model Higgs production.
   if (!useBSMHiggses) {
-    bool HiggsesSM = settings.flag("HiggsSM:all");
-    if (HiggsesSM || settings.flag("HiggsSM:ffbar2H")) {
+    bool HiggsesSM = settings.get(Flag::HiggsSM_all);
+    if (HiggsesSM || settings.get(Flag::HiggsSM_ffbar2H)) {
       sigmaPtr = new Sigma1ffbar2H(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:gg2H")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_gg2H)) {
      sigmaPtr = new Sigma1gg2H(0);
      containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:gmgm2H")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_gmgm2H)) {
       sigmaPtr = new Sigma1gmgm2H(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:ffbar2HZ")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_ffbar2HZ)) {
       sigmaPtr = new Sigma2ffbar2HZ(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:ffbar2HW")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_ffbar2HW)) {
       sigmaPtr = new Sigma2ffbar2HW(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:ff2Hff(t:ZZ)")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_ff2Hff_t_ZZ_)) {
       sigmaPtr = new Sigma3ff2HfftZZ(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:ff2Hff(t:WW)")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_ff2Hff_t_WW_)) {
       sigmaPtr = new Sigma3ff2HfftWW(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:gg2Httbar")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_gg2Httbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(6,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesSM || settings.flag("HiggsSM:qqbar2Httbar")) {
+    if (HiggsesSM || settings.get(Flag::HiggsSM_qqbar2Httbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(6,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Further Standard-Model Higgs processes, not included in "all".
-    if (settings.flag("HiggsSM:qg2Hq")) {
+    if (settings.get(Flag::HiggsSM_qg2Hq)) {
       sigmaPtr = new Sigma2qg2Hq(4,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
       sigmaPtr = new Sigma2qg2Hq(5,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsSM:gg2Hbbbar")) {
+    if (settings.get(Flag::HiggsSM_gg2Hbbbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(5,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsSM:qqbar2Hbbbar")) {
+    if (settings.get(Flag::HiggsSM_qqbar2Hbbbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(5,0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsSM:gg2Hg(l:t)")) {
+    if (settings.get(Flag::HiggsSM_gg2Hg_l_t_)) {
       sigmaPtr = new Sigma2gg2Hglt(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsSM:qg2Hq(l:t)")) {
+    if (settings.get(Flag::HiggsSM_qg2Hq_l_t_)) {
       sigmaPtr = new Sigma2qg2Hqlt(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsSM:qqbar2Hg(l:t)")) {
+    if (settings.get(Flag::HiggsSM_qqbar2Hg_l_t_)) {
       sigmaPtr = new Sigma2qqbar2Hglt(0);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
@@ -1430,239 +1430,239 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
 
   // Common switch for the group of Higgs production BSM.
   if (useBSMHiggses) {
-    bool HiggsesBSM = settings.flag("HiggsBSM:all");
+    bool HiggsesBSM = settings.get(Flag::HiggsBSM_all);
 
     // Set up requested objects for BSM H1 production.
-    bool HiggsesH1 = settings.flag("HiggsBSM:allH1");
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:ffbar2H1")) {
+    bool HiggsesH1 = settings.get(Flag::HiggsBSM_allH1);
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_ffbar2H1)) {
       sigmaPtr = new Sigma1ffbar2H(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:gg2H1")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_gg2H1)) {
       sigmaPtr = new Sigma1gg2H(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:gmgm2H1")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_gmgm2H1)) {
       sigmaPtr = new Sigma1gmgm2H(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:ffbar2H1Z")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_ffbar2H1Z)) {
       sigmaPtr = new Sigma2ffbar2HZ(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:ffbar2H1W")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_ffbar2H1W)) {
       sigmaPtr = new Sigma2ffbar2HW(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:ff2H1ff(t:ZZ)")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_ff2H1ff_t_ZZ_)) {
       sigmaPtr = new Sigma3ff2HfftZZ(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:ff2H1ff(t:WW)")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_ff2H1ff_t_WW_)) {
       sigmaPtr = new Sigma3ff2HfftWW(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:gg2H1ttbar")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_gg2H1ttbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(6,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH1 || settings.flag("HiggsBSM:qqbar2H1ttbar")) {
+    if (HiggsesBSM || HiggsesH1 || settings.get(Flag::HiggsBSM_qqbar2H1ttbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(6,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Further BSM H1 processes, not included in "all".
-    if (settings.flag("HiggsBSM:qg2H1q")) {
+    if (settings.get(Flag::HiggsBSM_qg2H1q)) {
       sigmaPtr = new Sigma2qg2Hq(4,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
       sigmaPtr = new Sigma2qg2Hq(5,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2H1bbbar")) {
+    if (settings.get(Flag::HiggsBSM_gg2H1bbbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(5,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2H1bbbar")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2H1bbbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(5,1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2H1g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_gg2H1g_l_t_)) {
       sigmaPtr = new Sigma2gg2Hglt(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qg2H1q(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qg2H1q_l_t_)) {
       sigmaPtr = new Sigma2qg2Hqlt(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2H1g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2H1g_l_t_)) {
       sigmaPtr = new Sigma2qqbar2Hglt(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Set up requested objects for BSM H2 production.
-    bool HiggsesH2 = settings.flag("HiggsBSM:allH2");
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:ffbar2H2")) {
+    bool HiggsesH2 = settings.get(Flag::HiggsBSM_allH2);
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_ffbar2H2)) {
       sigmaPtr = new Sigma1ffbar2H(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:gg2H2")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_gg2H2)) {
       sigmaPtr = new Sigma1gg2H(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:gmgm2H2")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_gmgm2H2)) {
       sigmaPtr = new Sigma1gmgm2H(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:ffbar2H2Z")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_ffbar2H2Z)) {
       sigmaPtr = new Sigma2ffbar2HZ(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:ffbar2H2W")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_ffbar2H2W)) {
       sigmaPtr = new Sigma2ffbar2HW(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:ff2H2ff(t:ZZ)")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_ff2H2ff_t_ZZ_)) {
       sigmaPtr = new Sigma3ff2HfftZZ(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:ff2H2ff(t:WW)")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_ff2H2ff_t_WW_)) {
       sigmaPtr = new Sigma3ff2HfftWW(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:gg2H2ttbar")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_gg2H2ttbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(6,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesH2 || settings.flag("HiggsBSM:qqbar2H2ttbar")) {
+    if (HiggsesBSM || HiggsesH2 || settings.get(Flag::HiggsBSM_qqbar2H2ttbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(6,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Further BSM H2 processes, not included in "all".
-   if (settings.flag("HiggsBSM:qg2H2q")) {
+   if (settings.get(Flag::HiggsBSM_qg2H2q)) {
       sigmaPtr = new Sigma2qg2Hq(4,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
       sigmaPtr = new Sigma2qg2Hq(5,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2H2bbbar")) {
+    if (settings.get(Flag::HiggsBSM_gg2H2bbbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(5,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2H2bbbar")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2H2bbbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(5,2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2H2g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_gg2H2g_l_t_)) {
       sigmaPtr = new Sigma2gg2Hglt(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qg2H2q(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qg2H2q_l_t_)) {
       sigmaPtr = new Sigma2qg2Hqlt(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2H2g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2H2g_l_t_)) {
       sigmaPtr = new Sigma2qqbar2Hglt(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Set up requested objects for BSM A3 production.
-    bool HiggsesA3 = settings.flag("HiggsBSM:allA3");
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:ffbar2A3")) {
+    bool HiggsesA3 = settings.get(Flag::HiggsBSM_allA3);
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_ffbar2A3)) {
       sigmaPtr = new Sigma1ffbar2H(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:gg2A3")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_gg2A3)) {
       sigmaPtr = new Sigma1gg2H(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:gmgm2A3")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_gmgm2A3)) {
       sigmaPtr = new Sigma1gmgm2H(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:ffbar2A3Z")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_ffbar2A3Z)) {
       sigmaPtr = new Sigma2ffbar2HZ(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:ffbar2A3W")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_ffbar2A3W)) {
       sigmaPtr = new Sigma2ffbar2HW(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:ff2A3ff(t:ZZ)")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_ff2A3ff_t_ZZ_)) {
       sigmaPtr = new Sigma3ff2HfftZZ(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:ff2A3ff(t:WW)")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_ff2A3ff_t_WW_)) {
       sigmaPtr = new Sigma3ff2HfftWW(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:gg2A3ttbar")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_gg2A3ttbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(6,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesA3 || settings.flag("HiggsBSM:qqbar2A3ttbar")) {
+    if (HiggsesBSM || HiggsesA3 || settings.get(Flag::HiggsBSM_qqbar2A3ttbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(6,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Further BSM A3 processes, not included in "all".
-    if (settings.flag("HiggsBSM:qg2A3q")) {
+    if (settings.get(Flag::HiggsBSM_qg2A3q)) {
       sigmaPtr = new Sigma2qg2Hq(4,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
       sigmaPtr = new Sigma2qg2Hq(5,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2A3bbbar")) {
+    if (settings.get(Flag::HiggsBSM_gg2A3bbbar)) {
       sigmaPtr = new Sigma3gg2HQQbar(5,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2A3bbbar")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2A3bbbar)) {
       sigmaPtr = new Sigma3qqbar2HQQbar(5,3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:gg2A3g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_gg2A3g_l_t_)) {
       sigmaPtr = new Sigma2gg2Hglt(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qg2A3q(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qg2A3q_l_t_)) {
       sigmaPtr = new Sigma2qg2Hqlt(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (settings.flag("HiggsBSM:qqbar2A3g(l:t)")) {
+    if (settings.get(Flag::HiggsBSM_qqbar2A3g_l_t_)) {
       sigmaPtr = new Sigma2qqbar2Hglt(3);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Set up requested objects for Charged Higgs production
-    bool HiggsesChg = settings.flag("HiggsBSM:allH+-");
-    if (HiggsesBSM || HiggsesChg || settings.flag("HiggsBSM:ffbar2H+-")) {
+    bool HiggsesChg = settings.get(Flag::HiggsBSM_allHplusminus);
+    if (HiggsesBSM || HiggsesChg || settings.get(Flag::HiggsBSM_ffbar2Hplusminus)) {
       sigmaPtr = new Sigma1ffbar2Hchg;
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesChg || settings.flag("HiggsBSM:bg2H+-t")) {
+    if (HiggsesBSM || HiggsesChg || settings.get(Flag::HiggsBSM_bg2Hplusminust)) {
       sigmaPtr = new Sigma2qg2Hchgq(6, 1062, "b g -> H+- t");
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
 
     // Set up requested objects for Higgs pair-production
-    bool HiggsesPairs = settings.flag("HiggsBSM:allHpair");
-    if (HiggsesBSM || HiggsesPairs || settings.flag("HiggsBSM:ffbar2A3H1")) {
+    bool HiggsesPairs = settings.get(Flag::HiggsBSM_allHpair);
+    if (HiggsesBSM || HiggsesPairs || settings.get(Flag::HiggsBSM_ffbar2A3H1)) {
       sigmaPtr = new Sigma2ffbar2A3H12(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesPairs || settings.flag("HiggsBSM:ffbar2A3H2")) {
+    if (HiggsesBSM || HiggsesPairs || settings.get(Flag::HiggsBSM_ffbar2A3H2)) {
       sigmaPtr = new Sigma2ffbar2A3H12(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesPairs || settings.flag("HiggsBSM:ffbar2H+-H1")) {
+    if (HiggsesBSM || HiggsesPairs || settings.get(Flag::HiggsBSM_ffbar2HplusminusH1)) {
       sigmaPtr = new Sigma2ffbar2HchgH12(1);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesPairs || settings.flag("HiggsBSM:ffbar2H+-H2")) {
+    if (HiggsesBSM || HiggsesPairs || settings.get(Flag::HiggsBSM_ffbar2HplusminusH2)) {
       sigmaPtr = new Sigma2ffbar2HchgH12(2);
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
-    if (HiggsesBSM || HiggsesPairs || settings.flag("HiggsBSM:ffbar2H+H-")) {
+    if (HiggsesBSM || HiggsesPairs || settings.get(Flag::HiggsBSM_ffbar2HplusHminus)) {
       sigmaPtr = new Sigma2ffbar2HposHneg();
       containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
     }
@@ -1672,8 +1672,8 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
   if (couplings->isSUSY) {
     CoupSUSY* coupSUSY = (CoupSUSY *) couplings;
 
-    bool SUSYs = settings.flag("SUSY:all");
-    bool nmssm = settings.flag("SLHA:NMSSM");
+    bool SUSYs = settings.get(Flag::SUSY_all);
+    bool nmssm = settings.get(Flag::SLHA_NMSSM);
 
     // Preselected SUSY codes.
     setupIdVecs( settings);
@@ -1683,14 +1683,14 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     if (nmssm) nNeut = 5;
 
     // Gluino-gluino
-    if (SUSYs || settings.flag("SUSY:gg2gluinogluino")) {
+    if (SUSYs || settings.get(Flag::SUSY_gg2gluinogluino)) {
       // Skip if outgoing codes not asked for
       if (allowIdVals( 1000021, 1000021)) {
         sigmaPtr = new Sigma2gg2gluinogluino();
         containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
       }
     }
-    if (SUSYs || settings.flag("SUSY:qqbar2gluinogluino")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2gluinogluino)) {
       // Skip if outgoing codes not asked for
       if (allowIdVals( 1000021, 1000021)) {
         sigmaPtr = new Sigma2qqbar2gluinogluino();
@@ -1699,7 +1699,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Gluino-squark
-    if (SUSYs || settings.flag("SUSY:qg2squarkgluino")) {
+    if (SUSYs || settings.get(Flag::SUSY_qg2squarkgluino)) {
       int iproc = 1202;
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
@@ -1716,7 +1716,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Squark-antisquark (gg initiated)
-    if (SUSYs || settings.flag("SUSY:gg2squarkantisquark")) {
+    if (SUSYs || settings.get(Flag::SUSY_gg2squarkantisquark)) {
       int iproc = 1214;
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
@@ -1732,7 +1732,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Squark-antisquark (qqbar initiated)
-    if (SUSYs || settings.flag("SUSY:qqbar2squarkantisquark")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2squarkantisquark)) {
       int iproc = 1230;
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
@@ -1765,7 +1765,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Squark-squark
-    if (SUSYs || settings.flag("SUSY:qq2squarksquark")) {
+    if (SUSYs || settings.get(Flag::SUSY_qq2squarksquark)) {
       int iproc = 1350;
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
@@ -1788,7 +1788,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Neutralino + squark
-    if (SUSYs || settings.flag("SUSY:qg2chi0squark")) {
+    if (SUSYs || settings.get(Flag::SUSY_qg2chi0squark)) {
       int iproc = 1430;
       for (int iNeut= 1; iNeut <= nNeut; iNeut++) {
         for (int idx = 1; idx <= 6; idx++) {
@@ -1809,7 +1809,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Chargino + squark
-    if (SUSYs || settings.flag("SUSY:qg2chi+-squark")) {
+    if (SUSYs || settings.get(Flag::SUSY_qg2chiplusminussquark)) {
       int iproc = 1490;
       for (int iChar = 1; iChar <= 2; iChar++) {
         for (int idx = 1; idx <= 6; idx++) {
@@ -1830,7 +1830,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Neutralino pairs
-    if (SUSYs || settings.flag("SUSY:qqbar2chi0chi0")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2chi0chi0)) {
       int iproc = 1550;
       for (int iNeut2 = 1; iNeut2 <= nNeut; iNeut2++) {
         for (int iNeut1 = 1; iNeut1 <= iNeut2; iNeut1++) {
@@ -1845,7 +1845,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Neutralino-Chargino
-    if (SUSYs || settings.flag("SUSY:qqbar2chi+-chi0")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2chiplusminuschi0)) {
       int iproc = 1570;
       for (int iNeut = 1; iNeut <= nNeut; iNeut++) {
         for (int iChar = 1; iChar <= 2; ++iChar) {
@@ -1862,7 +1862,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Chargino-Chargino
-    if (SUSYs || settings.flag("SUSY:qqbar2chi+chi-")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2chipluschiminus)) {
       int iproc = 1590;
       for (int i = 1; i <= 2; ++i) {
         for (int j = 1; j <= 2; ++j) {
@@ -1877,7 +1877,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // RPV squark production
-    if(SUSYs || settings.flag("SUSY:qq2antisquark")) {
+    if(SUSYs || settings.get(Flag::SUSY_qq2antisquark)) {
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
           int id1 = iso + ((idx <= 3) ? 1000000+2*(idx-1) : 2000000+2*(idx-4));
@@ -1890,7 +1890,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Neutralino-gluino
-    if (SUSYs || settings.flag("SUSY:qqbar2chi0gluino")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2chi0gluino)) {
       int iproc = 1600;
       for (int iNeut = 1; iNeut <= nNeut; iNeut++) {
         iproc++;
@@ -1902,7 +1902,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Chargino-Gluino
-    if (SUSYs || settings.flag("SUSY:qqbar2chi+-gluino")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2chiplusminusgluino)) {
       int iproc = 1620;
       for (int iChar = 1; iChar <= 2; ++iChar) {
         iproc ++;
@@ -1914,7 +1914,7 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     }
 
     // Slepton-antislepton (qqbar initiated); Currently no RH sneutrinos
-    if (SUSYs || settings.flag("SUSY:qqbar2sleptonantislepton")) {
+    if (SUSYs || settings.get(Flag::SUSY_qqbar2sleptonantislepton)) {
       int iproc = 1650;
       for (int idx = 1; idx <= 6; ++idx) {
         for (int iso = 1; iso <= 2; ++iso) {
@@ -1952,229 +1952,229 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
   } // End of SUSY processes.
 
   // Set up requested objects for New-Gauge-Boson processes.
-  if (settings.flag("NewGaugeBoson:ffbar2gmZZprime")) {
+  if (settings.get(Flag::NewGaugeBoson_ffbar2gmZZprime)) {
     sigmaPtr = new Sigma1ffbar2gmZZprime();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("NewGaugeBoson:ffbar2Wprime")) {
+  if (settings.get(Flag::NewGaugeBoson_ffbar2Wprime)) {
     sigmaPtr = new Sigma1ffbar2Wprime();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("NewGaugeBoson:ffbar2R0")) {
+  if (settings.get(Flag::NewGaugeBoson_ffbar2R0)) {
     sigmaPtr = new Sigma1ffbar2Rhorizontal();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for Left-Right-Symmetry processes.
-  bool leftrights = settings.flag("LeftRightSymmmetry:all");
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2ZR")) {
+  bool leftrights = settings.get(Flag::LeftRightSymmmetry_all);
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ffbar2ZR)) {
     sigmaPtr = new Sigma1ffbar2ZRight();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2WR")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ffbar2WR)) {
     sigmaPtr = new Sigma1ffbar2WRight();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ll2HL")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ll2HL)) {
     sigmaPtr = new Sigma1ll2Hchgchg(1);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLe")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HLe)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(1, 11);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLmu")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HLmu)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(1, 13);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HLtau")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HLtau)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(1, 15);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ff2HLff")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ff2HLff)) {
     sigmaPtr = new Sigma3ff2HchgchgfftWW(1);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HLHL")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ffbar2HLHL)) {
     sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(1);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ll2HR")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ll2HR)) {
     sigmaPtr = new Sigma1ll2Hchgchg(2);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRe")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HRe)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(2, 11);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRmu")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HRmu)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(2, 13);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:lgm2HRtau")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_lgm2HRtau)) {
     sigmaPtr = new Sigma2lgm2Hchgchgl(2, 15);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ff2HRff")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ff2HRff)) {
     sigmaPtr = new Sigma3ff2HchgchgfftWW(2);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leftrights || settings.flag("LeftRightSymmmetry:ffbar2HRHR")) {
+  if (leftrights || settings.get(Flag::LeftRightSymmmetry_ffbar2HRHR)) {
     sigmaPtr = new Sigma2ffbar2HchgchgHchgchg(2);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for leptoquark LQ processes.
-  bool leptoquarks = settings.flag("LeptoQuark:all");
-  if (leptoquarks || settings.flag("LeptoQuark:ql2LQ")) {
+  bool leptoquarks = settings.get(Flag::LeptoQuark_all);
+  if (leptoquarks || settings.get(Flag::LeptoQuark_ql2LQ)) {
     sigmaPtr = new Sigma1ql2LeptoQuark;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leptoquarks || settings.flag("LeptoQuark:qg2LQl")) {
+  if (leptoquarks || settings.get(Flag::LeptoQuark_qg2LQl)) {
     sigmaPtr = new Sigma2qg2LeptoQuarkl;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leptoquarks || settings.flag("LeptoQuark:gg2LQLQbar")) {
+  if (leptoquarks || settings.get(Flag::LeptoQuark_gg2LQLQbar)) {
     sigmaPtr = new Sigma2gg2LQLQbar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (leptoquarks || settings.flag("LeptoQuark:qqbar2LQLQbar")) {
+  if (leptoquarks || settings.get(Flag::LeptoQuark_qqbar2LQLQbar)) {
     sigmaPtr = new Sigma2qqbar2LQLQbar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for excited-fermion processes.
-  bool excitedfermions = settings.flag("ExcitedFermion:all");
-  if (excitedfermions || settings.flag("ExcitedFermion:dg2dStar")) {
+  bool excitedfermions = settings.get(Flag::ExcitedFermion_all);
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_dg2dStar)) {
     sigmaPtr = new Sigma1qg2qStar(1);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:ug2uStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_ug2uStar)) {
     sigmaPtr = new Sigma1qg2qStar(2);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:sg2sStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_sg2sStar)) {
     sigmaPtr = new Sigma1qg2qStar(3);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:cg2cStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_cg2cStar)) {
     sigmaPtr = new Sigma1qg2qStar(4);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:bg2bStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_bg2bStar)) {
     sigmaPtr = new Sigma1qg2qStar(5);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:egm2eStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_egm2eStar)) {
     sigmaPtr = new Sigma1lgm2lStar(11);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:mugm2muStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_mugm2muStar)) {
     sigmaPtr = new Sigma1lgm2lStar(13);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:taugm2tauStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_taugm2tauStar)) {
     sigmaPtr = new Sigma1lgm2lStar(15);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qq2dStarq")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qq2dStarq)) {
     sigmaPtr = new Sigma2qq2qStarq(1);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qq2uStarq")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qq2uStarq)) {
     sigmaPtr = new Sigma2qq2qStarq(2);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qq2sStarq")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qq2sStarq)) {
     sigmaPtr = new Sigma2qq2qStarq(3);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qq2cStarq")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qq2cStarq)) {
     sigmaPtr = new Sigma2qq2qStarq(4);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qq2bStarq")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qq2bStarq)) {
     sigmaPtr = new Sigma2qq2qStarq(5);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2eStare")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2eStare)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(11);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2nueStarnue")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2nueStarnue)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(12);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2muStarmu")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2muStarmu)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(13);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2numuStarnumu")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2numuStarnumu)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(14);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2tauStartau")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2tauStartau)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(15);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (excitedfermions
-    || settings.flag("ExcitedFermion:qqbar2nutauStarnutau")) {
+    || settings.get(Flag::ExcitedFermion_qqbar2nutauStarnutau)) {
     sigmaPtr = new Sigma2qqbar2lStarlbar(16);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2eStareStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2eStareStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(11);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (excitedfermions
-    || settings.flag("ExcitedFermion:qqbar2nueStarnueStar")) {
+    || settings.get(Flag::ExcitedFermion_qqbar2nueStarnueStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(12);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (excitedfermions || settings.flag("ExcitedFermion:qqbar2muStarmuStar")) {
+  if (excitedfermions || settings.get(Flag::ExcitedFermion_qqbar2muStarmuStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(13);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (excitedfermions
-    || settings.flag("ExcitedFermion:qqbar2numuStarnumuStar")) {
+    || settings.get(Flag::ExcitedFermion_qqbar2numuStarnumuStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(14);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (excitedfermions
-    || settings.flag("ExcitedFermion:qqbar2tauStartauStar")) {
+    || settings.get(Flag::ExcitedFermion_qqbar2tauStartauStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(15);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
   if (excitedfermions
-    || settings.flag("ExcitedFermion:qqbar2nutauStarnutauStar")) {
+    || settings.get(Flag::ExcitedFermion_qqbar2nutauStarnutauStar)) {
     sigmaPtr = new Sigma2qqbar2lStarlStarBar(16);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for contact interaction processes.
-  if (settings.flag("ContactInteractions:QCqq2qq")) {
+  if (settings.get(Flag::ContactInteractions_QCqq2qq)) {
     sigmaPtr = new Sigma2QCqq2qq();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ContactInteractions:QCqqbar2qqbar")) {
+  if (settings.get(Flag::ContactInteractions_QCqqbar2qqbar)) {
     sigmaPtr = new Sigma2QCqqbar2qqbar();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ContactInteractions:QCffbar2eebar")) {
+  if (settings.get(Flag::ContactInteractions_QCffbar2eebar)) {
     sigmaPtr = new Sigma2QCffbar2llbar(11, 4203);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ContactInteractions:QCffbar2mumubar")) {
+  if (settings.get(Flag::ContactInteractions_QCffbar2mumubar)) {
     sigmaPtr = new Sigma2QCffbar2llbar(13, 4204);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ContactInteractions:QCffbar2tautaubar")) {
+  if (settings.get(Flag::ContactInteractions_QCffbar2tautaubar)) {
     sigmaPtr = new Sigma2QCffbar2llbar(15, 4205);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set spin of particles in the Hidden Valley scenario.
-  int spinFv = settings.mode("HiddenValley:spinFv");
+  int spinFv = settings.get(Mode::HiddenValley_spinFv);
   for (int i = 1; i < 7; ++i) {
     if (particleDataPtr->spinType( 4900000 + i) != spinFv + 1)
         particleDataPtr->spinType( 4900000 + i,    spinFv + 1);
@@ -2185,316 +2185,316 @@ bool SetupContainers::init(vector<ProcessContainer*>& containerPtrs,
     if (particleDataPtr->spinType( 4900101) != 2)
        particleDataPtr->spinType( 4900101, 2);
   } else {
-    int spinqv = settings.mode("HiddenValley:spinqv");
+    int spinqv = settings.get(Mode::HiddenValley_spinqv);
     if (particleDataPtr->spinType( 4900101) != 2 * spinqv + 1)
         particleDataPtr->spinType( 4900101,    2 * spinqv + 1);
   }
 
   // Set up requested objects for HiddenValley processes.
-  bool hiddenvalleys = settings.flag("HiddenValley:all");
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2DvDvbar")) {
+  bool hiddenvalleys = settings.get(Flag::HiddenValley_all);
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2DvDvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900001, 4901, spinFv,
       "g g -> Dv Dvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2UvUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2UvUvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900002, 4902, spinFv,
       "g g -> Uv Uvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2SvSvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2SvSvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900003, 4903, spinFv,
       "g g -> Sv Svbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2CvCvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2CvCvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900004, 4904, spinFv,
       "g g -> Cv Cvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2BvBvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2BvBvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900005, 4905, spinFv,
       "g g -> Bv Bvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:gg2TvTvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_gg2TvTvbar)) {
     sigmaPtr = new Sigma2gg2qGqGbar( 4900006, 4906, spinFv,
       "g g -> Tv Tvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2DvDvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2DvDvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900001, 4911, spinFv,
       "q qbar -> Dv Dvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2UvUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2UvUvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900002, 4912, spinFv,
       "q qbar -> Uv Uvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2SvSvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2SvSvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900003, 4913, spinFv,
       "q qbar -> Sv Svbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2CvCvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2CvCvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900004, 4914, spinFv,
       "q qbar -> Cv Cvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2BvBvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2BvBvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900005, 4915, spinFv,
       "q qbar -> Bv Bvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:qqbar2TvTvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_qqbar2TvTvbar)) {
     sigmaPtr = new Sigma2qqbar2qGqGbar( 4900006, 4916, spinFv,
       "q qbar -> Tv Tvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2DvDvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2DvDvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900001, 4921, spinFv,
       "f fbar -> Dv Dvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2UvUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2UvUvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900002, 4922, spinFv,
       "f fbar -> Uv Uvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2SvSvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2SvSvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900003, 4923, spinFv,
       "f fbar -> Sv Svbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2CvCvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2CvCvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900004, 4924, spinFv,
       "f fbar -> Cv Cvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2BvBvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2BvBvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900005, 4925, spinFv,
       "f fbar -> Bv Bvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2TvTvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2TvTvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900006, 4926, spinFv,
       "f fbar -> Tv Tvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2EvEvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2EvEvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900011, 4931, spinFv,
       "f fbar -> Ev Evbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2nuEvnuEvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2nuEvnuEvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900012, 4932, spinFv,
       "f fbar -> nuEv nuEvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2MUvMUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2MUvMUvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900013, 4933, spinFv,
       "f fbar -> MUv MUvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2nuMUvnuMUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2nuMUvnuMUvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900014, 4934, spinFv,
       "f fbar -> nuMUv nuMUvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2TAUvTAUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2TAUvTAUvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900015, 4935, spinFv,
       "f fbar -> TAUv TAUvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2nuTAUvnuTAUvbar")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2nuTAUvnuTAUvbar)) {
     sigmaPtr = new Sigma2ffbar2fGfGbar( 4900016, 4936, spinFv,
       "f fbar -> nuTAUv nuTAUvbar");
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (hiddenvalleys || settings.flag("HiddenValley:ffbar2Zv")) {
+  if (hiddenvalleys || settings.get(Flag::HiddenValley_ffbar2Zv)) {
     sigmaPtr = new Sigma1ffbar2Zv();
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for RS extra-dimensional G* processes.
-  bool extraDimGstars = settings.flag("ExtraDimensionsG*:all");
-  if (extraDimGstars || settings.flag("ExtraDimensionsG*:gg2G*")) {
+  bool extraDimGstars = settings.get(Flag::ExtraDimensionsGstar_all);
+  if (extraDimGstars || settings.get(Flag::ExtraDimensionsGstar_gg2Gstar)) {
     sigmaPtr = new Sigma1gg2GravitonStar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimGstars || settings.flag("ExtraDimensionsG*:ffbar2G*")) {
+  if (extraDimGstars || settings.get(Flag::ExtraDimensionsGstar_ffbar2Gstar)) {
     sigmaPtr = new Sigma1ffbar2GravitonStar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsG*:gg2G*g")) {
+  if (settings.get(Flag::ExtraDimensionsGstar_gg2Gstarg)) {
     sigmaPtr = new Sigma2gg2GravitonStarg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsG*:qg2G*q")) {
+  if (settings.get(Flag::ExtraDimensionsGstar_qg2Gstarq)) {
     sigmaPtr = new Sigma2qg2GravitonStarq;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsG*:qqbar2G*g")) {
+  if (settings.get(Flag::ExtraDimensionsGstar_qqbar2Gstarg)) {
     sigmaPtr = new Sigma2qqbar2GravitonStarg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   //  Set up requested objects for RS extra-dimensional KKgluon processes.
-  if (settings.flag("ExtraDimensionsG*:qqbar2KKgluon*")) {
+  if (settings.get(Flag::ExtraDimensionsGstar_qqbar2KKgluonstar)) {
     sigmaPtr = new Sigma1qqbar2KKgluonStar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // NOAM: Set up requested objects for TEV extra-dimensional processes.
-  if (settings.flag("ExtraDimensionsTEV:ffbar2ddbar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2ddbar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(1, 5061);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2uubar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2uubar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(2, 5062);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2ssbar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2ssbar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(3, 5063);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2ccbar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2ccbar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(4, 5064);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2bbbar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2bbbar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(5, 5065);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2ttbar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2ttbar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(6, 5066);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2e+e-")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2epluseminus)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(11, 5071);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2nuenuebar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2nuenuebar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(12, 5072);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2mu+mu-")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2muplusmuminus)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(13, 5073);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2numunumubar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2numunumubar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(14, 5074);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2tau+tau-")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2tauplustauminus)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(15, 5075);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsTEV:ffbar2nutaunutaubar")) {
+  if (settings.get(Flag::ExtraDimensionsTEV_ffbar2nutaunutaubar)) {
     sigmaPtr = new Sigma2ffbar2TEVffbar(16, 5076);
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for large extra-dimensional G processes.
-  bool extraDimLEDmono = settings.flag("ExtraDimensionsLED:monojet");
-  if (extraDimLEDmono || settings.flag("ExtraDimensionsLED:gg2Gg")) {
+  bool extraDimLEDmono = settings.get(Flag::ExtraDimensionsLED_monojet);
+  if (extraDimLEDmono || settings.get(Flag::ExtraDimensionsLED_gg2Gg)) {
     sigmaPtr = new Sigma2gg2LEDUnparticleg( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDmono || settings.flag("ExtraDimensionsLED:qg2Gq")) {
+  if (extraDimLEDmono || settings.get(Flag::ExtraDimensionsLED_qg2Gq)) {
     sigmaPtr = new Sigma2qg2LEDUnparticleq( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDmono || settings.flag("ExtraDimensionsLED:qqbar2Gg")) {
+  if (extraDimLEDmono || settings.get(Flag::ExtraDimensionsLED_qqbar2Gg)) {
     sigmaPtr = new Sigma2qqbar2LEDUnparticleg( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:ffbar2GZ")) {
+  if (settings.get(Flag::ExtraDimensionsLED_ffbar2GZ)) {
     sigmaPtr = new Sigma2ffbar2LEDUnparticleZ( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:ffbar2Ggamma")) {
+  if (settings.get(Flag::ExtraDimensionsLED_ffbar2Ggamma)) {
     sigmaPtr = new Sigma2ffbar2LEDUnparticlegamma( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:ffbar2gammagamma")) {
+  if (settings.get(Flag::ExtraDimensionsLED_ffbar2gammagamma)) {
     sigmaPtr = new Sigma2ffbar2LEDgammagamma( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:gg2gammagamma")) {
+  if (settings.get(Flag::ExtraDimensionsLED_gg2gammagamma)) {
     sigmaPtr = new Sigma2gg2LEDgammagamma( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:ffbar2llbar")) {
+  if (settings.get(Flag::ExtraDimensionsLED_ffbar2llbar)) {
     sigmaPtr = new Sigma2ffbar2LEDllbar( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsLED:gg2llbar")) {
+  if (settings.get(Flag::ExtraDimensionsLED_gg2llbar)) {
     sigmaPtr = new Sigma2gg2LEDllbar( true );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  bool extraDimLEDdij = settings.flag("ExtraDimensionsLED:dijets");
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:gg2DJgg")) {
+  bool extraDimLEDdij = settings.get(Flag::ExtraDimensionsLED_dijets);
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_gg2DJgg)) {
     sigmaPtr = new Sigma2gg2LEDgg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:gg2DJqqbar")) {
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_gg2DJqqbar)) {
     sigmaPtr = new Sigma2gg2LEDqqbar;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:qg2DJqg")) {
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_qg2DJqg)) {
     sigmaPtr = new Sigma2qg2LEDqg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:qq2DJqq")) {
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_qq2DJqq)) {
     sigmaPtr = new Sigma2qq2LEDqq;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:qqbar2DJgg")) {
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_qqbar2DJgg)) {
     sigmaPtr = new Sigma2qqbar2LEDgg;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimLEDdij || settings.flag("ExtraDimensionsLED:qqbar2DJqqbarNew")) {
+  if (extraDimLEDdij || settings.get(Flag::ExtraDimensionsLED_qqbar2DJqqbarNew)) {
     sigmaPtr = new Sigma2qqbar2LEDqqbarNew;
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // Set up requested objects for unparticle processes.
-  bool extraDimUnpartmono = settings.flag("ExtraDimensionsUnpart:monojet");
-  if (extraDimUnpartmono || settings.flag("ExtraDimensionsUnpart:gg2Ug")) {
+  bool extraDimUnpartmono = settings.get(Flag::ExtraDimensionsUnpart_monojet);
+  if (extraDimUnpartmono || settings.get(Flag::ExtraDimensionsUnpart_gg2Ug)) {
     sigmaPtr = new Sigma2gg2LEDUnparticleg( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimUnpartmono || settings.flag("ExtraDimensionsUnpart:qg2Uq")) {
+  if (extraDimUnpartmono || settings.get(Flag::ExtraDimensionsUnpart_qg2Uq)) {
     sigmaPtr = new Sigma2qg2LEDUnparticleq( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (extraDimUnpartmono || settings.flag("ExtraDimensionsUnpart:qqbar2Ug")) {
+  if (extraDimUnpartmono || settings.get(Flag::ExtraDimensionsUnpart_qqbar2Ug)) {
     sigmaPtr = new Sigma2qqbar2LEDUnparticleg( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:ffbar2UZ")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_ffbar2UZ)) {
     sigmaPtr = new Sigma2ffbar2LEDUnparticleZ( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:ffbar2Ugamma")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_ffbar2Ugamma)) {
     sigmaPtr = new Sigma2ffbar2LEDUnparticlegamma( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:ffbar2gammagamma")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_ffbar2gammagamma)) {
     sigmaPtr = new Sigma2ffbar2LEDgammagamma( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:gg2gammagamma")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_gg2gammagamma)) {
     sigmaPtr = new Sigma2gg2LEDgammagamma( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:ffbar2llbar")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_ffbar2llbar)) {
     sigmaPtr = new Sigma2ffbar2LEDllbar( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
-  if (settings.flag("ExtraDimensionsUnpart:gg2llbar")) {
+  if (settings.get(Flag::ExtraDimensionsUnpart_gg2llbar)) {
     sigmaPtr = new Sigma2gg2LEDllbar( false );
     containerPtrs.push_back( new ProcessContainer(sigmaPtr) );
   }
@@ -2520,7 +2520,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   SigmaProcess* sigmaPtr;
 
   // Two hard QCD jets.
-  if (settings.flag("SecondHard:TwoJets")) {
+  if (settings.get(Flag::SecondHard_TwoJets)) {
     sigmaPtr = new Sigma2gg2gg;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2gg2qqbar;
@@ -2544,7 +2544,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // A prompt photon and a hard jet.
-  if (settings.flag("SecondHard:PhotonAndJet")) {
+  if (settings.get(Flag::SecondHard_PhotonAndJet)) {
     sigmaPtr = new Sigma2qg2qgamma;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2qqbar2ggamma;
@@ -2554,7 +2554,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Two prompt photons.
-  if (settings.flag("SecondHard:TwoPhotons")) {
+  if (settings.get(Flag::SecondHard_TwoPhotons)) {
     sigmaPtr = new Sigma2ffbar2gammagamma;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2gg2gammagamma;
@@ -2562,7 +2562,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Charmonium.
-  if (settings.flag("SecondHard:Charmonium")) {
+  if (settings.get(Flag::SecondHard_Charmonium)) {
     vector<SigmaProcess*> charmoniumSigmaPtrs;
     charmonium.setupSigma2gg(charmoniumSigmaPtrs, true);
     charmonium.setupSigma2qg(charmoniumSigmaPtrs, true);
@@ -2572,7 +2572,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Bottomonium.
-  if (settings.flag("SecondHard:Bottomonium")) {
+  if (settings.get(Flag::SecondHard_Bottomonium)) {
     vector<SigmaProcess*> bottomoniumSigmaPtrs;
     bottomonium.setupSigma2gg(bottomoniumSigmaPtrs, true);
     bottomonium.setupSigma2qg(bottomoniumSigmaPtrs, true);
@@ -2582,19 +2582,19 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // A single gamma*/Z0.
-  if (settings.flag("SecondHard:SingleGmZ")) {
+  if (settings.get(Flag::SecondHard_SingleGmZ)) {
     sigmaPtr = new Sigma1ffbar2gmZ;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // A single W+-.
-  if (settings.flag("SecondHard:SingleW")) {
+  if (settings.get(Flag::SecondHard_SingleW)) {
     sigmaPtr = new Sigma1ffbar2W;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
   }
 
   // A gamma*/Z0 and a hard jet.
-  if (settings.flag("SecondHard:GmZAndJet")) {
+  if (settings.get(Flag::SecondHard_GmZAndJet)) {
     sigmaPtr = new Sigma2qqbar2gmZg;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2qg2gmZq;
@@ -2602,7 +2602,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // A W+- and a hard jet.
-  if (settings.flag("SecondHard:WAndJet")) {
+  if (settings.get(Flag::SecondHard_WAndJet)) {
     sigmaPtr = new Sigma2qqbar2Wg;
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2qg2Wq;
@@ -2610,7 +2610,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Top pair production.
-  if (settings.flag("SecondHard:TopPair")) {
+  if (settings.get(Flag::SecondHard_TopPair)) {
     sigmaPtr = new Sigma2gg2QQbar(6, 601);
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2qqbar2QQbar(6, 602);
@@ -2620,7 +2620,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Single top production.
-  if (settings.flag("SecondHard:SingleTop")) {
+  if (settings.get(Flag::SecondHard_SingleTop)) {
     sigmaPtr = new Sigma2qq2QqtW(6, 603);
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2ffbar2FfbarsW(6, 0, 605);
@@ -2628,7 +2628,7 @@ bool SetupContainers::init2(vector<ProcessContainer*>& container2Ptrs,
   }
 
   // Two b jets - already part of TwoJets sample above.
-  if (settings.flag("SecondHard:TwoBJets")) {
+  if (settings.get(Flag::SecondHard_TwoBJets)) {
     sigmaPtr = new Sigma2gg2QQbar(5, 123);
     container2Ptrs.push_back( new ProcessContainer(sigmaPtr) );
     sigmaPtr = new Sigma2qqbar2QQbar(5, 124);
@@ -2648,10 +2648,10 @@ void SetupContainers::setupIdVecs( Settings& settings) {
 
   // First array either none, one or many particles.
   idVecA.resize(0);
-  if (settings.mode("SUSY:idA") != 0) {
-    idVecA.push_back( abs(settings.mode("SUSY:idA")) );
+  if (settings.get(Mode::SUSY_idA) != 0) {
+    idVecA.push_back( abs(settings.get(Mode::SUSY_idA)) );
   } else {
-    vector<int> idTmpA = settings.mvec("SUSY:idVecA");
+    vector<int> idTmpA = settings.get(ModeList::SUSY_idVecA);
     for (int i = 0; i < int(idTmpA.size()); ++i)
       if (idTmpA[i] != 0) idVecA.push_back( abs(idTmpA[i]) );
   }
@@ -2659,10 +2659,10 @@ void SetupContainers::setupIdVecs( Settings& settings) {
 
   // Second array either none, one or many particles.
   idVecB.resize(0);
-  if (settings.mode("SUSY:idB") != 0) {
-    idVecB.push_back( abs(settings.mode("SUSY:idB")) );
+  if (settings.get(Mode::SUSY_idB) != 0) {
+    idVecB.push_back( abs(settings.get(Mode::SUSY_idB)) );
   } else {
-    vector<int> idTmpB = settings.mvec("SUSY:idVecB");
+    vector<int> idTmpB = settings.get(ModeList::SUSY_idVecB);
     for (int i = 0; i < int(idTmpB.size()); ++i)
     if (idTmpB[i] != 0) idVecB.push_back( abs(idTmpB[i]) );
   }

@@ -34,14 +34,14 @@ void ColConfig::init(Info* infoPtrIn, Settings& settings,
   flavSelPtr    = flavSelPtrIn;
 
   // Joining of nearby partons along the string.
-  mJoin         = settings.parm("FragmentationSystems:mJoin");
+  mJoin         = settings.get(Param::FragmentationSystems_mJoin);
 
   // For consistency ensure that mJoin is bigger than in StringRegion.
   mJoin         = max( mJoin, 2. * StringRegion::MJOIN);
 
   // Simplification of q q q junction topology to quark - diquark one.
-  mJoinJunction = settings.parm("FragmentationSystems:mJoinJunction");
-  mStringMin    = settings.parm("HadronLevel:mStringMin");
+  mJoinJunction = settings.get(Param::FragmentationSystems_mJoinJunction);
+  mStringMin    = settings.get(Param::HadronLevel_mStringMin);
 
 }
 

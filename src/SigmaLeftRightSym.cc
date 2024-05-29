@@ -333,12 +333,12 @@ void Sigma1ll2Hchgchg::initProc() {
   }
 
   // Read in Yukawa matrix for couplings to a lepton pair.
-  yukawa[1][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHee");
-  yukawa[2][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-  yukawa[2][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHmumu");
-  yukawa[3][1]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
-  yukawa[3][2]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
-  yukawa[3][3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtautau");
+  yukawa[1][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHee);
+  yukawa[2][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+  yukawa[2][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmumu);
+  yukawa[3][1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
+  yukawa[3][2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
+  yukawa[3][3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtautau);
 
   // Store H_L/R mass and width for propagator.
   mRes     = particleDataPtr->m0(idHLR);
@@ -436,17 +436,17 @@ void Sigma2lgm2Hchgchgl::initProc() {
 
   // Read in relevantYukawa matrix for couplings to a lepton pair.
   if (idLep == 11) {
-    yukawa[1]  = settingsPtr->parm("LeftRightSymmmetry:coupHee");
-    yukawa[2]  = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-    yukawa[3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
+    yukawa[1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHee);
+    yukawa[2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+    yukawa[3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
   } else if (idLep == 13) {
-    yukawa[1]  = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-    yukawa[2]  = settingsPtr->parm("LeftRightSymmmetry:coupHmumu");
-    yukawa[3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
+    yukawa[1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+    yukawa[2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHmumu);
+    yukawa[3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
   } else {
-    yukawa[1]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
-    yukawa[2]  = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
-    yukawa[3]  = settingsPtr->parm("LeftRightSymmmetry:coupHtautau");
+    yukawa[1]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
+    yukawa[2]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
+    yukawa[3]  = settingsPtr->get(Param::LeftRightSymmmetry_coupHtautau);
   }
 
   // Secondary open width fractions.
@@ -562,9 +562,9 @@ void Sigma3ff2HchgchgfftWW::initProc() {
   double mW    = particleDataPtr->m0(24);
   double mWR   = particleDataPtr->m0(9900024);
   mWS          = (leftRight == 1) ? pow2(mW) : pow2(mWR);
-  double gL    = settingsPtr->parm("LeftRightSymmmetry:gL");
-  double gR    = settingsPtr->parm("LeftRightSymmmetry:gR");
-  double vL    = settingsPtr->parm("LeftRightSymmmetry:vL");
+  double gL    = settingsPtr->get(Param::LeftRightSymmmetry_gL);
+  double gR    = settingsPtr->get(Param::LeftRightSymmmetry_gR);
+  double vL    = settingsPtr->get(Param::LeftRightSymmmetry_vL);
   prefac       = (leftRight == 1) ? pow2(pow4(gL) * vL)
                                   : 2. * pow2(pow3(gR) * mWR);
   // Secondary open width fractions.
@@ -702,12 +702,12 @@ void Sigma2ffbar2HchgchgHchgchg::initProc() {
   }
 
   // Read in Yukawa matrix for couplings to a lepton pair.
-  yukawa[1][1] = settingsPtr->parm("LeftRightSymmmetry:coupHee");
-  yukawa[2][1] = settingsPtr->parm("LeftRightSymmmetry:coupHmue");
-  yukawa[2][2] = settingsPtr->parm("LeftRightSymmmetry:coupHmumu");
-  yukawa[3][1] = settingsPtr->parm("LeftRightSymmmetry:coupHtaue");
-  yukawa[3][2] = settingsPtr->parm("LeftRightSymmmetry:coupHtaumu");
-  yukawa[3][3] = settingsPtr->parm("LeftRightSymmmetry:coupHtautau");
+  yukawa[1][1] = settingsPtr->get(Param::LeftRightSymmmetry_coupHee);
+  yukawa[2][1] = settingsPtr->get(Param::LeftRightSymmmetry_coupHmue);
+  yukawa[2][2] = settingsPtr->get(Param::LeftRightSymmmetry_coupHmumu);
+  yukawa[3][1] = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaue);
+  yukawa[3][2] = settingsPtr->get(Param::LeftRightSymmmetry_coupHtaumu);
+  yukawa[3][3] = settingsPtr->get(Param::LeftRightSymmmetry_coupHtautau);
 
   // Electroweak parameters.
   mRes         = particleDataPtr->m0(23);

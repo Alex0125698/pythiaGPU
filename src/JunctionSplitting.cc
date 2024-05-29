@@ -56,8 +56,8 @@ void JunctionSplitting::init( Info* infoPtrIn, Settings& settings,
     &flavSel, &pTSel, &zSel);
 
   // For junction processing.
-  eNormJunction     = settings.parm("StringFragmentation:eNormJunction");
-  allowDoubleJunRem = settings.flag("ColourReconnection:allowDoubleJunRem");
+  eNormJunction     = settings.get(Param::StringFragmentation_eNormJunction);
+  allowDoubleJunRem = settings.get(Flag::ColourReconnection_allowDoubleJunRem);
 }
 
 //--------------------------------------------------------------------------

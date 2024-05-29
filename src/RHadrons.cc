@@ -56,16 +56,16 @@ bool RHadrons::init( Info* infoPtrIn, Settings& settings,
   rndmPtr          = rndmPtrIn;
 
   // Flags and parameters related to R-hadron formation and decay.
-  allowRH          = settings.flag("RHadrons:allow");
-  maxWidthRH       = settings.parm("RHadrons:maxWidth");
-  idRSb            = settings.mode("RHadrons:idSbottom");
-  idRSt            = settings.mode("RHadrons:idStop");
-  idRGo            = settings.mode("RHadrons:idGluino");
-  setMassesRH      = settings.flag("RHadrons:setMasses");
-  probGluinoballRH = settings.parm("RHadrons:probGluinoball");
-  mOffsetCloudRH   = settings.parm("RHadrons:mOffsetCloud");
-  mCollapseRH      = settings.parm("RHadrons:mCollapse");
-  diquarkSpin1RH   = settings.parm("RHadrons:diquarkSpin1");
+  allowRH          = settings.get(Flag::RHadrons_allow);
+  maxWidthRH       = settings.get(Param::RHadrons_maxWidth);
+  idRSb            = settings.get(Mode::RHadrons_idSbottom);
+  idRSt            = settings.get(Mode::RHadrons_idStop);
+  idRGo            = settings.get(Mode::RHadrons_idGluino);
+  setMassesRH      = settings.get(Flag::RHadrons_setMasses);
+  probGluinoballRH = settings.get(Param::RHadrons_probGluinoball);
+  mOffsetCloudRH   = settings.get(Param::RHadrons_mOffsetCloud);
+  mCollapseRH      = settings.get(Param::RHadrons_mCollapse);
+  diquarkSpin1RH   = settings.get(Param::RHadrons_diquarkSpin1);
 
   // Check whether sbottom, stop or gluino should form R-hadrons.
   allowRSb         = allowRH && idRSb > 0

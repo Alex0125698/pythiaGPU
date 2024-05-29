@@ -127,54 +127,54 @@ void SigmaTotal::init(Info* infoPtrIn, Settings& settings,
   particleDataPtr = particleDataPtrIn;
 
   // Normalization of central diffractive cross section.
-  zeroAXB    = settings.flag("SigmaTotal:zeroAXB");
-  sigAXB2TeV = settings.parm("SigmaTotal:sigmaAXB2TeV");
+  zeroAXB    = settings.get(Flag::SigmaTotal_zeroAXB);
+  sigAXB2TeV = settings.get(Param::SigmaTotal_sigmaAXB2TeV);
 
   // User-set values for cross sections.
-  setTotal   = settings.flag("SigmaTotal:setOwn");
-  sigTotOwn  = settings.parm("SigmaTotal:sigmaTot");
-  sigElOwn   = settings.parm("SigmaTotal:sigmaEl");
-  sigXBOwn   = settings.parm("SigmaTotal:sigmaXB");
-  sigAXOwn   = settings.parm("SigmaTotal:sigmaAX");
-  sigXXOwn   = settings.parm("SigmaTotal:sigmaXX");
-  sigAXBOwn  = settings.parm("SigmaTotal:sigmaAXB");
+  setTotal   = settings.get(Flag::SigmaTotal_setOwn);
+  sigTotOwn  = settings.get(Param::SigmaTotal_sigmaTot);
+  sigElOwn   = settings.get(Param::SigmaTotal_sigmaEl);
+  sigXBOwn   = settings.get(Param::SigmaTotal_sigmaXB);
+  sigAXOwn   = settings.get(Param::SigmaTotal_sigmaAX);
+  sigXXOwn   = settings.get(Param::SigmaTotal_sigmaXX);
+  sigAXBOwn  = settings.get(Param::SigmaTotal_sigmaAXB);
 
   // User-set values to dampen diffractive cross sections.
-  doDampen   = settings.flag("SigmaDiffractive:dampen");
-  maxXBOwn   = settings.parm("SigmaDiffractive:maxXB");
-  maxAXOwn   = settings.parm("SigmaDiffractive:maxAX");
-  maxXXOwn   = settings.parm("SigmaDiffractive:maxXX");
-  maxAXBOwn  = settings.parm("SigmaDiffractive:maxAXB");
+  doDampen   = settings.get(Flag::SigmaDiffractive_dampen);
+  maxXBOwn   = settings.get(Param::SigmaDiffractive_maxXB);
+  maxAXOwn   = settings.get(Param::SigmaDiffractive_maxAX);
+  maxXXOwn   = settings.get(Param::SigmaDiffractive_maxXX);
+  maxAXBOwn  = settings.get(Param::SigmaDiffractive_maxAXB);
 
   // User-set values for handling of elastic sacattering.
-  setElastic = settings.flag("SigmaElastic:setOwn");
-  bSlope     = settings.parm("SigmaElastic:bSlope");
-  rho        = settings.parm("SigmaElastic:rho");
-  lambda     = settings.parm("SigmaElastic:lambda");
-  tAbsMin    = settings.parm("SigmaElastic:tAbsMin");
-  alphaEM0   = settings.parm("StandardModel:alphaEM0");
+  setElastic = settings.get(Flag::SigmaElastic_setOwn);
+  bSlope     = settings.get(Param::SigmaElastic_bSlope);
+  rho        = settings.get(Param::SigmaElastic_rho);
+  lambda     = settings.get(Param::SigmaElastic_lambda);
+  tAbsMin    = settings.get(Param::SigmaElastic_tAbsMin);
+  alphaEM0   = settings.get(Param::StandardModel_alphaEM0);
 
   // Parameters for diffractive systems.
-  sigmaPomP  = settings.parm("Diffraction:sigmaRefPomP");
-  mPomP      = settings.parm("Diffraction:mRefPomP");
-  pPomP      = settings.parm("Diffraction:mPowPomP");
+  sigmaPomP  = settings.get(Param::Diffraction_sigmaRefPomP);
+  mPomP      = settings.get(Param::Diffraction_mRefPomP);
+  pPomP      = settings.get(Param::Diffraction_mPowPomP);
 
   // Parameters for MBR model.
-  PomFlux     = settings.mode("Diffraction:PomFlux");
-  MBReps      = settings.parm("Diffraction:MBRepsilon");
-  MBRalpha    = settings.parm("Diffraction:MBRalpha");
-  MBRbeta0    = settings.parm("Diffraction:MBRbeta0");
-  MBRsigma0   = settings.parm("Diffraction:MBRsigma0");
-  m2min       = settings.parm("Diffraction:MBRm2Min");
-  dyminSDflux = settings.parm("Diffraction:MBRdyminSDflux");
-  dyminDDflux = settings.parm("Diffraction:MBRdyminDDflux");
-  dyminCDflux = settings.parm("Diffraction:MBRdyminCDflux");
-  dyminSD     = settings.parm("Diffraction:MBRdyminSD");
-  dyminDD     = settings.parm("Diffraction:MBRdyminDD");
-  dyminCD     = settings.parm("Diffraction:MBRdyminCD");
-  dyminSigSD  = settings.parm("Diffraction:MBRdyminSigSD");
-  dyminSigDD  = settings.parm("Diffraction:MBRdyminSigDD");
-  dyminSigCD  = settings.parm("Diffraction:MBRdyminSigCD");
+  PomFlux     = settings.get(Mode::Diffraction_PomFlux);
+  MBReps      = settings.get(Param::Diffraction_MBRepsilon);
+  MBRalpha    = settings.get(Param::Diffraction_MBRalpha);
+  MBRbeta0    = settings.get(Param::Diffraction_MBRbeta0);
+  MBRsigma0   = settings.get(Param::Diffraction_MBRsigma0);
+  m2min       = settings.get(Param::Diffraction_MBRm2Min);
+  dyminSDflux = settings.get(Param::Diffraction_MBRdyminSDflux);
+  dyminDDflux = settings.get(Param::Diffraction_MBRdyminDDflux);
+  dyminCDflux = settings.get(Param::Diffraction_MBRdyminCDflux);
+  dyminSD     = settings.get(Param::Diffraction_MBRdyminSD);
+  dyminDD     = settings.get(Param::Diffraction_MBRdyminDD);
+  dyminCD     = settings.get(Param::Diffraction_MBRdyminCD);
+  dyminSigSD  = settings.get(Param::Diffraction_MBRdyminSigSD);
+  dyminSigDD  = settings.get(Param::Diffraction_MBRdyminSigDD);
+  dyminSigCD  = settings.get(Param::Diffraction_MBRdyminSigCD);
 
 }
 

@@ -37,8 +37,8 @@ void Sigma1qg2qStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
-  coupFcol      = settingsPtr->parm("ExcitedFermion:coupFcol");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
+  coupFcol      = settingsPtr->get(Param::ExcitedFermion_coupFcol);
 
   // Set pointer to particle properties and decay table.
   qStarPtr      = particleDataPtr->particleDataEntryPtr(idRes);
@@ -160,9 +160,9 @@ void Sigma1lgm2lStar::initProc() {
   GamMRat       = GammaRes / mRes;
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
-  double coupF  = settingsPtr->parm("ExcitedFermion:coupF");
-  double coupFp = settingsPtr->parm("ExcitedFermion:coupFprime");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
+  double coupF  = settingsPtr->get(Param::ExcitedFermion_coupF);
+  double coupFp = settingsPtr->get(Param::ExcitedFermion_coupFprime);
   coupChg       = -0.5 * coupF - 0.5 * coupFp;
 
   // Set pointer to particle properties and decay table.
@@ -279,7 +279,7 @@ void Sigma2qq2qStarq::initProc() {
   else               nameSave = "q q -> b^* q";
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
   preFac        = M_PI / pow4(Lambda);
 
   // Secondary open width fractions.
@@ -439,7 +439,7 @@ void Sigma2qqbar2lStarlbar::initProc() {
   openFracNeg = particleDataPtr->resOpenFrac(-idRes);
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
   preFac        = (M_PI / pow4(Lambda)) * (openFracPos + openFracNeg) / 3.;
 
 }
@@ -542,7 +542,7 @@ void Sigma2qqbar2lStarlStarBar::initProc() {
   openFracNeg = particleDataPtr->resOpenFrac(-idRes);
 
   // Locally stored properties and couplings.
-  Lambda        = settingsPtr->parm("ExcitedFermion:Lambda");
+  Lambda        = settingsPtr->get(Param::ExcitedFermion_Lambda);
   preFac        = (M_PI / pow4(Lambda)) * openFracPos * openFracNeg / 12.;
 
 }
@@ -628,10 +628,10 @@ double Sigma2qqbar2lStarlStarBar::weightDecay( Event& process, int iResBeg,
 
 void Sigma2QCqq2qq::initProc() {
 
-  qCLambda2  = settingsPtr->parm("ContactInteractions:Lambda");
-  qCetaLL    = settingsPtr->mode("ContactInteractions:etaLL");
-  qCetaRR    = settingsPtr->mode("ContactInteractions:etaRR");
-  qCetaLR    = settingsPtr->mode("ContactInteractions:etaLR");
+  qCLambda2  = settingsPtr->get(Param::ContactInteractions_Lambda);
+  qCetaLL    = settingsPtr->get(Mode::ContactInteractions_etaLL);
+  qCetaRR    = settingsPtr->get(Mode::ContactInteractions_etaRR);
+  qCetaLR    = settingsPtr->get(Mode::ContactInteractions_etaLR);
   qCLambda2 *= qCLambda2;
 
 }
@@ -749,11 +749,11 @@ void Sigma2QCqq2qq::setIdColAcol() {
 
 void Sigma2QCqqbar2qqbar::initProc() {
 
-  qCnQuarkNew = settingsPtr->mode("ContactInteractions:nQuarkNew");
-  qCLambda2   = settingsPtr->parm("ContactInteractions:Lambda");
-  qCetaLL     = settingsPtr->mode("ContactInteractions:etaLL");
-  qCetaRR     = settingsPtr->mode("ContactInteractions:etaRR");
-  qCetaLR     = settingsPtr->mode("ContactInteractions:etaLR");
+  qCnQuarkNew = settingsPtr->get(Mode::ContactInteractions_nQuarkNew);
+  qCLambda2   = settingsPtr->get(Param::ContactInteractions_Lambda);
+  qCetaLL     = settingsPtr->get(Mode::ContactInteractions_etaLL);
+  qCetaRR     = settingsPtr->get(Mode::ContactInteractions_etaRR);
+  qCetaLR     = settingsPtr->get(Mode::ContactInteractions_etaLR);
   qCLambda2  *= qCLambda2;
 
 }
@@ -811,10 +811,10 @@ void Sigma2QCqqbar2qqbar::setIdColAcol() {
 
 void Sigma2QCffbar2llbar::initProc() {
 
-  qCLambda2   = settingsPtr->parm("ContactInteractions:Lambda");
-  qCetaLL     = settingsPtr->mode("ContactInteractions:etaLL");
-  qCetaRR     = settingsPtr->mode("ContactInteractions:etaRR");
-  qCetaLR     = settingsPtr->mode("ContactInteractions:etaLR");
+  qCLambda2   = settingsPtr->get(Param::ContactInteractions_Lambda);
+  qCetaLL     = settingsPtr->get(Mode::ContactInteractions_etaLL);
+  qCetaRR     = settingsPtr->get(Mode::ContactInteractions_etaRR);
+  qCetaLR     = settingsPtr->get(Mode::ContactInteractions_etaLR);
   qCLambda2  *= qCLambda2;
 
   // Process name.

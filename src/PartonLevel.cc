@@ -55,37 +55,37 @@ bool PartonLevel::init( Info* infoPtrIn, Settings& settings,
   mergingHooksPtr    = mergingHooksPtrIn;
 
   // Min bias and diffraction processes need special treatment.
-  bool doSQ          = settings.flag("SoftQCD:all")
-                    || settings.flag("SoftQCD:inelastic");
-  bool doND          = settings.flag("SoftQCD:nonDiffractive");
-  bool doSD          = settings.flag("SoftQCD:singleDiffractive");
-  bool doDD          = settings.flag("SoftQCD:doubleDiffractive");
-  bool doCD          = settings.flag("SoftQCD:centralDiffractive");
+  bool doSQ          = settings.get(Flag::SoftQCD_all)
+                    || settings.get(Flag::SoftQCD_inelastic);
+  bool doND          = settings.get(Flag::SoftQCD_nonDiffractive);
+  bool doSD          = settings.get(Flag::SoftQCD_singleDiffractive);
+  bool doDD          = settings.get(Flag::SoftQCD_doubleDiffractive);
+  bool doCD          = settings.get(Flag::SoftQCD_centralDiffractive);
   doNonDiff          = doSQ || doND;
   doDiffraction      = doSQ || doSD || doDD || doCD;
-  doHardDiff         = settings.flag("Diffraction:doHard");
-  sampleTypeDiff     = (doHardDiff) ? settings.mode("Diffraction:sampleType")
+  doHardDiff         = settings.get(Flag::Diffraction_doHard);
+  sampleTypeDiff     = (doHardDiff) ? settings.get(Mode::Diffraction_sampleType)
                      : 0;
 
   // Separate low-mass (unresolved) and high-mass (perturbative) diffraction.
-  mMinDiff           = settings.parm("Diffraction:mMinPert");
-  mWidthDiff         = settings.parm("Diffraction:mWidthPert");
-  pMaxDiff           = settings.parm("Diffraction:probMaxPert");
+  mMinDiff           = settings.get(Param::Diffraction_mMinPert);
+  mWidthDiff         = settings.get(Param::Diffraction_mWidthPert);
+  pMaxDiff           = settings.get(Param::Diffraction_probMaxPert);
   if (mMinDiff > infoPtr->eCM()) doDiffraction = false;
 
   // Need MPI initialization for soft QCD processes, even if only first MPI.
   // But no need to initialize MPI if never going to use it.
-  doMPI              = settings.flag("PartonLevel:MPI");
+  doMPI              = settings.get(Flag::PartonLevel_MPI);
   doMPIMB            = doMPI;
   doMPISDA           = doMPI;
   doMPISDB           = doMPI;
   doMPICD            = doMPI;
   doMPIinit          = doMPI;
   if (doNonDiff || doDiffraction)        doMPIinit = true;
-  if (!settings.flag("PartonLevel:all")) doMPIinit = false;
+  if (!settings.get(Flag::PartonLevel_all)) doMPIinit = false;
 
   // Nature of MPI matching also used here for one case.
-  pTmaxMatchMPI      = settings.mode("MultipartonInteractions:pTmaxMatch");
+  pTmaxMatchMPI      = settings.get(Mode::MultipartonInteractions_pTmaxMatch);
 
   // Initialise trial shower switch.
   doTrial            = useAsTrial;
@@ -101,26 +101,26 @@ bool PartonLevel::init( Info* infoPtrIn, Settings& settings,
   typeLastBranch     = 0;
 
   // Flags for showers: ISR and FSR.
-  doISR              = settings.flag("PartonLevel:ISR");
-  bool FSR           = settings.flag("PartonLevel:FSR");
-  bool FSRinProcess  = settings.flag("PartonLevel:FSRinProcess");
-  bool interleaveFSR = settings.flag("TimeShower:interleave");
+  doISR              = settings.get(Flag::PartonLevel_ISR);
+  bool FSR           = settings.get(Flag::PartonLevel_FSR);
+  bool FSRinProcess  = settings.get(Flag::PartonLevel_FSRinProcess);
+  bool interleaveFSR = settings.get(Flag::TimeShower_interleave);
   doFSRduringProcess = FSR && FSRinProcess &&  interleaveFSR;
   doFSRafterProcess  = FSR && FSRinProcess && !interleaveFSR;
-  doFSRinResonances  = FSR && settings.flag("PartonLevel:FSRinResonances");
+  doFSRinResonances  = FSR && settings.get(Flag::PartonLevel_FSRinResonances);
 
   // Flags for colour reconnection.
-  doReconnect        = settings.flag("ColourReconnection:reconnect");
-  reconnectMode      = settings.mode("ColourReconnection:mode");
-  forceResonanceCR   = settings.flag("ColourReconnection:forceResonance");
+  doReconnect        = settings.get(Flag::ColourReconnection_reconnect);
+  reconnectMode      = settings.get(Mode::ColourReconnection_mode);
+  forceResonanceCR   = settings.get(Flag::ColourReconnection_forceResonance);
 
   // Some other flags.
-  doRemnants         = settings.flag("PartonLevel:Remnants");
-  doSecondHard       = settings.flag("SecondHard:generate");
-  earlyResDec        = settings.flag("PartonLevel:earlyResDec");
+  doRemnants         = settings.get(Flag::PartonLevel_Remnants);
+  doSecondHard       = settings.get(Flag::SecondHard_generate);
+  earlyResDec        = settings.get(Flag::PartonLevel_earlyResDec);
 
   // Allow R-hadron formation.
-  allowRH            = settings.flag("RHadrons:allow");
+  allowRH            = settings.get(Flag::RHadrons_allow);
 
   // Possibility to allow user veto during evolution.
   canVetoPT          = (userHooksPtr != 0)
@@ -139,8 +139,8 @@ bool PartonLevel::init( Info* infoPtrIn, Settings& settings,
                      ? userHooksPtr->canVetoPartonLevelEarly() : false;
 
   // Settings for vetoing of QCD emission for Drell-Yan weak boson production.
-  vetoWeakJets       = settings.flag("WeakShower:vetoQCDjets");
-  vetoWeakDeltaR2    = pow2(settings.parm("WeakShower:vetoWeakDeltaR"));
+  vetoWeakJets       = settings.get(Flag::WeakShower_vetoQCDjets);
+  vetoWeakDeltaR2    = pow2(settings.get(Param::WeakShower_vetoWeakDeltaR));
 
   // Possibility to set maximal shower scale in resonance decays.
   canSetScale        = (userHooksPtr != 0)

@@ -45,7 +45,7 @@ void MiniStringFragmentation::init(Info* infoPtrIn, Settings& settings,
   zSelPtr         = zSelPtrIn;
 
   // Initialize the MiniStringFragmentation class proper.
-  nTryMass        = settings.mode("MiniStringFragmentation:nTry");
+  nTryMass        = settings.get(Mode::MiniStringFragmentation_nTry);
 
   // Initialize the b parameter of the z spectrum, used when joining jets.
   bLund           = zSelPtr->bAreaLund();

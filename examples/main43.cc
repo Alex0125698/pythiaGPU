@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     pythia.init();
 
     // Print name of Les Houches Event File.
-    string lheFile = pythia.settings.word("Beams:LHEF");
+    string lheFile = pythia.settings.get(Word::Beams_LHEF);
     cout << "\n >>> Now begin subrun " << iSubrun
          << " with events from file " << lheFile << " <<< \n"
          << endl;

@@ -1053,10 +1053,10 @@ inline bool LHAupAlpgen::rescaleMomenta() {
 AlpgenHooks::AlpgenHooks(Pythia &pythia) : LHAagPtr(NULL) {
 
   // If LHAupAlpgen needed, construct and pass to Pythia
-  string agFile = pythia.settings.word("Alpgen:file");
+  string agFile = pythia.settings.get(Word::Alpgen_file);
   if (agFile != "void") {
     LHAagPtr = new LHAupAlpgen(agFile.c_str(), &pythia.info);
-    pythia.settings.mode("Beams:frameType", 5);
+    pythia.settings.set(Mode::Beams_frameType, 5);
     pythia.setLHAupPtr(LHAagPtr);
   }
 }
@@ -1072,10 +1072,10 @@ AlpgenHooks::AlpgenHooks(Pythia &pythia) : LHAagPtr(NULL) {
 inline bool AlpgenHooks::initAfterBeams() {
 
   // Read in ALPGEN specific configuration variables
-  bool setLightMasses = settingsPtr->flag("Alpgen:setLightMasses");
-  bool setHeavyMasses = settingsPtr->flag("Alpgen:setHeavyMasses");
-  bool setNjet   = settingsPtr->flag("Alpgen:setNjet");
-  bool setMLM    = settingsPtr->flag("Alpgen:setMLM");
+  bool setLightMasses = settingsPtr->get(Flag::Alpgen_setLightMasses);
+  bool setHeavyMasses = settingsPtr->get(Flag::Alpgen_setHeavyMasses);
+  bool setNjet   = settingsPtr->get(Flag::Alpgen_setNjet);
+  bool setMLM    = settingsPtr->get(Flag::Alpgen_setMLM);
 
   // If ALPGEN parameters are present, then parse in AlpgenPar object
   AlpgenPar par(infoPtr);
@@ -1100,7 +1100,7 @@ inline bool AlpgenHooks::initAfterBeams() {
   // Set MLM:nJets if requested
   if (setNjet) {
     if (par.haveParam("njets"))
-      settingsPtr->mode("JetMatching:nJet", par.getParamAsInt("njets"));
+      settingsPtr->set(Mode::JetMatching_nJet, par.getParamAsInt("njets"));
     else
       infoPtr->errorMsg("Warning in AlpgenHooks:init: "
           "no ALPGEN nJet parameter found");
@@ -1112,9 +1112,9 @@ inline bool AlpgenHooks::initAfterBeams() {
         par.haveParam("etajmax")) {
       double ptjmin = par.getParam("ptjmin");
       ptjmin = max(ptjmin + 5., 1.2 * ptjmin);
-      settingsPtr->parm("JetMatching:eTjetMin",   ptjmin);
-      settingsPtr->parm("JetMatching:coneRadius", par.getParam("drjmin"));
-      settingsPtr->parm("JetMatching:etaJetMax",  par.getParam("etajmax"));
+      settingsPtr->set(Param::JetMatching_eTjetMin, ptjmin);
+      settingsPtr->set(Param::JetMatching_coneRadius, par.getParam("drjmin"));
+      settingsPtr->set(Param::JetMatching_etaJetMax, par.getParam("etajmax"));
 
     // Warn if setMLM requested, but parameters not present
     } else {

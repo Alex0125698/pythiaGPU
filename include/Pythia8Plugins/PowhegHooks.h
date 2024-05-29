@@ -35,15 +35,15 @@ public:
 
   // Initialize settings, detailing merging strategy to use.
   bool initAfterBeams() {
-    nFinal      = settingsPtr->mode("POWHEG:nFinal");
-    vetoMode    = settingsPtr->mode("POWHEG:veto");
-    vetoCount   = settingsPtr->mode("POWHEG:vetoCount");
-    pThardMode  = settingsPtr->mode("POWHEG:pThard");
-    pTemtMode   = settingsPtr->mode("POWHEG:pTemt");
-    emittedMode = settingsPtr->mode("POWHEG:emitted");
-    pTdefMode   = settingsPtr->mode("POWHEG:pTdef");
-    MPIvetoMode = settingsPtr->mode("POWHEG:MPIveto");
-    QEDvetoMode = settingsPtr->mode("POWHEG:QEDveto");
+    nFinal      = settingsPtr->get(Mode::POWHEG_nFinal);
+    vetoMode    = settingsPtr->get(Mode::POWHEG_veto);
+    vetoCount   = settingsPtr->get(Mode::POWHEG_vetoCount);
+    pThardMode  = settingsPtr->get(Mode::POWHEG_pThard);
+    pTemtMode   = settingsPtr->get(Mode::POWHEG_pTemt);
+    emittedMode = settingsPtr->get(Mode::POWHEG_emitted);
+    pTdefMode   = settingsPtr->get(Mode::POWHEG_pTdef);
+    MPIvetoMode = settingsPtr->get(Mode::POWHEG_MPIveto);
+    QEDvetoMode = settingsPtr->get(Mode::POWHEG_QEDveto);
     return true;
   }
 

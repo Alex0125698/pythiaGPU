@@ -708,28 +708,28 @@ bool HadronScatter::init(Info* infoPtrIn, Settings& settings,
   rndmPtr = rndmPtrIn;
 
   // Main settings
-  doHadronScatter = settings.flag("HadronScatter:scatter");
-  afterDecay      = settings.flag("HadronScatter:afterDecay");
-  allowDecayProd  = settings.flag("HadronScatter:allowDecayProd");
-  scatterRepeat   = settings.flag("HadronScatter:scatterRepeat");
+  doHadronScatter = settings.get(Flag::HadronScatter_scatter);
+  afterDecay      = settings.get(Flag::HadronScatter_afterDecay);
+  allowDecayProd  = settings.get(Flag::HadronScatter_allowDecayProd);
+  scatterRepeat   = settings.get(Flag::HadronScatter_scatterRepeat);
   // Hadron selection
-  hadronSelect    = settings.mode("HadronScatter:hadronSelect");
-  Npar            = settings.parm("HadronScatter:N");
-  kPar            = settings.parm("HadronScatter:k");
-  pPar            = settings.parm("HadronScatter:p");
+  hadronSelect    = settings.get(Mode::HadronScatter_hadronSelect);
+  Npar            = settings.get(Param::HadronScatter_N);
+  kPar            = settings.get(Param::HadronScatter_k);
+  pPar            = settings.get(Param::HadronScatter_p);
   // Scattering probability
-  scatterProb     = settings.mode("HadronScatter:scatterProb");
-  jPar            = settings.parm("HadronScatter:j");
-  rMax            = settings.parm("HadronScatter:rMax");
+  scatterProb     = settings.get(Mode::HadronScatter_scatterProb);
+  jPar            = settings.get(Param::HadronScatter_j);
+  rMax            = settings.get(Param::HadronScatter_rMax);
   rMax2           = rMax * rMax;
-  doTile          = settings.flag("HadronScatter:tile");
+  doTile          = settings.get(Flag::HadronScatter_tile);
 
   // String fragmentation and MPI settings
-  pTsigma         = 2.0 * settings.parm("StringPT:sigma");
+  pTsigma         = 2.0 * settings.get(Param::StringPT_sigma);
   pTsigma2        = pTsigma * pTsigma;
-  double pT0ref   = settings.parm("MultipartonInteractions:pT0ref");
-  double eCMref   = settings.parm("MultipartonInteractions:eCMref");
-  double eCMpow   = settings.parm("MultipartonInteractions:eCMpow");
+  double pT0ref   = settings.get(Param::MultipartonInteractions_pT0ref);
+  double eCMref   = settings.get(Param::MultipartonInteractions_eCMref);
+  double eCMpow   = settings.get(Param::MultipartonInteractions_eCMpow);
   double eCMnow   = infoPtr->eCM();
   pT0MPI          = pT0ref * pow(eCMnow / eCMref, eCMpow);
 

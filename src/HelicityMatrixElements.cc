@@ -325,18 +325,18 @@ void HMETwoFermions2W2TwoFermions::initConstants() {
   // Set the constants for the W'.
   if (abs(pID[4]) == 34 && settingsPtr) {
     if (abs(pID[0]) < 11) {
-      p0CA = settingsPtr->parm("Wprime:aq");
-      p0CV = settingsPtr->parm("Wprime:vq");
+      p0CA = settingsPtr->get(Param::Wprime_aq);
+      p0CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p0CA = settingsPtr->parm("Wprime:al");
-      p0CV = settingsPtr->parm("Wprime:vl");
+      p0CA = settingsPtr->get(Param::Wprime_al);
+      p0CV = settingsPtr->get(Param::Wprime_vl);
     }
     if (abs(pID[2]) < 11) {
-      p2CA = settingsPtr->parm("Wprime:aq");
-      p2CV = settingsPtr->parm("Wprime:vq");
+      p2CA = settingsPtr->get(Param::Wprime_aq);
+      p2CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p2CA = settingsPtr->parm("Wprime:al");
-      p2CV = settingsPtr->parm("Wprime:vl");
+      p2CA = settingsPtr->get(Param::Wprime_al);
+      p2CV = settingsPtr->get(Param::Wprime_vl);
     }
 
   // The default constants (SM W).
@@ -431,12 +431,12 @@ void HMETwoFermions2GammaZ2TwoFermions::initConstants() {
     if (abs(pID[4]) == 22) {
       includeGamma = true;
     } else if (abs(pID[4]) == 23) {
-      int mode = settingsPtr->mode("WeakZ0:gmZmode");
+      int mode = settingsPtr->get(Mode::WeakZ0_gmZmode);
       if (mode == 0) {includeGamma = true; includeZ = true;}
       else if (mode == 1) includeGamma = true;
       else if (mode == 2) includeZ = true;
     } else if (abs(pID[4]) == 32) {
-      int mode = settingsPtr->mode("Zprime:gmZmode");
+      int mode = settingsPtr->get(Mode::Zprime_gmZmode);
       if (mode == 0) {includeGamma = true; includeZ = true; includeZp = true;}
       else if (mode == 1) includeGamma = true;
       else if (mode == 2) includeZ = true;
@@ -610,11 +610,11 @@ void HMEW2TwoFermions::initConstants() {
   // Set the constants for the W'.
   if (abs(pID[0]) == 34 && settingsPtr) {
     if (abs(pID[2]) < 11) {
-      p2CA = settingsPtr->parm("Wprime:aq");
-      p2CV = settingsPtr->parm("Wprime:vq");
+      p2CA = settingsPtr->get(Param::Wprime_aq);
+      p2CV = settingsPtr->get(Param::Wprime_vq);
     } else {
-      p2CA = settingsPtr->parm("Wprime:al");
-      p2CV = settingsPtr->parm("Wprime:vl");
+      p2CA = settingsPtr->get(Param::Wprime_al);
+      p2CV = settingsPtr->get(Param::Wprime_vl);
     }
 
   // The default constants (SM W).
@@ -773,27 +773,27 @@ void HMEHiggs2TwoFermions::initConstants() {
     double eta, phi;
     // Set the H1 mixing.
     if (abs(pID[1]) == 25) {
-      mode = settingsPtr->mode("HiggsH1:parity");
-      eta  = settingsPtr->parm("HiggsH1:etaParity");
-      phi  = settingsPtr->parm("HiggsH1:phiParity");
+      mode = settingsPtr->get(Mode::HiggsH1_parity);
+      eta  = settingsPtr->get(Param::HiggsH1_etaParity);
+      phi  = settingsPtr->get(Param::HiggsH1_phiParity);
       if      (mode == 2) {p2CA = 1;        p2CV = 0;}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}
       else                {p2CA = 0;        p2CV = complex(0, 1);}
     // Set the H2 mixing.
     } else if (abs(pID[1]) == 35) {
-      mode = settingsPtr->mode("HiggsH2:parity");
-      eta  = settingsPtr->parm("HiggsH2:etaParity");
-      phi  = settingsPtr->parm("HiggsH2:phiParity");
+      mode = settingsPtr->get(Mode::HiggsH2_parity);
+      eta  = settingsPtr->get(Param::HiggsH2_etaParity);
+      phi  = settingsPtr->get(Param::HiggsH2_phiParity);
       if      (mode == 2) {p2CA = 1;        p2CV = 0;}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}
       else                {p2CA = 0;        p2CV = complex(0, 1);}
     // Set the A3 mixing.
     } else if (abs(pID[1]) == 36) {
-      mode = settingsPtr->mode("HiggsA3:parity");
-      eta  = settingsPtr->parm("HiggsA3:etaParity");
-      phi  = settingsPtr->parm("HiggsA3:phiParity");
+      mode = settingsPtr->get(Mode::HiggsA3_parity);
+      eta  = settingsPtr->get(Param::HiggsA3_etaParity);
+      phi  = settingsPtr->get(Param::HiggsA3_phiParity);
       if      (mode == 1) {p2CA = 0;        p2CV = complex(0, 1);}
       else if (mode == 3) {p2CA = eta;      p2CV = complex(0, 1);}
       else if (mode == 4) {p2CA = cos(phi); p2CV = complex(0, 1) * sin(phi);}

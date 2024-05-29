@@ -332,16 +332,16 @@ void StringFragmentation::init(Info* infoPtrIn, Settings& settings,
   stopMass        = zSelPtr->stopMass();
   stopNewFlav     = zSelPtr->stopNewFlav();
   stopSmear       = zSelPtr->stopSmear();
-  eNormJunction   = settings.parm("StringFragmentation:eNormJunction");
+  eNormJunction   = settings.get(Param::StringFragmentation_eNormJunction);
   eBothLeftJunction
-     = settings.parm("StringFragmentation:eBothLeftJunction");
+     = settings.get(Param::StringFragmentation_eBothLeftJunction);
   eMaxLeftJunction
-    = settings.parm("StringFragmentation:eMaxLeftJunction");
+    = settings.get(Param::StringFragmentation_eMaxLeftJunction);
   eMinLeftJunction
-    = settings.parm("StringFragmentation:eMinLeftJunction");
+    = settings.get(Param::StringFragmentation_eMinLeftJunction);
 
   // Joining of nearby partons along the string.
-  mJoin           = settings.parm("FragmentationSystems:mJoin");
+  mJoin           = settings.get(Param::FragmentationSystems_mJoin);
 
   // Initialize the b parameter of the z spectrum, used when joining jets.
   bLund           = zSelPtr->bAreaLund();

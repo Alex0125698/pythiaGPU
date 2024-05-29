@@ -119,7 +119,7 @@ void Sigma2qqbar2ggamma::setIdColAcol() {
 void Sigma2gg2ggamma::initProc() {
 
   // Maximum quark flavour in loop.
-  int nQuarkLoop = settingsPtr->mode("PromptPhoton:nQuarkLoop");
+  int nQuarkLoop = settingsPtr->get(Mode::PromptPhoton_nQuarkLoop);
 
   // Calculate charge factor from the allowed quarks in the box.
   chargeSum                       = - 1./3. + 2./3. - 1./3.;
@@ -240,7 +240,7 @@ void Sigma2ffbar2gammagamma::setIdColAcol() {
 void Sigma2gg2gammagamma::initProc() {
 
   // Maximum quark flavour in loop.
-  int nQuarkLoop = settingsPtr->mode("PromptPhoton:nQuarkLoop");
+  int nQuarkLoop = settingsPtr->get(Mode::PromptPhoton_nQuarkLoop);
 
   // Calculate charge factor from the allowed quarks in the box.
   charge2Sum                       = 1./9. + 4./9. + 1./9.;
@@ -312,7 +312,7 @@ void Sigma2gg2gammagamma::setIdColAcol() {
 void Sigma2ff2fftgmZ::initProc() {
 
   // Store Z0 mass for propagator. Common coupling factor.
-  gmZmode   = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode   = settingsPtr->get(Mode::WeakZ0_gmZmode);
   mZ        = particleDataPtr->m0(23);
   mZS       = mZ*mZ;
   thetaWRat = 1. / (16. * couplingsPtr->sin2thetaW()
@@ -636,7 +636,7 @@ double Sigma2qq2QqtW::weightDecay( Event& process, int iResBeg,
 void Sigma1ffbar2gmZ::initProc() {
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
-  gmZmode     = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Store Z0 mass and width for propagator.
   mRes        = particleDataPtr->m0(23);
@@ -991,7 +991,7 @@ void Sigma2ffbar2ffbarsgm::setIdColAcol() {
 void Sigma2ffbar2ffbarsgmZ::initProc() {
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
-  gmZmode     = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Store Z0 mass and width for propagator.
   mRes        = particleDataPtr->m0(23);
@@ -1282,7 +1282,7 @@ void Sigma2ffbar2FFbarsgmZ::initProc() {
     nameSave   = "f fbar -> nu'_tau nu'bar_tau (s-channel gamma*/Z0)";
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
-  gmZmode      = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode      = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Store Z0 mass and width for propagator.
   mRes         = particleDataPtr->m0(23);
@@ -1663,7 +1663,7 @@ double Sigma2ffbargmZWgmZW::xjGK( double tHnow, double uHnow) {
 void Sigma2ffbar2gmZgmZ::initProc() {
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
-  gmZmode     = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Store Z0 mass and width for propagator.
   mRes        = particleDataPtr->m0(23);
@@ -2306,7 +2306,7 @@ double Sigma2ffbar2WW::weightDecay( Event& process, int iResBeg, int iResEnd) {
 void Sigma2ffbargmZggm::initProc() {
 
   // Allow to pick only gamma* or Z0 part of full gamma*/Z0 expression.
-  gmZmode     = settingsPtr->mode("WeakZ0:gmZmode");
+  gmZmode     = settingsPtr->get(Mode::WeakZ0_gmZmode);
 
   // Store Z0 mass and width for propagator.
   mRes        = particleDataPtr->m0(23);

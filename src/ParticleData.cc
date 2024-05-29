@@ -545,21 +545,21 @@ void ParticleData::initCommon() {
   // Benchmark_function(ParticleData_initCommon)
 
   // Mass generation: fixed mass or linear/quadratic Breit-Wigner.
-  modeBreitWigner = settingsPtr->mode("ParticleData:modeBreitWigner");
+  modeBreitWigner = settingsPtr->get(Mode::ParticleData_modeBreitWigner);
 
   // Maximum tail enhancement when adding threshold factor to Breit-Wigner.
-  maxEnhanceBW    = settingsPtr->parm("ParticleData:maxEnhanceBW");
+  maxEnhanceBW    = settingsPtr->get(Param::ParticleData_maxEnhanceBW);
 
   // Find initial MSbar masses for five light flavours.
-  mQRun[1]        = settingsPtr->parm("ParticleData:mdRun");
-  mQRun[2]        = settingsPtr->parm("ParticleData:muRun");
-  mQRun[3]        = settingsPtr->parm("ParticleData:msRun");
-  mQRun[4]        = settingsPtr->parm("ParticleData:mcRun");
-  mQRun[5]        = settingsPtr->parm("ParticleData:mbRun");
-  mQRun[6]        = settingsPtr->parm("ParticleData:mtRun");
+  mQRun[1]        = settingsPtr->get(Param::ParticleData_mdRun);
+  mQRun[2]        = settingsPtr->get(Param::ParticleData_muRun);
+  mQRun[3]        = settingsPtr->get(Param::ParticleData_msRun);
+  mQRun[4]        = settingsPtr->get(Param::ParticleData_mcRun);
+  mQRun[5]        = settingsPtr->get(Param::ParticleData_mbRun);
+  mQRun[6]        = settingsPtr->get(Param::ParticleData_mtRun);
 
   // Find Lambda5 value to use in running of MSbar masses.
-  double alphaSvalue = settingsPtr->parm("ParticleData:alphaSvalueMRun");
+  double alphaSvalue = settingsPtr->get(Param::ParticleData_alphaSvalueMRun);
   AlphaStrong alphaS;
   alphaS.init( alphaSvalue, 1, 5, false);
   Lambda5Run = alphaS.Lambda5();
@@ -602,7 +602,7 @@ void ParticleData::initWidths( vector<ResonanceWidths*> resonancePtrs) {
   setResonancePtr(  6, resonancePtr);
 
   // Higgs in SM.
-  if (!settingsPtr->flag("Higgs:useBSM")) {
+  if (!settingsPtr->get(Flag::Higgs_useBSM)) {
     resonancePtr = new ResonanceH(0, 25);
     setResonancePtr( 25, resonancePtr);
 

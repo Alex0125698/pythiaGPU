@@ -43,7 +43,7 @@ bool SUSYResonanceWidths::allowCalc(){
   if ( (idRes == 45 || idRes == 46 || idRes == 1000045)
        && !coupSUSYPtr->isNMSSM ) return false;
 
-  if (settingsPtr->flag("SLHA:useDecayTable") ) {
+  if (settingsPtr->get(Flag::SLHA_useDecayTable) ) {
 
     // Next check if decay table was read in via SLHA and takes precedence
     for ( int iDec = 0; iDec < int((coupSUSYPtr->slhaPtr)->decays.size());

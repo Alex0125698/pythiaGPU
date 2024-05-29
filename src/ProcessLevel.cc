@@ -80,10 +80,10 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   sigmaND = sigmaTotPtr->sigmaND();
 
   // Options to allow second hard interaction and resonance decays.
-  doSecondHard  = settings.flag("SecondHard:generate");
-  doSameCuts    = settings.flag("PhaseSpace:sameForSecond");
-  doResDecays   = settings.flag("ProcessLevel:resonanceDecays");
-  startColTag   = settings.mode("Event:startColTag");
+  doSecondHard  = settings.get(Flag::SecondHard_generate);
+  doSameCuts    = settings.get(Flag::PhaseSpace_sameForSecond);
+  doResDecays   = settings.get(Flag::ProcessLevel_resonanceDecays);
+  startColTag   = settings.get(Mode::Event_startColTag);
 
   // Second interaction not to be combined with biased phase space.
   if (doSecondHard && userHooksPtr != 0
@@ -94,17 +94,17 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   // Mass and pT cuts for two hard processes.
-  mHatMin1      = settings.parm("PhaseSpace:mHatMin");
-  mHatMax1      = settings.parm("PhaseSpace:mHatMax");
+  mHatMin1      = settings.get(Param::PhaseSpace_mHatMin);
+  mHatMax1      = settings.get(Param::PhaseSpace_mHatMax);
   if (mHatMax1 < mHatMin1) mHatMax1 = eCM;
-  pTHatMin1     = settings.parm("PhaseSpace:pTHatMin");
-  pTHatMax1     = settings.parm("PhaseSpace:pTHatMax");
+  pTHatMin1     = settings.get(Param::PhaseSpace_pTHatMin);
+  pTHatMax1     = settings.get(Param::PhaseSpace_pTHatMax);
   if (pTHatMax1 < pTHatMin1) pTHatMax1 = eCM;
-  mHatMin2      = settings.parm("PhaseSpace:mHatMinSecond");
-  mHatMax2      = settings.parm("PhaseSpace:mHatMaxSecond");
+  mHatMin2      = settings.get(Param::PhaseSpace_mHatMinSecond);
+  mHatMax2      = settings.get(Param::PhaseSpace_mHatMaxSecond);
   if (mHatMax2 < mHatMin2) mHatMax2 = eCM;
-  pTHatMin2     = settings.parm("PhaseSpace:pTHatMinSecond");
-  pTHatMax2     = settings.parm("PhaseSpace:pTHatMaxSecond");
+  pTHatMin2     = settings.get(Param::PhaseSpace_pTHatMinSecond);
+  pTHatMax2     = settings.get(Param::PhaseSpace_pTHatMaxSecond);
   if (pTHatMax2 < pTHatMin2) pTHatMax2 = eCM;
 
   // Check whether mass and pT ranges agree or overlap.
@@ -152,7 +152,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   // Check whether pT-based weighting in 2 -> 2 is requested.
-  if (settings.flag("PhaseSpace:bias2Selection")) {
+  if (settings.get(Flag::PhaseSpace_bias2Selection)) {
     bool bias2Sel = false;
     if (sigmaPtrs.size() == 0 && !doLHA && !doSecondHard) {
       bias2Sel = true;
@@ -219,7 +219,7 @@ bool ProcessLevel::init( Info* infoPtrIn, Settings& settings,
   }
 
   // Printout during initialization is optional.
-  if (settings.flag("Init:showProcesses")) {
+  if (settings.get(Flag::Init_showProcesses)) {
 
     // Construct string with incoming beams and for cm energy.
     string collision = "We collide " + particleDataPtr->name(idA)
