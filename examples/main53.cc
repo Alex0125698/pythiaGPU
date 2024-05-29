@@ -23,7 +23,7 @@ int main() {
   pythia.readFile("main53.cmnd");
 
   // Extract settings to be used in the main program.
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
   // Initialize. Either of two opions, to be picked in main53.cmnd.
   // 1) Read in external event with incoming photon in the ME,

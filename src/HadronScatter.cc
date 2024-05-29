@@ -727,9 +727,9 @@ bool HadronScatter::init(Info* infoPtrIn, Settings& settings,
   // String fragmentation and MPI settings
   pTsigma         = 2.0 * settings.get(Param::StringPT_sigma);
   pTsigma2        = pTsigma * pTsigma;
-  double pT0ref   = settings.get(Param::MultipartonInteractions_pT0ref);
-  double eCMref   = settings.get(Param::MultipartonInteractions_eCMref);
-  double eCMpow   = settings.get(Param::MultipartonInteractions_eCMpow);
+  double pT0ref   = settings.get(Param::MultipartonInteractions_pT0Ref);
+  double eCMref   = settings.get(Param::MultipartonInteractions_ecmRef);
+  double eCMpow   = settings.get(Param::MultipartonInteractions_ecmPow);
   double eCMnow   = infoPtr->eCM();
   pT0MPI          = pT0ref * pow(eCMnow / eCMref, eCMpow);
 

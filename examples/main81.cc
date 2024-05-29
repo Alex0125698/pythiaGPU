@@ -107,7 +107,7 @@ int main( int argc, char* argv[] ){
   string iPath = string(argv[2]);
   string oPath = string(argv[3]);
   // Number of events
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
   // For ISR regularisation off
   pythia.settings.forceParm("SpaceShower:pT0Ref",0.);

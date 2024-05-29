@@ -65,7 +65,7 @@ int main() {
   int nBin = 5;
   if (mode == 2) {
     pythia.readFile("main08.cmnd");
-    nBin = pythia.mode("Main:numberOfSubruns");
+    nBin = pythia.get(Mode::Main_numberOfSubruns);
   }
   else if (mode == 3) nBin = 1;
   else if (mode == 4) nBin = 4;

@@ -548,23 +548,41 @@ double HMETwoFermions2GammaZ2TwoFermions::zpCoupling(int id, string type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
-  if      (id == 1)  name = "d";
-  else if (id == 2)  name = "u";
-  else if (id == 3)  name = "s";
-  else if (id == 4)  name = "c";
-  else if (id == 5)  name = "b";
-  else if (id == 6)  name = "t";
-  else if (id == 7)  name = "b'";
-  else if (id == 8)  name = "t'";
-  else if (id == 11) name = "e";
-  else if (id == 12) name = "nue";
-  else if (id == 13) name = "mu";
-  else if (id == 14) name = "numu";
-  else if (id == 15) name = "tau";
-  else if (id == 16) name = "nutau";
-  else return 0;
-  return settingsPtr->parm("Zprime:" + type + name);
+  if (type == "a")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_ad);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_au);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_as);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_ac);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_ab);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_at);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_abPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_atPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ae);
+    if (id == 12) return settingsPtr->get(Param::Zprime_anue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_amu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_anumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_atau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_anutau);
+  }
+  if (type == "v")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_vd);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_vu);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_vs);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_vc);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_vb);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_vt);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_vbPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_vtPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ve);
+    if (id == 12) return settingsPtr->get(Param::Zprime_vnue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_vmu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_vnumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_vtau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_vnutau);
+  }
+  return 0;
 
 }
 
@@ -710,24 +728,41 @@ double HMEZ2TwoFermions::zpCoupling(int id, string type) {
 
   if (!settingsPtr) return 0;
   id = abs(id);
-  string name;
-  if      (id == 1)  name = "d";
-  else if (id == 2)  name = "u";
-  else if (id == 3)  name = "s";
-  else if (id == 4)  name = "c";
-  else if (id == 5)  name = "b";
-  else if (id == 6)  name = "t";
-  else if (id == 7)  name = "b'";
-  else if (id == 8)  name = "t'";
-  else if (id == 11) name = "e";
-  else if (id == 12) name = "nue";
-  else if (id == 13) name = "mu";
-  else if (id == 14) name = "numu";
-  else if (id == 15) name = "tau";
-  else if (id == 16) name = "nutau";
-  else return 0;
-  return settingsPtr->parm("Zprime:" + type + name);
-
+  if (type == "a")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_ad);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_au);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_as);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_ac);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_ab);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_at);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_abPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_atPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ae);
+    if (id == 12) return settingsPtr->get(Param::Zprime_anue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_amu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_anumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_atau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_anutau);
+  }
+  if (type == "v")
+  {
+    if (id == 1)  return settingsPtr->get(Param::Zprime_vd);
+    if (id == 2)  return settingsPtr->get(Param::Zprime_vu);
+    if (id == 3)  return settingsPtr->get(Param::Zprime_vs);
+    if (id == 4)  return settingsPtr->get(Param::Zprime_vc);
+    if (id == 5)  return settingsPtr->get(Param::Zprime_vb);
+    if (id == 6)  return settingsPtr->get(Param::Zprime_vt);
+    if (id == 7)  return settingsPtr->get(Param::Zprime_vbPrime);
+    if (id == 8)  return settingsPtr->get(Param::Zprime_vtPrime);
+    if (id == 11) return settingsPtr->get(Param::Zprime_ve);
+    if (id == 12) return settingsPtr->get(Param::Zprime_vnue);
+    if (id == 13) return settingsPtr->get(Param::Zprime_vmu);
+    if (id == 14) return settingsPtr->get(Param::Zprime_vnumu);
+    if (id == 15) return settingsPtr->get(Param::Zprime_vtau);
+    if (id == 16) return settingsPtr->get(Param::Zprime_vnutau);
+  }
+  return 0;
 }
 
 //==========================================================================

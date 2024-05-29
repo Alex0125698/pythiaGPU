@@ -55,19 +55,19 @@ int main( int argc, char* argv[] ){
   string iPath = string(argv[2]);
 
   // Number of events.
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
   // Maximal number of additional LO jets.
-  int nMaxLO =  pythia.mode("Merging:nJetMax");
+  int nMaxLO =  pythia.get(Mode::Merging_nJetMax);
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
   // Switch off all showering and MPI when estimating the cross section after
   // the merging scale cut.
-  bool fsr = pythia.flag("PartonLevel:FSR");
-  bool isr = pythia.flag("PartonLevel:ISR");
-  bool mpi = pythia.flag("PartonLevel:MPI");
-  bool had = pythia.flag("HadronLevel:all");
+  bool fsr = pythia.get(Flag::PartonLevel_FSR);
+  bool isr = pythia.get(Flag::PartonLevel_ISR);
+  bool mpi = pythia.get(Flag::PartonLevel_MPI);
+  bool had = pythia.get(Flag::HadronLevel_all);
   pythia.settings.set(Flag::PartonLevel_FSR, false);
   pythia.settings.set(Flag::PartonLevel_ISR, false);
   pythia.settings.set(Flag::HadronLevel_all, false);

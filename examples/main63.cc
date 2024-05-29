@@ -58,7 +58,7 @@ int main() {
     // Generator.
     Pythia pythia;
     pythia.readFile("main63.cmnd");
-    int nEvent = pythia.mode("Main:numberOfEvents");
+    int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
     // Set up a user hook and send it in.
     UserHooks* enhanceHooks = 0;

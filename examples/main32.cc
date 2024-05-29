@@ -23,9 +23,9 @@ int main() {
   pythia.readFile("main32.cmnd");
 
   // Extract settings to be used in the main program.
-  int nEvent = pythia.mode("Main:numberOfEvents");
-  int nAbort = pythia.mode("Main:timesAllowErrors");
-  int nSkip  = pythia.mode("Main:spareMode1");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort = pythia.get(Mode::Main_timesAllowErrors);
+  int nSkip  = pythia.get(Mode::Main_spareMode1);
 
   // Create UserHooks pointer. Stop if it failed. Pass pointer to Pythia.
   CombineMatchingInput combined;

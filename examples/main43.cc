@@ -57,8 +57,8 @@ int main(int argc, char* argv[]) {
   pythia.readFile( argv[1]);
 
   // Extract data to be used in main program. Set counters.
-  int nSubrun = pythia.mode("Main:numberOfSubruns");
-  int nAbort  = pythia.mode("Main:timesAllowErrors");
+  int nSubrun = pythia.get(Mode::Main_numberOfSubruns);
+  int nAbort  = pythia.get(Mode::Main_timesAllowErrors);
   int iAbort  = 0;
 
   // Begin loop over subruns.

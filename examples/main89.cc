@@ -74,7 +74,7 @@ int main( int argc, char* argv[] ){
   }
 
   // Get number of subruns.
-  int nMerge = pythia.mode("LHEFInputs:nSubruns");
+  int nMerge = pythia.get(Mode::LHEFInputs_nSubruns);
 
   // Number of events. Negative numbers mean all events in the LHEF will be
   // used.
@@ -118,7 +118,7 @@ int main( int argc, char* argv[] ){
   double errorTotal  = 0.;
 
   // Allow abort of run if many errors.
-  int  nAbort  = pythia.mode("Main:timesAllowErrors");
+  int  nAbort  = pythia.get(Mode::Main_timesAllowErrors);
   int  iAbort  = 0;
   bool doAbort = false;
 

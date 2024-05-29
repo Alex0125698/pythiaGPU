@@ -31,9 +31,9 @@ int main() {
   pythia.readFile("main30.cmnd");
 
   // Extract settings to be used in the main program.
-  int nEvent = pythia.mode("Main:numberOfEvents");
-  int nAbort = pythia.mode("Main:timesAllowErrors");
-  int nShow  = pythia.mode("Next:numberShowEvent");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort = pythia.get(Mode::Main_timesAllowErrors);
+  int nShow  = pythia.get(Mode::Next_numberShowEvent);
 
   // Initialize.
   pythia.init();

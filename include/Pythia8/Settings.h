@@ -1356,6 +1356,11 @@ public: // public functions
 
   void restoreDefault();
 
+public: // backwards compatibility
+
+  const vector<bool>& lookupFlagList(const string& name);
+  const vector<double>& lookupParamList(const string& name);
+
 public: // private functions
 
   // adds the appropriate setting using string (default,min,max)
@@ -1401,6 +1406,10 @@ public: // more functions
   // Set the values related to a tune of pp/ppbar data,
   // i.e. mainly for initial-state radiation and multiparton interactions.
   void initTunePP();
+
+private:
+
+  bool initialized = false;
 
 };
 

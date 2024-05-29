@@ -93,10 +93,10 @@ void BeamParticle::init( int idIn, double pzIn, double eIn, double mIn,
 
   // Choose whether to form a di-quark or
   // a junction with new colur reconnection scheme.
-  beamJunction       = settings.get(Flag::beamRemnants_beamJunction);
+  beamJunction       = settings.get(Flag::BeamRemnants_beamJunction);
 
   // Allow junctions in the outgoing colour state.
-  allowBeamJunctions = settings.get(Flag::beamRemnants_allowBeamJunction);
+  allowBeamJunctions = settings.get(Flag::BeamRemnants_allowBeamJunction);
 
   // For low-mass diffractive system kick out q/g = norm / mass^power.
   pickQuarkNorm     = settings.get(Param::Diffraction_pickQuarkNorm);

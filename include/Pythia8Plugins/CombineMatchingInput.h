@@ -121,8 +121,8 @@ public:
   UserHooks* getHook(Pythia& pythia) {
 
     // Find input source and matching scheme.
-    bool isAlpgenFile = ( pythia.word("Alpgen:file") != "void" );
-    int  scheme = pythia.mode("JetMatching:scheme");
+    bool isAlpgenFile = ( pythia.get(Word::Alpgen_file) != "void" );
+    int  scheme = pythia.get(Mode::JetMatching_scheme);
 
     // Return relevant UserHooks.
     if (isAlpgenFile) {

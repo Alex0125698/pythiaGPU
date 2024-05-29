@@ -100,7 +100,7 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   doQCDshower     = settingsPtr->get(Flag::SpaceShower_QCDshower);
   doQEDshowerByQ  = settingsPtr->get(Flag::SpaceShower_QEDshowerByQ);
   doQEDshowerByL  = settingsPtr->get(Flag::SpaceShower_QEDshowerByL);
-  doWeakShower    = settingsPtr->get(Flag::SpaceShower_WeakShower);
+  doWeakShower    = settingsPtr->get(Flag::SpaceShower_weakShower);
 
   // Matching in pT of hard interaction to shower evolution.
   pTmaxMatch      = settingsPtr->get(Mode::SpaceShower_pTmaxMatch);
@@ -181,8 +181,8 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   alphaEM.init( alphaEMorder, settingsPtr);
 
   // Parameters of QED evolution.
-  pTminChgQ       = settingsPtr->get(Param::SpaceShower_pTminchgQ);
-  pTminChgL       = settingsPtr->get(Param::SpaceShower_pTminchgL);
+  pTminChgQ       = settingsPtr->get(Param::SpaceShower_pTminChgQ);
+  pTminChgL       = settingsPtr->get(Param::SpaceShower_pTminChgL);
 
   // Derived parameters of QCD evolution.
   pT20            = pow2(pT0);
@@ -197,7 +197,7 @@ void SpaceShower::init( BeamParticle* beamAPtrIn,
   weakEnhancement    = settingsPtr->get(Param::WeakShower_enhancement);
   singleWeakEmission = settingsPtr->get(Flag::WeakShower_singleEmission);
   vetoWeakJets       = settingsPtr->get(Flag::WeakShower_vetoWeakJets);
-  vetoWeakDeltaR2    = pow2(settingsPtr->get(Param::weakShower_vetoWeakDeltaR));
+  vetoWeakDeltaR2    = pow2(settingsPtr->get(Param::WeakShower_vetoWeakDeltaR));
 
   // Various other parameters.
   doMEcorrections    = settingsPtr->get(Flag::SpaceShower_MEcorrections);

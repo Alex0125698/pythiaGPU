@@ -291,7 +291,7 @@ int main( int argc, char* argv[] ){
   string oPath = string(argv[3]);
 
   // Number of events
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
   // Construct user inut for merging
   MergingHooks* myMergingHooks = new MyMergingHooks();

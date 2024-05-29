@@ -1290,6 +1290,23 @@ for subdir, dirs, files in os.walk('.'):
         s = re.sub(r'(settingsPtr|settings) *(\.|->) *mvec *\(\s*"(.*?)" *\)', mlsub2, s)
         s = re.sub(r'(settingsPtr|settings) *(\.|->) *pvec *\(\s*"(.*?)" *\)', plsub2, s)
 
+        def fsub3(m): return m.group(1) + m.group(2) + "get(Flag::" + format(m.group(3)) + ")"
+        def msub3(m): return m.group(1) + m.group(2) + "get(Mode::" + format(m.group(3)) + ")"
+        def psub3(m): return m.group(1) + m.group(2) + "get(Param::" + format(m.group(3)) + ")"
+        def wsub3(m): return m.group(1) + m.group(2) + "get(Word::" + format(m.group(3)) + ")"
+        def flsub3(m): return m.group(1) + m.group(2) + "get(FlagList::" + format(m.group(3)) + ")"
+        def mlsub3(m): return m.group(1) + m.group(2) + "get(ModeList::" + format(m.group(3)) + ")"
+        def plsub3(m): return m.group(1) + m.group(2) + "get(ParamList::" + format(m.group(3)) + ")"
+
+        # pythia.flag("name:name")
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *flag *\(\s*"(.*?)" *\)', fsub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *mode *\(\s*"(.*?)" *\)', msub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *parm *\(\s*"(.*?)" *\)', psub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *word *\(\s*"(.*?)" *\)', wsub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *fvec *\(\s*"(.*?)" *\)', flsub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *mvec *\(\s*"(.*?)" *\)', mlsub3, s)
+        s = re.sub(r'(pythiaPtr|pythia) *(\.|->) *pvec *\(\s*"(.*?)" *\)', plsub3, s)
+
         if s != sorig:
           f = open(subdir + "/" + file,"w")
           f.write(s)

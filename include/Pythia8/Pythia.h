@@ -150,10 +150,10 @@ public:
   void stat();
 
   // Read in settings values: shorthand, not new functionality.
-  bool   flag(string key) {return settings.flag(key);}
-  int    mode(string key) {return settings.mode(key);}
-  double parm(string key) {return settings.parm(key);}
-  string word(string key) {return settings.word(key);}
+  bool get(const Flag flag) {return settings.get(flag);}
+  int get(const Mode mode) {return settings.get(mode);}
+  double get(const Param param) {return settings.get(param);}
+  const string& get(const Word word) {return settings.get(word);}
 
   // Auxiliary to set parton densities among list of possibilities.
   PDF* getPDFPtr(int idIn, int sequence = 1, string beam = "");

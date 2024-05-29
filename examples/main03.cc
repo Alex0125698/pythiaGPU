@@ -25,8 +25,8 @@ int mainfcn() {
   pythia.readFile("main03.cmnd");
 
   // Extract settings to be used in the main program.
-  int nEvent = pythia.mode("Main:numberOfEvents");
-  int nAbort = pythia.mode("Main:timesAllowErrors");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort = pythia.get(Mode::Main_timesAllowErrors);
 
   // Initialize.
   pythia.init();

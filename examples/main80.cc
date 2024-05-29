@@ -18,8 +18,8 @@ int main() {
   pythia.readFile("main80.cmnd");
 
   // Extract number of events and max number of jets in merging.
-  int nEvent = pythia.mode("Main:numberOfEvents");
-  int nMerge = pythia.mode("Merging:nJetMax");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
+  int nMerge = pythia.get(Mode::Merging_nJetMax);
 
   // Histograms combined over all jet multiplicities.
   Hist pTWsum("pT of W, summed over all subruns", 100, 0., 200.);

@@ -62,8 +62,8 @@ int main() {
   pythia.init();
 
   // Extract settings to be used in the main program.
-  int nEvent  = pythia.mode("Main:numberOfEvents");
-  int nAbort  = pythia.mode("Main:timesAllowErrors");
+  int nEvent  = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort  = pythia.get(Mode::Main_timesAllowErrors);
 
   // Histogram particle spectra.
   Hist eGamma("energy spectrum of photons",        100, 0., 250.);

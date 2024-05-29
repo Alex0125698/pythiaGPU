@@ -23,9 +23,9 @@ int mainfcn() {
   pythia.readFile("main24.cmnd");
 
   // Extract settings to be used in the main program.
-  int nEvent   = pythia.mode("Main:numberOfEvents");
-  int nAbort   = pythia.mode("Main:timesAllowErrors");
-  double eCM   = pythia.parm("Beams:eCM");
+  int nEvent   = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort   = pythia.get(Mode::Main_timesAllowErrors);
+  double eCM   = pythia.get(Param::Beams_eCM);
 
   // Initialize.
   pythia.init();

@@ -1262,7 +1262,7 @@ bool LHEF3FromPythia8::setInit() {
 
   // Print Pythia settings
   stringstream setout;
-  settingsPtr->listAll(setout);
+  settingsPtr->list(false,"",setout);
   while ( getline(setout,line) )
     writer.headerBlock() << line << "\n";
 

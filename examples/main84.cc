@@ -108,7 +108,7 @@ int main( int argc, char* argv[] ){
 
   // First argument: Get input from an input file
   pythia.readFile(argv[1]);
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
   // Interface for conversion from Pythia8::Event to HepMC event.
   // Will fill cross section and event weight directly in this program,

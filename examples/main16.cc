@@ -147,9 +147,9 @@ int main(int argc, char* argv[]) {
   myAnalysis.init();
 
   // Read in number of event and maximal number of aborts.
-  int nEvent = pythia.mode("Main:numberOfEvents");
-  int nAbort = pythia.mode("Main:timesAllowErrors");
-  bool hasPL = pythia.flag("PartonLevel:all");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
+  int nAbort = pythia.get(Mode::Main_timesAllowErrors);
+  bool hasPL = pythia.get(Flag::PartonLevel_all);
 
   // Begin event loop.
   int iAbort = 0;

@@ -13,6 +13,7 @@
 // Allow string and character manipulation.
 #include <cctype>
 
+
 namespace Pythia8 {
 
 //==========================================================================
@@ -121,7 +122,7 @@ Pythia::Pythia(string xmlDir, bool printBanner) {
   Benchmark_stop(readSettingsData)
 
   // Check that XML version number matches code version number.
-  double versionNumberXML = parm("Pythia:versionNumber");
+  double versionNumberXML = settings.get(Param::Pythia_versionNumber);
   isConstructed = (abs(versionNumberXML - VERSIONNUMBERCODE) < 0.0005);
   if (!isConstructed) {
     ostringstream errCode;
@@ -377,34 +378,34 @@ bool Pythia::init() {
 
   // Begin initialization. Find which frame type to use.
   info.addCounter(1);
-  frameType = mode("Beams:frameType");
+  frameType = settings.get(Mode::Beams_frameType);
 
   // Initialization with internal processes: read in and set values.
   if (frameType < 4 ) {
     doLHA     = false;
     boostType = frameType;
-    idA       = mode("Beams:idA");
-    idB       = mode("Beams:idB");
-    eCM       = parm("Beams:eCM");
-    eA        = parm("Beams:eA");
-    eB        = parm("Beams:eB");
-    pxA       = parm("Beams:pxA");
-    pyA       = parm("Beams:pyA");
-    pzA       = parm("Beams:pzA");
-    pxB       = parm("Beams:pxB");
-    pyB       = parm("Beams:pyB");
-    pzB       = parm("Beams:pzB");
+    idA       = settings.get(Mode::Beams_idA);
+    idB       = settings.get(Mode::Beams_idB);
+    eCM       = settings.get(Param::Beams_eCM);
+    eA        = settings.get(Param::Beams_eA);
+    eB        = settings.get(Param::Beams_eB);
+    pxA       = settings.get(Param::Beams_pxA);
+    pyA       = settings.get(Param::Beams_pyA);
+    pzA       = settings.get(Param::Beams_pzA);
+    pxB       = settings.get(Param::Beams_pxB);
+    pyB       = settings.get(Param::Beams_pyB);
+    pzB       = settings.get(Param::Beams_pzB);
 
    // Initialization with a Les Houches Event File or an LHAup object.
   } else {
     doLHA     = true;
     boostType = 2;
-    string lhef        = word("Beams:LHEF");
-    string lhefHeader  = word("Beams:LHEFheader");
-    bool   readHeaders = flag("Beams:readLHEFheaders");
-    bool   setScales   = flag("Beams:setProductionScalesFromLHEF");
-    bool   skipInit    = flag("Beams:newLHEFsameInit");
-    int    nSkipAtInit = mode("Beams:nSkipLHEFatInit");
+    string lhef        = settings.get(Word::Beams_LHEF);
+    string lhefHeader  = settings.get(Word::Beams_LHEFheader);
+    bool   readHeaders = settings.get(Flag::Beams_readLHEFheaders);
+    bool   setScales   = settings.get(Flag::Beams_setProductionScalesFromLHEF);
+    bool   skipInit    = settings.get(Flag::Beams_newLHEFsameInit);
+    int    nSkipAtInit = settings.get(Mode::Beams_nSkipLHEFatInit);
 
     // For file input: renew file stream or (re)new Les Houches object.
     if (frameType == 4) {
@@ -2176,8 +2177,17 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, string beam) {
 
   // Proton beam, normal or hard choice. Also used for neutron.
   if (abs(idIn) == 2212 || abs(idIn) == 2112) {
-    string pSet = settings.word("PDF:p"
-      + string(sequence == 1 ? "" : "Hard") + "Set" + beam);
+    string pSet;
+    if (beam == "")
+    {
+      if (sequence == 1) pSet = settings.get(Word::PDF_pSet);
+      if (sequence != 1) pSet = settings.get(Word::PDF_pHardSet);
+    }
+    else if (beam == "B")
+    {
+      if (sequence == 1) pSet = settings.get(Word::PDF_pSetB);
+      if (sequence != 1) pSet = settings.get(Word::PDF_pHardSetB);
+    }
     if (pSet == "void" && sequence != 1 && beam == "B")
       pSet = settings.get(Word::PDF_pHardSet);
     if (pSet == "void") pSet = settings.get(Word::PDF_pSet);
@@ -2203,7 +2213,9 @@ PDF* Pythia::getPDFPtr(int idIn, int sequence, string beam) {
 
   // Pion beam (or, in one option, Pomeron beam).
   else if (abs(idIn) == 211 || idIn == 111) {
-    string pSet = settings.word("PDF:piSet" + beam);
+    string pSet;
+    if (beam == "") pSet = settings.get(Word::PDF_piSet);
+    if (beam == "B") pSet = settings.get(Word::PDF_piSetB);
     istringstream pSetStream(pSet);
     int pSetInt(0);
     pSetStream >> pSetInt;

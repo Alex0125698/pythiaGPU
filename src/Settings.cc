@@ -1629,6 +1629,18 @@ void Settings::restoreDefault()
   for (size_t i=0; i<(int)ParamList::END; ++i) restoreDefault((ParamList)i);
 }
 
+// ----- backwards compatibility -----
+
+  const vector<bool>& Settings::lookupFlagList(const string& name)
+  {
+    return flagListValue[(int)FlagListMap.at(name)];
+  }
+
+  const vector<double>& Settings::lookupParamList(const string& name)
+  {
+    return paramListValue[(int)ParamListMap.at(name)];
+}
+
 // ----- private functions -----
 
 void Settings::addFlag(const string& name, bool defaultVal)
@@ -1677,9 +1689,8 @@ void Settings::addParamList(const string& name, const vector<double>& defaultVal
 
 // ----- more functions -----
 
-bool Settings::init(const string& startFile = "../xmldoc/Index.xml", bool append = false, bool reinit = false, ostream& os = cout)
+bool Settings::init(const string& startFile, bool append, bool reinit, ostream& os)
 {
-  static bool initialized = false;
   if (reinit) initialized = false;
   if (initialized) return true;
   int nError = 0;
@@ -1900,6 +1911,15 @@ bool Settings::init(const string& startFile = "../xmldoc/Index.xml", bool append
     }
   }
 
+  // set values to defaults
+  flagValue = flagDefault;
+  modeValue = modeDefault;
+  paramValue = paramDefault;
+  wordValue = wordDefault;
+  flagListValue = flagListDefault;
+  modeListValue = modeListDefault;
+  paramListValue = paramListDefault;
+
   // Set up default e+e- and pp tunes, if positive.
   initTuneEE();
   initTunePP();
@@ -1916,6 +1936,11 @@ bool Settings::readString(const string& line, bool warn, ostream& os)
   if (!std::regex_match(line, match, std::regex("\\s*(.*?)\\s*=\\s*(.*)"))) return true;
   string name = match[1].str();
   string value = match[2].str();
+  
+  // chop off anything at end
+  // TODO: might break words...
+  int i=0; while(value[i] >= 33 && value[i] <= 'z') ++i;
+  value.resize(i);
 
   // If first character is not a letter, then taken to be a comment line.
   if (!isalpha(name[0])) return true;
@@ -2079,6 +2104,8 @@ bool Settings::writeFile(ostream& os, bool writeAll)
     }
     os << "\n";
   }
+
+  return true;
 }
 
 void Settings::list(bool onlyChanged, string filter, ostream& os) {
@@ -2109,9 +2136,6 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
     bool matches = (filter == "" || nameLower.find(filter) != string::npos);
     if (!matches) continue;
 
-    os << " | " << setw(45) << left;
-    os << i.first << " | " << setw(24) << right;
-    
     if (i.second == Setting::FLAG)
     {
       int index = int(FlagMap.at(i.first));
@@ -2120,6 +2144,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
 
       if (matches && (!onlyChanged || val != valDefault))
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         os << state[val] << " | " << setw(12) << state[valDefault];
         os << "                         | \n";
       }
@@ -2134,6 +2159,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
       auto valMax = modeMax[index];
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         os << val << " | " << setw(12) << valDefault;
         if (valMin != std::numeric_limits<int>::min()) os << setw(12) << valMin;
         else os << "            ";
@@ -2152,6 +2178,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
       auto valMax = paramMax[index];
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         os << format(val) << " | " << setw(12) << format(valDefault);
         if (valMin != std::numeric_limits<double>::min()) os << setw(12) << format(valMin);
         else os << "            ";
@@ -2168,6 +2195,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
       auto& valDefault = wordDefault[index];
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         int blankLeft = max(0, 60 - max(24, int(val.length()) ) - max(12, int(valDefault.length()) ) );
         string blankPad( blankLeft, ' ');
         os << val << " | " << setw(12) << valDefault << blankPad << " | \n";
@@ -2176,12 +2204,13 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
 
     if (i.second == Setting::FLAGLIST)
     {
-      int index = int(FlagMap.at(i.first));
+      int index = int(FlagListMap.at(i.first));
       auto& val = flagListValue[index];
       auto& valDefault = flagListDefault[index];
 
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
         {
           if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";
@@ -2204,6 +2233,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
 
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
         {
           if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";
@@ -2230,6 +2260,7 @@ void Settings::list(bool onlyChanged, string filter, ostream& os) {
 
       if (!onlyChanged || val != valDefault)
       {
+        os << " | " << setw(45) << left; os << i.first << " | " << setw(24) << right;
         for (int i = 0; i < (int) val.size() || i < valDefault.size(); ++i) 
         {
           if (i != 0) os << " | " << setw(45) << ' ' << right << " |             ";

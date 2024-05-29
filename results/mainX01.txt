@@ -493,27 +493,33 @@
  |                                               |                          |                                      | 
  | Beams:eCM                                     |                13000.000 |    14000.000    10.00000             | 
  | HadronLevel:Hadronize                         |                      off |           on                         | 
- | HiggsA3:coup2d                                |                  9.68279 |      1.00000                         | 
- | HiggsA3:coup2H1Z                              |               -0.0039697 |      1.00000                         | 
+ | HiggsA3:coup2H1H1                             |              2.2251e-308 |          0.0                         | 
+ | HiggsA3:coup2H1Z                              |              2.2251e-308 |      1.00000                         | 
  | HiggsA3:coup2H2Z                              |                  0.99999 |      1.00000                         | 
+ | HiggsA3:coup2Hchg                             |              2.2251e-308 |          0.0                         | 
+ | HiggsA3:coup2W                                |              2.2251e-308 |          0.0                         | 
+ | HiggsA3:coup2Z                                |              2.2251e-308 |          0.0                         | 
+ | HiggsA3:coup2d                                |                  9.68279 |      1.00000                         | 
  | HiggsA3:coup2l                                |                  0.10328 |      1.00000                         | 
  | HiggsA3:coup2u                                |                  0.10328 |      1.00000                         | 
- | HiggsH1:coup2d                                |                  1.03843 |      1.00000                         | 
  | HiggsH1:coup2Hchg                             |                  0.56009 |          0.0                         | 
- | HiggsH1:coup2l                                |                  0.99958 |      1.00000                         | 
- | HiggsH1:coup2u                                |                  0.99958 |      1.00000                         | 
  | HiggsH1:coup2W                                |                  0.99999 |      1.00000                         | 
  | HiggsH1:coup2Z                                |                  0.99999 |      1.00000                         | 
+ | HiggsH1:coup2d                                |                  1.03843 |      1.00000                         | 
+ | HiggsH1:coup2l                                |                  0.99958 |      1.00000                         | 
+ | HiggsH1:coup2u                                |                  0.99958 |      1.00000                         | 
  | HiggsH2:coup2A3A3                             |                  0.20386 |      1.00000                         | 
- | HiggsH2:coup2d                                |                  9.67875 |      1.00000                         | 
- | HiggsH2:coup2H1H1                             |                 -0.61849 |      1.00000                         | 
+ | HiggsH2:coup2A3H1                             |              2.2251e-308 |          0.0                         | 
+ | HiggsH2:coup2H1H1                             |              2.2251e-308 |      1.00000                         | 
+ | HiggsH2:coup2H1Z                              |              2.2251e-308 |          0.0                         | 
  | HiggsH2:coup2Hchg                             |                  0.19784 |          0.0                         | 
  | HiggsH2:coup2HchgW                            |                  0.99999 |          0.0                         | 
- | HiggsH2:coup2l                                |                 -0.10724 |      1.00000                         | 
- | HiggsH2:coup2u                                |                 -0.10724 |      1.00000                         | 
- | HiggsH2:coup2W                                |               -0.0039697 |      1.00000                         | 
- | HiggsH2:coup2Z                                |               -0.0039697 |      1.00000                         | 
- | HiggsHchg:coup2H1W                            |               -0.0039697 |      1.00000                         | 
+ | HiggsH2:coup2W                                |              2.2251e-308 |      1.00000                         | 
+ | HiggsH2:coup2Z                                |              2.2251e-308 |      1.00000                         | 
+ | HiggsH2:coup2d                                |                  9.67875 |      1.00000                         | 
+ | HiggsH2:coup2l                                |              2.2251e-308 |      1.00000                         | 
+ | HiggsH2:coup2u                                |              2.2251e-308 |      1.00000                         | 
+ | HiggsHchg:coup2H1W                            |              2.2251e-308 |      1.00000                         | 
  | HiggsHchg:coup2H2W                            |                  0.99999 |          0.0                         | 
  | HiggsHchg:tanBeta                             |                  9.68279 |      5.00000                         | 
  | Init:showChangedParticleData                  |                      off |           on                         | 

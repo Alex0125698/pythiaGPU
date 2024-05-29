@@ -95,6 +95,11 @@ using std::right;
 using std::setw;
 using std::setprecision;
 
+
+inline string toLower(const string& nameConv) { string temp(nameConv);
+for (int i = 0; i < int(temp.length()); ++i) temp[i] = tolower(temp[i]);
+return temp; }
+
 } // end namespace Pythia8
 
 namespace Pythia8 {

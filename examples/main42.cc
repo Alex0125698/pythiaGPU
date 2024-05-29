@@ -55,8 +55,8 @@ int main(int argc, char* argv[]) {
   pythia.readFile(argv[1]);
 
   // Extract settings to be used in the main program.
-  int    nEvent    = pythia.mode("Main:numberOfEvents");
-  int    nAbort    = pythia.mode("Main:timesAllowErrors");
+  int    nEvent    = pythia.get(Mode::Main_numberOfEvents);
+  int    nAbort    = pythia.get(Mode::Main_timesAllowErrors);
 
   // Initialization.
   pythia.init();

@@ -170,7 +170,7 @@ int main() {
   Hist energy("daughter energy in W rest frame", 100, 0.0, 100.0);
 
   // Extract settings to be used in the main program.
-  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nEvent = pythia.get(Mode::Main_numberOfEvents);
 
   // Begin event loop.
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {

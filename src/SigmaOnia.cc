@@ -37,7 +37,8 @@ SigmaOniaSetup::SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
   onia3S1     = settingsPtr->get(Flag::Onia_all_3S1_);
   onia3PJ     = settingsPtr->get(Flag::Onia_all_3PJ_);
   onia3DJ     = settingsPtr->get(Flag::Onia_all_3DJ_);
-  oniaFlavour = settingsPtr->flag(cat + ":all");
+  if (flavour == 4) oniaFlavour = settingsPtr->get(Flag::Charmonium_all);
+  else oniaFlavour = settingsPtr->get(Flag::Bottomonium_all);
 
   // Set the names of the matrix element settings.
   meNames3S1.push_back(cat + ":O(3S1)[3S1(1)]");
@@ -72,19 +73,22 @@ SigmaOniaSetup::SigmaOniaSetup(Info* infoPtrIn, Settings* settingsPtrIn,
   qqNames3DJ.push_back(cat + ":qqbar2" + key + "(3DJ)[3PJ(8)]g");
 
   // Initialise and check all settings.
-  states3S1 = settingsPtr->mvec(cat + ":states(3S1)");
+  if (flavour == 4) states3S1 = settingsPtr->get(ModeList::Charmonium_states_3S1_);
+  else states3S1 = settingsPtr->get(ModeList::Bottomonium_states_3S1_);
   initStates("3S1", states3S1, spins3S1, valid3S1);
   initSettings("3S1", states3S1.size(), meNames3S1, mes3S1, valid3S1);
   initSettings("3S1", states3S1.size(), ggNames3S1, ggs3S1, valid3S1);
   initSettings("3S1", states3S1.size(), qgNames3S1, qgs3S1, valid3S1);
   initSettings("3S1", states3S1.size(), qqNames3S1, qqs3S1, valid3S1);
-  states3PJ = settingsPtr->mvec(cat + ":states(3PJ)");
+  if (flavour == 4) states3PJ = settingsPtr->get(ModeList::Charmonium_states_3PJ_);
+  else states3PJ = settingsPtr->get(ModeList::Bottomonium_states_3PJ_);
   initStates("3PJ", states3PJ, spins3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), meNames3PJ, mes3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), ggNames3PJ, ggs3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), qgNames3PJ, qgs3PJ, valid3PJ);
   initSettings("3PJ", states3PJ.size(), qqNames3PJ, qqs3PJ, valid3PJ);
-  states3DJ = settingsPtr->mvec(cat + ":states(3DJ)");
+  if (flavour == 4) states3DJ = settingsPtr->get(ModeList::Charmonium_states_3DJ_);
+  else states3DJ = settingsPtr->get(ModeList::Bottomonium_states_3DJ_);
   initStates("3DJ", states3DJ, spins3DJ, valid3DJ);
   initSettings("3DJ", states3DJ.size(), meNames3DJ, mes3DJ, valid3DJ);
   initSettings("3DJ", states3DJ.size(), ggNames3DJ, ggs3DJ, valid3DJ);
@@ -341,7 +345,7 @@ void SigmaOniaSetup::initSettings(string wave, unsigned int size,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
-    pvecs.push_back(settingsPtr->pvec(names[i]));
+    pvecs.push_back(settingsPtr->lookupParamList(names[i]));
     if (pvecs.back().size() != size) {
       infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
                         + ":states(" + wave + ")", "is not the same size as"
@@ -361,7 +365,7 @@ void SigmaOniaSetup::initSettings(string wave, unsigned int size,
   bool &valid) {
 
   for (unsigned int i = 0; i < names.size(); ++i) {
-    fvecs.push_back(settingsPtr->fvec(names[i]));
+    fvecs.push_back(settingsPtr->lookupFlagList(names[i]));
     if (fvecs.back().size() != size) {
       infoPtr->errorMsg("Error in SigmaOniaSetup::initSettings: mvec " + cat
                         + ":states(" + wave + ")", "is not the same size as"
